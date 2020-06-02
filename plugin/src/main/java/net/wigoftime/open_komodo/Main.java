@@ -161,7 +161,7 @@ public class Main extends JavaPlugin implements Listener
 	private static final String phoneName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	private static final String cardName = ChatColor.translateAlternateColorCodes('&', "&6&lBank");
 	
-	private static final String resourcePackLink = "https://www.dropbox.com/s/b2x3gbtw806cr4t/OpenKomodo%20v1.zip?dl=1";
+	private static final String resourcePackLink = "https://www.dropbox.com/s/cxfibivcv5m9xdb/OpenKomodo.zip?dl=1";
 	
 	private static JavaPlugin plugin;
 	
