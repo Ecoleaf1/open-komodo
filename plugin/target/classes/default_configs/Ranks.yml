@@ -10,10 +10,13 @@ VIP:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
 VIP+:
   ID: 2
   Prefix: '&e&lVIP+&r&e &2'
-  XP Price: 250.0
+  XP Price: 100.0
   Salery (Points): 45
   Permissions:
   - openkomodo.essentials.*
@@ -22,6 +25,9 @@ VIP+:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears
@@ -35,7 +41,7 @@ MVP:
   ID: 3
   Prefix: '&b&lMVP&r&b &3'
   Salery (Points): 60
-  XP Price: 500.0
+  XP Price: 250.0
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
@@ -44,6 +50,9 @@ MVP:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears
@@ -58,7 +67,7 @@ MVP+:
   ID: 4
   Prefix: '&b&lMVP+&r&b &3'
   Salery (Points): 72
-  XP Price: 750.0
+  XP Price: 500.0
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
@@ -67,6 +76,9 @@ MVP+:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears
@@ -88,6 +100,9 @@ MOD:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears
@@ -112,6 +127,9 @@ BUILDER:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears
@@ -151,6 +169,9 @@ DESIGNER:
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
   - openkomodo.hats.brownbearears
   - openkomodo.hats.whitebunnyears
   - openkomodo.hats.graybunnyears

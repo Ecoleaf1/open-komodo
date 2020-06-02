@@ -31,7 +31,7 @@ abstract public class HatMenu
 		// The CustomItems in the shop (In order by IDs)
 		int idList[] = 
 			{
-				28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40
+				28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 42, 43, 44
 			};
 		
 		// List of Player's owned hats

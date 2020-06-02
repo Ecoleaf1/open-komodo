@@ -17,12 +17,6 @@ abstract public class PropShop
 		int slot = 0;
 		Inventory gui = Bukkit.getServer().createInventory(null, 45, title);
 		
-		/*
-		for (CustomItem item : CustomItem.getItems())
-		{
-			gui.setItem(slot++, item.getNBTItem().getItem());
-		}*/
-		
 		gui.setItem(slot++,CustomItem.getCustomItem(2).getNBTItem().getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(3).getNBTItem().getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(4).getNBTItem().getItem());

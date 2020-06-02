@@ -6,6 +6,8 @@ import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.command.CommandSender;
@@ -27,7 +29,7 @@ public class Emote {
 	private final String msgSolo;
 	private final String msgOthers;
 	
-	private static HashMap<String, Emote> nameSortMap = new HashMap<String, Emote>();
+	public static HashMap<String, Emote> nameSortMap = new HashMap<String, Emote>();
 	private static HashMap<String, Emote> commandSortMap = new HashMap<String, Emote>();
 	
 	public Emote(String name,String command,String msgSolo, String msgOthers) 
@@ -127,6 +129,9 @@ public class Emote {
 			p.sendMessage(message);
 		}
 		
+		// Play a sound to direct Player to notify about emote
+		if (directPlayer != null)
+		directPlayer.playSound(directPlayer.getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
 	}
 	
 	public static Emote getByName(String name) {

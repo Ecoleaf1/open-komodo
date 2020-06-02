@@ -98,3 +98,9 @@ Emotes:
     command: "kick"
     self: "&r&b$S&r&3 kicks!"
     others: "&r&b$S&r&3 kicks &r&b$R&r&3!"
+
+  Pat:
+    name: "pat"
+    command: "pat"
+    self: "&r&b$S&r&3 pats themselves"
+    others: "&r&b$S&r&3 pats &r&b$R&r&3"

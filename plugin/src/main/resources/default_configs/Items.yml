@@ -200,6 +200,27 @@ Hats:
       Price (Points): 920
       Permission: openkomodo.hats.backswardcap
       id: 40
+   Chicken Hat:
+      Display Name: "&bChicken hat"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.chickenhat
+      id: 42
+   Cowboy Hat:
+      Display Name: "&bCowboy Hat"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.cowboyhat
+      id: 43
+   King Crown:
+      Display Name: "&bKing Crown"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.kingcrown
+      id: 44
 
 Tags:
   Freshmen:
