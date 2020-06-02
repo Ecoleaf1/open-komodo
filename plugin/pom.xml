@@ -46,27 +46,19 @@
   		<artifactId>BountifulAPI</artifactId>
   		<version>1.4.1</version>
 	</dependency> 
-	
-		<dependency>
-  	 	<groupId>org.bucket</groupId>
-  		<artifactId>spigot</artifactId>
-  		<version>1.14.4-R0-1</version>
-  		<scope>system</scope>
-  		<systemPath>${basedir}/../External Dependencies/spigot-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
-		</dependency>
 		
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
 			<artifactId>ProtocolLib</artifactId>
 			<version>4.5.0</version>
 		</dependency>
-	<!--<dependency>
+	<dependency>
   	 	<groupId>org.bucket</groupId>
   		<artifactId>craftbucket</artifactId>
   		<version>1.14.4-R0-1</version>
   		<scope>system</scope>
   		<systemPath>${basedir}/../External Dependencies/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
-	</dependency> !-->
+	</dependency>
   </dependencies>
   
   <build>
