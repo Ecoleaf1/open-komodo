@@ -1,0 +1,249 @@
+Props:
+   ePhone:
+      Display Name: "&6Phone"
+      id: 1
+   Avocado:
+      Display Name: "&6Avocado"
+      id: 2
+      Price (Points): 360
+   Baseball_Bat:
+      Display Name: "&6Baseball Bat"
+      id: 3
+      Price (Points): 360
+   Dumbell:
+      Display Name: "&6Dumbbell"
+      id: 4
+      Price (Points): 360
+   Knife_Small:
+      Display Name: "&6Knife"
+      id: 5
+      Price (Points): 360
+   Rose:
+      Display Name: "&6Rose"
+      id: 6
+      Price (Points): 360
+   Sunglasses:
+      Display Name: "&6Sunglasses"
+      id: 7
+      Price (Points): 360
+   Walkie-Talkie:
+      Display Name: "&6Walkie Talkie"
+      id: 8
+      Price (Points): 360
+   Pencil:
+      Display Name: "&6Pencil"
+      id: 9
+      Price (Points): 360
+   Paper:
+      Display Name: "&6Paper"
+      id: 10
+      Price (Points): 360
+   Saber:
+      Display Name: "&6Saber"
+      id: 11
+      Price (Points): 360
+   Katana:
+      Display Name: "&6Katana"
+      id: 12
+      Price (Points): 360
+   Golden Staff:
+      Display Name: "&6Golden Staff"
+      id: 13
+      Price (Points): 360
+   Silver Staff:
+      Display Name: "&6Silver Staff"
+      id: 14
+      Price (Points): 360
+   Cane:
+      Display Name: "&6Cane"
+      id: 15
+      Price (Points): 360
+   ChainSaw:
+      Display Name: "&6Chainsaw"
+      id: 16
+      Price (Points): 360
+   White Handbag:
+      Display Name: "&6White Handbag"
+      id: 17
+      Price (Points): 360
+   Pink Handbag:
+      Display Name: "&6Pink Handbag"
+      id: 18
+      Price (Points): 360
+   Black Handbag:
+      Display Name: "&6Black Handbag"
+      id: 19
+      Price (Points): 360
+   Tea Cup:
+      Display Name: "&6Tea Cup"
+      id: 20
+      Price (Points): 360
+   Wallet:
+      Display Name: "&6Wallet"
+      id: 21
+      Price (Points): 360
+   Open Book:
+      Display Name: "&6Open Book"
+      id: 22
+      Price (Points): 360
+   Water Bottle:
+      Display Name: "&6Water Bottle"
+      id: 23
+      Price (Points): 360
+   DS:
+      Display Name: "&6DS"
+      id: 24
+      Price (Points): 360
+   Lunch Box:
+      Display Name: "&6Lunch Box"
+      id: 25
+      Price (Points): 360
+   Stuffed Bear:
+      Display Name: "&6Teddy Bear"
+      id: 26
+      Price (Points): 360
+   Stuffed Bunny:
+      Display Name: "&6Bunny Plushie"
+      id: 27
+      Price (Points): 360
+   Handcuffs:
+      Display Name: "&6Handcuffs"
+      id: 35
+      Price (Points): 360
+   Waffle:
+      Display Name: "&6Waffle"
+      id: 41
+      Price (Points): 360
+
+Hats:
+   Blue Ribbon:
+      Display Name: "&bRibbon"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.ribbon
+      id: 28
+   Bowler Hat:
+      Display Name: "&bBowler Hat"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.bowlerhat
+      id: 29
+   Brown Bear Ears:
+      Display Name: "&bBear Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.brownbearears
+      id: 30
+   White Bunny Ears:
+      Display Name: "&bBunny Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.whitebunnyears
+      id: 31
+   Gray Bunny Ears:
+      Display Name: "&bBunny Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.graybunnyears
+      id: 32
+   Brown Bunny Ears:
+      Display Name: "&bBunny Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.brownbunnyears
+      id: 33
+   black Bear Ears:
+      Display Name: "&bbunny Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.blackbunnyears
+      id: 34
+   Orange Cat Ears:
+      Display Name: "&bCat Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.orangecatears
+      id: 36
+   White Cat Ears:
+      Display Name: "&bCat Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.whitecatears
+      id: 37
+   Gray Cat Ears:
+      Display Name: "&bCat Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.graycatears
+      id: 38
+   Black Cat Ears:
+      Display Name: "&bCat Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 920
+      Permission: openkomodo.hats.blackcatears
+      id: 39
+   Backwards Cap:
+      Display Name: "&bCap"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 920
+      Permission: openkomodo.hats.backswardcap
+      id: 40
+
+Tags:
+  Freshmen:
+    Name: Freshmen
+    id: 300
+    Display: Freshman
+    Price (Points): 220
+  Sophomore:
+    Name: Sophomore
+    id: 301
+    Display: Sophomore
+    Price (Points): 450
+  Junior:
+    Name: Junior
+    id: 302
+    Display: Junior
+    Price (Points): 320
+  Senior:
+    Name: Sophomore
+    id: 303
+    Display: Sophomore
+    Price (Points): 470
+  Vampire:
+    Name: Vampire
+    id: 304
+    Display: Vampire
+    Price (Points): 220
+  Werewolf:
+    Name: Werewolf
+    id: 305
+    Display: Werewolf
+    Price (Points): 450
+  Meifwa:
+    Name: Meifwa
+    id: 306
+    Display: Meifwa
+    Price (Points): 450
+  Maid:
+    Name: Maid
+    id: 307
+    Display: Maid
+    Price (Points): 540
+  Senpai:
+    Name: Senpai
+    id: 308
+    Display: Senpai
+    Price (Points): 540

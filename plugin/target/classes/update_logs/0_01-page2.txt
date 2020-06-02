@@ -1,0 +1,5 @@
+ * Chainsaw should now be displayed in the propshop
+ * Fixed glitch where when player right clicks, the player gets teleported into a glitchy void
+ * Throwing eggs at mobs is now patched
+ * The bunny plushy should now have a name
+ 

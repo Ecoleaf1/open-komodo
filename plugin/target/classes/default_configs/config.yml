@@ -1,0 +1,31 @@
+Normal Message:
+  Format: '["",{"text":"$G","color":"gray"},{"text":"$S","color":"dark_gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Username:
+    $N"}]}}},{"text":": ","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "}},{"text":"$M","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "}}]'
+  Tag Format: '["",{"text":"$W","color":"gray"},{"text":" | ","color":"dark_gray"},{"text":"$G","color":"gray"},{"text":"$S","color":"dark_gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Username:
+    $N"}]}}},{"text":": ","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "}},{"text":"$M","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
+    $N "}}]'
+  Chat Distance: 50
+Private Message:
+  Format (Sent): '&7you &e-> &7$D &7:&f $M'
+  Format (Received): '&7$N &e-> &7you &7:&f $M'
+Global Settings:
+  Spawn:
+    World: open_komodo
+    Location:
+      ==: Vector
+      x: 330.0
+      y: 68.0
+      z: -215.0
+  Join Message: ''
+  Leave Message: ''
+  Allow Item Drops: false
+  Explosion Enabled: false
+  Leaves Decay: false
+  Ice Melts: false
+  Allow Damage: false
+  Fall Damage: false

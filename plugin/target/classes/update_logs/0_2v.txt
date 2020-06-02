@@ -1,0 +1,93 @@
+ Update 0.2 log, what's new?
+
+§0Features:§r
+§0*  Created different       Inventories for§r
+§0   Different worlds§r
+
+§0*  World permissions §r
+§0   now implemented§r
+
+§0*  Added Worldedit,§r
+§0   usuable for §r
+§0   builders working§r
+
+page 2:
+
+   on the map in the
+§0   builder's world§r
+
+§0*  Added /genpay, a §r
+§0   command for admins    that generate §r
+§0   currency§r
+
+§0*  Added /pay, able to    pay players§r
+
+§0*  Players can no    §r
+§0   longer pick stuff up§r
+
+page 3:
+
+*  Players can no 
+§0   longer destroy §r
+§0   fire§r
+
+§0*  Players will no §r
+§0   collider with other §r
+§0   players§r
+
+§0*  Server resource§r
+§0   pack is now§r
+§0   implemented into the§r
+§0   server! Just join§r
+§0   and it should§r
+§0   prompt you to§r
+
+page 4:
+
+   install the resource
+§0   pack.§r
+
+§0*  The bug report §r
+§0   messages when you §r
+§0   summit.§r
+
+§0Fixed Bugs:§r
+
+§0*  Players can no §r
+§0   longer open§r
+§0   enderchests§r
+
+§0*  Fixed bug that the§r
+
+page 5:
+
+   chat stops working 
+§0   when a player is in §r
+§0   a different world§r
+
+§0*  The rank's prefix §r
+§0   on Player List§r is 
+   fixed
+
+§0*  Weather won't §r
+§0   randomly come on§r
+
+§0*  §rBuilders unable to
+   build in build world
+   is fixed.
+   
+page 6:
+
+*  Fixed the phone gui;
+   the phone interface
+   Should now look 
+   normal
+
+*  Player's now should
+   go to spawn instead
+   when happened to 
+   die.
+
+
+            -=-
+Thanks for visiting and your support ^.^
