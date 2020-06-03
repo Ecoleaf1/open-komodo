@@ -46,6 +46,7 @@ public abstract class Filter
 			if (delay.get(uuid) > cal.getTimeInMillis())
 			{
 				player.sendMessage(slowDownMsg);
+				PrintConsole.test("time: " + cal.getTime().toString());
 				return true;
 			}
 		

@@ -15,10 +15,7 @@ public class NormalMessageJson
 	private static final int distanceR = Main.getDistanceRange();
 	
 	public static void sendMessage(Player sender, String message) 
-	{
-		if (!Filter.checkMessage(sender, message))
-			return;
-		
+	{		
 		Location senderLocation = sender.getLocation();
 		String format = MessageFormat.json(sender, message);
 		
@@ -90,10 +87,7 @@ public class NormalMessageJson
 	}
 	
 	public static void shout(Player sender, String message)
-	{
-		if (!Filter.checkMessage(sender, message))
-			return;
-		
+	{	
 		String format = MessageFormat.json(sender, message);
 		
 		for (Player p : Bukkit.getOnlinePlayers())
