@@ -23,11 +23,11 @@ public abstract class Filter
 	
 	public static boolean checkMessage(Player player, String text)
 	{
-		if (player.hasPermission(Permissions.ignoreSpamPerm))
+		if (!player.hasPermission(Permissions.ignoreSpamPerm))
 			if (isSpamming(player, text))
 				return false;
 		
-		if (player.hasPermission(Permissions.ignoreSwearPerm))
+		if (!player.hasPermission(Permissions.ignoreSwearPerm))
 			if (isSwore(text))
 			{
 				player.sendMessage(bannedWordMsg);
@@ -87,7 +87,7 @@ public abstract class Filter
 			for (int i = 0; i < word.toCharArray().length; i++)
 			{
 				// Append letter to pattern
-				sb.append(word.charAt(i)+".{0,2}");
+				sb.append(word.charAt(i)+".{0,3}");
 			}
 			sb.append("");
 			

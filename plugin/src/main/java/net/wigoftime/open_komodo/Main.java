@@ -17,6 +17,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.FlowerPot;
 import org.bukkit.command.CommandMap;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
@@ -26,7 +27,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockFadeEvent;
+import org.bukkit.event.block.BlockFertilizeEvent;
+import org.bukkit.event.block.BlockIgniteEvent;
+import org.bukkit.event.block.BlockIgniteEvent.IgniteCause;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.block.LeavesDecayEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -447,6 +452,29 @@ public class Main extends JavaPlugin implements Listener
 		return;
 	}
 	
+	@EventHandler
+	public void fertilizedEvent(BlockFertilizeEvent e)
+	{
+		
+		Player player = e.getPlayer();
+		
+		if (player.hasPermission(Permissions.breakPerm))
+			e.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void ignitevent(BlockIgniteEvent e)
+	{
+		Player player = e.getPlayer();
+		
+		if (e.getCause() != IgniteCause.FLINT_AND_STEEL)
+			return;
+		
+		if (player.hasPermission(Permissions.breakPerm))
+			e.setCancelled(true);
+	}
+	
+	
 	// When vehicle of any kind (Such as boats or minecarts) was attempted to be destroyed
 	@EventHandler
 	public void vehicleDestroy(VehicleDestroyEvent e) 
@@ -729,7 +757,10 @@ public class Main extends JavaPlugin implements Listener
 	public void onInteract(PlayerInteractEvent e) 
 	{
 		if (e.getAction() == Action.PHYSICAL)
-		{		
+		{
+			if (e.getClickedBlock().getType() == Material.FARMLAND)
+				e.setCancelled(true);
+			
 			return;
 		}
 		
@@ -739,7 +770,7 @@ public class Main extends JavaPlugin implements Listener
 		Action action = e.getAction();
 		// Get Item
 		ItemStack item = e.getItem();
-		
+			
 		// If not left and right click on block, cancel it.
 		// This is to prevent players quickly moving their cursor out right
 		// when they left click on the fire to put it out.
@@ -771,6 +802,13 @@ public class Main extends JavaPlugin implements Listener
 			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR)
 				if (!e.getPlayer().hasPermission(Permissions.changePerm))
 					e.setCancelled(true);
+			
+			if (material == Material.FLOWER_POT || material.name().startsWith("POTTED"))
+			{
+				player.sendMessage(Permissions.getChangeError());
+				e.setCancelled(true);
+				return;
+			}
 			
 			// If Enderchest
 			if (block.getType() == Material.ENDER_CHEST)

@@ -5,6 +5,7 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -278,8 +279,13 @@ abstract public class GUIManager {
 
 		if (e.getCurrentItem().getType() == Material.INK_SAC) 
 		{
+			player.sendMessage(e.getSlot()+"");
+			
 			if (!e.getCurrentItem().getItemMeta().hasCustomModelData())
 				return;
+			
+			if (e.getSlot() == 39)
+				e.setCancelled(true);
 			
 			if (e.getCurrentItem().getItemMeta().getCustomModelData() != 1)
 				return;
@@ -314,10 +320,8 @@ abstract public class GUIManager {
 			if (e.getCursor().getItemMeta().getCustomModelData() != 1)
 				return;
 			
-			e.setCancelled(true);
 			return;
 		}
-			
 	}
 	
 }
