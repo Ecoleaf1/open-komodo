@@ -799,9 +799,11 @@ public class Main extends JavaPlugin implements Listener
 			// Get Material
 			Material material = block.getType();
 			
+			if (player.hasPermission(Permissions.changePerm))
+				return;
+			
 			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR)
-				if (!e.getPlayer().hasPermission(Permissions.changePerm))
-					e.setCancelled(true);
+				e.setCancelled(true);
 			
 			if (material == Material.FLOWER_POT || material.name().startsWith("POTTED"))
 			{
