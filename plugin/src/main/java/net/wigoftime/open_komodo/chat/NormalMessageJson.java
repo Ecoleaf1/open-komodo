@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Filter;
 
 public class NormalMessageJson 
 {
@@ -15,6 +16,9 @@ public class NormalMessageJson
 	
 	public static void sendMessage(Player sender, String message) 
 	{
+		if (!Filter.checkMessage(sender, message))
+			return;
+		
 		Location senderLocation = sender.getLocation();
 		String format = MessageFormat.json(sender, message);
 		
@@ -86,7 +90,10 @@ public class NormalMessageJson
 	}
 	
 	public static void shout(Player sender, String message)
-	{	
+	{
+		if (!Filter.checkMessage(sender, message))
+			return;
+		
 		String format = MessageFormat.json(sender, message);
 		
 		for (Player p : Bukkit.getOnlinePlayers())
