@@ -1,15 +1,29 @@
 package net.wigoftime.open_komodo.etc;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
+
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.config.Config;
 
 public abstract class Filter 
 {
@@ -17,12 +31,42 @@ public abstract class Filter
 	private static final String spamMsg = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but please stop spamming.");
 	private static final String bannedWordMsg = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but that word isn't allowed on here.");
 	
-	private static Map<UUID, Long> delay = new HashMap<UUID, Long>();
+	public static final File fileDict = new File(Main.dataFolderPath+"/Whitelist-Dict.txt");
 	
-	private static String[] bannedWords = {"fuck", "cunt", "pussy", "dick", "dickhead", "bastard", "tits", "shit", "piss", "bitch", "asshole", "arsehole", "penis", "vagina", "sex", "whore", "nigger", "nigga", "fag" ,"cumming"};
+	private static Map<UUID, Long> delay = new HashMap<UUID, Long>();
+	private static Set<String> whitelistWords = new HashSet<String>();
+	
+	public static void setup()
+	{
+		FileReader reader;
+		try
+		{
+			reader = new FileReader(fileDict);
+			BufferedReader buff = new BufferedReader(reader);
+			
+			while(buff.ready())
+			{
+				String line = buff.readLine();
+				
+				
+				
+				whitelistWords.add(line);
+			}
+			
+			buff.close();
+			reader.close();
+		}
+		catch (IOException e)
+		{
+			
+		}
+	}
+	
+	private static String[] bannedWords = {"fuck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast"};
 	
 	public static boolean checkMessage(Player player, String text)
 	{
+		
 		if (!player.hasPermission(Permissions.ignoreSpamPerm))
 			if (isSpamming(player, text))
 				return false;
@@ -42,32 +86,15 @@ public abstract class Filter
 		Calendar cal = Calendar.getInstance();
 		UUID uuid = player.getUniqueId();
 		
+		// Check if the player needs to slow down
 		if (delay.containsKey(uuid))
 			if (delay.get(uuid) > cal.getTimeInMillis())
 			{
 				player.sendMessage(slowDownMsg);
-				PrintConsole.test("time: " + cal.getTime().toString());
 				return true;
 			}
 		
-		char[] chars = text.toCharArray();
-		
-		for (int i = 0; i < chars.length; i++)
-		{
-			char c = chars[i];
-			
-			if (i + 3 > chars.length)
-				break;
-			
-			if (chars[i+1] == c)
-				if (chars[i+2] == c)
-				{
-					player.sendMessage(spamMsg);
-					return true;
-				}
-				
-		}
-		
+		// Add 2 seconds on.
 		cal.add(Calendar.SECOND, 2);
 		delay.put(uuid, cal.getTimeInMillis());
 		return false;
@@ -76,25 +103,70 @@ public abstract class Filter
 	
 	public static boolean isSwore(String text)
 	{
-		// List every single word
-		for (String word : bannedWords)
-		{
-			// String builder for pattern
-			StringBuilder sb = new StringBuilder();
+		// Split text into arguments
+		String[] args = text.split(" ");
+		
+		// Get all unapproved characters
+		StringBuilder textBuilder = new StringBuilder();
+		for (String s : args)
+		{	
+			if (whitelistWords.contains(s.toLowerCase()))
+				continue;
 			
-			// Beginning of pattern
-			sb.append("");
-			// Loop through each character
-			for (int i = 0; i < word.toCharArray().length; i++)
+			// Get each letter in unapproved word
+			for (int i = 0; i < s.length(); i++)
 			{
-				// Append letter to pattern
-				sb.append(word.charAt(i)+".{0,3}");
+				textBuilder.append(s.charAt(i));
 			}
-			sb.append("");
 			
-			if (Pattern.matches(sb.toString(), text))
+			// Loop through each forbidden word
+			for (String word : bannedWords)
 			{
-				return true;
+				
+				// String builder that limits multiple characters.
+				StringBuilder sb = new StringBuilder();
+				
+				// Index for spotting swearing
+				int swearIndex = 0;
+				
+				// Check for multiple characters together, if so, check if it has some in sforbidden word.
+				for (int i = 0; i < textBuilder.length(); i++)
+				{
+					if (swearIndex < word.length())
+						if (word.charAt(swearIndex) == textBuilder.charAt(i))
+						{
+							swearIndex++;
+							sb.append(textBuilder.charAt(i));
+							continue;
+						}
+					
+					if (i+1 < textBuilder.length())
+						if (textBuilder.charAt(i) == textBuilder.charAt(i+1))
+						{
+							continue;
+						}
+					sb.append(textBuilder.charAt(i));
+				}
+				
+				StringBuilder wordRegex = new StringBuilder();
+				for (char c : word.toCharArray())
+				{
+					if (c == '*')
+					{
+						wordRegex.append("\\"+c+".{0,3}");
+						continue;
+					}
+					
+					wordRegex.append(c+".{0,3}");
+				}
+				
+				
+				Pattern pattern = Pattern.compile(wordRegex.toString(), Pattern.CASE_INSENSITIVE);
+				
+				if (pattern.matcher(sb.toString()).find())
+				{
+					return true;
+				}
 			}
 		}
 		return false;

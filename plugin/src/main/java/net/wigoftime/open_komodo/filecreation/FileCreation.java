@@ -16,6 +16,7 @@ import net.wigoftime.open_komodo.config.ItemConfig;
 import net.wigoftime.open_komodo.config.PetConfig;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.RankConfig;
+import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 
 abstract public class FileCreation 
@@ -26,6 +27,7 @@ abstract public class FileCreation
 	public static final File rankConfig = RankConfig.getFile();
 	public static final File petConfig = PetConfig.getConfig();
 	public static final File playerConfigFolder = PlayerConfig.getConfigFolder();
+	public static final File whitelistDict = Filter.fileDict;
 	//public static final File playerConfig = PlayerConfig.getCon();
 
 	public static void create(ConfigType type)
@@ -60,6 +62,11 @@ abstract public class FileCreation
 		{
 			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Pets.yml");
 			file = petConfig;
+		}
+		else if (type == ConfigType.WHITELIST_DICT)
+		{
+			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Whitelist-Dict.txt");
+			file = whitelistDict;
 		}
 		else
 		{

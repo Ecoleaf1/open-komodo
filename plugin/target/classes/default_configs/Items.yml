@@ -268,3 +268,38 @@ Tags:
     id: 308
     Display: Senpai
     Price (Points): 540
+  Reaper:
+    Name: Reaper
+    id: 309
+    Display: Reaper
+    Price (Points): 740
+  Kawaii:
+    Name: Kawaii
+    id: 310
+    Display: Kawaii
+    Price (Points): 640
+  Unknown:
+    Name: Unknown
+    id: 311
+    Display: Unknown
+    Price (Points): 430
+  Angel:
+    Name: Angel
+    id: 312
+    Display: Angel
+    Price (Points): 640
+  Nerd:
+    Name: Nerd
+    id: 313
+    Display: Nerd
+    Price (Points): 430
+  Witch:
+    Name: Witch
+    id: 314
+    Display: Witch
+    Price (Points): 540
+  Unicorn:
+    Name: Unicorn
+    id: 315
+    Display: Unicorn
+    Price (Points): 740

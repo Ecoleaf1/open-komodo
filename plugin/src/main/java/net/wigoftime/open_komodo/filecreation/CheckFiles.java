@@ -9,6 +9,7 @@ import net.wigoftime.open_komodo.config.ItemConfig;
 import net.wigoftime.open_komodo.config.PetConfig;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.RankConfig;
+import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.gui.BuyOptionsGUI;
@@ -42,6 +43,9 @@ abstract public class CheckFiles
 		
 		FileCreation.create(ConfigType.PET);
 		PetConfig.setup();
+		
+		FileCreation.create(ConfigType.WHITELIST_DICT);
+		Filter.setup();
 		
 		/*
 		PrintConsole.test("c5");
