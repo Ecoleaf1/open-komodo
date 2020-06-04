@@ -252,15 +252,6 @@ abstract public class GUIManager {
 				int id = im.getCustomModelData();
 				
 				BuyConfirm.create(player, CustomItem.getCustomItem(id), Currency.POINTS);
-				
-				/*
-				 * Old
-				 * Tag tag = Tag.findByDisplay(e.getCurrentItem().getItemMeta().getDisplayName());
-				
-				if (tag != null) {
-					
-					BuyConfirm.create(player,tag, Currency.POINTS);
-				} */
 			}
 			
 			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Next"))
@@ -278,9 +269,7 @@ abstract public class GUIManager {
 		}
 
 		if (e.getCurrentItem().getType() == Material.INK_SAC) 
-		{
-			player.sendMessage(e.getSlot()+"");
-			
+		{	
 			if (!e.getCurrentItem().getItemMeta().hasCustomModelData())
 				return;
 			
