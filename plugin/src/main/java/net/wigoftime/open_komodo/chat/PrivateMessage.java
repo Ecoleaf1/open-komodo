@@ -1,5 +1,9 @@
 package net.wigoftime.open_komodo.chat;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
@@ -11,58 +15,60 @@ import net.wigoftime.open_komodo.etc.Filter;
 
 abstract public class PrivateMessage 
 {
-
-	public static void sendMessage(CommandSender sender,String[] args) 
+	private static final Map<UUID, UUID> lastReply = new HashMap<UUID, UUID>();
+	
+	public static void sendMessage(CommandSender sender, Player receiver, String message) 
 	{
 		
-		// Make sure that the player just didn't do /msg, with nothing else (arg[0] is the command).
-		if (args.length>0) 
+		// If the player typed in an online correct username
+		if (receiver == null)
 		{
+			sender.sendMessage(ChatColor.DARK_RED+"Player not found.");
+			return;
+		}
+		
+		// If spammed or swore
+		if (sender instanceof Player)
+		if (!Filter.checkMessage((Player) sender, message))
+			return;
+		
+		String sentFormat = Main.getPMSentFormat();
+		String receivedFormat = Main.getPMReceivedFormat();
+		
+		String sentMessage = ChatColor.translateAlternateColorCodes('&', sentFormat);
+		
+		sentMessage = MessageFormat.format(sentMessage, sender,receiver, message);
+		
+		String receivedMessage = ChatColor.translateAlternateColorCodes('&', receivedFormat);
+		receivedMessage = MessageFormat.format(receivedMessage, sender,receiver, message);
+		
+		receiver.sendMessage(receivedMessage);
+		sender.sendMessage(sentMessage);
+		
+		if (sender instanceof Player)
+		{
+			Player player = (Player) sender;
 			
-			if (sender instanceof Player)
-				if (Moderation.isMuted((Player) sender))
-					return;
-			
-			Player receiver = Bukkit.getPlayer(args[0]);
-			
-			// If the player typed in an online correct username
-			if (receiver == null)
-			{
-				sender.sendMessage(ChatColor.DARK_RED+"Player not found.");
-				return;
-			}
-				
-			StringBuilder sb = new StringBuilder();
-			
-			for (int i = 1; i < args.length;i++) 
-			{
-				if (i+1<args.length)
-					sb.append(args[i] + " ");
-				else
-					sb.append(args[i]);
-			}
-			
-			// If spammed or swore
-			if (sender instanceof Player)
-			if (!Filter.checkMessage((Player) sender, sb.toString()))
-				return;
-			
-			String sentFormat = Main.getPMSentFormat();
-			String receivedFormat = Main.getPMReceivedFormat();
-			
-			String sentMessage = ChatColor.translateAlternateColorCodes('&', sentFormat);
-			
-			sentMessage = MessageFormat.format(sentMessage, sender,receiver, sb.toString());
-			
-			String receivedMessage = ChatColor.translateAlternateColorCodes('&', receivedFormat);
-			receivedMessage = MessageFormat.format(receivedMessage, sender,receiver, sb.toString());
-			
-			receiver.sendMessage(receivedMessage);
-					
-			sender.sendMessage(sentMessage);
-				
-			
+			lastReply.put(player.getUniqueId(), receiver.getUniqueId());
+			lastReply.put(receiver.getUniqueId(), player.getUniqueId());
 		}
 	}
 	
+	public static void playerLeft(UUID uuid)
+	{
+		lastReply.remove(uuid);
+	}
+	
+	public static void reply(Player sender, String message)
+	{
+		Player target = Bukkit.getPlayer(lastReply.get(sender.getUniqueId()));
+		
+		if (target == null)
+		{
+			sender.sendMessage(ChatColor.DARK_RED + "No one to to reply to.");
+			return;
+		}
+		
+		sendMessage(sender, target, message);
+	}
 }

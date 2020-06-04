@@ -85,26 +85,10 @@ abstract public class TpSystem {
 		tpaMap.remove(target);
 		return;
 	}
-	/*
 	
-	public static void acceptTpa(Player target) {
-		
-		if (!tpaMap.containsKey(target)) {
-			target.sendMessage(noRequests);
-			return;
-		}
-		
-		Player requester = tpaMap.get(target);
-
-		String requesterMessage = MessageFormat.format(acceptedRequester, target, requester, null);
-		String targetMessage = MessageFormat.format(acceptedTarget, target, requester, null);
-		
-		requester.sendMessage(requesterMessage);
-		target.sendMessage(targetMessage);
-		
-		requester.teleport(target.getLocation());
-		
+	public static void playerLeft(Player target)
+	{
 		tpaMap.remove(target);
-	}*/
+	}
 	
 }

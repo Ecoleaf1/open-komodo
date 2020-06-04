@@ -2,7 +2,6 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -10,10 +9,10 @@ import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.chat.PrivateMessage;
 
-public class MsgCommand extends Command 
+public class ReplyCommand extends Command
 {
 
-	public MsgCommand(String name, String description, String usageMessage,
+	public ReplyCommand(String name, String description, String usageMessage,
 			List<String> aliases) 
 	{
 		super(name, description, usageMessage, aliases);
@@ -21,11 +20,11 @@ public class MsgCommand extends Command
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String commandLabel, String[] args) 
 	{
 		if (!(sender instanceof Player))
 		{
-			sender.sendMessage("Must be player to send a message");
+			sender.sendMessage(ChatColor.DARK_RED + "Sorry, but this is a player only command.");
 			return false;
 		}
 		
@@ -36,16 +35,15 @@ public class MsgCommand extends Command
 		}
 		
 		Player player = (Player) sender;
-		Player target = Bukkit.getPlayer(args[0]);
 		
 		StringBuilder message = new StringBuilder();
-		for (int i = 1; i < args.length; i++)
+		for (String s : args)
 		{
-			message.append(args[i] + " ");
+			message.append(s +" ");
 		}
 		
-		PrivateMessage.sendMessage(player, target, message.toString());
-		return false;
+		PrivateMessage.reply(player, message.toString());
+		return true;
 	}
 
 }

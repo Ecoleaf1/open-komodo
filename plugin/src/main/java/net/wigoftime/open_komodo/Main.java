@@ -70,6 +70,7 @@ import de.tr7zw.nbtinjector.NBTInjector;
 import net.wigoftime.open_komodo.actions.BugReporter;
 import net.wigoftime.open_komodo.actions.Rules;
 import net.wigoftime.open_komodo.chat.MessageFormat;
+import net.wigoftime.open_komodo.chat.PrivateMessage;
 import net.wigoftime.open_komodo.commands.BanCommand;
 import net.wigoftime.open_komodo.commands.CheckBalanceCommand;
 import net.wigoftime.open_komodo.commands.DelHomeCommand;
@@ -93,6 +94,7 @@ import net.wigoftime.open_komodo.commands.PetsMenuCommand;
 import net.wigoftime.open_komodo.commands.PromoteCommand;
 import net.wigoftime.open_komodo.commands.PropShopCommand;
 import net.wigoftime.open_komodo.commands.RankCommand;
+import net.wigoftime.open_komodo.commands.ReplyCommand;
 import net.wigoftime.open_komodo.commands.ReportCommand;
 import net.wigoftime.open_komodo.commands.RulesCommand;
 import net.wigoftime.open_komodo.commands.SetHomeCommand;
@@ -117,6 +119,7 @@ import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
+import net.wigoftime.open_komodo.etc.TpSystem;
 import net.wigoftime.open_komodo.etc.UpdateLog;
 import net.wigoftime.open_komodo.events.AsyncPlayerChat;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
@@ -357,6 +360,13 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Register the nickname command
 		map.register("openkomodo", new NicknameCommand("nickname", "Change your nickname", "/nickname", nickAtlas));
+		
+		// Add nickname command atlases
+		ArrayList<String> replyAtlas = new ArrayList<String>(1);
+		replyAtlas.add("r");
+		
+		// Register the nickname command
+		map.register("openkomodo", new ReplyCommand("reply", "Reply to a player", "/reply (message)", replyAtlas));
 	}
 	
 	@Override
@@ -887,6 +897,9 @@ public class Main extends JavaPlugin implements Listener
 		// Unop the player (To sync with the permissions)
 		if (player.isOp())
 			player.setOp(false);
+		
+		TpSystem.playerLeft(player);
+		PrivateMessage.playerLeft(player.getUniqueId());
 	}
 	
 	@EventHandler
