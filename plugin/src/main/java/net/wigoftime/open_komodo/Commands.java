@@ -24,14 +24,6 @@ abstract public class Commands
 		// Get the command
 		String command = args[0];
 		
-		/*
-		if (args[0].equalsIgnoreCase("/npcspawn"))
-			if (args.length > 1) 
-				if (args.length > 2)
-					NPCSpawner.spawn(e.getPlayer().getLocation(), args[1], args[2]);
-				else
-					NPCSpawner.spawn(e.getPlayer().getLocation(), args[1], null); */
-		
 		if (args[0].equalsIgnoreCase("/test2")) {
 			Calendar cal = Calendar.getInstance();
 			e.getPlayer().sendMessage(cal.getTime().toString());
@@ -55,8 +47,8 @@ abstract public class Commands
 		
 		if (command.equalsIgnoreCase("/help") || command.equalsIgnoreCase("/minecraft:help"))
 		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&b&lHelp:&e&l\nFor info about ranks, type in /rank help\nFor info about points, type in /money help\n"
-					+ "/msg (Player) (message) to message someone!\n/tpa (player) to send a teleport request!"));
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bHelp:&3\nFor info about ranks, type in /rank help\nFor info about points, type in /money help\n"
+					+ "/msg (Player) (message) to message someone!\n/tpa (player) to send a teleport request!\n/home help for setting homes!"));
 			e.setCancelled(true);
 			return;
 		}

@@ -11,7 +11,7 @@ import net.wigoftime.open_komodo.etc.TpSystem;
 public class TpaDenycommand extends Command
 {
 
-	protected TpaDenycommand(String name, String description, String usageMessage,
+	public TpaDenycommand(String name, String description, String usageMessage,
 			List<String> aliases) 
 	{
 		super(name, description, usageMessage, aliases);

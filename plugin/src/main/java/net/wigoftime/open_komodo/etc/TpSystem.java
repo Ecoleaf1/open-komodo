@@ -54,7 +54,6 @@ abstract public class TpSystem {
 		
 		Player requester = tpaMap.get(target);
 		
-		String message = MessageFormat.format(deniedRequest, target, requester, null);
 		target.sendMessage(deniedRequest);
 		tpaMap.remove(target);
 		return;

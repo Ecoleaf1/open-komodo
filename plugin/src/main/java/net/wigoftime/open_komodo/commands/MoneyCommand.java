@@ -23,8 +23,8 @@ public class MoneyCommand extends Command
 		
 		if (args[0].equalsIgnoreCase("help"))
 		{
-		sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Simply earn more points when being on the server! "
-				+ "\nRank up to get a higher salery!");
+		sender.sendMessage(ChatColor.AQUA + "Money information" + ChatColor.DARK_AQUA + ":\nSimply earn more points when being on the server. Coins are unobtainable as of right now"
+				+ "\nRank up to get a higher salery");
 		return true;
 		}
 		

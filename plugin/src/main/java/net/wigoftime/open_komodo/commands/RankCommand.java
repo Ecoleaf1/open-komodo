@@ -22,7 +22,7 @@ public class RankCommand extends Command
 			
 			if (args[0].equalsIgnoreCase("help"))
 			{
-				sender.sendMessage(ChatColor.YELLOW + "" + ChatColor.BOLD + "Rank up by roleplaying! The more you roleplay publically, the more likely you will rank up!");
+				sender.sendMessage(ChatColor.AQUA + "Rank help" + ChatColor.DARK_AQUA + ":\nRank up by roleplaying and chatting in public chat. The more often you are active in chat, the quicker you rank up. Ranking up takes time, having no one of checking when you will rank up.");
 				return true;
 			}
 			

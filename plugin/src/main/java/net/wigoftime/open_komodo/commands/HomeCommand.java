@@ -28,12 +28,18 @@ public class HomeCommand extends Command
 		
 		Player player = (Player) sender;
 		
-		// If there isn't enough subcommands
-		if (args.length == 0) 
+		// If there isn't enough arguments
+		if (args.length < 1) 
 		{
-			// Tell player to enter subcommand
+			// Tell player to enter arguments
 			player.sendMessage(enterNameMsg);
 			return false;
+		}
+		
+		if (args[0].equalsIgnoreCase("help"))
+		{
+			sender.sendMessage(ChatColor.AQUA +"Home Help:\n" + ChatColor.DARK_AQUA+ "Homes are a way to save your location. Different ranks can have different home limit.\nTo create a home, type in: /sethome (Name)\nTo delete a home, type in /delhome (Name)\nTo go to a home, type in /home (name)\nDisplay your current homes: /homes");
+			return true;
 		}
 		
 		// Teleport home

@@ -102,6 +102,7 @@ import net.wigoftime.open_komodo.commands.TagShopCommand;
 import net.wigoftime.open_komodo.commands.TeleportToBuildWorldCommand;
 import net.wigoftime.open_komodo.commands.TpaAcceptCommand;
 import net.wigoftime.open_komodo.commands.TpaCommand;
+import net.wigoftime.open_komodo.commands.TpaDenycommand;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import net.wigoftime.open_komodo.etc.ActionBar;
@@ -355,8 +356,8 @@ public class Main extends JavaPlugin implements Listener
 		ArrayList<String> tpadenyAtlas = new ArrayList<String>(1);
 		tpadenyAtlas.add("tpdeny");
 		
-		// Register the nickname command
-		map.register("fp", new NicknameCommand("tpadeny", "Deny a tp request", "/tpadeny", tpadenyAtlas));
+		//  Register tpadeny
+		map.register("fp", new TpaDenycommand("tpadeny", "Deny a tp request", "/tpadeny", tpadenyAtlas));
 	}
 	
 	@Override

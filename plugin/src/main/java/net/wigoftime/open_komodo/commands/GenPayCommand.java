@@ -26,23 +26,18 @@ public class GenPayCommand extends Command
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) 
 	{
-		if (!(sender instanceof Player))
-			return false;
-		
-		// Get sender in player format
-		Player player = (Player) sender;
 		
 		// Check if Player has permission
-		if (!player.hasPermission(Permissions.genPayPerm))
+		if (!sender.hasPermission(Permissions.genPayPerm))
 		{
-			player.sendMessage(Permissions.useError);
+			sender.sendMessage(Permissions.useError);
 			return false;
 		}
 		
 		// cancel if there's less than 4 sub-commands
 		if (args.length < 3)
 		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eUsage: /pay {Player} {Amount} {Currency}"));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eUsage: /pay {Player} {Amount} {Currency}"));
 			return false;
 		}
 		
@@ -72,7 +67,7 @@ public class GenPayCommand extends Command
 		}
 		catch (NumberFormatException ee)
 		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown amount. Use digit numbers"));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown amount. Use digit numbers"));
 			return false;
 		}
 		
@@ -85,7 +80,7 @@ public class GenPayCommand extends Command
 			currency = Currency.COINS;
 		else
 		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown Currency Type. Usage: Points/Coins"));
+			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown Currency Type. Usage: Points/Coins"));
 			return false;
 		}
 		
