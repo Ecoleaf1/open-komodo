@@ -303,3 +303,8 @@ Tags:
     id: 315
     Display: Unicorn
     Price (Points): 740
+  Robot:
+    Name: Robot
+    id: 316
+    Display: Robot
+    Price (Points): 540
