@@ -103,6 +103,7 @@ import net.wigoftime.open_komodo.commands.TeleportToBuildWorldCommand;
 import net.wigoftime.open_komodo.commands.TpaAcceptCommand;
 import net.wigoftime.open_komodo.commands.TpaCommand;
 import net.wigoftime.open_komodo.commands.TpaDenycommand;
+import net.wigoftime.open_komodo.commands.TpaHereCommand;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import net.wigoftime.open_komodo.etc.ActionBar;
@@ -331,6 +332,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new DisplayTagsCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>()));
 		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", new ArrayList<String>()));
 		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>()));
+		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>()));
 		map.register("openkomodo", new FriendsCommand("friend", "A WIP Command: Display friends gui", "/friends", new ArrayList<String>()));
 		map.register("openkomodo", new TagShopCommand("tagshop", "Open the tagshop", "/tagshop", new ArrayList<String>()));
 		map.register("openkomodo", new PetsMenuCommand("pets", "Open the pets menu", "/pets", new ArrayList<String>()));
@@ -345,19 +347,16 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>()));
 		map.register("openkomodo_admin", new PromoteCommand("promote", "Promote People's Ranks", "/promote {Player} {Add/Remove} {Player Name} {Permission}", new ArrayList<String>()));
 		
+		ArrayList<String> tpaDenyAtlas = new ArrayList<String>();
+		tpaDenyAtlas.add("/tpdeny");
+		map.register("openkomodo", new TpaDenycommand("tpadeny", "Request to teleport", "/tpdeny", tpaDenyAtlas));
+		
 		// Add nickname command atlases
 		ArrayList<String> nickAtlas = new ArrayList<String>(1);
 		nickAtlas.add("nick");
 		
 		// Register the nickname command
-		map.register("fp", new NicknameCommand("nickname", "Change your nickname", "/nickname", nickAtlas));
-		
-		// Add tpadeny command atlases
-		ArrayList<String> tpadenyAtlas = new ArrayList<String>(1);
-		tpadenyAtlas.add("tpdeny");
-		
-		//  Register tpadeny
-		map.register("fp", new TpaDenycommand("tpadeny", "Deny a tp request", "/tpadeny", tpadenyAtlas));
+		map.register("openkomodo", new NicknameCommand("nickname", "Change your nickname", "/nickname", nickAtlas));
 	}
 	
 	@Override

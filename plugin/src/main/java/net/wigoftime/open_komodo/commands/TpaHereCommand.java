@@ -12,39 +12,40 @@ import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.etc.TpSystem;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 
-public class TpaCommand extends Command
-{	
-	public TpaCommand(String name, String description, String usageMessage,
+public class TpaHereCommand extends Command
+{
+
+	public TpaHereCommand(String name, String description, String usageMessage,
 			List<String> aliases) 
 	{
 		super(name, description, usageMessage, aliases);
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String commandLabel, String[] args) 
 	{
 		if (!(sender instanceof Player))
 			return false;
 		
-		// Get player in Player format
+		if (args.length < 1)
+		{
+			sender.sendMessage(ChatColor.DARK_RED + this.usageMessage);
+			return false;
+		}
+		
 		Player player = (Player) sender;
 		
-		if (args.length > 0) 
-		{
-			Player target = Bukkit.getPlayer(args[0]);
-			
-			if (target != null)
-				TpSystem.request(player, target, tpType.TPA);
-			else 
-			{
-				String message = MessageFormat.format(TpSystem.errorCantFindPerson, player.getDisplayName(), args[0], null);
-				player.sendMessage(message);
-			}
-				
-		}
-		else
-			player.sendMessage(ChatColor.DARK_RED + this.usageMessage);
+		Player target = Bukkit.getPlayer(args[0]);
 		
+		if (target == null)
+		{
+			String message = MessageFormat.format(TpSystem.errorCantFindPerson, player.getDisplayName(), args[0], null);
+			
+			player.sendMessage(message);
+			return false;
+		}
+		
+		TpSystem.request(player,target, tpType.TPAHERE);
 		return true;
 	}
 
