@@ -20,6 +20,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/objects/Pet.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/FriendSystem.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/HomeSystem.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/objects/TpRequest.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/chat/Emote.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/BuyOptionsGUI.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/SetHomeCommand.java
@@ -66,6 +67,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/TagMenu.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/RulesCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/config/WorldInventoryConfig.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/TpaHereCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/TagShop.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/ActionBar.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/SpawnCommand.java
