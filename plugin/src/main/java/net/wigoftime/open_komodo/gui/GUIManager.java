@@ -5,7 +5,9 @@ import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -14,7 +16,9 @@ import de.tr7zw.nbtapi.NBTCompound;
 import de.tr7zw.nbtapi.NBTItem;
 import de.tr7zw.nbtinjector.NBTInjector;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
@@ -311,6 +315,13 @@ abstract public class GUIManager {
 			
 			return;
 		}
+	}
+	
+	public static void inventoryClosed(InventoryCloseEvent e)
+	{	
+		Player player = (Player) e.getPlayer();
+		
+		InventoryManagement.saveInventory(player, player.getWorld());
 	}
 	
 }

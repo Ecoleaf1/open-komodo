@@ -336,7 +336,7 @@ abstract public class BuyConfirm
 		player.closeInventory();
 	}
 	
-	
+	/*
 	public static void confirm(Player player) 
 	{
 		Inventory gui = player.getOpenInventory().getTopInventory();
@@ -360,7 +360,7 @@ abstract public class BuyConfirm
 		System.out.println(view.getTitle());
 		
 		player.closeInventory();
-	}
+	}*/
 	
 	/*
 	public static void confirm(Player player, Inventory gui, Currency currency, byte type) 

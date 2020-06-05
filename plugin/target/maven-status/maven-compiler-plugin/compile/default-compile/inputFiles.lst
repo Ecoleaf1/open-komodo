@@ -56,6 +56,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/world/BuilderWorld.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/actions/Rules.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/BinGUI.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/ReplyCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/TagShopCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/LegacyHatMenu.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/config/PetConfig.java

@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +40,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -107,6 +109,7 @@ import net.wigoftime.open_komodo.commands.TpaCommand;
 import net.wigoftime.open_komodo.commands.TpaDenycommand;
 import net.wigoftime.open_komodo.commands.TpaHereCommand;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import net.wigoftime.open_komodo.etc.ActionBar;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
@@ -377,13 +380,7 @@ public class Main extends JavaPlugin implements Listener
 		for (Player player : Bukkit.getOnlinePlayers())
 		{
 			InventoryManagement.saveInventory(player, player.getWorld());
-			if (player.isOp())
-				player.setOp(false);
-			
-			if (PetsManager.getCreature(player) != null)
-				PetsManager.removePet(player);
 		}
-		
 	}
 	
 	/* Events Below */
@@ -819,7 +816,6 @@ public class Main extends JavaPlugin implements Listener
 			{
 				player.sendMessage(Permissions.getChangeError());
 				e.setCancelled(true);
-				return;
 			}
 			
 			// If Enderchest
@@ -864,12 +860,6 @@ public class Main extends JavaPlugin implements Listener
 	{
 		// Get Player
 		Player player = e.getPlayer();
-		
-		// Get Inventory
-		Inventory inventory = player.getInventory();
-		
-		// Save Player's Items
-		InventoryManagement.saveInventory(player, player.getWorld());
 		
 		// Get Message
 		String message = leaveMessage;
@@ -1024,6 +1014,12 @@ public class Main extends JavaPlugin implements Listener
 		// If it is FPBank card
 		if (item.getType() == Material.FLINT)
 			e.setCancelled(true);
+	}
+	
+	@EventHandler
+	public void inventoryClose(InventoryCloseEvent e)
+	{
+		GUIManager.inventoryClosed(e);
 	}
 	
 	@EventHandler
