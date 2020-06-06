@@ -12,7 +12,7 @@ import net.wigoftime.open_komodo.etc.HomeSystem;
 public class DelHomeCommand extends Command
 {
 	private static final String nameMsg = ChatColor.translateAlternateColorCodes('&', "&4Enter your home name that you wish to delete.");
-	private static final String homeDeleted = ChatColor.translateAlternateColorCodes('&', "&bHome deleted!");
+	private static final String homeDeleted = ChatColor.translateAlternateColorCodes('&', "&7Home deleted!");
 
 	public DelHomeCommand(String name, String description, String usageMessage,
 			List<String> aliases) {

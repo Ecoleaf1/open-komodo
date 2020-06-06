@@ -57,7 +57,7 @@ abstract public class Promote
 		target.sendMessage(msg);
 		
 		// Message to promoter that player been promoted
-		String msg2 = MessageFormat.format(senderPromote, promoter, null, null);
+		String msg2 = MessageFormat.format(senderPromote, promoter, target, null);
 		promoter.sendMessage(msg2);
 	}
 	

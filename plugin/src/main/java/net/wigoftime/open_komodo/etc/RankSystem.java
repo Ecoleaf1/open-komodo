@@ -18,12 +18,11 @@ abstract public class RankSystem
 {
 	public static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
 	
-	public static final String rankedUp = ChatColor.translateAlternateColorCodes('&', "&b&l" + Main.name + "&eYou sucessfully ranked up!");
+	public static final String rankedUp = ChatColor.translateAlternateColorCodes('&', "  &6―――――――&5&k| " + Main.nameColoured + " &5&k|&6―――――――" + "\n\n     &bYou ranked up! Congratz!\n\n&6―――――――――――――――――――――――――――――――――");
 	
 	// The setup function, should only be used once when server starting up
 	public static void setup()
 	{
-		
 		// Create a runnable that loops for 10 minutes
 		// Turning pending XP into actual XP that is saved
 		// As well as getting paid salery

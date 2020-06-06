@@ -3,10 +3,12 @@ package net.wigoftime.open_komodo.commands;
 import java.util.List;
 import java.util.ListIterator;
 
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.HomeSystem;
 
 public class HomesCommand extends Command 
@@ -43,7 +45,7 @@ public class HomesCommand extends Command
 		StringBuilder sb = new StringBuilder();
 		
 		// Start adding onto the stringbuilder the title of homes
-		sb.append("Homes: ");
+		sb.append(ChatColor.AQUA + "Homes" + ChatColor.DARK_AQUA +" (Limit: "+ PlayerConfig.getHomeLimit(player.getUniqueId()) +"):\n");
 		
 		// loop through List of home names
 		for (ListIterator<String> iter = homes.listIterator(); iter.hasNext();) 
@@ -57,7 +59,7 @@ public class HomesCommand extends Command
 			// Else don't do a comma
 			else
 				sb.append(name);
-		} 
+		}
 		
 		// Send message of their list of homes
 		player.sendMessage(sb.toString());

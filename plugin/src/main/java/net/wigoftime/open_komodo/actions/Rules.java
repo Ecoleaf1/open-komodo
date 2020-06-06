@@ -18,7 +18,7 @@ import net.wigoftime.open_komodo.Main;
 
 abstract public class Rules 
 {
-	private static final String[] rules = {"No 18+ stuff", "No using words towards discrimination and words behind anything inappropriate.","No bypassing the word filter to use forbidden words.", "Have fun!", "No harassment", "Please use common sense"};
+	private static final String[] rules = {"No 18+ stuff", "No swearing (no discrimination and words behind anything inappropriate).","No bypassing the word filter to use forbidden words.", "Have fun!", "No harassment", "Please use common sense"};
 	
 	/*
 	private static final File rulesFolder = new File(Main.config.getAbsolutePath()+"/rulesAccepted");
