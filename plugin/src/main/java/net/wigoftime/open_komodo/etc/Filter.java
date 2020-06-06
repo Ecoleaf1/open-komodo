@@ -63,6 +63,7 @@ public abstract class Filter
 	}
 	
 	private static String[] bannedWords = {"fuck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast"};
+	private static String[] suffixes = {"s","es","d"};
 	
 	public static boolean checkMessage(Player player, String text)
 	{
@@ -106,11 +107,55 @@ public abstract class Filter
 		// Split text into arguments
 		String[] args = text.split(" ");
 		
+		// Approved word count, counts how much approved words in a row.
+		int approvedStreak = 0;
+		
+		boolean approved = false;
+		
 		// Get all unapproved characters
 		StringBuilder textBuilder = new StringBuilder();
 		for (String s : args)
 		{	
 			if (whitelistWords.contains(s.toLowerCase()))
+			{
+				approvedStreak++;
+				//approved.put(approved.size(), true);
+				continue;
+			}
+			
+			boolean approvedSuffix = false;
+			for (String ss : suffixes)
+			{
+				if (!s.endsWith(ss))
+					continue;
+				
+				int ii = s.length() - ss.length();
+				
+				char[] test = new char[ii];
+				s.getChars(0, ii, test, 0);
+				StringBuilder wordSuffixRemoval = new StringBuilder();
+				
+				for (char c : test)
+				{
+					wordSuffixRemoval.append(c);
+				}
+				
+				PrintConsole.test(wordSuffixRemoval.toString());
+				
+				if (whitelistWords.contains(wordSuffixRemoval.toString().toLowerCase()))
+				{
+					approvedStreak++;
+					
+					// Tick approved so it will stop
+					approvedSuffix = true;
+					break;
+				}
+				
+				approvedSuffix = false;
+			}
+			
+			// If approved word with suffix, stop.
+			if (approved || approvedSuffix)
 				continue;
 			
 			// Get each letter in unapproved word
@@ -119,10 +164,16 @@ public abstract class Filter
 				textBuilder.append(s.charAt(i));
 			}
 			
+			if (approvedStreak > 1)
+			{
+				textBuilder.delete(0, textBuilder.length());
+				approvedStreak = 0;
+				continue;
+			}
+			
 			// Loop through each forbidden word
 			for (String word : bannedWords)
 			{
-				
 				// String builder that limits multiple characters.
 				StringBuilder sb = new StringBuilder();
 				
