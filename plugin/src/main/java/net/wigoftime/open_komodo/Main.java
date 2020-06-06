@@ -439,18 +439,6 @@ public class Main extends JavaPlugin implements Listener
 		// Get Player
 		Player player = e.getPlayer();
 		
-		// Get World
-		World world = player.getWorld();
-		
-		/*
-			// Else say that they aren't allowed in builder's world.
-			else
-			{
-				player.sendMessage(Permissions.getBreakError());
-				e.setCancelled(true);
-				return;
-			} */
-		
 		// Allow if player has permission
 		if (player.hasPermission(Permissions.breakPerm))
 			return;
@@ -624,7 +612,6 @@ public class Main extends JavaPlugin implements Listener
 	public void playerMove(PlayerMoveEvent e)
 	{
 		Player player = e.getPlayer();
-		PrintConsole.test("Player moved.");
 		
 		if (player.isFlying())
 			return;
@@ -633,9 +620,7 @@ public class Main extends JavaPlugin implements Listener
 			return;
 		
 		if (e.getFrom().distance(e.getTo()) > 0.2)
-		{
-			UUID uuid = player.getUniqueId();
-			
+		{	
 			double add = 0.000015;
 			RankSystem.addPendingPoints(player, add);
 		}
