@@ -110,8 +110,6 @@ public abstract class Filter
 		// Approved word count, counts how much approved words in a row.
 		int approvedStreak = 0;
 		
-		boolean approved = false;
-		
 		// Get all unapproved characters
 		StringBuilder textBuilder = new StringBuilder();
 		for (String s : args)
@@ -152,21 +150,22 @@ public abstract class Filter
 				approvedSuffix = false;
 			}
 			
-			// If approved word with suffix, stop.
-			if (approved || approvedSuffix)
-				continue;
 			
-			// Get each letter in unapproved word
-			for (int i = 0; i < s.length(); i++)
-			{
-				textBuilder.append(s.charAt(i));
-			}
+			
+			// If approved word with suffix, stop.
+			if (approvedSuffix)
+				continue;
 			
 			if (approvedStreak > 1)
 			{
 				textBuilder.delete(0, textBuilder.length());
 				approvedStreak = 0;
-				continue;
+			}
+			
+			// Get each letter in unapproved word
+			for (int i = 0; i < s.length(); i++)
+			{
+				textBuilder.append(s.charAt(i));
 			}
 			
 			// Loop through each forbidden word
