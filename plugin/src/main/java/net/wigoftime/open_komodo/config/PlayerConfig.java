@@ -427,14 +427,32 @@ public abstract class PlayerConfig
 		return configYaml.getStringList("Permissions");
 	}
 	
-	public static void setPermission(Player player, Permission permission, boolean isAdding)
+	public static void setPermission(Player player, World world, Permission permission, boolean isAdding)
 	{
 		// Get and open Player's Configuration
 		File file = getPlayerConfig(player);
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		
 		// Get list of permissions
-		List<String> list = config.getStringList("Permissions");
+		List<String> list;
+		if (world == null)
+			list = config.getStringList("Permissions");
+		else
+		{	
+			ConfigurationSection worldsSection =config.getConfigurationSection("Worlds");
+			if (worldsSection.contains(world.getName()))
+				worldsSection.createSection(world.getName());
+			
+			ConfigurationSection worldSection = worldsSection.getConfigurationSection(world.getName());
+			
+			list = worldSection.getStringList("Permissions");
+			
+			if (list == null)
+			{
+				 worldSection.set("Permissions", new LinkedList<String>());
+				 list = worldSection.getStringList("Permissions");
+			}
+		}
 		
 		// If adding, add to list, if removing, remove to list
 		if (isAdding)
@@ -443,8 +461,14 @@ public abstract class PlayerConfig
 			list.remove(permission.getName());
 		
 		// Overwrite with updated permission list
+		if (world == null)
 		config.set("Permissions", list);
-		
+		else
+		{
+			ConfigurationSection worldsSection = config.getConfigurationSection("Worlds");
+			ConfigurationSection worldSection =  worldsSection.getConfigurationSection(world.getName());
+			worldSection.set("Permissions", list);
+		}
 		// Try save configuration
 		try
 		{

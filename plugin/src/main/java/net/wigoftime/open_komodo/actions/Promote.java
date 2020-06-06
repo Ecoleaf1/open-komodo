@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.actions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
@@ -32,7 +33,7 @@ abstract public class Promote
 	public static void commandPromoteRank(CommandSender promoter, String targetName, String rank)
 	{
 		// Check if rank exists
-		if (Rank.getRank(rank) == null && rank != "default")
+		if (Rank.getRank(rank) == null && !rank.equalsIgnoreCase("default"))
 		{
 			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Rank!");
 			return;
@@ -75,7 +76,7 @@ abstract public class Promote
 		}
 		
 		// Set Player Permission
-		PlayerConfig.setPermission(target, permission, addMode);
+		PlayerConfig.setPermission(target, null, permission, addMode);
 		Permissions.setUp(target);
 		
 		// Send to promoter that the command worked
@@ -87,7 +88,7 @@ abstract public class Promote
 	}
 	
 	// When command for adding Player permission
-	public static void commandPromoteRank(CommandSender promoter, String targetName, Permission permission, boolean addMode)
+	public static void commandPromoteRank(CommandSender promoter, String targetName, World world, Permission permission, boolean addMode)
 	{
 		// Get player by name
 		Player target = Bukkit.getPlayer(targetName);
@@ -100,11 +101,14 @@ abstract public class Promote
 		}
 		
 		// Set Player Permission
-		PlayerConfig.setPermission(target, permission, addMode);
+		if (world == null)
+			PlayerConfig.setPermission(target, null, permission, addMode);
+		else
+			PlayerConfig.setPermission(target, world, permission, addMode);
 		Permissions.setUp(target);
 		
 		// Send to promoter that the command worked
-		String msg2 = MessageFormat.format(senderPermission, promoter,null, null);
+		String msg2 = MessageFormat.format(senderPermission, promoter, target, null);
 		promoter.sendMessage(msg2);
 		
 		// Refresh scoreboard

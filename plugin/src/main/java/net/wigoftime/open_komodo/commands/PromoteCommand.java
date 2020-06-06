@@ -2,7 +2,9 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
@@ -71,7 +73,27 @@ public class PromoteCommand extends Command
 			String modifer = args[1];
 			
 			String targetName = args[2];
-			Permission permission = new Permission(args[3]);
+			
+			Permission permission;
+			World world;
+			
+			if (args.length > 4)
+			{
+				world = Bukkit.getWorld(args[3]);
+				
+				if (world == null)
+				{
+					sender.sendMessage(ChatColor.DARK_RED + "Could not find world.");
+					return false;
+				}
+				
+				permission = new Permission(args[4]);
+			}
+			else
+			{
+				permission = new Permission(args[3]);
+				world = null;
+			}
 			
 			// If player is adding permission
 			boolean addMode;
@@ -86,7 +108,7 @@ public class PromoteCommand extends Command
 				return false;
 			}
 			
-			Promote.commandPromoteRank(sender, targetName, permission, addMode);
+			Promote.commandPromoteRank(sender, targetName, world, permission, addMode);
 		return false;
 		}
 		
