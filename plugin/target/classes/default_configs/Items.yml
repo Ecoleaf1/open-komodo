@@ -221,7 +221,20 @@ Hats:
       Price (Points): 920
       Permission: openkomodo.hats.kingcrown
       id: 44
-
+   Witch Hat:
+      Display Name: "&5Witch Hat"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1540
+      Permission: openkomodo.hats.witchhat
+      id: 45
+   Top Hat with Mustache:
+      Display Name: "&bTop Hat with Mustache"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.tophatwithmustache
+      id: 46
 Tags:
   Freshmen:
     Name: Freshmen

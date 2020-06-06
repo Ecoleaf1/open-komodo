@@ -37,6 +37,8 @@ VIP+:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
 MVP:
   ID: 3
   Prefix: '&b&lMVP&r&b &3'
@@ -62,6 +64,8 @@ MVP:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
 MVP+:
   ID: 4
@@ -88,6 +92,8 @@ MVP+:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
 MOD:
   Prefix: '&e&lMOD&r&e &6'
@@ -112,6 +118,8 @@ MOD:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
   - openkomodo.mod.kick
   - openkomodo.mod.Ban
@@ -139,6 +147,8 @@ BUILDER:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
   Worlds:
      BuilderWorld:
@@ -181,6 +191,8 @@ DESIGNER:
   - openkomodo.hats.whitecatears
   - openkomodo.hats.graycatears
   - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
 MANAGER:
     Prefix: "&6&lMANAGER&r "
