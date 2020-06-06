@@ -6,7 +6,7 @@ VIP:
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
-  - openkomodo.home.limit.2
+  - openkomodo.home.limit.3
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -21,7 +21,7 @@ VIP+:
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
-  - openkomodo.home.limit.3
+  - openkomodo.home.limit.5
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -46,7 +46,7 @@ MVP:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
-  - openkomodo.home.limit.4
+  - openkomodo.home.limit.10
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -72,7 +72,7 @@ MVP+:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
-  - openkomodo.home.limit.5
+  - openkomodo.home.limit.20
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -96,7 +96,7 @@ MOD:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
-  - openkomodo.home.limit.5
+  - openkomodo.home.limit.20
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -123,7 +123,7 @@ BUILDER:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
-  - openkomodo.home.limit.8
+  - openkomodo.home.limit.20
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap
@@ -165,7 +165,7 @@ DESIGNER:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
-  - openkomodo.home.limit.8
+  - openkomodo.home.limit.20
   - openkomodo.hats.ribbon
   - openkomodo.hats.bowlerhat
   - openkomodo.hats.backswardcap

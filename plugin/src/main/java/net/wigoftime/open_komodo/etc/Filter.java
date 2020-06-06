@@ -140,8 +140,6 @@ public abstract class Filter
 					wordSuffixRemoval.append(c);
 				}
 				
-				PrintConsole.test(wordSuffixRemoval.toString());
-				
 				if (whitelistWords.contains(wordSuffixRemoval.toString().toLowerCase()))
 				{
 					approvedStreak++;

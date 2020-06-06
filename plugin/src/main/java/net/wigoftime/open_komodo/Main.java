@@ -5,6 +5,8 @@ import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
@@ -55,6 +57,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
@@ -615,6 +618,27 @@ public class Main extends JavaPlugin implements Listener
 		// Other wise, cancel it and tell player that they are not allowed
 		e.setCancelled(true);
 		player.sendMessage(Permissions.getHurtError());
+	}
+	
+	@EventHandler
+	public void playerMove(PlayerMoveEvent e)
+	{
+		Player player = e.getPlayer();
+		PrintConsole.test("Player moved.");
+		
+		if (player.isFlying())
+			return;
+		
+		if (player.getFallDistance() > 0)
+			return;
+		
+		if (e.getFrom().distance(e.getTo()) > 0.2)
+		{
+			UUID uuid = player.getUniqueId();
+			
+			double add = 0.000015;
+			RankSystem.addPendingPoints(player, add);
+		}
 	}
 	
 	// Triggered when a hanging entity is removed by an entity
