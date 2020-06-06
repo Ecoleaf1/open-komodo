@@ -62,7 +62,7 @@ abstract public class TpSystem {
 			request.getRequester().teleport(request.getTarget());
 		
 		if (type == tpType.TPAHERE)
-			request.getRequester().teleport(request.getTarget());
+			request.getTarget().teleport(request.getRequester());
 		
 		
 		String requesterMessage = MessageFormat.format(acceptedRequester, target, request.getRequester(), null);

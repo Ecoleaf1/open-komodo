@@ -85,7 +85,7 @@ abstract public class GUIManager {
 	
 	public static void invItemClicked(InventoryClickEvent e) 
 	{
-		
+		// If couldn't get item, return
 		if (e.getCurrentItem() == null)
 			return;
 		
@@ -95,12 +95,26 @@ abstract public class GUIManager {
 		String inventoryName = inventoryView.getTitle();
 		Player player = (Player) e.getWhoClicked();
 		
+		// If in phone gui
 		if (inventoryName.equalsIgnoreCase(PhoneGui.titleName)) {
 			e.setCancelled(true);
 			PhoneGui.clicked(player, e.getCurrentItem());
 			return;
 		}
 		
+		if (is.getType() == Material.STICK)
+			if (InventoryManagement.currentOpen.containsKey(player.getUniqueId()))
+			{
+				int bagID = InventoryManagement.currentOpen.get(player.getUniqueId());
+				
+				if (is.getItemMeta().getCustomModelData() == bagID)
+				{
+					e.setCancelled(true);
+					return;
+				}
+			}
+		
+		// If in warps gui
 		if (inventoryName.equals(Warps.guiName)) {
 			e.setCancelled(true);
 			Warps.clicked(player, e.getCurrentItem());
@@ -112,6 +126,8 @@ abstract public class GUIManager {
 			
 			NBTItem nbti = new NBTItem(is);
 			int id = nbti.getInteger("CustomModelData");
+			
+			PrintConsole.test("ID: " + id);
 			
 			if (id < 1)
 				return;
@@ -217,7 +233,6 @@ abstract public class GUIManager {
 		{
 			
 			ItemMeta meta = is.getItemMeta();
-			PrintConsole.test("test #002" + meta.getDisplayName());
 			
 			if (meta.getCustomModelData() == PetControl.cancelID)
 				PetsManager.removePet(player);

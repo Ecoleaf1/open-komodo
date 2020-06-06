@@ -2,9 +2,13 @@ package net.wigoftime.open_komodo.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
 
 abstract public class PropShop 
@@ -45,6 +49,8 @@ abstract public class PropShop
 		gui.setItem(slot++,CustomItem.getCustomItem(27).getNBTItem().getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(35).getNBTItem().getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(41).getNBTItem().getItem());
+		
+		gui.setItem(slot++, CustomItem.getCustomItem(999).getNBTItem().getItem());
 		
 		/*
 		gui.setItem(slot++,CustomItem.getCustomItem(31).getNBTItem().getItem());

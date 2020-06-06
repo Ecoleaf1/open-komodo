@@ -836,6 +836,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Checks if Item could have an ID
 		if (item.getItemMeta().hasCustomModelData())
+		{
 			// If ID is 1 (IPlay Phone)
 			if (item.getItemMeta().getCustomModelData() == 1)
 				// And if the item is an ink sac, open IPlay
@@ -845,6 +846,12 @@ public class Main extends JavaPlugin implements Listener
 					PhoneGui.open(player);
 					return;
 				}
+			
+			if (item.getType() == Material.STICK)
+			{
+				InventoryManagement.openBagInventory(player, item.getItemMeta().getCustomModelData());
+			}
+		}
 		
 		// If Item is a flint, display balance (Card item)
 		if (item.getType() == Material.FLINT) 

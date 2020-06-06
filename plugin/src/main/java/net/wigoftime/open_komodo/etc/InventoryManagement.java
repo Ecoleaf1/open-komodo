@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
@@ -22,12 +23,15 @@ abstract public class InventoryManagement
 		// Get Player's Items
 		Inventory inventory = player.getInventory();
 		
+		PrintConsole.test("1");
 		if (currentOpen.containsKey(player.getUniqueId()))
 		{
+			PrintConsole.test("2");
 			int bagID = currentOpen.get(player.getUniqueId());
 			
 			ItemStack[] items = player.getOpenInventory().getTopInventory().getContents();
 			WorldInventoryConfig.setInventory(player, bagID, items);
+			currentOpen.remove(player.getUniqueId());
 		}
 		
 		// Get items from Player's inventory
@@ -51,5 +55,32 @@ abstract public class InventoryManagement
 		
 		// Load inventory on player
 		inventory.setContents(items);
+	}
+	
+	public static void openBagInventory(Player player, int bagID)
+	{	
+		
+		// Get all items
+		ItemStack[] items = WorldInventoryConfig.getInventory(player, bagID);
+		
+		if (items == null)
+		{
+			PrintConsole.test("Doesn't exist.");
+			WorldInventoryConfig.setInventory(player, bagID, new ItemStack[0]);
+			items = WorldInventoryConfig.getInventory(player, bagID);
+		}
+		
+		Inventory gui = Bukkit.createInventory(null, 27, "Backpack");
+		
+		for (int i = 0; i < gui.getSize(); i++)
+		{
+			if (i >= items.length)
+				break;
+			
+			gui.setItem(i, items[i]);
+		}
+		
+		InventoryManagement.currentOpen.put(player.getUniqueId(), bagID);
+		player.openInventory(gui);
 	}
 }

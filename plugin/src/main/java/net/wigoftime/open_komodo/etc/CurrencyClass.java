@@ -3,12 +3,15 @@ package net.wigoftime.open_komodo.etc;
 import java.io.File;
 
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.objects.Pet;
@@ -57,7 +60,7 @@ public abstract class CurrencyClass
 			return false;
 		
 		// Get ItemStack
-		ItemStack is = customItem.getNBTItem().getItem();
+		ItemStack is =  new ItemStack(customItem.getNBTItem().getItem());
 		
 		// Get ItemType
 		ItemType type = customItem.getType();
@@ -65,10 +68,14 @@ public abstract class CurrencyClass
 		// If item is prop
 		if (type == ItemType.PROP)
 		{
-			player.getInventory().addItem(is);
+			ItemMeta meta = is.getItemMeta();
+			if (is.getType() == Material.STICK)
+			{
+				meta.setCustomModelData(WorldInventoryConfig.getInventoryIndex(player));
+				is.setItemMeta(meta);
+			}
 			
-			// Save player's inventory in case server crashes or something unexpected happened
-			InventoryManagement.saveInventory(player, player.getWorld());
+			player.getInventory().addItem(is);
 		}
 		
 		// If item is tag
@@ -80,6 +87,9 @@ public abstract class CurrencyClass
 			PlayerConfig.addItem(player, customItem);
 		
 		ServerScoreBoard.add(player);
+		
+		// Save player's inventory in case server crashes or something unexpected happened
+		InventoryManagement.saveInventory(player, player.getWorld());
 		return true;
 	}
 	

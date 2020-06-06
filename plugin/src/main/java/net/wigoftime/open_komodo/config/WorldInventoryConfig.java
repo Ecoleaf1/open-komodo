@@ -78,8 +78,13 @@ public abstract class WorldInventoryConfig
 		if (!bagInventoryFolder.exists())
 			bagInventoryFolder.mkdir();
 		
-		File playerFolder = new File(bagInventoryFolder.getAbsolutePath()+"/"+player.getWorld().getName()+"/"+player.getUniqueId());
+		File worldFolder = new File(bagInventoryFolder.getAbsolutePath()+"/"+player.getWorld().getName());
 		
+		if (!worldFolder.exists())
+			worldFolder.mkdir();
+		
+		File playerFolder = new File(worldFolder.getAbsolutePath()+"/"+player.getUniqueId());
+			
 		if (!playerFolder.exists())
 			playerFolder.mkdir();
 		
@@ -90,7 +95,7 @@ public abstract class WorldInventoryConfig
 		if (list.length < 1)
 			index = 1;
 		else
-			index = Integer.parseInt(list[list.length-1].replace(".yml", ""));
+			index = Integer.parseInt(list[list.length-1].replace(".yml", "")) + 1;
 		
 		return index;
 	}

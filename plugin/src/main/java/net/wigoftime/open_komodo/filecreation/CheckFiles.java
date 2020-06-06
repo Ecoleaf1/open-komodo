@@ -2,6 +2,12 @@ package net.wigoftime.open_komodo.filecreation;
 
 import java.io.File;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
+
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.config.ConfigType;
@@ -15,6 +21,8 @@ import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.gui.BuyOptionsGUI;
 import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.gui.Warps;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.ItemType;
 
 abstract public class CheckFiles 
 {
@@ -34,6 +42,12 @@ abstract public class CheckFiles
 		
 		FileCreation.create(ConfigType.ITEM);
 		ItemConfig.setup();
+		
+		ItemStack is = new ItemStack(Material.STICK);
+		ItemMeta meta = is.getItemMeta();
+		meta.setDisplayName(ChatColor.GOLD + "Backpack");
+		is.setItemMeta(meta);
+		new CustomItem(is, 999, meta.getDisplayName(), null, 1050, null, ItemType.PROP);
 		
 		FileCreation.create(ConfigType.RANK);
 		RankConfig.setup();

@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.tr7zw.nbtapi.NBTItem;
+import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.Permissions;
@@ -27,87 +28,6 @@ abstract public class BuyConfirm
 	
 	private static final Material confirmMaterial = Material.LIME_WOOL;
 	private static final Material cancelMaterial = Material.RED_WOOL;
-	
-	/*
-	public static void create(Player player, Tag tag, Currency currency)
-	{
-		Inventory gui = Bukkit.getServer().createInventory(null, 27, "Confirmation");
-		
-		// Create side to cancel.=
-		ItemStack denyItem = new ItemStack(cancelMaterial,1); 
-		
-		// Change the display name
-		ItemMeta denyMeta = denyItem.getItemMeta();
-		denyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
-		denyItem.setItemMeta(denyMeta);
-		
-		// Create side to confirm
-		ItemStack confirmItem = new ItemStack(confirmMaterial,1); 
-		
-		// Change display name
-		ItemMeta itemMeta = confirmItem.getItemMeta();
-		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lConfirmation"));
-		confirmItem.setItemMeta(itemMeta);
-		
-		// Place the cancel side items to the left side
-		gui.setItem(0,denyItem);
-		gui.setItem(1,denyItem);
-		gui.setItem(9, denyItem);
-		gui.setItem(10, denyItem);
-		gui.setItem(18, denyItem);
-		gui.setItem(19, denyItem);
-		
-		// Place the confirm side items to the right side
-		gui.setItem(7, confirmItem);
-		gui.setItem(8, confirmItem);
-		gui.setItem(16, confirmItem);
-		gui.setItem(17, confirmItem);
-		gui.setItem(25, confirmItem);
-		gui.setItem(26, confirmItem);
-		
-		// Name of Currency
-		String cn = currency == Currency.POINTS ?
-					"Points" : "Coins";
-		
-		// Cost amount of item
-		int amount;
-		amount = currency == Currency.POINTS ? 
-				 tag.getPointPrice() : tag.getCoinPrice();
-		
-		// Create the display item
-		ItemStack is = new ItemStack(Material.NAME_TAG);
-		
-		// Set display name on display item
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName(tag.getDisplay());
-		
-		// Save changes
-		is.setItemMeta(im);
-		
-		// Display the display item on the 12th slot
-		gui.setItem(12, is);
-		
-		// Currency Item
-		ItemStack ci;
-		
-		// Get the currency type
-		if (currency == Currency.POINTS)
-			ci = new ItemStack(Material.IRON_INGOT);
-		else
-			ci = new ItemStack(Material.GOLD_INGOT);
-		
-		// Show price
-		ItemMeta cim = ci.getItemMeta();
-		cim.setDisplayName(String.format("Cost: %d %s", amount, cn));
-		
-		// Save changes
-		ci.setItemMeta(cim);
-		
-		// Set the Currency Item on the 14th slot
-		gui.setItem(14, ci);
-		
-		player.openInventory(gui);
-	} */
 	
 	public static void create(Player player,Pet pet, Currency currency) 
 	{
@@ -247,8 +167,21 @@ abstract public class BuyConfirm
 		amount = currency == Currency.POINTS ? 
 				 item.getPointPrice() : item.getCoinPrice();
 		
+		ItemStack is;
 		// Display the item on the 12th slot.
-		ItemStack is = item.getNBTItem().getItem();
+		if (item.getNBTItem().getItem().getType() == Material.STICK)
+		{
+			is = new ItemStack(Material.STICK);
+			ItemMeta meta = is.getItemMeta();
+			meta.setDisplayName(item.getNBTItem().getItem().getItemMeta().getDisplayName());
+			meta.setCustomModelData(WorldInventoryConfig.getInventoryIndex(player));
+			is.setItemMeta(meta);
+		}
+		else
+		{
+		is = item.getNBTItem().getItem();
+		}
+		
 		gui.setItem(12, is);
 		
 		// Currency Item
@@ -310,9 +243,12 @@ abstract public class BuyConfirm
 			return;
 		}
 		
-		// Create an NBTItem to get custom model data.
-		NBTItem nbti = new NBTItem(cis);
-		int id = nbti.getInteger("CustomModelData");
+		// Get id
+		int id;
+		if (cis.getType() == Material.STICK)
+			id = 999;
+		else
+			id = cis.getItemMeta().getCustomModelData();
 		
 		// About Item
 		CustomItem cs = CustomItem.getCustomItem(id);
