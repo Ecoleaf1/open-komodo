@@ -87,24 +87,25 @@ abstract public class RankSystem
 			
 			e.setValue(0.0);
 			
-			for (Rank r : Rank.getRanks())
-			{
-				
-				// If not next rank, skip
-				if ((rankID + 1) != r.getID())
-					continue;
-				
-				if (r.getXPPrice() > totalXP || r.getXPPrice() == 0)
-					break;
-				
-				PlayerConfig.setRank(player, r.getName());
-				PlayerConfig.setXP(player, 0.0);
-				
-				// Play sound effect
-				//player.playSound)
-				
-				player.sendMessage(rankedUp);
-			}
+			if (rankID > 0)
+				for (Rank r : Rank.getRanks())
+				{
+					
+					// If not next rank, skip
+					if ((rankID + 1) != r.getID())
+						continue;
+					
+					if (r.getXPPrice() > totalXP || r.getXPPrice() == 0)
+						break;
+					
+					PlayerConfig.setRank(player, r.getName());
+					PlayerConfig.setXP(player, 0.0);
+					
+					// Play sound effect
+					//player.playSound)
+					
+					player.sendMessage(rankedUp);
+				}
 		}
 	}
 	
