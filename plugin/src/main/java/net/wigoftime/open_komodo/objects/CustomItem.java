@@ -11,8 +11,6 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
-
-import de.tr7zw.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 
@@ -27,7 +25,7 @@ public class CustomItem
 	private final int pointPrice;
 	private final int coinPrice;
 	
-	private final NBTItem nbtItem;
+	private final ItemStack item;
 	private final ItemType type;
 	
 	private final Permission obtainPermission;
@@ -35,28 +33,24 @@ public class CustomItem
 	public CustomItem(ItemStack item, int id, String name, List<String> description, int pointPrice,Permission permission, ItemType type)
 	{
 		
-		// Create NBTItem to edit NBT Tags.
-		NBTItem nbti = new NBTItem(item);
-		
-		// Set the CustomModelData NBT Tag the id.
-		nbti.setInteger("CustomModelData", id);
-		
-		ItemMeta im = nbti.getItem().getItemMeta();
+		// Set the CustomModelData to the id
+		ItemMeta meta = item.getItemMeta();
+		meta.setCustomModelData(id);
 		
 		if (name != null)
-			im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		
 		if (description != null)
-			im.setLore(description);
+			meta.setLore(description);
 		
-		nbti.getItem().setItemMeta(im);
+		item.setItemMeta(meta);
 		
 		// Assign all the CustomItem Variables
 		this.description = description;
 		
 		this.pointPrice = pointPrice;
 		this.coinPrice = -1;
-		this.nbtItem = nbti;
+		this.item = item;
 		this.type = type;
 		this.obtainPermission = permission;
 		
@@ -138,9 +132,9 @@ public class CustomItem
 		return description;
 	}
 	
-	public NBTItem getNBTItem()
+	public ItemStack getItem()
 	{
-		return nbtItem;
+		return item;
 	}
 	
 	public int getPointPrice()

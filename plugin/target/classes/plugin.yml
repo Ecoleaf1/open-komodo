@@ -3,5 +3,5 @@ main: net.wigoftime.open_komodo.Main
 description: The Offical Open Komodo plugin!
 version: 0.2
 author: Ecoleaf
-depend: [ProtocolLib, BountifulAPI, NBTAPI]
+depend: [ProtocolLib, BountifulAPI]
 api-version: 1.13

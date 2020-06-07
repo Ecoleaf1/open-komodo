@@ -60,7 +60,7 @@ public abstract class CurrencyClass
 			return false;
 		
 		// Get ItemStack
-		ItemStack is =  new ItemStack(customItem.getNBTItem().getItem());
+		ItemStack is =  new ItemStack(customItem.getItem());
 		
 		// Get ItemType
 		ItemType type = customItem.getType();

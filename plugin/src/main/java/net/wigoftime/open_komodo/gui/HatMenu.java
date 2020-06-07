@@ -48,7 +48,7 @@ abstract public class HatMenu
 			for (CustomItem cs : owned)
 			{
 				// Get more info
-				ItemMeta im = cs.getNBTItem().getItem().getItemMeta(); 
+				ItemMeta im = cs.getItem().getItemMeta(); 
 				int id2 = im.getCustomModelData();
 				
 				// Check if player owns it
@@ -60,7 +60,7 @@ abstract public class HatMenu
 			}
 			
 			// CustomItem in ItemStack format
-			ItemStack is = ct.getNBTItem().getItem();
+			ItemStack is = ct.getItem();
 			
 			// Get info about item
 			ItemMeta im = is.getItemMeta();
@@ -261,7 +261,7 @@ abstract public class HatMenu
 		for (CustomItem ci : owned)
 		{
 			// Get info about item
-			ItemMeta im2 = ci.getNBTItem().getItem().getItemMeta();
+			ItemMeta im2 = ci.getItem().getItemMeta();
 			
 			// Get ID
 			int id2 = im2.getCustomModelData();

@@ -70,7 +70,7 @@ public class TagShop {
 			boolean alreadyOwned = false;
 			for (CustomItem cs2 : ownedTags)
 			{
-				if (cs2.getNBTItem().getItem().getItemMeta().getCustomModelData() == cs.getNBTItem().getItem().getItemMeta().getCustomModelData())
+				if (cs2.getItem().getItemMeta().getCustomModelData() == cs.getItem().getItemMeta().getCustomModelData())
 				{
 					alreadyOwned = true;
 					break;
@@ -131,7 +131,7 @@ public class TagShop {
 			}
 			
 			// Info about Item
-			ItemStack is = ci.getNBTItem().getItem();
+			ItemStack is = ci.getItem();
 			ItemMeta im = is.getItemMeta();
 			
 			// Save the item description

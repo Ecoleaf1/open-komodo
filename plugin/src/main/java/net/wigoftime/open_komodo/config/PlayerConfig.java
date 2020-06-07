@@ -272,7 +272,7 @@ public abstract class PlayerConfig
 			return false;
 		
 		// Get info about item
-		ItemStack is = cs.getNBTItem().getItem();
+		ItemStack is = cs.getItem();
 		ItemMeta im = is.getItemMeta();
 		
 		// Get the ID of the item

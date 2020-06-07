@@ -149,7 +149,7 @@ abstract public class TagMenu {
 				break;
 			
 			// Get it into the ItemStack format
-			ItemStack is3 = item.getNBTItem().getItem();
+			ItemStack is3 = item.getItem();
 			
 			gui.setItem(slotIndex++, is3);
 		}

@@ -24,7 +24,7 @@ public abstract class BuyOptionsGUI {
 			gui.setItem(10, coinStack);
 			gui.setItem(16, pointsStack);
 		
-			gui.setItem(13, customItem.getNBTItem().getItem());
+			gui.setItem(13, customItem.getItem());
 			
 		player.openInventory(gui);
 	}

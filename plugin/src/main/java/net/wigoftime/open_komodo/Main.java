@@ -71,7 +71,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import de.tr7zw.nbtinjector.NBTInjector;
 import net.wigoftime.open_komodo.actions.BugReporter;
 import net.wigoftime.open_komodo.actions.Rules;
 import net.wigoftime.open_komodo.chat.MessageFormat;
@@ -187,9 +186,6 @@ public class Main extends JavaPlugin implements Listener
 	{
 		//	Say that the plugin is loading
 		PrintConsole.print("Loading..");
-		
-		// Setup all the custom NBT, loading them as well
-		NBTInjector.inject();
 	}
 	
 	// When Plugin is enabled
@@ -543,12 +539,6 @@ public class Main extends JavaPlugin implements Listener
 	{
 		Player player = e.getPlayer();
 		Entity entity = e.getRightClicked();
-		
-		if (GUIManager.getEntityGui(entity, player))
-		{
-			e.setCancelled(true);
-			return;
-		}
 		
 		if (player.hasPermission(Permissions.changePerm))
 			return;

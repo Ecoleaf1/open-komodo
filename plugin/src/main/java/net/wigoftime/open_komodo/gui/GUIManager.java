@@ -12,9 +12,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import de.tr7zw.nbtapi.NBTCompound;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtinjector.NBTInjector;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.Currency;
@@ -58,31 +55,6 @@ abstract public class GUIManager {
 		return id;
 	}
 	
-	/*
-	 * getEntityGui checks if there's a guiID on entities, as well as if it does, open the gui.
-	 * Returning false means it doesn't exist.
-	 */
-	public static boolean getEntityGui(Entity entity, Player interactor)
-	{
-		if (entity instanceof Player)
-			return false;
-		
-		if (entity instanceof CraftEntity)
-			return false;
-		
-		entity = NBTInjector.patchEntity(entity);
-		NBTCompound comp = NBTInjector.getNbtData(entity);
-		
-		int guiID = comp.getInteger("GuiID");
-		
-		if (guiID == 0)
-			return false;
-		
-		setGuiToPlayer(interactor, guiID);
-		
-		return true;
-	}
-	
 	public static void invItemClicked(InventoryClickEvent e) 
 	{
 		// If couldn't get item, return
@@ -124,8 +96,11 @@ abstract public class GUIManager {
 		{
 			e.setCancelled(true);
 			
-			NBTItem nbti = new NBTItem(is);
-			int id = nbti.getInteger("CustomModelData");
+			int id;
+			if (is.hasItemMeta())
+				id = is.getItemMeta().getCustomModelData();
+			else
+				id = 0;
 			
 			PrintConsole.test("ID: " + id);
 			

@@ -7,7 +7,6 @@ import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import de.tr7zw.nbtapi.NBTItem;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
@@ -169,17 +168,17 @@ abstract public class BuyConfirm
 		
 		ItemStack is;
 		// Display the item on the 12th slot.
-		if (item.getNBTItem().getItem().getType() == Material.STICK)
+		if (item.getItem().getType() == Material.STICK)
 		{
 			is = new ItemStack(Material.STICK);
 			ItemMeta meta = is.getItemMeta();
-			meta.setDisplayName(item.getNBTItem().getItem().getItemMeta().getDisplayName());
+			meta.setDisplayName(item.getItem().getItemMeta().getDisplayName());
 			meta.setCustomModelData(WorldInventoryConfig.getInventoryIndex(player));
 			is.setItemMeta(meta);
 		}
 		else
 		{
-		is = item.getNBTItem().getItem();
+		is = item.getItem();
 		}
 		
 		gui.setItem(12, is);
