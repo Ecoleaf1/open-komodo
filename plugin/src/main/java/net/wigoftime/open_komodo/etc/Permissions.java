@@ -55,6 +55,8 @@ abstract public class Permissions
 	public static final String promotePermError = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you are not permitted to do that.");
 	
 	public static final Permission genPayPerm = new Permission("openkomodo.admin.genpay");
+	public static final Permission emoteReloadPerm = new Permission("openkomodo.admin.emote.reload");
+	public static final Permission rankReloadPerm = new Permission("openkomodo.admin.rank.reload");
 	
 	public static final Permission mutePerm = new Permission("openkomodo.mod.mute");
 	public static final Permission banPerm = new Permission("openkomodo.mod.ban");

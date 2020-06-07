@@ -8,6 +8,7 @@ import java.util.Set;
 import org.bukkit.World;
 import org.bukkit.permissions.Permission;
 
+import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 
 public class Rank 
@@ -97,5 +98,11 @@ public class Rank
 	public static Set<Rank> getRanks() 
 	{
 		return ranks;
+	}
+	
+	public static void reload()
+	{
+		ranks.clear();
+		RankConfig.setup();
 	}
 }

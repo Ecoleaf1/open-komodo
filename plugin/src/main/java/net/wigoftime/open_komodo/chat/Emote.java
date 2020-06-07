@@ -224,4 +224,12 @@ public class Emote {
 		}
 	}
 	
+	public static void reload()
+	{
+		nameSortMap.clear();
+		commandSortMap.clear();
+		
+		setup();
+	}
+	
 }

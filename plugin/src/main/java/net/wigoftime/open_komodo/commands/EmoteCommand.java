@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.chat.Emote;
+import net.wigoftime.open_komodo.etc.Permissions;
 
 public class EmoteCommand extends Command
 {
@@ -33,7 +34,7 @@ public class EmoteCommand extends Command
 		
 		// If player didnt enter in emote
 		if (args.length < 1)
-		{
+		{	
 			Iterator<String> iterator = Emote.nameSortMap.keySet().iterator();
 			
 			StringBuilder sb = new StringBuilder();
@@ -48,6 +49,19 @@ public class EmoteCommand extends Command
 			}
 			
 			player.sendMessage(sb.toString());
+			return true;
+		}
+		
+		if (args[0].equalsIgnoreCase("reload"))
+		{
+			if (!sender.hasPermission(Permissions.emoteReloadPerm))
+			{
+				sender.sendMessage(ChatColor.DARK_RED + "You don't have permission.");
+				return false;
+			}
+			
+			Emote.reload();
+			sender.sendMessage(ChatColor.DARK_AQUA+ "Emotes reloaded!");
 			return true;
 		}
 		
