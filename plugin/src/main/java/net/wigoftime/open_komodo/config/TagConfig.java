@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.config;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -15,9 +16,9 @@ public abstract class TagConfig
 	
 	private static final File config = new File(Main.dataFolderPath+"/Tags.yml");
 	
-	public static String getTag(Player player) 
+	public static String getTag(UUID uuid) 
 	{
-		File playerFile = PlayerConfig.getPlayerConfig(player);
+		File playerFile = PlayerConfig.getPlayerConfig(uuid);
 		YamlConfiguration playerYaml = YamlConfiguration.loadConfiguration(playerFile);
 		
 		String tag = playerYaml.getConfigurationSection("General").getString("Tag");

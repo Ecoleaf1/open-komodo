@@ -399,10 +399,10 @@ public abstract class PlayerConfig
 		}
 	}
 	
-	public static void setRank(Player player, String rank) 
+	public static void setRank(UUID uuid, String rank) 
 	{
 		// Get config file and load config
-		File file = getPlayerConfig(player);
+		File file = getPlayerConfig(uuid);
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		
 		// Set player's Rank
@@ -480,9 +480,9 @@ public abstract class PlayerConfig
 		}
 	}
 	
-	public static String getRankPrefix(Player player) 
+	public static String getRankPrefix(UUID uuid) 
 	{
-		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(getPlayerConfig(player));
+		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(getPlayerConfig(uuid));
 		
 		String userRankStr = configYaml.getConfigurationSection("General").getString("Rank");
 		Rank rank = Rank.getRank(userRankStr);

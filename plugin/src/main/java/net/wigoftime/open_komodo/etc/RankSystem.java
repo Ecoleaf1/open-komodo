@@ -97,7 +97,7 @@ abstract public class RankSystem
 					if (r.getXPPrice() > totalXP || r.getXPPrice() == 0)
 						break;
 					
-					PlayerConfig.setRank(player, r.getName());
+					PlayerConfig.setRank(player.getUniqueId(), r.getName());
 					PlayerConfig.setXP(player, 0.0);
 					
 					// Play sound effect

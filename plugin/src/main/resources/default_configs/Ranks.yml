@@ -150,23 +150,24 @@ BUILDER:
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
   - openkomodo.pets.access
+  - openkomodo.build.buildmode
+  - openkomodo.build.place
+  - openkomodo.build.break
+  - openkomodo.build.change
+  - openkomodo.build.hurt
+  - worldedit.history.undo.self
+  - worldedit.history.redo.self
+  - worldedit.navigation.ceiling
+  - worldedit.navigation.ascend
+  - worldedit.navigation.thru.command
+  - worldedit.navigation.jumpto.command
+  - worldedit.navigation.up
+  - worldedit.selection.*
+  - worldedit.region.*
+  - worldedit.clipboard.*
   Worlds:
      BuilderWorld:
-        Permissions:
-        - openkomodo.build.place
-        - openkomodo.build.break
-        - openkomodo.build.change
-        - openkomodo.build.hurt
-        - worldedit.history.undo.self
-        - worldedit.history.redo.self
-        - worldedit.navigation.ceiling
-        - worldedit.navigation.ascend
-        - worldedit.navigation.thru.command
-        - worldedit.navigation.jumpto.command
-        - worldedit.navigation.up
-        - worldedit.selection.*
-        - worldedit.region.*
-        - worldedit.clipboard.*
+        Permissions: []
 
 DESIGNER:
   Prefix: '&d&lDESIGNER &r&5'

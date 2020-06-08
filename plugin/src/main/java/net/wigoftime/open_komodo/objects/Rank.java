@@ -5,11 +5,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 
 public class Rank 
 {
@@ -104,5 +108,10 @@ public class Rank
 	{
 		ranks.clear();
 		RankConfig.setup();
+		
+		for (Player player : Bukkit.getOnlinePlayers())
+		{
+			Permissions.setUp(player);
+		}
 	}
 }

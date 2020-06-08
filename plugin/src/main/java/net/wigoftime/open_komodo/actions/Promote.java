@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.actions;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,13 +20,13 @@ abstract public class Promote
 	private static final String senderPromote = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully promoted $D!");
 	private static final String senderPermission = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully added permission on $D!");
 	
-	public static boolean promoteRank(Player player, String rankName)
+	public static boolean promoteRank(OfflinePlayer player, String rankName)
 	{
 		// Check if rank exists
 		if (Rank.getRank(rankName) == null)
 			return false;
 		
-		PlayerConfig.setRank(player, rankName);
+		PlayerConfig.setRank(player.getUniqueId(), rankName);
 		return true;
 	}
 	
@@ -40,22 +41,37 @@ abstract public class Promote
 		}
 		
 		// Get player by name
-		Player target = Bukkit.getPlayer(targetName);
+		OfflinePlayer target = Bukkit.getPlayer(targetName);
 		
 		// Check if player is online/exists
 		if (target == null)
 		{
-			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
-			return;
+			// Get offline player
+			target = Bukkit.getOfflinePlayer(targetName);
+			
+			if (target == null)
+			{
+				promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
+				return;
+			}
 		}
 		
-		// Setup rank and then their permissions
-		PlayerConfig.setRank(target, rank);
-		Permissions.setUp(target);
+		PlayerConfig.setRank(target.getUniqueId(), rank);
 		
-		// Message to target that they been promoted
-		String msg = MessageFormat.format(target, promoted);
-		target.sendMessage(msg);
+		// Setup rank and then their permissions
+		if (target instanceof Player)
+		{
+			Permissions.setUp(((Player) target));
+		}
+		
+		if (target.isOnline())
+		{
+			Player targetPlayer = (Player) target;
+				
+			// Message to target that they been promoted
+			String msg = MessageFormat.format(targetPlayer, promoted);
+			targetPlayer.sendMessage(msg);
+		}
 		
 		// Message to promoter that player been promoted
 		String msg2 = MessageFormat.format(senderPromote, promoter, target, null);
