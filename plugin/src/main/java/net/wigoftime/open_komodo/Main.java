@@ -422,6 +422,13 @@ public class Main extends JavaPlugin implements Listener
 		
 		// If player has permission to drop, allow
 		if (player.hasPermission(Permissions.placePerm))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
+		
+		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
 			return;
 		
 		// Otherwise, cancel the item drop
@@ -438,9 +445,15 @@ public class Main extends JavaPlugin implements Listener
 	{
 		// Get Player
 		Player player = e.getPlayer();
-		
+			
 		// Allow if player has permission
-		if (player.hasPermission(Permissions.breakPerm))
+		if (!player.hasPermission(Permissions.breakPerm))
+		{
+			e.setCancelled(true);
+			return;
+		}
+		
+		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
 			return;
 		
 		// Otherwise, cancel the block break
@@ -468,7 +481,7 @@ public class Main extends JavaPlugin implements Listener
 		if (e.getCause() != IgniteCause.FLINT_AND_STEEL)
 			return;
 		
-		if (player.hasPermission(Permissions.breakPerm))
+		if (!player.hasPermission(Permissions.breakPerm))
 			e.setCancelled(true);
 	}
 	

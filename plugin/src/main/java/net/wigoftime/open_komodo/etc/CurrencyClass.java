@@ -60,7 +60,7 @@ public abstract class CurrencyClass
 			return false;
 		
 		// Get ItemStack
-		ItemStack is =  new ItemStack(customItem.getItem());
+		ItemStack is =  new ItemStack(customItem.getItem().getType());
 		
 		// Get ItemType
 		ItemType type = customItem.getType();
@@ -71,8 +71,12 @@ public abstract class CurrencyClass
 			ItemMeta meta = is.getItemMeta();
 			if (is.getType() == Material.STICK)
 			{
-				meta.setCustomModelData(WorldInventoryConfig.getInventoryIndex(player));
+				int bagID = WorldInventoryConfig.getInventoryIndex(player);
+				
+				meta.setCustomModelData(bagID);
 				is.setItemMeta(meta);
+				
+				WorldInventoryConfig.setInventory(player, bagID, new ItemStack[0]);
 			}
 			
 			player.getInventory().addItem(is);

@@ -90,6 +90,7 @@ public abstract class WorldInventoryConfig
 		
 		
 		String[] list = playerFolder.list();
+	//	Integer.parseInt(list[list.length-1].replace(".yml", ""));
 		
 		int index;
 		if (list.length < 1)
@@ -97,6 +98,7 @@ public abstract class WorldInventoryConfig
 		else
 			index = Integer.parseInt(list[list.length-1].replace(".yml", "")) + 1;
 		
+		PrintConsole.test("index;   "+index);
 		return index;
 	}
 	
