@@ -76,6 +76,7 @@ import net.wigoftime.open_komodo.actions.Rules;
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.chat.PrivateMessage;
 import net.wigoftime.open_komodo.commands.BanCommand;
+import net.wigoftime.open_komodo.commands.BuildModeCommand;
 import net.wigoftime.open_komodo.commands.CheckBalanceCommand;
 import net.wigoftime.open_komodo.commands.DelHomeCommand;
 import net.wigoftime.open_komodo.commands.DisplayTagsCommand;
@@ -349,6 +350,9 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>()));
 		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>()));
 		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/mute (Player) (Amount)", new ArrayList<String>()));
+		
+		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>()));
+		
 		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>()));
 		map.register("openkomodo_admin", new PromoteCommand("promote", "Promote People's Ranks", "/promote {Player} {Add/Remove} {Player Name} {Permission}", new ArrayList<String>()));
 		
@@ -895,6 +899,7 @@ public class Main extends JavaPlugin implements Listener
 			player.setOp(false);
 		
 		TpSystem.playerLeft(player);
+		BuildModeCommand.toggleBuild(player);
 		PrivateMessage.playerLeft(player.getUniqueId());
 	}
 	

@@ -1,7 +1,9 @@
 package net.wigoftime.open_komodo.etc;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -10,16 +12,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import net.wigoftime.open_komodo.commands.BuildModeCommand;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 
 abstract public class InventoryManagement 
 {
 	public static Map<UUID, Integer> currentOpen = new HashMap<UUID, Integer>();
 	
-	
 	// Save inventory under a world uuid.
 	public static void saveInventory(Player player,  World world)
 	{
+		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
+			return;
+		
 		// Get Player's Items
 		Inventory inventory = player.getInventory();
 		
@@ -43,7 +48,10 @@ abstract public class InventoryManagement
 	
 	// Load a world inventory
 	public static void loadInventory(Player player, World world)
-	{	
+	{
+		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
+			return;
+		
 		// Get Player's Items
 		Inventory inventory = player.getInventory();
 		

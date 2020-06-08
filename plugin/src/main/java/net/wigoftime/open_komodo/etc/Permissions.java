@@ -37,6 +37,8 @@ abstract public class Permissions
 	public static final Permission hurtPerm = new Permission("openkomodo.build.hurt");
 	private static final String hurtError = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you cannot damage that here.");
 	
+	public static final Permission buildModePerm = new Permission("openkomodo.build.buildmode");
+	
 	public static final Permission dropPerm = new Permission("openkomodo.build.drop");
 	private static final String dropError = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you cannot drop that here.");
 	
