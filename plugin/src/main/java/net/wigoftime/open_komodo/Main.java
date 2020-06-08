@@ -421,7 +421,7 @@ public class Main extends JavaPlugin implements Listener
 		Player player = e.getPlayer();
 		
 		// If player has permission to drop, allow
-		if (player.hasPermission(Permissions.placePerm))
+		if (!player.hasPermission(Permissions.placePerm))
 		{
 			e.setCancelled(true);
 			return;
