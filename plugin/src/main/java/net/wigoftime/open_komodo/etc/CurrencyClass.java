@@ -68,7 +68,7 @@ public abstract class CurrencyClass
 		// If item is prop
 		if (type == ItemType.PROP)
 		{
-			ItemMeta meta = is.getItemMeta();
+			ItemMeta meta = customItem.getItem().getItemMeta();
 			if (is.getType() == Material.STICK)
 			{
 				int bagID = WorldInventoryConfig.getInventoryIndex(player);
