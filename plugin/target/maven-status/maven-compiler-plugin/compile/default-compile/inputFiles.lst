@@ -76,6 +76,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/custommobs/CustomPetMob.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/filecreation/FileCreation.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/Currency.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/BuildModeCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/Status_Bar.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/PetControl.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/GenPayCommand.java

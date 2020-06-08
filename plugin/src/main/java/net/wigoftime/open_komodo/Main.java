@@ -456,7 +456,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		Player player = e.getPlayer();
 		
-		if (player.hasPermission(Permissions.breakPerm))
+		if (!player.hasPermission(Permissions.breakPerm))
 			e.setCancelled(true);
 	}
 	
