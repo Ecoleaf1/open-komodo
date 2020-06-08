@@ -78,6 +78,11 @@ public abstract class CurrencyClass
 				
 				WorldInventoryConfig.setInventory(player, bagID, new ItemStack[0]);
 			}
+			else
+			{
+				meta.setCustomModelData(customItem.getItem().getItemMeta().getCustomModelData());
+				is.setItemMeta(meta);
+			}
 			
 			player.getInventory().addItem(is);
 		}
