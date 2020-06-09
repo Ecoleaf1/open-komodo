@@ -8,7 +8,7 @@ abstract public class PrintConsole
 {
 	
 	// Used to enable the test print function, which is used to problem solve and fix issues.
-	private static final boolean debugMode = true;
+	private static final boolean debugMode = false;
 	
 	private static final String name = Main.name;
 	
