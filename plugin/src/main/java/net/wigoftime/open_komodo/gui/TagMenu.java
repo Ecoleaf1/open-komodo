@@ -13,6 +13,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 
 abstract public class TagMenu {
@@ -22,16 +23,21 @@ abstract public class TagMenu {
 	
 	public static final String shop = ChatColor.translateAlternateColorCodes('&', "&e&lTag Shop");
 	
-	public static void open(Player player, boolean next)
+	public static void open(CustomPlayer player, boolean next)
 	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+		}
+		
 		// Create Page number Variable
 		int page;
 		
 		// What page the player is on
-		if (player.getOpenInventory().getTitle().equals(title))
+		if (player.getPlayer().getOpenInventory().getTitle().equals(title))
 		{
 			// Get Player Inventory
-			Inventory gui = player.getOpenInventory().getTopInventory();
+			Inventory gui = player.getPlayer().getOpenInventory().getTopInventory();
 			
 			// Get Info about Reset Button
 			ItemStack is = gui.getItem(49);
@@ -101,7 +107,7 @@ abstract public class TagMenu {
 		int slotLimit = 35;
 		
 		// Get all the tags that the player owns
-		List<CustomItem> list = PlayerConfig.getItem(player, ItemType.TAG);
+		List<CustomItem> list = PlayerConfig.getItem(player.getPlayer(), ItemType.TAG);
 		
 		// Variable to see if there is previous page
 		boolean isPrevious;
@@ -196,7 +202,7 @@ abstract public class TagMenu {
 		else
 			gui.setItem(53, new ItemStack(Material.AIR));
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
 }

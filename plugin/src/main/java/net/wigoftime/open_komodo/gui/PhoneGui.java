@@ -10,6 +10,8 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+
 public class PhoneGui 
 {
 	
@@ -165,7 +167,8 @@ public class PhoneGui
 		icons.add(warps);
 	}
 	
-	protected static void clicked(Player player, ItemStack item) {
+	protected static void clicked(CustomPlayer player, ItemStack item) 
+	{
 		
 		if (!item.getItemMeta().hasCustomModelData())
 			return;
@@ -202,23 +205,30 @@ public class PhoneGui
 		
 		if (item.getItemMeta().getCustomModelData() == website.getItemMeta().getCustomModelData()) 
 		{
-			player.closeInventory();
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bWebsite link: https://www.wigoftime.net"));
+			player.getPlayer().closeInventory();
+			player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&bWebsite link: https://www.wigoftime.net"));
 			return;
 		}
 		
 		if (item.getItemMeta().getCustomModelData() == discord.getItemMeta().getCustomModelData()) 
 		{
-			player.closeInventory();
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Discord link: https://discord.gg/nUJM7dT"));
+			player.getPlayer().closeInventory();
+			player.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', "&7Discord link: https://discord.gg/nUJM7dT"));
 			return;
 		}
 	}
 	
-	public static void open(Player player) {
+	public static void open(CustomPlayer player) 
+	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
 		
 		// The Gui
-		Inventory gui = Bukkit.createInventory(null, 54, titleName); {
+		Inventory gui = Bukkit.createInventory(null, 54, titleName); 
+		{
 			// Setup the border and the backgroundPannels
 			
 			gui.setItem(0,leftBorder);
@@ -314,7 +324,7 @@ public class PhoneGui
 			gui.setItem(39, bin); 
 		};
 
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
 }

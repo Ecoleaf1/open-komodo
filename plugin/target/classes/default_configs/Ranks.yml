@@ -39,6 +39,12 @@ VIP+:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
 MVP:
   ID: 3
   Prefix: '&b&lMVP&r&b &3'
@@ -66,6 +72,12 @@ MVP:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
   - openkomodo.pets.access
 MVP+:
   ID: 4
@@ -94,6 +106,12 @@ MVP+:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
   - openkomodo.pets.access
 MOD:
   Prefix: '&e&lMOD&r&e &6'
@@ -120,6 +138,12 @@ MOD:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
   - openkomodo.pets.access
   - openkomodo.mod.kick
   - openkomodo.mod.Ban
@@ -149,6 +173,12 @@ BUILDER:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
   - openkomodo.pets.access
   - openkomodo.build.buildmode
   - openkomodo.build.place
@@ -194,6 +224,12 @@ DESIGNER:
   - openkomodo.hats.blackcatears
   - openkomodo.hats.witchhat
   - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
   - openkomodo.pets.access
 MANAGER:
     Prefix: "&6&lMANAGER&r "

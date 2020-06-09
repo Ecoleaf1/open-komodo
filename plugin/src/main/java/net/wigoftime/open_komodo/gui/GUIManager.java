@@ -1,5 +1,6 @@
 package net.wigoftime.open_komodo.gui;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
 import org.bukkit.entity.Entity;
@@ -20,6 +21,7 @@ import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
 
 abstract public class GUIManager {
@@ -28,7 +30,7 @@ abstract public class GUIManager {
 		
 	}
 	
-	public static void setGuiToPlayer(Player player, int gui) {
+	public static void setGuiToPlayer(CustomPlayer player, int gui) {
 		if (gui == 1)
 			PrintConsole.print("Not added in yet #0002.");
 			//HatMenu.open(player);
@@ -65,7 +67,7 @@ abstract public class GUIManager {
 		
 		InventoryView inventoryView = e.getView();
 		String inventoryName = inventoryView.getTitle();
-		Player player = (Player) e.getWhoClicked();
+		CustomPlayer player = CustomPlayer.get(e.getWhoClicked().getUniqueId());
 		
 		// If in phone gui
 		if (inventoryName.equalsIgnoreCase(PhoneGui.titleName)) {
@@ -89,7 +91,7 @@ abstract public class GUIManager {
 		// If in warps gui
 		if (inventoryName.equals(Warps.guiName)) {
 			e.setCancelled(true);
-			Warps.clicked(player, e.getCurrentItem());
+			Warps.clicked(player.getPlayer(), e.getCurrentItem());
 		}
 		
 		if (inventoryName.equals(PropShop.title))
@@ -118,7 +120,7 @@ abstract public class GUIManager {
 			if (cs.getPointPrice() < 0)
 				return;
 			
-			BuyConfirm.create(player, cs, Currency.POINTS);
+			BuyConfirm.create(player.getPlayer(), cs, Currency.POINTS);
 		}
 		
 		if (inventoryName.equalsIgnoreCase(TagMenu.title)) 
@@ -128,23 +130,23 @@ abstract public class GUIManager {
 			if (e.getCurrentItem().getType() == Material.NAME_TAG) 
 			{
 				// Change nametag
-				PlayerConfig.changeCurrentTag(player, e.getCurrentItem().getItemMeta().getDisplayName());
+				PlayerConfig.changeCurrentTag(player.getPlayer(), e.getCurrentItem().getItemMeta().getDisplayName());
 				
 				// Refresh scoreboard
-				ServerScoreBoard.add(player);
+				ServerScoreBoard.add(player.getPlayer());
 				
-				player.closeInventory();
+				player.getPlayer().closeInventory();
 				return;
 			}
 			
 			if (e.getCurrentItem().getType() == Material.WHITE_WOOL) 
 			{
-				PlayerConfig.changeCurrentTag(player, "");
+				PlayerConfig.changeCurrentTag(player.getPlayer(), "");
 				
 				// Refresh scoreboard
-				ServerScoreBoard.add(player);
+				ServerScoreBoard.add(player.getPlayer());
 				
-				player.closeInventory();
+				player.getPlayer().closeInventory();
 				return;
 			}
 			
@@ -155,12 +157,12 @@ abstract public class GUIManager {
 			
 			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Next")) 
 			{
-				TagMenu.open((Player) player, true); 
+				TagMenu.open(player, true); 
 			}
 			
 			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Back")) 
 			{
-				TagMenu.open((Player) player, false); 
+				TagMenu.open(player, false); 
 			}
 			return;
 			
@@ -181,7 +183,7 @@ abstract public class GUIManager {
 			if (confirmItem.getType() == Material.LIME_WOOL)
 				BuyConfirm.buy(e.getClickedInventory());
 			if (confirmItem.getType() == Material.RED_WOOL)
-				player.closeInventory();
+				player.getPlayer().closeInventory();
 			
 			return;
 		}
@@ -195,9 +197,9 @@ abstract public class GUIManager {
 			
 			Pet pet = Pet.getPet(id);
 			
-			if (PlayerConfig.containsPet(player, pet))
+			if (PlayerConfig.containsPet(player.getPlayer(), pet))
 			{
-				PetsManager.create(player, pet);
+				PetsManager.create(player.getPlayer(), pet);
 				return;
 			}
 			
@@ -210,16 +212,16 @@ abstract public class GUIManager {
 			ItemMeta meta = is.getItemMeta();
 			
 			if (meta.getCustomModelData() == PetControl.cancelID)
-				PetsManager.removePet(player);
+				PetsManager.removePet(player.getPlayer());
 			
 			if (meta.getCustomModelData() == PetControl.changeNameID)
-				PetsManager.setAwaitingNameInput(player);
+				PetsManager.setAwaitingNameInput(player.getPlayer());
 			
 			if (meta.getCustomModelData() == PetControl.mountID)
-				PetsManager.mount(player);
+				PetsManager.mount(player.getPlayer());
 			
 			
-			player.closeInventory();
+			player.getPlayer().closeInventory();
 			e.setCancelled(true);
 			return;
 		}
@@ -228,12 +230,12 @@ abstract public class GUIManager {
 			e.setCancelled(true);
 			
 			if (e.getCurrentItem().getType() == FriendsList.nextButtonMaterial && e.getCurrentItem().getItemMeta().getDisplayName().equals(FriendsList.nextButtonLabel)) {
-				FriendsList.open(player, (byte) 1);
+				FriendsList.open(player.getPlayer(), (byte) 1);
 				return;
 			}
 			
 			if (e.getCurrentItem().getType() == FriendsList.backButtonMaterial && e.getCurrentItem().getItemMeta().getDisplayName().equals(FriendsList.backButtonLabel)) {
-				FriendsList.open(player, (byte) 2);
+				FriendsList.open(player.getPlayer(), (byte) 2);
 				return;
 			}
 		}
@@ -245,7 +247,7 @@ abstract public class GUIManager {
 				ItemMeta im = e.getCurrentItem().getItemMeta();
 				int id = im.getCustomModelData();
 				
-				BuyConfirm.create(player, CustomItem.getCustomItem(id), Currency.POINTS);
+				BuyConfirm.create(player.getPlayer(), CustomItem.getCustomItem(id), Currency.POINTS);
 			}
 			
 			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Next"))
@@ -270,7 +272,7 @@ abstract public class GUIManager {
 			if (e.getSlot() == 39)
 				e.setCancelled(true);
 			
-			if (e.getCurrentItem().getItemMeta().getCustomModelData() != 1)
+			if (e.getCurrentItem().getItemMeta().getCustomModelData() != 1 && e.getCurrentItem().getItemMeta().getCustomModelData() != 56)
 				return;
 			
 			e.setCancelled(true);
@@ -300,7 +302,7 @@ abstract public class GUIManager {
 			if (!e.getCursor().getItemMeta().hasCustomModelData())
 				return;
 			
-			if (e.getCursor().getItemMeta().getCustomModelData() != 1)
+			if (e.getCursor().getItemMeta().getCustomModelData() != 1 && e.getCursor().getItemMeta().getCustomModelData() != 56)
 				return;
 			
 			return;
@@ -309,9 +311,9 @@ abstract public class GUIManager {
 	
 	public static void inventoryClosed(InventoryCloseEvent e)
 	{	
-		Player player = (Player) e.getPlayer();
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
-		InventoryManagement.saveInventory(player, player.getWorld());
+		InventoryManagement.saveInventory(player, player.getPlayer().getWorld());
 	}
 	
 }

@@ -14,28 +14,27 @@ import org.bukkit.inventory.ItemStack;
 
 import net.wigoftime.open_komodo.commands.BuildModeCommand;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 abstract public class InventoryManagement 
 {
 	public static Map<UUID, Integer> currentOpen = new HashMap<UUID, Integer>();
 	
 	// Save inventory under a world uuid.
-	public static void saveInventory(Player player,  World world)
+	public static void saveInventory(CustomPlayer player,  World world)
 	{
-		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
+		if (player.isBuilding())
 			return;
 		
 		// Get Player's Items
-		Inventory inventory = player.getInventory();
+		Inventory inventory = player.getPlayer().getInventory();
 		
-		PrintConsole.test("1");
 		if (currentOpen.containsKey(player.getUniqueId()))
 		{
-			PrintConsole.test("2");
 			int bagID = currentOpen.get(player.getUniqueId());
 			
-			ItemStack[] items = player.getOpenInventory().getTopInventory().getContents();
-			WorldInventoryConfig.setInventory(player, bagID, items);
+			ItemStack[] items = player.getPlayer().getOpenInventory().getTopInventory().getContents();
+			WorldInventoryConfig.setInventory(player.getPlayer(), bagID, items);
 			currentOpen.remove(player.getUniqueId());
 		}
 		
@@ -43,23 +42,23 @@ abstract public class InventoryManagement
 		ItemStack[] items = inventory.getContents();
 		
 		// Save inventory
-		WorldInventoryConfig.setInventory(player, world, items);
+		WorldInventoryConfig.setInventory(player.getPlayer(), world, items);
 	}
 	
 	// Load a world inventory
-	public static void loadInventory(Player player, World world)
+	public static void loadInventory(CustomPlayer player, World world)
 	{
-		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
+		if (player.isBuilding())
 			return;
 		
 		// Get Player's Items
-		Inventory inventory = player.getInventory();
+		Inventory inventory = player.getPlayer().getInventory();
 		
 		// Clear current inventory for next inventory
 		inventory.clear();
 		
 		// Get all items
-		ItemStack[] items = WorldInventoryConfig.getInventory(player, world);
+		ItemStack[] items = WorldInventoryConfig.getInventory(player.getPlayer(), world);
 		
 		// Load inventory on player
 		inventory.setContents(items);

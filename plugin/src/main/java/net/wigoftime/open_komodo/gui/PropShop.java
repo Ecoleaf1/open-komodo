@@ -10,14 +10,20 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 abstract public class PropShop 
 {
 	
 	public static final String title =  ChatColor.translateAlternateColorCodes('&', "&6&lProps");
 	
-	public static void open(Player player)
+	public static void open(CustomPlayer player)
 	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
 		int slot = 0;
 		Inventory gui = Bukkit.getServer().createInventory(null, 45, title);
 		
@@ -49,9 +55,11 @@ abstract public class PropShop
 		gui.setItem(slot++,CustomItem.getCustomItem(27).getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(35).getItem());
 		gui.setItem(slot++,CustomItem.getCustomItem(41).getItem());
+		gui.setItem(slot++,CustomItem.getCustomItem(55).getItem());
+		gui.setItem(slot++,CustomItem.getCustomItem(57).getItem());
 		
 		gui.setItem(slot++, CustomItem.getCustomItem(999).getItem());
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 }

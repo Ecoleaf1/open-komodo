@@ -13,6 +13,7 @@ import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
 import net.wigoftime.open_komodo.objects.Tag;
 
@@ -28,8 +29,14 @@ abstract public class BuyConfirm
 	private static final Material confirmMaterial = Material.LIME_WOOL;
 	private static final Material cancelMaterial = Material.RED_WOOL;
 	
-	public static void create(Player player,Pet pet, Currency currency) 
+	public static void create(CustomPlayer player,Pet pet, Currency currency) 
 	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
+		
 		Inventory gui = Bukkit.getServer().createInventory(null, 27, "Confirmation");
 		
 		// Create side to cancel.=
@@ -108,7 +115,7 @@ abstract public class BuyConfirm
 		// Set the Currency Item on the 14th slot
 		gui.setItem(14, ci);
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
 	public static void create(Player player,CustomItem item, Currency currency) 
@@ -173,7 +180,7 @@ abstract public class BuyConfirm
 			is = new ItemStack(Material.STICK);
 			ItemMeta meta = is.getItemMeta();
 			meta.setDisplayName(item.getItem().getItemMeta().getDisplayName());
-			meta.setCustomModelData(WorldInventoryConfig.getInventoryIndex(player));
+			meta.setCustomModelData(999);
 			is.setItemMeta(meta);
 		}
 		else
@@ -209,8 +216,7 @@ abstract public class BuyConfirm
 	{
 		// Find the player that is using this gui
 		HumanEntity he = gui.getViewers().get(0);
-		String username = he.getName();
-		Player player = Bukkit.getPlayer(username);
+		CustomPlayer player = CustomPlayer.get(he.getUniqueId());
 		
 		// select the pending item
 		ItemStack cis = gui.getItem(12);
@@ -237,8 +243,8 @@ abstract public class BuyConfirm
 			int price = (currency == Currency.POINTS) ? 
 						pet.getPrice(Currency.POINTS) : pet.getPrice(Currency.COINS);
 			
-			CurrencyClass.buy(player, price, currency, pet);
-			player.closeInventory();
+			CurrencyClass.buy(player.getPlayer(), price, currency, pet);
+			player.getPlayer().closeInventory();
 			return;
 		}
 		
@@ -268,7 +274,7 @@ abstract public class BuyConfirm
 		// Buy item
 		CurrencyClass.buy(player, price, currency, cs);
 		
-		player.closeInventory();
+		player.getPlayer().closeInventory();
 	}
 	
 	/*

@@ -111,6 +111,7 @@ import net.wigoftime.open_komodo.commands.TpaAcceptCommand;
 import net.wigoftime.open_komodo.commands.TpaCommand;
 import net.wigoftime.open_komodo.commands.TpaDenycommand;
 import net.wigoftime.open_komodo.commands.TpaHereCommand;
+import net.wigoftime.open_komodo.commands.TpaToggleCommand;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
@@ -133,6 +134,7 @@ import net.wigoftime.open_komodo.gui.GUIManager;
 import net.wigoftime.open_komodo.gui.PetControl;
 import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.world.BuilderWorld;
 
@@ -177,7 +179,7 @@ public class Main extends JavaPlugin implements Listener
 	private static final String phoneName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	private static final String cardName = ChatColor.translateAlternateColorCodes('&', "&6&lBank");
 	
-	private static final String resourcePackLink = "https://www.dropbox.com/s/9cp1obzlwsd3jsm/OpenKomodo.zip?dl=1";
+	private static final String resourcePackLink = "https://www.dropbox.com/s/uq63zixj48szg3h/OpenKomodo%20resourcepack.zip?dl=1";
 	
 	private static JavaPlugin plugin;
 	
@@ -338,7 +340,9 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new DisplayTagsCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>()));
 		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", new ArrayList<String>()));
 		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>()));
+		
 		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>()));
+		map.register("openkomodo", new TpaToggleCommand("tptoggle", "Toggle tpa requests", "/tpatoggle", new ArrayList<String>()));
 		map.register("openkomodo", new FriendsCommand("friend", "A WIP Command: Display friends gui", "/friends", new ArrayList<String>()));
 		map.register("openkomodo", new TagShopCommand("tagshop", "Open the tagshop", "/tagshop", new ArrayList<String>()));
 		map.register("openkomodo", new PetsMenuCommand("pets", "Open the pets menu", "/pets", new ArrayList<String>()));
@@ -380,9 +384,9 @@ public class Main extends JavaPlugin implements Listener
 	{
 		
 		// Save everyone's inventory
-		for (Player player : Bukkit.getOnlinePlayers())
+		for (CustomPlayer p : CustomPlayer.getOnlinePlayers())
 		{
-			InventoryManagement.saveInventory(player, player.getWorld());
+			InventoryManagement.saveInventory(p, p.getPlayer().getWorld());
 		}
 	}
 	
@@ -418,24 +422,22 @@ public class Main extends JavaPlugin implements Listener
 	public void blockPlaced(BlockPlaceEvent e) 
 	{
 		// Get Player
-		Player player = e.getPlayer();
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
 		// If player has permission to drop, allow
-		if (!player.hasPermission(Permissions.placePerm))
+		if (!player.getPlayer().hasPermission(Permissions.placePerm))
+		{
+			e.setCancelled(true);
+			player.getPlayer().sendMessage(Permissions.getPlaceError());
+			
+			return;
+		}
+		
+		if (!player.isBuilding())
 		{
 			e.setCancelled(true);
 			return;
 		}
-		
-		
-		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
-			return;
-		
-		// Otherwise, cancel the item drop
-		e.setCancelled(true);
-		// Message the player that they are not allowed
-		player.sendMessage(Permissions.getPlaceError());
-		return;
 		
 	}
 	
@@ -444,45 +446,67 @@ public class Main extends JavaPlugin implements Listener
 	public void blockBreaked(BlockBreakEvent e) 
 	{
 		// Get Player
-		Player player = e.getPlayer();
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 			
 		// Allow if player has permission
-		if (!player.hasPermission(Permissions.breakPerm))
+		if (!player.getPlayer().hasPermission(Permissions.breakPerm))
+		{
+			e.setCancelled(true);
+			player.getPlayer().sendMessage(Permissions.getBreakError());
+			
+			return;
+		}
+		
+		if (!player.isBuilding())
 		{
 			e.setCancelled(true);
 			return;
 		}
-		
-		if (BuildModeCommand.buildMode.contains(player.getUniqueId()))
-			return;
-		
-		// Otherwise, cancel the block break
-		e.setCancelled(true);
-		// Message the player that they are not allowed
-		player.sendMessage(Permissions.getBreakError());
-		return;
 	}
 	
 	@EventHandler
 	public void fertilizedEvent(BlockFertilizeEvent e)
 	{
 		
-		Player player = e.getPlayer();
-		
-		if (!player.hasPermission(Permissions.breakPerm))
+		if (!e.getPlayer().hasPermission(Permissions.breakPerm))
+		{
 			e.setCancelled(true);
+			e.getPlayer().sendMessage(Permissions.getBreakError());
+			return;
+		}
+		
+		// Get CustomPlayer
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
+		
+		if (!player.isBuilding())
+		{
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	@EventHandler
 	public void ignitevent(BlockIgniteEvent e)
 	{
-		Player player = e.getPlayer();
-		
 		if (e.getCause() != IgniteCause.FLINT_AND_STEEL)
 			return;
 		
-		if (!player.hasPermission(Permissions.breakPerm))
+		if (!e.getPlayer().hasPermission(Permissions.breakPerm))
+		{
 			e.setCancelled(true);
+			e.getPlayer().sendMessage(Permissions.getBreakError());
+			
+			return;
+		}
+		
+		// Get CustomPlayer
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
+		
+		if (!player.isBuilding())
+		{
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	
@@ -498,38 +522,53 @@ public class Main extends JavaPlugin implements Listener
 			return;
 		}
 		
-		// Get Player
-		Player player = (Player) e.getAttacker();
-		
 		// If player has permission, return
-		if (player.hasPermission(Permissions.changePerm))
+		if (!e.getAttacker().hasPermission(Permissions.changePerm))
+		{
+			// Cancel vehicle being destroyed
+			e.setCancelled(true);
+			// Send message to player that it isn't allowed
+			e.getAttacker().sendMessage(Permissions.getChangeError());
+			
 			return;
+		}
 		
-		// Cancel vehicle being destroyed
-		e.setCancelled(true);
-		// Send message to player that it isn't allowed
-		player.sendMessage(Permissions.getChangeError());
+		// Get CustomPlayer
+		CustomPlayer player = CustomPlayer.get(((Player) e.getAttacker()).getUniqueId());
+		
+		if (!player.isBuilding())
+		{
+			e.setCancelled(true);
+		}
+		
 	}
 	
 	// An Event for example when player takes off or put Armor Stand
 	@EventHandler
 	public void playerInteractAt(PlayerInteractAtEntityEvent e) 
 	{
-		Player player = e.getPlayer();
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
-		if (e.getRightClicked() == PetsManager.getCreature(player))
+		if (e.getRightClicked() == PetsManager.getCreature(player.getPlayer()))
 		{
 			e.setCancelled(true);
 			PetControl.create(player);
+			return;
 		}
 		
-		if (player.hasPermission(Permissions.changePerm)) 
-			return;
+		if (!player.getPlayer().hasPermission(Permissions.changePerm))
+		{
+			if (e.getRightClicked().getType() == EntityType.ARMOR_STAND) 
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(Permissions.getChangeError());
+				return;
+			}
+		}
 		
-		if (e.getRightClicked().getType() == EntityType.ARMOR_STAND) 
+		if (!player.isBuilding())
 		{
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(Permissions.getChangeError());
 			return;
 		}
 		
@@ -554,27 +593,32 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void interactedEntity(PlayerInteractEntityEvent e) 
 	{
-		Player player = e.getPlayer();
 		Entity entity = e.getRightClicked();
 		
-		if (player.hasPermission(Permissions.changePerm))
-			return;
-				
-		if (entity.getType() == EntityType.ARMOR_STAND) 
+		if (!e.getPlayer().hasPermission(Permissions.changePerm))
 		{
 			e.setCancelled(true);
-			e.getPlayer().sendMessage(Permissions.getChangeError());
 			return;
 		}
 		
-		if (entity.getType() == EntityType.ITEM_FRAME) 
-		{
-			e.setCancelled(true);
-			e.getPlayer().sendMessage(Permissions.getChangeError());
-			return;
-		}
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
-		new Vector(50, 50, -250);
+		if (!player.isBuilding())
+		{
+			if (entity.getType() == EntityType.ARMOR_STAND) 
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(Permissions.getChangeError());
+				return;
+			}
+			
+			if (entity.getType() == EntityType.ITEM_FRAME) 
+			{
+				e.setCancelled(true);
+				e.getPlayer().sendMessage(Permissions.getChangeError());
+				return;
+			}
+		}
 	}
 	
 	// When blocks fade like fire and ice
@@ -603,16 +647,26 @@ public class Main extends JavaPlugin implements Listener
 		if (e.getDamager().getType() != EntityType.PLAYER) 
 			return;
 		
-		// Get Player
-		Player player = (Player) e.getDamager();
+		// Get damager
+		Player damager = (Player) e.getDamager();
 		
 		// If player has permission to damage entity
-		if (player.hasPermission(Permissions.hurtPerm)) 
+		if (!damager.hasPermission(Permissions.hurtPerm))
+		{
+			// Other wise, cancel it and tell player that they are not allowed
+			e.setCancelled(true);
+			damager.sendMessage(Permissions.getHurtError());
+			
 			return;
+		}
 		
-		// Other wise, cancel it and tell player that they are not allowed
-		e.setCancelled(true);
-		player.sendMessage(Permissions.getHurtError());
+		CustomPlayer player = CustomPlayer.get(damager.getUniqueId());
+		
+		if (!player.isBuilding())
+		{
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	@EventHandler
@@ -641,60 +695,67 @@ public class Main extends JavaPlugin implements Listener
 		if (e.getRemover().getType() != EntityType.PLAYER)
 			return;
 		
-		// Get player
-		Player player = (Player) e.getRemover();
+		// Get player in CustomPlayer form
+		CustomPlayer player = CustomPlayer.get(((Player) e.getRemover()).getUniqueId());
 		
 		// If player has permission
-		if (player.hasPermission(Permissions.changePerm))
+		if (!player.getPlayer().hasPermission(Permissions.changePerm))
+		{
+			// Otherwise, canscel and send a msg that they are not allowed
+			e.setCancelled(true);
+			player.getPlayer().sendMessage(Permissions.getChangeError());
+			
 			return;
+		}
 		
-		// Otherwise, canscel and send a msg that they are not allowed
-		e.setCancelled(true);
-		player.sendMessage(Permissions.getChangeError());
-		
+		if (!!player.isBuilding())
+		{
+			e.setCancelled(true);
+			return;
+		}
 	}
 	
 	@EventHandler
 	public void onJoin(PlayerJoinEvent e) 
 	{	
-		// Get Player
-		Player player = e.getPlayer();
+		// Create CustomPlayer to hold custom Variables.
+		CustomPlayer player = CustomPlayer.create(e.getPlayer());
 		
 		// Get Message
 		String message = joinMessage;
 		
 		// Unop the player to sync with the permissions
-		if (player.isOp())
-		player.setOp(false);
+		if (player.getPlayer().isOp())
+			player.getPlayer().setOp(false);
 		
 		// Check if player has it's own player config file, if not, they are new to the server.
 		File file = new File(dataFolderPath+"/Players/"+e.getPlayer().getUniqueId()+".yml");
 		if (!file.exists()) 
 		{	
-			PlayerConfig.create(player);
+			PlayerConfig.create(player.getPlayer());
 			
 			for (Player p : Bukkit.getServer().getOnlinePlayers())
 			{
-				p.sendMessage(String.format(firstWelcome, player.getName()));
+				p.sendMessage(String.format(firstWelcome, player.getPlayer().getName()));
 			}
 		}
 		
 		// If created config but no joined date (Like if they were banned before coming onto the server)
-		if (PlayerConfig.firstJoined(player))
+		if (PlayerConfig.firstJoined(player.getPlayer()))
 		{
-			PlayerConfig.setJoinDate(player);
+			PlayerConfig.setJoinDate(player.getPlayer());
 			
 			for (Player p : Bukkit.getServer().getOnlinePlayers())
 			{
-				p.sendMessage(String.format(firstWelcome, player.getName()));
+				p.sendMessage(String.format(firstWelcome, player.getPlayer().getName()));
 			}
 		}
 		
 		// Teleport player to spawn
-		player.teleport(spawnLocation);
+		player.getPlayer().teleport(spawnLocation);
 		
 		// Get saved items from inventory
-		InventoryManagement.loadInventory(player, player.getWorld());
+		InventoryManagement.loadInventory(player, player.getPlayer().getWorld());
 		
 		// Create Phone
 		ItemStack phone = new ItemStack(Material.INK_SAC); 
@@ -708,18 +769,19 @@ public class Main extends JavaPlugin implements Listener
 		phone.setItemMeta(meta);
 		
 		// Create FPBank Card
-		ItemStack card = new ItemStack(Material.FLINT);
+		ItemStack card = new ItemStack(Material.INK_SAC);
 		
 		// Set Display and ID
 		ItemMeta meta2 = card.getItemMeta();
+		meta2.setCustomModelData(56);
 		meta2.setDisplayName(cardName);
 		
 		// Save Changes
 		card.setItemMeta(meta2);
 		
 		// Add items to player's slots
-		player.getInventory().setItem(8, phone);
-		player.getInventory().setItem(7, card);
+		player.getPlayer().getInventory().setItem(8, phone);
+		player.getPlayer().getInventory().setItem(7, card);
 		
 		// If Message is empty, join message does not exist
 		if (message == "")
@@ -728,7 +790,7 @@ public class Main extends JavaPlugin implements Listener
 		else
 		{
 		// Format message
-		message = MessageFormat.format(player, message);
+		message = MessageFormat.format(player.getPlayer(), message);
 		
 		// Format colours
 		message = ChatColor.translateAlternateColorCodes('&', message);
@@ -738,34 +800,34 @@ public class Main extends JavaPlugin implements Listener
 		}
 		
 		// Display welcome message!
-		player.sendMessage(welcomemsg);
+		player.getPlayer().sendMessage(welcomemsg);
 		
 		// Display rules
-		Rules.display(player);
+		Rules.display(player.getPlayer());
 		
 		// Setup the sidebar, playerlist prefix rank, etc
-		ServerScoreBoard.add(player);
-		Status_Bar.addPlayer(player);
-		PlayerList.add(player);
+		ServerScoreBoard.add(player.getPlayer());
+		Status_Bar.addPlayer(player.getPlayer());
+		PlayerList.add(player.getPlayer());
 		
 		// Setup player's permissions
-		Permissions.setUp(player);
+		Permissions.setUp(player.getPlayer());
 		
 		// Set Gamemode to survival, in case of other worlds
-		player.setGameMode(GameMode.SURVIVAL);
+		player.getPlayer().setGameMode(GameMode.SURVIVAL);
 		
 		// Make players not collide to each other and unable to pickup stuff
-		player.setCanPickupItems(false);
-		player.setCollidable(false);
+		player.getPlayer().setCanPickupItems(false);
+		player.getPlayer().setCollidable(false);
 		
 		// Put player in rank system
-		RankSystem.putPlayer(player);
+		RankSystem.putPlayer(player.getPlayer());
 		
 		// Checks if they read the UpdateLog before
-		UpdateLog.onJoin(player);
+		UpdateLog.onJoin(player.getPlayer());
 		
 		// Give player resourcepack
-		player.setResourcePack(resourcePackLink);
+		player.getPlayer().setResourcePack(resourcePackLink);
 	}
 	
 	// If Egg thrown, set hatching to false to prevent chickens from spawning
@@ -787,8 +849,8 @@ public class Main extends JavaPlugin implements Listener
 			return;
 		}
 		
-		// Get Player
-		Player player = e.getPlayer();
+		// Get player in CustomPlayer format
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		// Get Action
 		Action action = e.getAction();
 		// Get Item
@@ -801,12 +863,12 @@ public class Main extends JavaPlugin implements Listener
 			e.setCancelled(true);
 		
 			// If clicked on fire
-			if (player.getTargetBlock((Set<Material>) null, 20).getType() == Material.FIRE)
+			if (player.getPlayer().getTargetBlock((Set<Material>) null, 20).getType() == Material.FIRE)
 			{
 				// If player does not have permission, cancel and return
-				if (!player.hasPermission(Permissions.changePerm))
+				if (!player.getPlayer().hasPermission(Permissions.changePerm))
 				{
-					player.sendMessage(Permissions.getChangeError());
+					player.getPlayer().sendMessage(Permissions.getChangeError());
 					
 					e.setCancelled(true);
 				}
@@ -822,28 +884,44 @@ public class Main extends JavaPlugin implements Listener
 			// Get Material
 			Material material = block.getType();
 			
-			if (player.hasPermission(Permissions.changePerm))
-				return;
-			
+			if (player.getPlayer().hasPermission(Permissions.changePerm))
+			{
+				if (player.isBuilding())
+					return;
+			}
 			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR)
+			{	
 				e.setCancelled(true);
+				return;
+			}
 			
 			if (material == Material.FLOWER_POT || material.name().startsWith("POTTED"))
 			{
-				player.sendMessage(Permissions.getChangeError());
+				player.getPlayer().sendMessage(Permissions.getChangeError());
 				e.setCancelled(true);
+				return;
+			}
+			
+			if (material.name().endsWith("SHULKER_BOX"))
+			{
+				e.setCancelled(true);
+				return;
 			}
 			
 			// If Enderchest
 			if (block.getType() == Material.ENDER_CHEST)
 			{
 				// Allow open if player has permission
-				if (player.hasPermission(Permissions.changePerm))
+				if (player.getPlayer().hasPermission(Permissions.changePerm))
+					return;
+				
+				if (player.isBuilding())
 					return;
 				
 				// Other wise, cancel it
 				e.setCancelled(true);
-				player.sendMessage(Permissions.useError);
+				player.getPlayer().sendMessage(Permissions.useError);
+				return;
 			}
 		}
 		
@@ -854,35 +932,36 @@ public class Main extends JavaPlugin implements Listener
 		if (item.getItemMeta().hasCustomModelData())
 		{
 			// If ID is 1 (IPlay Phone)
-			if (item.getItemMeta().getCustomModelData() == 1)
+			if (item.getType() == Material.INK_SAC)
+			{
 				// And if the item is an ink sac, open IPlay
-				if (item.getType() == Material.INK_SAC) 
+				if (item.getItemMeta().getCustomModelData() == 1)
 				{	
 					e.setCancelled(true);
 					PhoneGui.open(player);
 					return;
 				}
+				
+				if (item.getItemMeta().getCustomModelData() == 56)
+				{
+					e.setCancelled(true);
+					CurrencyClass.displayBalance(player.getPlayer());
+					return;
+				}
+			}
 			
 			if (item.getType() == Material.STICK)
 			{
-				InventoryManagement.openBagInventory(player, item.getItemMeta().getCustomModelData());
+				InventoryManagement.openBagInventory(player.getPlayer(), item.getItemMeta().getCustomModelData());
 			}
-		}
-		
-		// If Item is a flint, display balance (Card item)
-		if (item.getType() == Material.FLINT) 
-		{
-			e.setCancelled(true);
-			CurrencyClass.displayBalance(player);
-			return;
 		}
 	}
 	
 	@EventHandler
 	public void onLeave(PlayerQuitEvent e) 
 	{
-		// Get Player
-		Player player = e.getPlayer();
+		// Get CustomPlayer
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
 		// Get Message
 		String message = leaveMessage;
@@ -899,7 +978,7 @@ public class Main extends JavaPlugin implements Listener
 		}
 		
 		// format message
-		message = MessageFormat.format(player, message);
+		message = MessageFormat.format(player.getPlayer(), message);
 		
 		// Format colours
 		message = ChatColor.translateAlternateColorCodes('&', message);
@@ -908,21 +987,20 @@ public class Main extends JavaPlugin implements Listener
 		e.setQuitMessage(message);
 		
 		// Unop the player (To sync with the permissions)
-		if (player.isOp())
-			player.setOp(false);
+		if (player.getPlayer().isOp())
+			player.getPlayer().setOp(false);
 		
-		TpSystem.playerLeft(player);
-		BuildModeCommand.toggleBuild(player);
 		PrivateMessage.playerLeft(player.getUniqueId());
+		player.prepareDestroy();
 	}
 	
 	@EventHandler
 	public void switchWorld(PlayerChangedWorldEvent e)
 	{
-		Player player = e.getPlayer();
+		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
 		World previousWorld = e.getFrom();
-		World world = player.getWorld();
+		World world = player.getPlayer().getWorld();
 		
 		// Save inventory
 		InventoryManagement.saveInventory(player, previousWorld);
@@ -931,7 +1009,7 @@ public class Main extends JavaPlugin implements Listener
 		InventoryManagement.loadInventory(player, world);
 		
 		// Reload permissions
-		Permissions.setUp(player);
+		Permissions.setUp(player.getPlayer());
 		
 	}
 	
@@ -1032,12 +1110,12 @@ public class Main extends JavaPlugin implements Listener
 			if (ci.getType() == ItemType.HAT || id == 1)
 				e.setCancelled(true);
 			
+			// If it is FPBank card
+			if (item.getType() == Material.INK_SAC || id == 56)
+				e.setCancelled(true);
+			
 			return;
 		}
-		
-		// If it is FPBank card
-		if (item.getType() == Material.FLINT)
-			e.setCancelled(true);
 	}
 	
 	@EventHandler

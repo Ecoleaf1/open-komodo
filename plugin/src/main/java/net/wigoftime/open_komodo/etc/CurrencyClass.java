@@ -13,6 +13,7 @@ import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.objects.Pet;
 
@@ -53,10 +54,10 @@ public abstract class CurrencyClass
 		return true;
 	}
 	
-	public static boolean buy(Player player, int amount, Currency currency, CustomItem customItem)
+	public static boolean buy(CustomPlayer player, int amount, Currency currency, CustomItem customItem)
 	{
 		// Try take money out, if doesn't work, skip
-		if (!buy(player, amount, currency))
+		if (!buy(player.getPlayer(), amount, currency))
 			return false;
 		
 		// Get ItemStack
@@ -68,37 +69,37 @@ public abstract class CurrencyClass
 		// If item is prop
 		if (type == ItemType.PROP)
 		{
-			ItemMeta meta = customItem.getItem().getItemMeta();
+			ItemMeta meta = customItem.getItem().getItemMeta().clone();
 			if (is.getType() == Material.STICK)
 			{
-				int bagID = WorldInventoryConfig.getInventoryIndex(player);
+				PrintConsole.test("is stick");
+				int bagID = WorldInventoryConfig.createBagInventory(player.getPlayer());
 				
+				PrintConsole.test("bagID: "+ bagID);
 				meta.setCustomModelData(bagID);
 				is.setItemMeta(meta);
-				
-				WorldInventoryConfig.setInventory(player, bagID, new ItemStack[0]);
 			}
 			else
 			{
-				meta.setCustomModelData(customItem.getItem().getItemMeta().getCustomModelData());
+				meta.setCustomModelData(meta.getCustomModelData());
 				is.setItemMeta(meta);
 			}
 			
-			player.getInventory().addItem(is);
+			player.getPlayer().getInventory().addItem(is);
 		}
 		
 		// If item is tag
 		if (type == ItemType.TAG)
-			PlayerConfig.addItem(player, customItem);
+			PlayerConfig.addItem(player.getPlayer(), customItem);
 		
 		// if item is Hat 
 		if (type == ItemType.HAT)
-			PlayerConfig.addItem(player, customItem);
+			PlayerConfig.addItem(player.getPlayer(), customItem);
 		
-		ServerScoreBoard.add(player);
+		ServerScoreBoard.add(player.getPlayer());
 		
 		// Save player's inventory in case server crashes or something unexpected happened
-		InventoryManagement.saveInventory(player, player.getWorld());
+		InventoryManagement.saveInventory(player, player.getPlayer().getWorld());
 		return true;
 	}
 	

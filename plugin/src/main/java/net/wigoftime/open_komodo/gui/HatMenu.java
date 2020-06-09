@@ -15,6 +15,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 
 abstract public class HatMenu 
@@ -24,18 +25,24 @@ abstract public class HatMenu
 	
 	private static final String unlockedString = ChatColor.translateAlternateColorCodes('&', "&2&lUnlocked");
 	
-	public static void open(Player player) 
+	public static void open(CustomPlayer player) 
 	{	
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
+		
 		Inventory gui = Bukkit.getServer().createInventory(null, 36, title);
 		
 		// The CustomItems in the shop (In order by IDs)
 		int idList[] = 
 			{
-				28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46
+				28, 29, 30, 31, 32, 33, 34, 36, 37, 38, 39, 40, 42, 43, 44, 45, 46, 48, 49, 50, 51, 52, 53
 			};
 		
 		// List of Player's owned hats
-		List<CustomItem> owned = PlayerConfig.getItem(player, ItemType.HAT);
+		List<CustomItem> owned = PlayerConfig.getItem(player.getPlayer(), ItemType.HAT);
 		
 		for (int id : idList)
 		{
@@ -191,7 +198,7 @@ abstract public class HatMenu
 		gui.setItem(31, is2);
 		gui.setItem(32, is3);
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 		/*
 		gui.addItem(CustomItem.getCustomItem(194).getNBTItem().getItem());
 		gui.addItem(CustomItem.getCustomItem(195).getNBTItem().getItem());

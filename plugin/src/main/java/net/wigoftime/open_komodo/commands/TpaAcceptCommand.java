@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.etc.TpSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class TpaAcceptCommand extends Command
 {
@@ -23,10 +24,10 @@ public class TpaAcceptCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		// Get sender in player format
-		Player player = (Player) sender;
+		// Get sender in CustomPlayer format
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		TpSystem.acceptTpa(player);
+		player.tpaAccept();
 		return true;
 	}
 	

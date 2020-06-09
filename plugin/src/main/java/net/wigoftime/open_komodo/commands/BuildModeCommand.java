@@ -13,11 +13,10 @@ import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class BuildModeCommand extends Command
 {
-	public static Set<UUID> buildMode = new HashSet<UUID>();
-
 	public BuildModeCommand(String name, String description, String usageMessage,
 			List<String> aliases) {
 		
@@ -39,27 +38,28 @@ public class BuildModeCommand extends Command
 			return false;
 		}
 		
-		Player player = (Player) sender;
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		toggleBuild(player);
 		return true;
 	}
 	
-	public static void toggleBuild(Player player)
+	public static void toggleBuild(CustomPlayer player)
 	{
-		if (buildMode.contains(player.getUniqueId()))
+		if (player.isBuilding())
 		{
-			buildMode.remove(player.getUniqueId());
-			player.setGameMode(GameMode.SURVIVAL);
-			InventoryManagement.loadInventory(player, player.getWorld());
+			player.getPlayer().setGameMode(GameMode.SURVIVAL);
+			player.setBuilding(false);
+			InventoryManagement.loadInventory(player, player.getPlayer().getWorld());
 		}
 		else
 		{
-			InventoryManagement.saveInventory(player, player.getWorld());
-			player.getInventory().clear();
+			player.setBuilding(true);
 			
-			player.setGameMode(GameMode.CREATIVE);
-			buildMode.add(player.getUniqueId());
+			InventoryManagement.saveInventory(player, player.getPlayer().getWorld());
+			player.getPlayer().getInventory().clear();
+			
+			player.getPlayer().setGameMode(GameMode.CREATIVE);
 		}
 		
 		return;

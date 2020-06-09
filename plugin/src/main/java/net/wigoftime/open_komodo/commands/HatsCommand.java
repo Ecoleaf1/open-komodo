@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.gui.HatMenu;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class HatsCommand extends Command 
 {
@@ -24,7 +25,7 @@ public class HatsCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		Player player = (Player) sender;
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		// Give player the hats gui
 		HatMenu.open(player);

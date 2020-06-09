@@ -14,6 +14,7 @@ import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
 import net.wigoftime.open_komodo.gui.PetControl;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class CustomPetCat extends EntityCat
 {
@@ -65,7 +66,8 @@ public class CustomPetCat extends EntityCat
 	    {
 	    	if (entity.getUniqueID() == owner.getUniqueId())
 	    	{
-	    		PetControl.create(owner);
+	    		CustomPlayer customOwner = CustomPlayer.get(entity.getUniqueID());
+	    		PetControl.create(customOwner);
 	    	}
 	    	
 	    	return false;

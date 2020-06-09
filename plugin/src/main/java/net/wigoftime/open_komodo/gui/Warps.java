@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class Warps 
 {
@@ -33,7 +34,14 @@ public class Warps
 	private static ItemStack cruiseShip;
 	private static String cruiseShipName = ChatColor.translateAlternateColorCodes('&', "&r&lCruise Ship");
 	
-	public static void open(Player player) {
+	public static void open(CustomPlayer player) 
+	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
+		
 		Inventory gui = Bukkit.createInventory(null, 27,guiName);
 		
 		gui.setItem(10, hs);
@@ -42,7 +50,7 @@ public class Warps
 		gui.setItem(13, cruiseShip);
 		gui.setItem(14, airport);
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
 	public static void clicked(Player player, ItemStack item) 

@@ -14,6 +14,7 @@ import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
 import net.wigoftime.open_komodo.gui.PetControl;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class CustomPetMob extends EntityCreature
 {
@@ -68,7 +69,8 @@ public class CustomPetMob extends EntityCreature
     {
     	if (entity.getUniqueID() == owner.getUniqueId())
     	{
-    		PetControl.create(owner);
+    		CustomPlayer player = CustomPlayer.get(entity.getUniqueID());
+    		PetControl.create(player);
     	}
     	
     	return false;

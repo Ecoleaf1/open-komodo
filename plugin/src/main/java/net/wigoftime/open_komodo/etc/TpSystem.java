@@ -11,10 +11,9 @@ import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 
 abstract public class TpSystem {
 
-	private static HashMap<Player, TpRequest> tpaMap = new HashMap<Player, TpRequest>();
+	//private static HashMap<Player, TpRequest> tpaMap = new HashMap<Player, TpRequest>();
 	
-	public static final String errorCantFindPerson = ChatColor.translateAlternateColorCodes('&', "&cCan't find $D");
-	private static final String alreadySent = ChatColor.translateAlternateColorCodes('&', "&cYou already sent a request.");
+	/*private static final String alreadySent = ChatColor.translateAlternateColorCodes('&', "&cYou already sent a request.");
 	private static final String noRequests = ChatColor.translateAlternateColorCodes('&', "&7You don't have any requests");
 	
 	private static final String receivedRequestTpa = ChatColor.translateAlternateColorCodes('&', "&7$N requests to teleport to you!\n&6/tpaccept&7 to accept\n&6/tpadeny&7 to deny");
@@ -25,8 +24,9 @@ abstract public class TpSystem {
 	private static final String acceptedRequester = ChatColor.translateAlternateColorCodes('&', "&7$N has accepted your request.");
 	private static final String acceptedTarget = ChatColor.translateAlternateColorCodes('&', "&7You accepted $D request.");
 	
-	private static final String deniedRequest = ChatColor.translateAlternateColorCodes('&', "&7You denied the request.");
+	private static final String deniedRequest = ChatColor.translateAlternateColorCodes('&', "&7You denied the request.");*/
 	
+	/*
 	public static void request(Player requester, Player target, tpType type) {
 		
 		if (tpaMap.containsKey(target))
@@ -71,8 +71,6 @@ abstract public class TpSystem {
 		request.getRequester().sendMessage(requesterMessage);
 		request.getTarget().sendMessage(targetMessage);
 		
-		/*requester.teleport(target.getLocation());*/
-		
 		tpaMap.remove(target);
 	}
 	public static void denyTpa(Player target) {
@@ -89,6 +87,6 @@ abstract public class TpSystem {
 	public static void playerLeft(Player target)
 	{
 		tpaMap.remove(target);
-	}
+	}*/
 	
 }

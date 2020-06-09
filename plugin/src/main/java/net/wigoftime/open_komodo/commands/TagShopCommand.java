@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.gui.TagShop;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class TagShopCommand extends Command
 {
@@ -24,7 +25,7 @@ public class TagShopCommand extends Command
 			return false;
 		
 		// Get sender in player format
-		Player player = (Player) sender;
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		TagShop.open(player);
 		

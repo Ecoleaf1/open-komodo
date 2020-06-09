@@ -9,6 +9,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public abstract class BuyOptionsGUI {
 
@@ -18,7 +19,12 @@ public abstract class BuyOptionsGUI {
 	private static ItemStack coinStack;
 	private static ItemStack pointsStack;
 	
-	public static void create(Player player, CustomItem customItem) {
+	public static void create(CustomPlayer player, CustomItem customItem) 
+	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+		}
 		
 		Inventory gui = Bukkit.createInventory(null, 27);
 			gui.setItem(10, coinStack);
@@ -26,17 +32,20 @@ public abstract class BuyOptionsGUI {
 		
 			gui.setItem(13, customItem.getItem());
 			
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
-	public static final void setup() {
-		coinStack = new ItemStack(Material.GOLD_NUGGET); {
+	public static final void setup() 
+	{
+		coinStack = new ItemStack(Material.GOLD_NUGGET); 
+		{
 			ItemMeta meta = coinStack.getItemMeta();
 			meta.setDisplayName(coinsLabel);
 			coinStack.setItemMeta(meta);
 		}
 		
-		pointsStack = new ItemStack(Material.IRON_INGOT); {
+		pointsStack = new ItemStack(Material.IRON_INGOT); 
+		{
 			ItemMeta meta = coinStack.getItemMeta();
 			meta.setDisplayName(pointsLabel);
 			pointsStack.setItemMeta(meta);

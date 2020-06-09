@@ -17,16 +17,22 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.TagConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 
 public class TagShop {
 	
 	private static final int pageSlots = 35;
 	
-	public static void open(Player player) 
+	public static void open(CustomPlayer player) 
 	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
 		
-		File plConfig = PlayerConfig.getPlayerConfig(player);
+		File plConfig = PlayerConfig.getPlayerConfig(player.getUniqueId());
 		
 		YamlConfiguration plYaml = YamlConfiguration.loadConfiguration(plConfig);
 		File tagConfig = TagConfig.get();
@@ -36,7 +42,7 @@ public class TagShop {
 		
 		
 		int page;
-		ItemStack idItem = player.getOpenInventory().getItem(44);
+		ItemStack idItem = player.getPlayer().getOpenInventory().getItem(44);
 		if (idItem != null)
 			if (idItem.getItemMeta().hasCustomModelData())
 				page = idItem.getItemMeta().getCustomModelData();
@@ -51,7 +57,7 @@ public class TagShop {
 		ItemStack itemStack = new ItemStack(Material.NAME_TAG);
 		
 		List<CustomItem> showTags;
-		List<CustomItem> ownedTags = PlayerConfig.getItem(player, ItemType.TAG);
+		List<CustomItem> ownedTags = PlayerConfig.getItem(player.getPlayer(), ItemType.TAG);
 		
 		List<CustomItem> shopTags = CustomItem.getCustomItem(ItemType.TAG);
 		
@@ -161,7 +167,7 @@ public class TagShop {
 		gui.setItem(37, border);
 		gui.setItem(36, border);
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 	
 }

@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 abstract public class PetControl 
 {
@@ -21,8 +22,14 @@ abstract public class PetControl
 	public static final String mountNameButton = ChatColor.translateAlternateColorCodes('&', "&lMount");
 	public static final int mountID = 3;
 	
-	public static void create(Player player)
+	public static void create(CustomPlayer player)
 	{
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
+		
 		Inventory gui = Bukkit.createInventory(null, 9, title);
 		
 		ItemStack remove = new ItemStack(Material.BARRIER);
@@ -53,6 +60,6 @@ abstract public class PetControl
 		gui.addItem(changeName);
 		gui.addItem(mountButton);
 		
-		player.openInventory(gui);
+		player.getPlayer().openInventory(gui);
 	}
 }

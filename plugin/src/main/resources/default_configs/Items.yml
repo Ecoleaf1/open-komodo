@@ -114,6 +114,18 @@ Props:
       Display Name: "&6Waffle"
       id: 41
       Price (Points): 360
+   Boba Tea:
+      Display Name: "&6Boba Tea"
+      id: 55
+      Price (Points): 360
+   Card:
+      Display Name: "&6Card"
+      id: 56
+      Price (Points): 360
+   Pie:
+      Display Name: "&6Pie"
+      id: 57
+      Price (Points): 360
 
 Hats:
    Blue Ribbon:
@@ -235,6 +247,48 @@ Hats:
       Price (Points): 1250
       Permission: openkomodo.hats.tophatwithmustache
       id: 46
+   Wolf Ears:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfears
+      id: 48
+   Wolf Ears Black:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfearsblack
+      id: 49
+   Wolf Ears Black Red:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfearsblackred
+      id: 50
+   Wolf Ears Black Purple:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfearsblackpurple
+      id: 51
+   Wolf Ears Pink:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfearspink
+      id: 52
+   Wolf Ears White:
+      Display Name: "&bWolf Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.wolfearswhite
+      id: 53
 Tags:
   Freshmen:
     Name: Freshmen

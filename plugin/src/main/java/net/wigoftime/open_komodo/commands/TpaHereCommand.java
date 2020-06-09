@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.etc.TpSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 
 public class TpaHereCommand extends Command
@@ -33,19 +34,19 @@ public class TpaHereCommand extends Command
 			return false;
 		}
 		
-		Player player = (Player) sender;
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		Player target = Bukkit.getPlayer(args[0]);
+		CustomPlayer target = CustomPlayer.get(Bukkit.getPlayer(args[0]).getUniqueId());
 		
 		if (target == null)
 		{
-			String message = MessageFormat.format(TpSystem.errorCantFindPerson, player.getDisplayName(), args[0], null);
+			String message = MessageFormat.format(CustomPlayer.errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
 			
-			player.sendMessage(message);
+			player.getPlayer().sendMessage(message);
 			return false;
 		}
 		
-		TpSystem.request(player,target, tpType.TPAHERE);
+		target.tpaRequest(player, tpType.TPAHERE);
 		return true;
 	}
 

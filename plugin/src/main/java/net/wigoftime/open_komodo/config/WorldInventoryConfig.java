@@ -16,6 +16,7 @@ import org.bukkit.inventory.ItemStack;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public abstract class WorldInventoryConfig 
 {
@@ -35,7 +36,10 @@ public abstract class WorldInventoryConfig
 		File file = new File(worldFolder.getAbsolutePath()+"/"+player.getUniqueId());
 		
 		if (!file.exists())
-			InventoryManagement.saveInventory(player, world);
+		{
+			CustomPlayer customPlayer = CustomPlayer.get(player.getUniqueId());
+			InventoryManagement.saveInventory(customPlayer, world);
+		}
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		
@@ -73,7 +77,7 @@ public abstract class WorldInventoryConfig
 		return;
 	}
 	
-	public static int getInventoryIndex(Player player)
+	public static short getInventoryIndex(Player player)
 	{
 		if (!bagInventoryFolder.exists())
 			bagInventoryFolder.mkdir();
@@ -92,19 +96,59 @@ public abstract class WorldInventoryConfig
 		String[] list = playerFolder.list();
 	//	Integer.parseInt(list[list.length-1].replace(".yml", ""));
 		
-		int index;
+		short index;
 		if (list.length < 1)
-			index = 1;
+			index = 0;
 		else
-			index = Integer.parseInt(list[list.length-1].replace(".yml", "")) + 1;
+		{
+			
+			short max = 0;
+			for (String s : list)
+			{
+				char[] numChar = new char[s.length()-4];
+				s.getChars(0, (s.length()-4), numChar, 0);
+				
+				StringBuilder sb = new StringBuilder();
+				for (char c : numChar)
+				{
+					sb.append(c);
+				}
+				
+				short number = Short.parseShort(sb.toString());
+				
+				if (number > max)
+					max = number;
+			}
+			
+			index = max;
+			/*
+			char[] numbers = new char[list[0].length()-4];
+			PrintConsole.test("Numbers length: " + numbers.length);
+			
+			list[0].getChars(0, (list[0].length()-4), numbers, 0);
+			
+			StringBuilder sb = new StringBuilder();
+			for (char c : numbers)
+			{
+				sb.append(c);
+				PrintConsole.test(c+"");
+			}
+			
+			index = Integer.parseInt(sb.toString());*/
+		}
 		
-		PrintConsole.test("index;   "+index);
+		PrintConsole.test("index: "+index);
+		PrintConsole.test("List Length WorldInventory: "+list.length);
 		return index;
 	}
 	
-	public static void createBagInventory(Player player)
+	public static int createBagInventory(Player player)
 	{
-		setInventory(player, getInventoryIndex(player), new ItemStack[0]);
+		int bagID = getInventoryIndex(player) + 1;
+		
+		setInventory(player, bagID, new ItemStack[0]);
+		
+		return bagID;
 	}
 	
 	public static void setInventory(Player player, int bagID, ItemStack[] inventory)

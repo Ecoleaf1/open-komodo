@@ -61,7 +61,6 @@ abstract public class PetsManager
 	
 	public static void removePet(Player player)
 	{
-		PrintConsole.test("Test #003");
 		CraftCreature creature = pets.get(player.getUniqueId());
 		
 		pets.remove(player.getUniqueId());
@@ -101,8 +100,6 @@ abstract public class PetsManager
 				{
 					Player player = Bukkit.getPlayer(entry.getKey());
 					CraftCreature entityPet = entry.getValue();
-						
-					PrintConsole.test("Entry " +entry.getKey());
 					
 					// If pet in the list is null, delete it and stop loop
 					if (!pets.containsValue(entityPet))

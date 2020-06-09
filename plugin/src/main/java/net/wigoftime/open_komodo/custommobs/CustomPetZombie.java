@@ -13,6 +13,7 @@ import net.minecraft.server.v1_14_R1.EntityZombie;
 import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
 import net.wigoftime.open_komodo.gui.PetControl;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 // The custom zombie mob for having pets
 public class CustomPetZombie extends EntityZombie implements CustomPet
@@ -65,7 +66,8 @@ public class CustomPetZombie extends EntityZombie implements CustomPet
     {
     	if (entity.getUniqueID() == owner.getUniqueId())
     	{
-    		PetControl.create(owner);
+    		CustomPlayer player = CustomPlayer.get(entity.getUniqueID());
+    		PetControl.create(player);
     	}
     	
     	return false;

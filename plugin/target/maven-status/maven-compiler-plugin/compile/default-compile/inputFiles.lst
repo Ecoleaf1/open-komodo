@@ -35,6 +35,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/TeleportToBuildWorldCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/PetsGui.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/Filter.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/TpaToggleCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/PrintConsole.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/gui/HatMenu.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/PromoteCommand.java
@@ -84,6 +85,7 @@
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/events/AsyncPlayerChat.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/etc/TypeToEnum.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/SitCommand.java
+/home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/objects/CustomPlayer.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/commands/FriendsCommand.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/config/ItemConfig.java
 /home/ecoleaf/githubrepos/open-komodo/plugin/src/main/java/net/wigoftime/open_komodo/custommobs/CustomPetCat.java

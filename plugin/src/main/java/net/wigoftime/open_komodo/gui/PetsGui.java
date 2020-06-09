@@ -14,15 +14,21 @@ import org.bukkit.inventory.meta.ItemMeta;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
 
 abstract public class PetsGui 
 {
 	public static final String title = "Pet Menu";
 	
-	public static void create(Player player)
+	public static void create(CustomPlayer player)
 	{
-		if (!player.hasPermission(Permissions.petAccess))
+		if (player.isBuilding())
+		{
+			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			return;
+		}
+		if (!player.getPlayer().hasPermission(Permissions.petAccess))
 			return;
 		
 		Inventory inv = Bukkit.createInventory(null, 45, title);
@@ -66,6 +72,6 @@ abstract public class PetsGui
 			inv.addItem(item);
 		}
 		
-		player.openInventory(inv);
+		player.getPlayer().openInventory(inv);
 	}
 }

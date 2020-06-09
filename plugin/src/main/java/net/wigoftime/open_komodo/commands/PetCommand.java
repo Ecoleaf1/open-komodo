@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.gui.PetsGui;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PetCommand extends Command
 {
@@ -19,7 +20,7 @@ public class PetCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		Player player = (Player) sender;
+		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		PetsGui.create(player);
 		return false;
