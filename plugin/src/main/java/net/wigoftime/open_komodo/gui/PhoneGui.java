@@ -181,7 +181,7 @@ public class PhoneGui
 		
 		if (item.getItemMeta().getCustomModelData() == hats.getItemMeta().getCustomModelData()) 
 		{
-			HatMenu.open(player);
+			HatMenu.open(player, (byte) 1);
 			return;
 		}
 		

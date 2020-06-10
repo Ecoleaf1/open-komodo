@@ -17,7 +17,9 @@ import net.wigoftime.open_komodo.config.PetConfig;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.gui.PropShop;
 
 abstract public class FileCreation 
 {
@@ -67,6 +69,16 @@ abstract public class FileCreation
 		{
 			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Whitelist-Dict.txt");
 			file = whitelistDict;
+		}
+		else if (type == ConfigType.PROPSHOP_DEFAULT)
+		{
+			is = Main.class.getClassLoader().getResourceAsStream("default_gui/propshop/default.yml");
+			
+			File directory = new File(Main.dataFolderPath+"/gui/propshop/");
+			if (!directory.exists())
+				directory.mkdirs();
+			
+			file = PropShop.shopPage;
 		}
 		else
 		{

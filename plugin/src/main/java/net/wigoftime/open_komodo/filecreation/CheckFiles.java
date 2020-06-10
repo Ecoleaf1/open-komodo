@@ -20,6 +20,7 @@ import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.gui.BuyOptionsGUI;
 import net.wigoftime.open_komodo.gui.PhoneGui;
+import net.wigoftime.open_komodo.gui.PropShop;
 import net.wigoftime.open_komodo.gui.Warps;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.ItemType;
@@ -60,6 +61,9 @@ abstract public class CheckFiles
 		
 		FileCreation.create(ConfigType.WHITELIST_DICT);
 		Filter.setup();
+		
+		FileCreation.create(ConfigType.PROPSHOP_DEFAULT);
+		PropShop.setup();
 		
 		/*
 		PrintConsole.test("c5");

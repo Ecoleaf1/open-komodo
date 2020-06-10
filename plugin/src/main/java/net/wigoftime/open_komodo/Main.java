@@ -179,7 +179,7 @@ public class Main extends JavaPlugin implements Listener
 	private static final String phoneName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	private static final String cardName = ChatColor.translateAlternateColorCodes('&', "&6&lBank");
 	
-	private static final String resourcePackLink = "https://www.dropbox.com/s/uq63zixj48szg3h/OpenKomodo%20resourcepack.zip?dl=1";
+	private static String resourcePackLink;
 	
 	private static JavaPlugin plugin;
 	
@@ -235,6 +235,8 @@ public class Main extends JavaPlugin implements Listener
 		PMSentFormat = yamlConfig.getConfigurationSection("Private Message").getString("Format (Sent)");
 		// What private message looks like to the receiver
 		PMReceivedFormat = yamlConfig.getConfigurationSection("Private Message").getString("Format (Received)");
+		
+		resourcePackLink = yamlConfig.getConfigurationSection("Global Settings").getString("Resource Pack");
 		
 		// Get the spawn world, the world that players spawn
 		World spawnWorld = Bukkit.getWorld(yamlConfig.getConfigurationSection("Global Settings").getConfigurationSection("Spawn").getString("World"));

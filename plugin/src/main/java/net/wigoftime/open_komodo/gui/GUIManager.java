@@ -170,7 +170,7 @@ abstract public class GUIManager {
 
 		if (inventoryName.equalsIgnoreCase("Hat-Menu"))
 		{
-			HatMenu.clicked((Player) e.getWhoClicked(), e.getCurrentItem());
+			HatMenu.clicked(player, e.getCurrentItem(), e.getClickedInventory());
 			e.setCancelled(true);
 		}
 		

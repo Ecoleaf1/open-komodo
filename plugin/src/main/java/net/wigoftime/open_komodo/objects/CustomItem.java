@@ -127,6 +127,18 @@ public class CustomItem
 		return itemList;
 	}
 	
+	public static List<CustomItem> getItems(ItemType type)
+	{
+		List<CustomItem> itemList = new ArrayList<CustomItem>(items.size());
+		for (Entry<Integer, CustomItem> e : items.entrySet())
+		{
+			if (e.getValue().getType() == type)
+				itemList.add((CustomItem) e.getValue());
+		}
+		
+		return itemList;
+	}
+	
 	public List<String> getDescription()
 	{
 		return description;

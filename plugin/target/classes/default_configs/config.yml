@@ -14,6 +14,7 @@ Private Message:
   Format (Sent): '&7you &e-> &7$D &7:&f $M'
   Format (Received): '&7$N &e-> &7you &7:&f $M'
 Global Settings:
+  Resource Pack: "https://www.dropbox.com/s/uq63zixj48szg3h/OpenKomodo%20resourcepack.zip?dl=1"
   Spawn:
     World: open_komodo
     Location:
