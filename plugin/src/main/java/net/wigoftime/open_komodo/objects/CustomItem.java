@@ -21,6 +21,7 @@ public class CustomItem
 	private static HashMap<Integer, CustomItem> items = new HashMap<Integer, CustomItem>();
 	
 	private final List<String> description;
+	private final boolean equipable;
 	
 	private final int pointPrice;
 	private final int coinPrice;
@@ -30,7 +31,7 @@ public class CustomItem
 	
 	private final Permission obtainPermission;
 	
-	public CustomItem(ItemStack item, int id, String name, List<String> description, int pointPrice,Permission permission, ItemType type)
+	public CustomItem(ItemStack item, int id, String name, List<String> description, boolean equipable, int pointPrice,Permission permission, ItemType type)
 	{
 		
 		// Set the CustomModelData to the id
@@ -44,6 +45,8 @@ public class CustomItem
 			meta.setLore(description);
 		
 		item.setItemMeta(meta);
+		
+		this.equipable = equipable;
 		
 		// Assign all the CustomItem Variables
 		this.description = description;
@@ -59,18 +62,18 @@ public class CustomItem
 		items.put(id, this);
 	}
 	
-	public static void create(ItemStack item, int id, int pointPrice, Permission permission, ItemType type)
+	public static void create(ItemStack item, int id, int pointPrice, boolean equipable, Permission permission, ItemType type)
 	{
-		new CustomItem(item, id, null, null, pointPrice, permission, type);
+		new CustomItem(item, id, null, null, equipable, pointPrice, permission, type);
 	}
 	
 	public static void create(int id, int pointPrice,Permission permission, ItemType type)
 	{
 		ItemStack item = new ItemStack(Material.INK_SAC);
-		new CustomItem(item, id, null, null, pointPrice, permission, type);
+		new CustomItem(item, id, null, null, false, pointPrice, permission, type);
 	}
 	
-	public static void create(int id, String name, List<String> description, int pointPrice, Permission permission, ItemType type)
+	public static void create(int id, String name, List<String> description, int pointPrice, boolean equipable, Permission permission, ItemType type)
 	{
 		ItemStack item;
 		
@@ -84,7 +87,7 @@ public class CustomItem
 			return;
 		}
 		
-		new CustomItem(item, id, name, description, pointPrice, permission, type);
+		new CustomItem(item, id, name, description, equipable, pointPrice, permission, type);
 	}
 	
 	public static List<CustomItem> getCustomItem(ItemType type)
@@ -162,6 +165,11 @@ public class CustomItem
 	public ItemType getType()
 	{
 		return type;
+	}
+	
+	public boolean isEquipable()
+	{
+		return equipable;
 	}
 	
 	public Permission getPermission()

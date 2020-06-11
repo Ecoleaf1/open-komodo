@@ -48,7 +48,7 @@ abstract public class CheckFiles
 		ItemMeta meta = is.getItemMeta();
 		meta.setDisplayName(ChatColor.GOLD + "Backpack");
 		is.setItemMeta(meta);
-		new CustomItem(is, 999, meta.getDisplayName(), null, 1050, null, ItemType.PROP);
+		new CustomItem(is, 999, meta.getDisplayName(), null, true, 1050, null, ItemType.PROP);
 		
 		FileCreation.create(ConfigType.RANK);
 		RankConfig.setup();

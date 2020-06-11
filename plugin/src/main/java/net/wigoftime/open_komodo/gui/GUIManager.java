@@ -22,6 +22,7 @@ import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.objects.Pet;
 
 abstract public class GUIManager {
@@ -103,8 +104,6 @@ abstract public class GUIManager {
 				id = is.getItemMeta().getCustomModelData();
 			else
 				id = 0;
-			
-			PrintConsole.test("ID: " + id);
 			
 			if (id < 1)
 				return;
@@ -269,8 +268,17 @@ abstract public class GUIManager {
 			if (!e.getCurrentItem().getItemMeta().hasCustomModelData())
 				return;
 			
+			short id = (short) e.getCurrentItem().getItemMeta().getCustomModelData();
+			CustomItem item = CustomItem.getCustomItem(id);
+			
 			if (e.getSlot() == 39)
-				e.setCancelled(true);
+			{
+				if (item.getType() == ItemType.HAT)
+				{
+					e.setCancelled(true);
+					return;
+				}
+			}
 			
 			if (e.getCurrentItem().getItemMeta().getCustomModelData() != 1 && e.getCurrentItem().getItemMeta().getCustomModelData() != 56)
 				return;

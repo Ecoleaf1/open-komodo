@@ -287,7 +287,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Create CustomItem for errors.
 		ItemStack is = new ItemStack(Material.INK_SAC);
-		CustomItem.create(is, -99, -1, null, ItemType.PROP);
+		CustomItem.create(is, -99, -1, false, null, ItemType.PROP);
 		
 		Status_Bar.startLoop();
 		ActionBar.startLoop();
@@ -924,6 +924,25 @@ public class Main extends JavaPlugin implements Listener
 				e.setCancelled(true);
 				player.getPlayer().sendMessage(Permissions.useError);
 				return;
+			}
+		}
+		
+		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
+		{
+			if (item.getType() == Material.INK_SAC)
+			{
+				
+				ItemMeta meta = item.getItemMeta();
+				if (meta.hasCustomModelData())
+				{
+					CustomItem cs = CustomItem.getCustomItem(meta.getCustomModelData());
+					
+					if (cs.isEquipable())
+					{
+						player.getPlayer().getInventory().setHelmet(item);
+						item.setAmount(0);
+					}
+				}
 			}
 		}
 		

@@ -53,6 +53,12 @@ public abstract class ItemConfig
 				else
 					description = null;
 				
+				boolean equipable;
+				if (c1s2.contains("Equipable"))
+					equipable = c1s2.getBoolean("Equipable");
+				else
+					equipable = false;
+				
 				// Check if has permission or not
 				// Also create item
 				if (c1s2.contains("Permission"))
@@ -61,12 +67,12 @@ public abstract class ItemConfig
 					obtainPermission = new Permission(c1s2.getString("Permission"));
 					
 					// Create item
-					CustomItem.create(id, name, description, pc, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, null, type);
+					CustomItem.create(id, name, description, pc, equipable, null, type);
 				}
 			}
 		}
@@ -103,17 +109,23 @@ public abstract class ItemConfig
 				else
 					description = null;
 				
+				boolean equipable;
+				if (c2s2.contains("Equipable"))
+					equipable = c2s2.getBoolean("Equipable");
+				else
+					equipable = false;
+				
 				if (c2s2.contains("Permission"))
 				{
 					Permission obtainPermission;
 					obtainPermission = new Permission(c2s2.getString("Permission"));
 					
-					CustomItem.create(id, name, description, pc, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, null, type);
+					CustomItem.create(id, name, description, pc, equipable, null, type);
 				}
 			}
 		}
@@ -148,6 +160,12 @@ public abstract class ItemConfig
 				else
 					description = null;
 				
+				boolean equipable;
+				if (c2s2.contains("Equipable"))
+					equipable = c2s2.getBoolean("Equipable");
+				else
+					equipable = false;
+				
 				// Check if has permission or not
 				// Also create item
 				if (c2s2.contains("Permission"))
@@ -156,12 +174,12 @@ public abstract class ItemConfig
 					obtainPermission = new Permission(c2s2.getString("Permission"));
 					
 					// Create item
-					CustomItem.create(id, name, description, pc, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, null, type);
+					CustomItem.create(id, name, description, pc, equipable, null, type);
 				}
 			}
 		}
