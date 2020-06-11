@@ -74,7 +74,7 @@ abstract public class FileCreation
 		{
 			is = Main.class.getClassLoader().getResourceAsStream("default_gui/propshop/default.yml");
 			
-			File directory = new File(Main.dataFolderPath+"/gui/propshop/");
+			File directory = new File(Main.dataFolderPath+"/gui/propshop");
 			if (!directory.exists())
 				directory.mkdirs();
 			

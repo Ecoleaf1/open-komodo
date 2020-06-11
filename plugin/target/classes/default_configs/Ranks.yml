@@ -45,6 +45,15 @@ VIP+:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
 MVP:
   ID: 3
   Prefix: '&b&lMVP&r&b &3'
@@ -78,6 +87,15 @@ MVP:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
   - openkomodo.pets.access
 MVP+:
   ID: 4
@@ -112,6 +130,15 @@ MVP+:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
   - openkomodo.pets.access
 MOD:
   Prefix: '&e&lMOD&r&e &6'
@@ -144,6 +171,15 @@ MOD:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
   - openkomodo.pets.access
   - openkomodo.mod.kick
   - openkomodo.mod.Ban
@@ -179,6 +215,15 @@ BUILDER:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
   - openkomodo.pets.access
   - openkomodo.build.buildmode
   - openkomodo.build.place
@@ -230,6 +275,15 @@ DESIGNER:
   - openkomodo.hats.wolfearsblackpurple
   - openkomodo.hats.wolfearspink
   - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
   - openkomodo.pets.access
 MANAGER:
     Prefix: "&6&lMANAGER&r "

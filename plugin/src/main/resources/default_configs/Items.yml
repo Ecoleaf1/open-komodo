@@ -126,6 +126,10 @@ Props:
       Display Name: "&6Pie"
       id: 57
       Price (Points): 360
+   Gun:
+      Display Name: "&6Gun"
+      id: 62
+      Price (Points): 360
 
 Hats:
    Blue Ribbon:
@@ -289,6 +293,55 @@ Hats:
       Price (Points): 1250
       Permission: openkomodo.hats.wolfearswhite
       id: 53
+   Polar Bear Ears:
+      Display Name: "&bBear Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.polarbearears
+      id: 58
+   Panda Bear Ears:
+      Display Name: "&bBear Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.pandabearears
+      id: 59
+   Black Bears Ears:
+      Display Name: "&bBear Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.blackbearears
+      id: 60
+   Fox Ears:
+      Display Name: "&bFox Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.foxears
+      id: 61
+   Artic foxears:
+      Display Name: "&bFox Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.articfoxears
+      id: 63
+   Bateared Foxears:
+      Display Name: "&bFox Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.batearedfoxears
+      id: 64
+   Fennec Foxears:
+      Display Name: "&bFox Ears"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.fennecfoxears
+      id: 65
 Tags:
   Freshmen:
     Name: Freshmen
