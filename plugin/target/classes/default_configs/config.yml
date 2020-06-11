@@ -16,7 +16,7 @@ Private Message:
 Global Settings:
   Resource Pack: "https://www.dropbox.com/s/uq63zixj48szg3h/OpenKomodo%20resourcepack.zip?dl=1"
   Spawn:
-    World: open_komodo
+    World: komodo_island
     Location:
       ==: Vector
       x: 330.0
