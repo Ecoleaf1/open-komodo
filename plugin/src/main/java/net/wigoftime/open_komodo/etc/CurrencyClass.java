@@ -1,63 +1,43 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.io.File;
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.objects.Pet;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 public abstract class CurrencyClass 
 {
-	
-	private static String notEnoughPoints = ChatColor.translateAlternateColorCodes('&', "&c&lSorry, but you do not have enough points");
-	private static String notEnoughCoins = ChatColor.translateAlternateColorCodes('&', "&c&lSorry, but you do not have enough coins");
-	private static String balanceMessage = "Your account balance:\n    - &6$C&r coins\n    - &6$T&r points";
-	
-	public static int getPoints(Player player) {
-		
-		File config = PlayerConfig.getPlayerConfig(player);
-		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-		
-		final int points = configYaml.getConfigurationSection("Currency").getInt("Points");
-		
-		return points;
-	}
-	
-	public static int getCoins(Player player) {
-		File config = PlayerConfig.getPlayerConfig(player);
-		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-		
-		final int coins = configYaml.getConfigurationSection("Currency").getInt("Coins");
-		
-		return coins;
-	}
+	private static String notEnoughPoints = String.format("%s%sSorry%s, but you do not have enough points", ChatColor.RED, ChatColor.BOLD, ChatColor.GRAY);
+	//private static String notEnoughPoints = ChatColor.translateAlternateColorCodes('&', "&c&lSorry, but you do not have enough points");
+	private static String notEnoughCoins = String.format("%s%sSorry%s, but you do not have enough coins", ChatColor.RED, ChatColor.BOLD, ChatColor.GRAY);
+	//private static String notEnoughCoins = ChatColor.translateAlternateColorCodes('&', "&c&lSorry, but you do not have enough coins");
+	private static String balanceMessage = "&6»&7 Your account balance:\n    - &6$C&7 coins\n    - &6$T&7 points";
 	
 	// When buying bet
-	public static boolean buy(Player player, int amount, Currency currency, Pet pet)
+	public static boolean buy(CustomPlayer playerCustomPlayer, int amount, Currency currency, Pet pet)
 	{
 		// Try take money out, if doesn't work, skip
-		if (!buy(player, amount, currency))
+		if (!buy(playerCustomPlayer, amount, currency))
 			return false;
-			
-		PlayerConfig.addPet(player, pet);
+		
+		playerCustomPlayer.addPet(pet);
 		return true;
 	}
 	
-	public static boolean buy(CustomPlayer player, int amount, Currency currency, CustomItem customItem)
+	public static boolean buy(CustomPlayer playerCustomPlayer, int amount, Currency currency, CustomItem customItem)
 	{
 		// Try take money out, if doesn't work, skip
-		if (!buy(player.getPlayer(), amount, currency))
+		if (!buy(playerCustomPlayer, amount, currency))
 			return false;
 		
 		// Get ItemStack
@@ -67,13 +47,15 @@ public abstract class CurrencyClass
 		ItemType type = customItem.getType();
 		
 		// If item is prop
-		if (type == ItemType.PROP)
-		{
+		if (type == ItemType.PROP) {
 			ItemMeta meta = customItem.getItem().getItemMeta().clone();
-			if (is.getType() == Material.STICK)
-			{
+			if (is.getType() == Material.STICK) {
 				PrintConsole.test("is stick");
-				int bagID = WorldInventoryConfig.createBagInventory(player.getPlayer());
+				int bagID;
+				if (SQLManager.isEnabled())
+					bagID = SQLManager.createBagInventory(playerCustomPlayer.getUniqueId(), playerCustomPlayer.getPlayer().getWorld().getName());
+				else
+					bagID = WorldInventoryConfig.createBagInventory(playerCustomPlayer.getPlayer());
 				
 				PrintConsole.test("bagID: "+ bagID);
 				meta.setCustomModelData(bagID);
@@ -85,27 +67,32 @@ public abstract class CurrencyClass
 				is.setItemMeta(meta);
 			}
 			
-			player.getPlayer().getInventory().addItem(is);
+			playerCustomPlayer.getPlayer().getInventory().addItem(is);
 		}
 		
 		// If item is tag
 		if (type == ItemType.TAG)
-			PlayerConfig.addItem(player.getPlayer(), customItem);
+			playerCustomPlayer.addItem(customItem);
 		
 		// if item is Hat 
 		if (type == ItemType.HAT)
-			PlayerConfig.addItem(player.getPlayer(), customItem);
+			playerCustomPlayer.addItem(customItem);
 		
-		ServerScoreBoard.add(player.getPlayer());
+		if (type == ItemType.PHONE) {
+			playerCustomPlayer.addItem(customItem);
+			playerCustomPlayer.setActivePhone(customItem);
+		}
+		
+		ServerScoreBoard.add(playerCustomPlayer);
 		
 		// Save player's inventory in case server crashes or something unexpected happened
-		InventoryManagement.saveInventory(player, player.getPlayer().getWorld());
+		InventoryManagement.saveInventory(playerCustomPlayer, playerCustomPlayer.getPlayer().getWorld());
 		return true;
 	}
 	
-	private static boolean buy(Player player, int amount, Currency currency)
+	public static boolean buy(CustomPlayer playerCustomPlayer, int amount, Currency currency)
 	{
-		int balance = PlayerConfig.getCurrency(player, currency);
+		int balance = playerCustomPlayer.getCurrency(currency);
 		int cost = amount;
 		
 		int remaining = balance - cost;
@@ -113,127 +100,90 @@ public abstract class CurrencyClass
 		if (remaining < 0)
 		{
 			if (currency == Currency.POINTS)
-				player.sendMessage(notEnoughPoints);
+				playerCustomPlayer.getPlayer().sendMessage(notEnoughPoints);
 			
 			if (currency == Currency.COINS)
-			player.sendMessage(notEnoughCoins);
+				playerCustomPlayer.getPlayer().sendMessage(notEnoughCoins);
 			
 			return false;
 		}
 		
-		PlayerConfig.setCurrency(player, remaining, currency);
-		ServerScoreBoard.add(player);
+		playerCustomPlayer.setCurrency(remaining, currency);
+		ServerScoreBoard.add(playerCustomPlayer);
 		return true;
 	}
 	
-	public static void genPay(Player player, int amount ,Currency currency)
-	{
-		int remaining = PlayerConfig.getCurrency(player, currency);
+	public static void genPay(CustomPlayer playerCustomPlayer, int amount ,Currency currency) {
+		int remaining = playerCustomPlayer.getCurrency(currency);
 		
-		PlayerConfig.setCurrency(player, amount + remaining, currency);
-		ServerScoreBoard.add(player);
-	}
-	
-	public static void pay(Player giver, Player receiver, int amount, Currency currency)
-	{
-		// Take money, if not enough, cancel payment
-		if (!buy(giver, amount, currency))
-			return;
+		playerCustomPlayer.setCurrency(amount + remaining, currency);
 		
-		// Get receiver's remaining currency
-		int remaining = PlayerConfig.getCurrency(receiver, currency);
-		// Add money into receiver's account
-		PlayerConfig.setCurrency(receiver, remaining + amount, currency);
-		
-		// Send message to giver that it went successful
-		String msg = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully transfered $C $T to $D&e&l!");
-		msg = msg.replaceFirst("$C", amount+"");
-		msg = msg.replaceFirst("$T", currency == Currency.POINTS ? "Points" : "Coins");
-		msg = MessageFormat.format(msg, giver, receiver, null);
-		
-		// Send message
-		giver.sendMessage(msg);
-		
-		// Send message to receiver to notify
-		String msg2 = ChatColor.translateAlternateColorCodes('&', "&e&l$D&e&l gave u $C $T!");
-		msg2 = MessageFormat.format(msg2, giver, receiver, null);
-		msg2 = msg2.replaceFirst("$C", amount+"");
-		msg2 = msg2.replaceFirst("$T", currency == Currency.POINTS ? "Points" : "Coins");
-		
-		// Send message
-		giver.sendMessage(msg2);
-	}
-	
-	/*
-	public static boolean buyWithPoints(Player player, int amount) {
-		File config = PlayerConfig.getPlayerConfig(player);
-		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-		
-		int points = configYaml.getConfigurationSection("Currency").getInt("Points");
-		
-		// If User don't have enough
-		if (amount > points) {
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', notEnoughPoints));
-			return false;
-		}
-		
-		points = points - amount;
-		configYaml.getConfigurationSection("Currency").set("Points", points);
-			
-		// Try save the charge amount to the player's file.
-		try {
-			configYaml.save(config);
-			return true;
-		} catch(IOException e) {
-			PrintConsole.print("ERROR: Can't charge user's points; can't save the charge amount.");
-			
-			return false;
-		}
-		
-	}
-	
-	public static boolean buyWithCoins(Player player, int amount) {
-		File config = PlayerConfig.getPlayerConfig(player);
-		YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-		
-		int coins = configYaml.getConfigurationSection("Currency").getInt("Coins");
-		
-		// If User don't have enough
-		if (amount > coins) {
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', notEnoughCoins));
-			return false;
-		}
-		
-			coins = coins - amount;
-			configYaml.getConfigurationSection("Currency").set("Coins", coins);
-			// Try save the charge amount to the player's file.
-			try {
-				configYaml.save(config);
-			} catch(IOException e) {
-				PrintConsole.print("ERROR: Can't charge user's coins; can't save the charge amount.");
-				
-				return false;
+		Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+			public void run() {
+				ServerScoreBoard.add(playerCustomPlayer);
 			}
-			
-			return true;
-		
-	} */
+		});
+	}
 	
-	public static void displayBalance(Player player) {
+	public static void pay(CustomPlayer givercustomPlayer, CustomPlayer receiverCustomPlayer, int amount, Currency currency) {
+		if (amount < 1) {
+			givercustomPlayer.getPlayer().sendMessage(String.format("%s» %sSorry, but please choose a higher number", ChatColor.GOLD, ChatColor.GRAY));
+			return;
+		}
+		
+		Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+			public void run() {
+				// Take money, if not enough, cancel payment
+				if (!buy(givercustomPlayer, amount, currency))
+					return;
+				
+				// Get receiver's remaining currency
+				int remaining = receiverCustomPlayer.getCurrency(currency);
+				// Add money into receiver's account
+				receiverCustomPlayer.setCurrency(remaining + amount, currency);
+				
+				// Send message to giver that it went successful
+				String msg = String.format("%s» %sSucessfully transfered %d %s to %s",
+						ChatColor.GOLD, ChatColor.GRAY, amount, currency == Currency.POINTS ? "points" : "coins",
+								receiverCustomPlayer.getPlayer().getDisplayName());
+				//msg = msg.replaceFirst("$C", amount+"");
+				//msg = msg.replaceFirst("$T", currency == Currency.POINTS ? "Points" : "Coins");
+				//msg = MessageFormat.format(msg, givercustomPlayer, receiverCustomPlayer, null);
+				
+				// Send message
+				givercustomPlayer.getPlayer().sendMessage(msg);
+				
+				// Send message to receiver to notify
+				String msg2 = String.format("%s» %sYou have just got paid %d %s from %s!", 
+						ChatColor.GOLD, ChatColor.GRAY, currency == Currency.POINTS ? "points" : "coins",
+							givercustomPlayer.getPlayer().getDisplayName());
+				msg2 = MessageFormat.format(msg2, givercustomPlayer, receiverCustomPlayer, null);
+				msg2 = msg2.replaceFirst("$C", amount+"");
+				msg2 = msg2.replaceFirst("$T", currency == Currency.POINTS ? "Points" : "Coins");
+				
+				// Send message
+				receiverCustomPlayer.getPlayer().sendMessage(msg2);
+				
+				ServerScoreBoard.add(receiverCustomPlayer);
+			}
+		});
+	}
+	
+	public static void displayBalance(CustomPlayer customPlayer) {
 		
 		String message = balanceMessage;
 		
 		message = ChatColor.translateAlternateColorCodes('&', message);
-		message = message.replace("$T", getPoints(player)+"");
-		message = message.replace("$C", getCoins(player)+"");
+		message = message.replace("$T", customPlayer.getCurrency(Currency.POINTS)+"");
+		message = message.replace("$C", customPlayer.getCurrency(Currency.COINS)+"");
 		
-		if (player.getCustomName() == null)
-			message = message.replace("$P", player.getDisplayName());
+		if (customPlayer.getPlayer().getCustomName() == null)
+			message = message.replace("$P", customPlayer.getPlayer().getDisplayName());
 		else
-			message = message.replace("$S", player.getCustomName());
-		message = message.replace("$P", player.getDisplayName());
+			message = message.replace("$S", customPlayer.getPlayer().getCustomName());
+		message = message.replace("$P", customPlayer.getPlayer().getDisplayName());
 		
-		player.sendMessage(message);
+		customPlayer.getPlayer().sendMessage(message);
 		
 	}
 	

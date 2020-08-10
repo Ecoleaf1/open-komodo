@@ -7,11 +7,11 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.etc.HomeSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class HomeCommand extends Command
 {
-	private static final String enterNameMsg = ChatColor.translateAlternateColorCodes('&', "&4Enter a name of your home.");
+	private static final String enterNameMsg = String.format("%s» %sPlease enter a name for your home.", ChatColor.GOLD, ChatColor.GRAY);
 
 	public HomeCommand(String name, String description, String usageMessage,
 			List<String> aliases) 
@@ -26,24 +26,23 @@ public class HomeCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		Player player = (Player) sender;
+		CustomPlayer playerCustomPlayer = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		// If there isn't enough arguments
-		if (args.length < 1) 
-		{
+		if (args.length < 1) {
 			// Tell player to enter arguments
-			player.sendMessage(enterNameMsg);
+			playerCustomPlayer.getPlayer().sendMessage(enterNameMsg);
 			return false;
 		}
 		
-		if (args[0].equalsIgnoreCase("help"))
-		{
-			sender.sendMessage(ChatColor.AQUA +"Home Help:\n" + ChatColor.DARK_AQUA+ "Homes are a way to save your location. Different ranks can have different home limit.\nTo create a home, type in: /sethome (Name)\nTo delete a home, type in /delhome (Name)\nTo go to a home, type in /home (name)\nDisplay your current homes: /homes");
+		if (args[0].equalsIgnoreCase("help")) {
+			sender.sendMessage(String.format("%s» %sHome Help:\nHomes are a way to save your location. Different ranks can have different home limit.\\nTo create a home, type in: /sethome (Name)\nTo delete a home, type in /delhome (Name)\nTo go to a home, type in /home (name)\nDisplay your current homes: /homes", 
+					ChatColor.GOLD, ChatColor.GRAY));
 			return true;
 		}
 		
 		// Teleport home
-		HomeSystem.teleportHome(player, args[0]);
+		playerCustomPlayer.teleportHome(args[0]);
 		return true;
 	}
 

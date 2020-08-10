@@ -2,7 +2,6 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,7 +37,8 @@ public class EmoteCommand extends Command
 			Iterator<String> iterator = Emote.nameSortMap.keySet().iterator();
 			
 			StringBuilder sb = new StringBuilder();
-			sb.append(ChatColor.AQUA + "" + ChatColor.BOLD + "Emotes" + ChatColor.DARK_AQUA + ": ");
+			sb.append(String.format("%s» %sEmotes%s: ", ChatColor.GOLD, ChatColor.AQUA, ChatColor.DARK_AQUA));
+			//sb.append(ChatColor.AQUA + "" + ChatColor.BOLD + "Emotes" + ChatColor.DARK_AQUA + ": ");
 			
 			while (iterator.hasNext())
 			{
@@ -54,21 +54,20 @@ public class EmoteCommand extends Command
 		
 		if (args[0].equalsIgnoreCase("reload"))
 		{
-			if (!sender.hasPermission(Permissions.emoteReloadPerm))
-			{
-				sender.sendMessage(ChatColor.DARK_RED + "You don't have permission.");
+			if (!sender.hasPermission(Permissions.emoteReloadPerm)) {
+				sender.sendMessage(String.format("%s» %sYou don't have permission to run this", ChatColor.GOLD, ChatColor.DARK_RED));
 				return false;
 			}
 			
 			Emote.reload();
-			sender.sendMessage(ChatColor.DARK_AQUA+ "Emotes reloaded!");
+			sender.sendMessage(String.format("%s» %sEmotes reloaded!", ChatColor.GOLD, ChatColor.DARK_GREEN));
 			return true;
 		}
 		
 		// If emote entered by player is invaild
 		if (Emote.getByName(args[0].toLowerCase()) == null) 
 		{
-			player.sendMessage("Not an emote.");
+			player.sendMessage(String.format("%s» %sNot an emote", ChatColor.GOLD, ChatColor.GRAY));
 			return false;
 		}
 		

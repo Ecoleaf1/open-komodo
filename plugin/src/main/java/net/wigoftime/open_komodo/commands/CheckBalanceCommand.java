@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class CheckBalanceCommand extends Command
 {
@@ -24,10 +25,10 @@ public class CheckBalanceCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		// Get player
-		Player player = (Player) sender;
+		// Get player in CustomPlayer format
+		CustomPlayer customPlayer = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		CurrencyClass.displayBalance(player);
+		CurrencyClass.displayBalance(customPlayer);
 		return true;
 	}
 

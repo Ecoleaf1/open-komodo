@@ -8,8 +8,8 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.objects.Rank;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public abstract class Status_Bar 
 {
@@ -20,36 +20,25 @@ public abstract class Status_Bar
 		};
 	
 	private static BossBar bar;
-
+	private static byte barIndex = 0;
+	
 	public static void startLoop()
 	{
 		bar = Bukkit.createBossBar(msg[0], BarColor.PURPLE, BarStyle.SEGMENTED_20, BarFlag.DARKEN_SKY);
 		bar.setProgress(0);
 		
-		Thread thread = new Thread(new Runnable() 
-		{
-			public void run() 
-			{
-				while (true)
-				{
-					for (String s : msg)
-					{
-						bar.setTitle(s);
-						
-						try 
-						{
-							Thread.sleep(5000);
-						} catch (InterruptedException e) 
-						{
-							e.printStackTrace();
-						}
-					
-					}
-				}
+		Runnable runnable = new Runnable() {
+			public void run() {
+				if ((msg.length - 1) <= barIndex)
+					barIndex = 0;
+				else
+					barIndex++;
+				
+					bar.setTitle(msg[barIndex]);
 			}
-		});
+		};
 		
-		thread.start();
+		Bukkit.getScheduler().runTaskTimer(Main.getPlugin(), runnable, 20, 100);
 	}
 	
 	public static BossBar getBar() 
@@ -57,26 +46,12 @@ public abstract class Status_Bar
 		return bar;
 	}
 	
-	public static void addPlayer(Player player)
+	public static void addPlayer(CustomPlayer customPlayer)
 	{
 		for (Player pl : bar.getPlayers())
-			if (pl == player)
+			if (pl == customPlayer.getPlayer())
 				return;
 		
-		bar.addPlayer(player);
-		
-		String rankStr = PlayerConfig.getRank(player);
-		Rank rank = Rank.getRank(rankStr);
-		
-		if (rank == null)
-			return;
-		
-		String rankPrefix = rank.getPrefix();
-		
-		if (rankPrefix == null)
-			return;
-		
-		rankPrefix = ChatColor.translateAlternateColorCodes('&', rankPrefix);
-		player.setPlayerListName(rankPrefix + ChatColor.translateAlternateColorCodes('&', "&r| ") + player.getDisplayName());
+		bar.addPlayer(customPlayer.getPlayer());
 	}
 }

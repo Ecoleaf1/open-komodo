@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.commands;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -10,14 +11,13 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class MuteCommand extends Command
-{
-	String playerNotFound = ChatColor.translateAlternateColorCodes('&', "Player not found");
-
+public class MuteCommand extends Command {
+	final String playerNotFound = String.format("%s» %sPlayer not found", ChatColor.GOLD, ChatColor.DARK_RED);
+	
 	public MuteCommand(String name, String description, String usageMessage,
 			List<String> aliases) 
 	{
@@ -27,16 +27,15 @@ public class MuteCommand extends Command
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) 
 	{
-		if (!sender.hasPermission(Permissions.mutePerm))
-		{
-			sender.sendMessage(ChatColor.DARK_RED + "You are not permitted to use that command.");
-			return false;
+		if (!sender.hasPermission(Permissions.mutePerm)) {
+			sender.sendMessage(String.format("%s» %sYou are not permitted to use that command", ChatColor.GOLD, ChatColor.DARK_RED));
+			return true;
 		}
 		
 		if (args.length < 2)
 		{
-			sender.sendMessage(ChatColor.GOLD+this.getUsage());
-			return false;
+			sender.sendMessage(String.format("%s» %sUsage: %s", ChatColor.GOLD, ChatColor.GRAY, this.getUsage()));
+			return true;
 		}
 		
 		// Get player
@@ -46,7 +45,7 @@ public class MuteCommand extends Command
 		if (player == null)
 		{
 			sender.sendMessage(playerNotFound);
-			return false;
+			return true;
 		}
 		
 		if (player.hasPermission(Permissions.mutePerm))
@@ -57,7 +56,7 @@ public class MuteCommand extends Command
 					p.sendMessage(String.format("%s tried to mute another mod %s", sender.getName(), player.getDisplayName()));
 			}
 			
-			return false;
+			return true;
 		}
 		
 		Instant instant = Instant.now();
@@ -139,8 +138,9 @@ public class MuteCommand extends Command
 			
 		}
 		
+		CustomPlayer customPlayer = CustomPlayer.get(player.getUniqueId());
 		// Set mute date
-		PlayerConfig.setMuteDate(player, instant);
+		customPlayer.setMuteDate(Date.from(instant));
 		
 		if (args.length < 3)
 			return true;
@@ -152,8 +152,8 @@ public class MuteCommand extends Command
 			sb2.append(args[i] + " ");
 		}
 		
-		PlayerConfig.setMuteReason(player, sb2.toString());
-		return false;
+		customPlayer.setMuteReason(sb2.toString());
+		return true;
 	}
 
 }

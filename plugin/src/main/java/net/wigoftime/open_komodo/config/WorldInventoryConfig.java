@@ -2,15 +2,11 @@ package net.wigoftime.open_komodo.config;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import net.wigoftime.open_komodo.Main;
@@ -22,6 +18,7 @@ public abstract class WorldInventoryConfig
 {
 	private static final File worldInventoryFolder = new File(Main.dataFolderPath+"/Inventories/Worlds");
 	private static final File bagInventoryFolder = new File(Main.dataFolderPath+"/Inventories/Bags");
+	
 	
 	public static ItemStack[] getInventory(Player player, World world)
 	{
@@ -47,6 +44,7 @@ public abstract class WorldInventoryConfig
 		
 		return list.toArray(new ItemStack[list.size()]);
 	}
+	
 	
 	public static void setInventory(Player player, World world, ItemStack[] inventory)
 	{
@@ -141,6 +139,7 @@ public abstract class WorldInventoryConfig
 		PrintConsole.test("List Length WorldInventory: "+list.length);
 		return index;
 	}
+	
 	
 	public static int createBagInventory(Player player)
 	{

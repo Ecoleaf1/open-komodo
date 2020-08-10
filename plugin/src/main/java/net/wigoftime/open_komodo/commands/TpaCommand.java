@@ -10,7 +10,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.etc.TpSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 
@@ -21,7 +20,9 @@ public class TpaCommand extends Command
 	{
 		super(name, description, usageMessage, aliases);
 	}
-
+	
+	private static final String msgUsage = String.format("%s» %sUsage: /tpa (Player)", ChatColor.GOLD, ChatColor.GRAY);
+	
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) 
 	{
@@ -33,12 +34,15 @@ public class TpaCommand extends Command
 		
 		if (args.length > 0) 
 		{
-			UUID uuid = Bukkit.getPlayer(args[0]).getUniqueId();
-			CustomPlayer target = CustomPlayer.get(uuid);
+			Player targetPlayer = Bukkit.getPlayer(args[0]);
 			
-			if (target != null)
-				target.tpaRequest(player, tpType.TPA);
-			else 
+			if (targetPlayer != null) {
+				UUID uuid = Bukkit.getPlayer(args[0]).getUniqueId();
+				CustomPlayer targetCustomPlayer = CustomPlayer.get(uuid);
+				
+				targetCustomPlayer.tpaRequest(player, tpType.TPA);
+				
+			} else 
 			{
 				String message = MessageFormat.format(CustomPlayer.errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
 				player.getPlayer().sendMessage(message);
@@ -46,7 +50,7 @@ public class TpaCommand extends Command
 				
 		}
 		else
-			player.getPlayer().sendMessage(ChatColor.DARK_RED + this.usageMessage);
+			player.getPlayer().sendMessage(msgUsage);
 		
 		return true;
 	}

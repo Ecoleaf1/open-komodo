@@ -6,7 +6,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.etc.TpSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class TpaDenycommand extends Command

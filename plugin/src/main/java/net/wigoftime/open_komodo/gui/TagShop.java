@@ -1,64 +1,72 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.config.TagConfig;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 
-public class TagShop {
-	
+public class TagShop extends CustomGUI {
+	private static final ItemStack nextItem = new ItemStack(Material.ARROW);
+	private static final ItemStack backItem = new ItemStack(Material.ARROW);
+	private static final ItemStack border = new ItemStack(Material.WHITE_STAINED_GLASS_PANE,1);;
 	private static final int pageSlots = 35;
+	private int page = 1;
 	
-	public static void open(CustomPlayer player) 
-	{
-		if (player.isBuilding())
+	
+	public static void setup() {
 		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
+			ItemMeta itemMeta = nextItem.getItemMeta();
+			itemMeta.setDisplayName("Next");
+			
+			nextItem.setItemMeta(itemMeta);
 		}
 		
-		File plConfig = PlayerConfig.getPlayerConfig(player.getUniqueId());
+		{
+			ItemMeta itemMeta = backItem.getItemMeta();
+			itemMeta.setDisplayName("Back");
+			
+			backItem.setItemMeta(itemMeta);
+		}
+		{
+			ItemMeta itemMeta = border.getItemMeta();
+			itemMeta.setDisplayName(" ");
+			
+			border.setItemMeta(itemMeta);
+		}
+	}
+	
+	public TagShop(CustomPlayer player) {
+		super(player, null, Bukkit.createInventory(null, 54,"Tag Shop"));
 		
-		YamlConfiguration plYaml = YamlConfiguration.loadConfiguration(plConfig);
-		File tagConfig = TagConfig.get();
-		YamlConfiguration tagYaml = YamlConfiguration.loadConfiguration(tagConfig);
-		ConfigurationSection section = tagYaml.getConfigurationSection("Tags");
+		// Adding Border Panels
+		gui.setItem(44, border);
+		gui.setItem(43, border);
+		gui.setItem(42, border);
+		gui.setItem(41, border);
+		gui.setItem(40, border);
+		gui.setItem(39, border);
+		gui.setItem(38, border);
+		gui.setItem(37, border);
+		gui.setItem(36, border);
 		
-		
-		
-		int page;
-		ItemStack idItem = player.getPlayer().getOpenInventory().getItem(44);
-		if (idItem != null)
-			if (idItem.getItemMeta().hasCustomModelData())
-				page = idItem.getItemMeta().getCustomModelData();
-			else
-				page = 1;
-		else
-			page = 1;
-		
-		int tagIndex = pageSlots * (page - 1);
-		
-		Inventory gui = Bukkit.createInventory(null, 54,"Tag Shop");
-		ItemStack itemStack = new ItemStack(Material.NAME_TAG);
+		gotoPage((byte)1);
+	}
+	
+	private void gotoPage(byte page) {
+		this.page = page;
 		
 		List<CustomItem> showTags;
-		List<CustomItem> ownedTags = PlayerConfig.getItem(player.getPlayer(), ItemType.TAG);
-		
+		List<CustomItem> ownedTags = opener.getItems(ItemType.TAG);
 		List<CustomItem> shopTags = CustomItem.getCustomItem(ItemType.TAG);
 		
 		// Get amount of tags that exist
@@ -67,21 +75,23 @@ public class TagShop {
 		// Set size for array with the amount variable
 		showTags = new ArrayList<CustomItem>(amount);
 		
-		
-		for (CustomItem cs : shopTags)
-		{	
+		int shopIndex = 0;
+		for (CustomItem cs : shopTags) {	
+			if (shopIndex < (page - 1) * pageSlots) {
+				shopIndex++;
+				return;
+			}
+			shopIndex++;
+				
 			if (cs.getPointPrice() < 0)
 				continue;
 			
 			boolean alreadyOwned = false;
 			for (CustomItem cs2 : ownedTags)
-			{
-				if (cs2.getItem().getItemMeta().getCustomModelData() == cs.getItem().getItemMeta().getCustomModelData())
-				{
+				if (cs2.getItem().getItemMeta().getCustomModelData() == cs.getItem().getItemMeta().getCustomModelData()) {
 					alreadyOwned = true;
 					break;
 				}
-			}
 			
 			if (alreadyOwned)
 				continue;
@@ -89,36 +99,27 @@ public class TagShop {
 			showTags.add(cs);
 		}
 		
+		//boolean hasNext = showTags.size() > (page * pageSlots) ? true : false;
 		boolean hasNext = showTags.size() > (page * pageSlots) ? true : false;
-		if (hasNext) 
-		{
-			ItemStack nextItem = new ItemStack(Material.ARROW); 
-			{
-				ItemMeta itemMeta = nextItem.getItemMeta();
-				itemMeta.setDisplayName("Next");
-				
-				nextItem.setItemMeta(itemMeta);
-			}
-			
+		if (hasNext)
 			gui.setItem(53, nextItem);
-		}
+		else
+			gui.setItem(53, new ItemStack(Material.AIR));
 		
 		// If can go back a previous page
 		if (page > 1) {
-			ItemStack backItem = new ItemStack(Material.ARROW); 
-			{
-				ItemMeta itemMeta = backItem.getItemMeta();
-				itemMeta.setDisplayName("Back");
-				
-				backItem.setItemMeta(itemMeta);
-			}
+			
 			
 			gui.setItem(45, backItem);
-		}
+		} else
+			gui.setItem(45, new ItemStack(Material.AIR));
 		
 		int slotIndex = 0;
-		for (CustomItem ci : showTags)
-		{
+		
+		for (CustomItem ci : showTags) {
+			if (slotIndex > pageSlots)
+				break;
+			
 			// Get Prices
 			int p;
 			
@@ -148,26 +149,37 @@ public class TagShop {
 			
 			gui.setItem(slotIndex++, is);
 		}
+	}
+
+	@Override
+	public void clicked(InventoryClickEvent clickEvent) {
+		PrintConsole.test("clicked");
 		
-		ItemStack border = new ItemStack(Material.WHITE_STAINED_GLASS_PANE,1); {
-			ItemMeta itemMeta = border.getItemMeta();
-			itemMeta.setDisplayName(" ");
-			
-			border.setItemMeta(itemMeta);
+		clickEvent.setCancelled(true);
+		ItemStack clickedItem = clickEvent.getCurrentItem();
+		
+		if (clickedItem.equals(nextItem)) {
+			gotoPage((byte) ++page);
+			return;
 		}
 		
-		// Adding Border Panels
-		gui.setItem(44, border);
-		gui.setItem(43, border);
-		gui.setItem(42, border);
-		gui.setItem(41, border);
-		gui.setItem(40, border);
-		gui.setItem(39, border);
-		gui.setItem(38, border);
-		gui.setItem(37, border);
-		gui.setItem(36, border);
+		if (clickedItem.equals(backItem)) {
+			gotoPage((byte) --page);
+			return;
+		}
 		
-		player.getPlayer().openInventory(gui);
+		if (clickEvent.getSlot() > pageSlots)
+			return;
+			
+		CustomItem itemTag = CustomItem.getCustomItem(clickedItem.getItemMeta().getCustomModelData());
+		
+		Currency currency;
+		if (itemTag.getPointPrice() > -1)
+			currency = Currency.POINTS;
+		else
+			currency = Currency.COINS;
+		
+		CustomGUI gui = new BuyConfirm(opener, itemTag, currency, itemTag.getPermission());
+		gui.open();
 	}
-	
 }

@@ -14,17 +14,16 @@ public class MoneyCommand extends Command
 	{
 		super(name, description, usageMessage, aliases);
 	}
-
+	
+	private final String moneyInfo = String.format("%s» %sMoney Information: \nSimply earn more points when being on the server. Coins are used to obtain special features. They can be obtained starting at MVP and above, earning coins around every 40 minutes.", 
+			ChatColor.GOLD, ChatColor.GRAY);
+	
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
-	{
-		if (args.length < 1)
-			return false;
+	public boolean execute(CommandSender sender, String command, String[] args) {
+		if (args.length < 1) return false;
 		
-		if (args[0].equalsIgnoreCase("help"))
-		{
-		sender.sendMessage(ChatColor.AQUA + "Money information" + ChatColor.DARK_AQUA + ":\nSimply earn more points when being on the server. Coins are unobtainable as of right now"
-				+ "\nRank up to get a higher salery");
+		if (args[0].equalsIgnoreCase("help")) {
+		sender.sendMessage(moneyInfo);
 		return true;
 		}
 		

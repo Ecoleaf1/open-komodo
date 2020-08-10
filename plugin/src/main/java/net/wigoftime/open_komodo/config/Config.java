@@ -1,111 +1,151 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
 
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.SQLInfo;
 
 abstract public class Config 
 {
-
 	private static final String dataFolderPath = Main.dataFolderPath;
 	private static final File configFile = new File(dataFolderPath+"/config.yml");
 	
-	public static void createConfig()
-	{
-		// If config exists, don't generate
-		if (configFile.exists())
-			return;
+	public static String getMessageFormat() {
+		File configFile = getConfigFile();
 		
-		// Get stream of bytes in default config
-		InputStream is = Main.class.getClassLoader().getResourceAsStream("resources/default_configs/config.yml");
-		// Get reader to read the bytes
-		InputStreamReader isReader = new InputStreamReader(is);
-		// Get reader to read bytes to characters
-		BufferedReader reader = new BufferedReader(isReader);
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Normal Message");
 		
-		// Try write a new config file
-		try
-		{
-			
-			FileWriter fw = new FileWriter(configFile);
-			BufferedWriter writer = new BufferedWriter(fw);
-			
-			while (reader.ready())
-			{
-				writer.write(reader.read());
-			}
-			
-			writer.close();
-		}
-		catch (IOException e)
-		{
-			PrintConsole.print("Could not generation config.yml, IOExeception occured. Here's Stacktrace:");
-			e.printStackTrace();
-		}
+		return normalMessageSection.getString("Format");
 	}
 	
-	/*
-	public static void createConfig() {
+	public static String getTagMessageFormat() {
+		File configFile = getConfigFile();
 		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Normal Message");
 		
-		if (configYMLFile.exists())
-			return;
-			
-			// Create the config yml file (But empty.)
-			FileCreation.createFile(configYMLFile);
-			
-			YamlConfiguration configYAML = new YamlConfiguration();
-			
-			// Variables to create in the config.yml file
-			
-			configYAML.createSection("Normal Message");
-				
-				configYAML.getConfigurationSection("Normal Message").set("Format", "[\"\",{\"text\":\"$G\",\"color\":\"gray\"},{\"text\":\"$S\",\"color\":\"dark_gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Username: $N\"}]}}},{\"text\":\": \",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}},{\"text\":\"$M\",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}}]");
-				configYAML.getConfigurationSection("Normal Message").set("Tag Format", "[\"\",{\"text\":\"$W\",\"color\":\"gray\"},{\"text\":\" | \",\"color\":\"dark_gray\"},{\"text\":\"$G\",\"color\":\"gray\"},{\"text\":\"$S\",\"color\":\"dark_gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Username: $N\"}]}}},{\"text\":\": \",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}},{\"text\":\"$M\",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}}]");
-				configYAML.getConfigurationSection("Normal Message").set("Chat Distance", 50);
-				
-			configYAML.createSection("Private Message");
-				
-				configYAML.getConfigurationSection("Private Message").set("Format (Sent)", "&7you &e-> &7$D &7:&f $M");
-				configYAML.getConfigurationSection("Private Message").set("Format (Received)", "&7$N &e-> &7you &7:&f $M");
-				
-			configYAML.createSection("Global Settings");
-				
-				configYAML.getConfigurationSection("Global Settings").createSection("Spawn");
-					configYAML.getConfigurationSection("Global Settings").getConfigurationSection("Spawn").set("World", "foreverplay");
-					configYAML.getConfigurationSection("Global Settings").getConfigurationSection("Spawn").set("Location", new Vector(-880.5, 17, 1576.5));
-				
-				configYAML.getConfigurationSection("Global Settings").set("Join Message", "");
-				configYAML.getConfigurationSection("Global Settings").set("Leave Message", "");
-				configYAML.getConfigurationSection("Global Settings").set("Allow Item Drops", false);
-				configYAML.getConfigurationSection("Global Settings").set("Explosion Enabled", false);
-				configYAML.getConfigurationSection("Global Settings").set("Leaves Decay", false);
-				configYAML.getConfigurationSection("Global Settings").set("Ice Melts", false);
-				configYAML.getConfigurationSection("Global Settings").set("Fall Damage", false);
-				
-			// Try save the file, if can't, print an error message in the console
-			try {
-				configYAML.save(configYMLFile);
-			} catch (IOException e) {
-				PrintConsole.print("Error: Config.yml Couldn't be saved.");
-			}
-			
-		final World defaultWorld = Bukkit.getWorlds().get(0);
-		defaultWorld.setGameRuleValue("mobGriefing", "false");
-		defaultWorld.setGameRuleValue("doWeatherCycle", "false");
-		defaultWorld.setGameRuleValue("doMobSpawning", "false");
+		return normalMessageSection.getString("Tag Format");
+	}
+	
+	public static int getChatDistance() {
+		File configFile = getConfigFile();
 		
-		final Difficulty d = defaultWorld.getDifficulty();
-		defaultWorld.setDifficulty(Difficulty.PEACEFUL);
-		defaultWorld.setDifficulty(d);
-	} */
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Normal Message");
+		
+		return normalMessageSection.getInt("Chat Distance");
+	}
+	
+	public static String getPrivateSentMessageFormat() {
+		File configFile = getConfigFile();
+		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection privateMessageSection = yamlConfiguration.getConfigurationSection("Private Message");
+		
+		return privateMessageSection.getString("Format (Sent)");
+	}
+	
+	public static String getPrivateReceivedMessageFormat() {
+		File configFile = getConfigFile();
+		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection privateMessageSection = yamlConfiguration.getConfigurationSection("Private Message");
+		
+		return privateMessageSection.getString("Format (Received)");
+	}
+	
+	public static String getResourcePackURL() {
+		File configFile = getConfigFile();
+		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection globalSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return globalSection.getString("Resource Pack");
+	}
+	
+	public static Location getSpawnLocation() {
+		File configFile = getConfigFile();
+		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return (Location) normalMessageSection.get("Spawn Location");
+	}
+	
+	public static boolean isPropShopEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Propshop");
+	}
+	
+	public static boolean isPetShopEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Propshop");
+	}
+	
+	public static boolean isHatshopEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Hatshop");
+	}
+	
+	public static boolean isTagshopEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Tagshop");
+	}
+	
+	public static boolean isBinEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Bin");
+	}
+	
+	public static boolean isWarpsEnabled() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getBoolean("Enable Warps");
+	}
+	
+	public static String getWebsiteDescription() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Website"));
+	}
+	
+	public static String getDiscordDescription() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Discord"));
+	}
+	
+	public static SQLInfo getSQLInfo() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection section = yamlConfiguration.getConfigurationSection("SQL");
+		
+		boolean enabled = section.getBoolean("Enabled");
+		String url = section.getString("URL");
+		String user = section.getString("User");
+		String password = section.getString("Password");
+		boolean sslEnabled = section.getBoolean("EnableSSL");
+		
+		return new SQLInfo(enabled, url, user, password, sslEnabled);
+	}
 	
 	public static File getConfigFile() {
 		return configFile;

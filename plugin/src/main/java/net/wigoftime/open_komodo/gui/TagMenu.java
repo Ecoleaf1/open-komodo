@@ -4,122 +4,109 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 
-abstract public class TagMenu {
-	
+public class TagMenu extends CustomGUI {
 	private static final String tagFormat = "Tag: $W";
 	public static final String title = "Tags";
 	
-	public static final String shop = ChatColor.translateAlternateColorCodes('&', "&e&lTag Shop");
+	private static final ItemStack border = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
+	private static final ItemStack backButton = new ItemStack(Material.ARROW);
+	private static final ItemStack resetButton = new ItemStack(Material.WHITE_WOOL);
+	private static final ItemStack nextButton = new ItemStack(Material.ARROW);
+	private static final ItemStack tagShopButton = new ItemStack(Material.STICK);
 	
-	public static void open(CustomPlayer player, boolean next)
-	{
-		if (player.isBuilding())
+	private static final int slotLimit = 35;
+	public byte page = 1;
+	
+	public static void setup() {
+		// Setup Reset Button
 		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
+			// Name Reset Button
+			ItemMeta meta = resetButton.getItemMeta();
+			meta.setDisplayName("Reset");
+			
+			// Store page number in the reset button for switching pages
+			meta.setCustomModelData(1);
+			resetButton.setItemMeta(meta);
 		}
 		
-		// Create Page number Variable
-		int page;
-		
-		// What page the player is on
-		if (player.getPlayer().getOpenInventory().getTitle().equals(title))
+		// Setup Border Item
 		{
-			// Get Player Inventory
-			Inventory gui = player.getPlayer().getOpenInventory().getTopInventory();
-			
-			// Get Info about Reset Button
-			ItemStack is = gui.getItem(49);
-			ItemMeta im = is.getItemMeta();
-			
-			// Get page number
-			
-			if (next)
-				page = im.getCustomModelData() + 1;
-			else
-				page = im.getCustomModelData() - 1;
-		}
-		else
-			page = 1;
-		
-		// Create Gui
-		Inventory gui = Bukkit.createInventory(null, 54, title);
-		
-		// Create Reset Button
-		ItemStack is;
-		is = new ItemStack(Material.WHITE_WOOL);
-		
-		// Name Reset Button
-		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("Reset");
-		
-		// Store page number in the reset button for switching pages
-		im.setCustomModelData(page);
-		
-		// Create Border Item
-		ItemStack is2 = new ItemStack(Material.WHITE_STAINED_GLASS_PANE);
-		
 		// Set the border name to nothing
-		ItemMeta im2 = is.getItemMeta();
-		im2.setDisplayName(" ");
+		ItemMeta meta = border.getItemMeta();
+		meta.setDisplayName(" ");
 		
 		// Save Changes to border
-		is2.setItemMeta(im2);
+		border.setItemMeta(meta);
+		}
 		
-		// Save Changes
-		is.setItemMeta(im);
+		// Setup backButton
+		{
+			ItemMeta meta = backButton.getItemMeta();
+			
+			// Set display name
+			meta.setDisplayName("Next");
+			
+			// Save Changes
+			backButton.setItemMeta(meta);
+		}
+		
+		// Setup nextButton
+		{
+			ItemMeta meta = nextButton.getItemMeta();
+			
+			// Set display name 
+			meta.setDisplayName("Back");
+			
+			// Save Changes
+			nextButton.setItemMeta(meta);
+		}
+		
+		{
+			ItemMeta meta = tagShopButton.getItemMeta();
+			
+			meta.setDisplayName(getTagShopButtonDisplayName());
+			tagShopButton.setItemMeta(meta);
+		}
+	}
+	
+	public TagMenu(CustomPlayer player) {
+		super(player, null, Bukkit.createInventory(null, 54, title));
 		
 		// Add reset button
-		gui.setItem(49, is);
+		gui.setItem(49, resetButton);
 		
 		// Ad Tagshop button
-		ItemStack iss = new ItemStack(Material.STICK);
-		ItemMeta ims = iss.getItemMeta();
 		
-		ims.setDisplayName(shop);
-		iss.setItemMeta(ims);
-		
-		gui.setItem(48, iss);
+		gui.setItem(48, tagShopButton);
 		
 		// Add Border
-		gui.setItem(44, is2);
-		gui.setItem(43, is2);
-		gui.setItem(42, is2);
-		gui.setItem(41, is2);
-		gui.setItem(40, is2);
-		gui.setItem(39, is2);
-		gui.setItem(38, is2);
-		gui.setItem(37, is2);
-		gui.setItem(36, is2);
+		gui.setItem(44, border);
+		gui.setItem(43, border);
+		gui.setItem(42, border);
+		gui.setItem(41, border);
+		gui.setItem(40, border);
+		gui.setItem(39, border);
+		gui.setItem(38, border);
+		gui.setItem(37, border);
+		gui.setItem(36, border);
 		
 		// Adding limit how many slots can be used
 		int slotLimit = 35;
 		
 		// Get all the tags that the player owns
-		List<CustomItem> list = PlayerConfig.getItem(player.getPlayer(), ItemType.TAG);
-		
-		// Variable to see if there is previous page
-		boolean isPrevious;
+		List<CustomItem> list = player.getItems(ItemType.TAG);
 		
 		// Variable to see if there is next page
 		boolean isNext;
-		
-		// Checks if there is a previous page
-		if (page > 1)
-			isPrevious = true;
-		else
-			isPrevious = false;
 		
 		// get Total amount that player owns
 		int totalAmount;
@@ -127,7 +114,7 @@ abstract public class TagMenu {
 		
 		// get index of the items for the current page.
 		int pageIndex;
-		pageIndex = slotLimit * (page - 1);
+		pageIndex = slotLimit * 0;
 		
 		// What slot number the gui needs to set the item in
 		int slotIndex = 0;
@@ -141,11 +128,9 @@ abstract public class TagMenu {
 		int itemIndex = 0;
 		
 		// Loop through tags and add them to gui
-		for (CustomItem item : list)
-		{
+		for (CustomItem item : list) {
 			// pageAmount is higher than the itemIndex, keep skipping until the loop catches up
-			if ((pageIndex) > itemIndex)
-			{
+			if ((pageIndex) > itemIndex) {
 				itemIndex++;
 				continue;
 			}
@@ -161,48 +146,130 @@ abstract public class TagMenu {
 		}
 		
 		// Checks if there is a next page
-		if (totalAmount >= (35 * page))
+		if (totalAmount >= 35)
 			isNext = true;
 		else
 			isNext = false;
 		
-		// If there is a previous page
-		if (isPrevious)
-		{
-			// Create back button
-			ItemStack is3 = new ItemStack(Material.ARROW);
-			ItemMeta im3 = is3.getItemMeta();
-			
-			// Set display name
-			im3.setDisplayName("Back");
-			
-			// Save Changes
-			is3.setItemMeta(im3);
-			
-			// Add back button
-			gui.setItem(46, is3);
-		}
-		
 		// If there is a next page
 		if (isNext)
-		{
-			// Create next button
-			ItemStack is3 = new ItemStack(Material.ARROW);
-			ItemMeta im3 = is3.getItemMeta();
-			
-			// Set display name 
-			im3.setDisplayName("Next");
-			
-			// Save Changes
-			is3.setItemMeta(im3);
-			
 			// Add Next Button
-			gui.setItem(53, is3);
-		}
-		else
-			gui.setItem(53, new ItemStack(Material.AIR));
+			gui.setItem(53, nextButton);
 		
 		player.getPlayer().openInventory(gui);
+	}
+	
+	@Override
+	public void clicked(InventoryClickEvent clickEvent) {
+		ItemStack clickedItem = clickEvent.getCurrentItem();
+		
+		clickEvent.setCancelled(true);
+		
+		if (clickedItem.equals(nextButton)) {
+			toPage(true);	
+			return;
+		} else if (clickedItem.equals(backButton)) {
+			toPage(false);
+			return;
+		} else if (clickedItem.equals(resetButton)) {
+			opener.setTagDisplay("");
+			return;
+		} else if (clickEvent.getCurrentItem().equals(tagShopButton)) {
+			TagShop gui = new TagShop(opener);
+			gui.open();
+		}
+		
+		if (clickEvent.getSlot() > slotLimit)
+			return;
+		
+		//CustomItem item = CustomItem.getCustomItem(clickedItem.getItemMeta().getCustomModelData());
+		opener.setTagDisplay(clickedItem.getItemMeta().getDisplayName());
+		opener.getPlayer().closeInventory();
+		
+	}
+	
+	private void toPage(boolean isForward) {
+		if (isForward)
+			page++;
+		else
+			page--;
+		
+		// Get all the tags that the player owns
+				List<CustomItem> list = opener.getItems(ItemType.TAG);
+				
+				// Variable to see if there is previous page
+				boolean isPrevious;
+				
+				// Variable to see if there is next page
+				boolean isNext;
+				
+				// Checks if there is a previous page
+				if (page > 1)
+					isPrevious = true;
+				else
+					isPrevious = false;
+				
+				// get Total amount that player owns
+				int totalAmount;
+				totalAmount = list.size();
+				
+				// get index of the items for the current page.
+				int pageIndex;
+				pageIndex = slotLimit * (page - 1);
+				
+				// What slot number the gui needs to set the item in
+				int slotIndex = 0;
+				
+				/* What the list is up to
+				 * 
+				 * This is used when player needs to go on next page,
+				 * Where it can tell the item list to catch up until it is
+				 * on the next page of the items.
+				 */
+				int itemIndex = 0;
+				
+				// Loop through tags and add them to gui
+				for (CustomItem item : list) {
+					// pageAmount is higher than the itemIndex, keep skipping until the loop catches up
+					if ((pageIndex) > itemIndex) {
+						itemIndex++;
+						continue;
+					}
+					
+					// Stop if loop reaches slot limit
+					if (slotIndex > slotLimit)
+						break;
+					
+					// Get it into the ItemStack format
+					ItemStack is3 = item.getItem();
+					
+					gui.setItem(slotIndex++, is3);
+				}
+				
+				// Checks if there is a next page
+				if (totalAmount >= (35 * page))
+					isNext = true;
+				else
+					isNext = false;
+				
+				// If there is a previous page
+				if (isPrevious) {
+					// Add back button
+					gui.setItem(46, backButton);
+				} else
+					gui.setItem(46, new ItemStack(Material.AIR));
+				
+				// If there is a next page
+				if (isNext) {
+					// Add Next Button
+					gui.setItem(53, nextButton);
+				}
+				else
+					gui.setItem(53, new ItemStack(Material.AIR));
+	}
+	
+	public static String getTagShopButtonDisplayName() {
+		return ChatColor.WHITE + "" + ChatColor.BOLD + "Tag Shop";
 	}
 	
 }

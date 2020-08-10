@@ -2,25 +2,18 @@ package net.wigoftime.open_komodo.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public abstract class BinGUI 
-{
-	public static final String title = ChatColor.translateAlternateColorCodes('&', "&7&lBin");
+public class BinGUI extends CustomGUI{
+	static final String title = String.format("%sBin", ChatColor.GRAY);
 	
-	public static void open(CustomPlayer player)
-	{
-		if (player.isBuilding())
-		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
-		}
-		
-		Inventory gui = Bukkit.createInventory(null, 27,title);
-		
-		player.getPlayer().openInventory(gui);
+	public BinGUI(CustomPlayer customPlayer) {
+		super(customPlayer, null, Bukkit.createInventory(null, 27,title));
+	}
+
+	public void clicked(InventoryClickEvent clickEvent) {
+		return;
 	}
 }

@@ -157,4 +157,9 @@ abstract public class PetsManager
 	{
 		return awaitingInput.contains(player.getUniqueId());
 	}
+	
+	public static void serverShuttingDown() {
+		for (Entry<UUID, CraftCreature> entry : pets.entrySet())
+			entry.getValue().setHealth(0);
+	}
 }

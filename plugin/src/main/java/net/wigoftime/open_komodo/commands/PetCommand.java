@@ -7,8 +7,7 @@ import org.bukkit.entity.Player;
 import net.wigoftime.open_komodo.gui.PetsGui;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class PetCommand extends Command
-{
+public class PetCommand extends Command {
 
 	public PetCommand() {
 		super("pet");
@@ -22,7 +21,8 @@ public class PetCommand extends Command
 		
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		PetsGui.create(player);
+		PetsGui gui = new PetsGui(player);
+		gui.open();
 		return false;
 	}
 

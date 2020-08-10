@@ -67,7 +67,8 @@ public class CustomPetZombie extends EntityZombie implements CustomPet
     	if (entity.getUniqueID() == owner.getUniqueId())
     	{
     		CustomPlayer player = CustomPlayer.get(entity.getUniqueID());
-    		PetControl.create(player);
+    		PetControl gui = new PetControl(player);
+    		gui.open();
     	}
     	
     	return false;

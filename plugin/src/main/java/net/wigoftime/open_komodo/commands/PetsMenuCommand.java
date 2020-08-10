@@ -13,22 +13,20 @@ public class PetsMenuCommand extends Command
 {
 
 	public PetsMenuCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
-	{
+			List<String> aliases) {
 		super(name, description, usageMessage, aliases);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
-	{
+	public boolean execute(CommandSender sender, String command, String[] args) {
 		if (!(sender instanceof Player))
 			return false;
 		
 		// Get sender in CustomPlayer format
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		PetsGui.create(player);
+		PetsGui gui = new PetsGui(player);
+		gui.open();
 		return true;
 	}
 

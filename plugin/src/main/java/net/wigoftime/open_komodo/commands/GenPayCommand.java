@@ -12,61 +12,53 @@ import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class GenPayCommand extends Command
 {
 
 	public GenPayCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
-	{
+			List<String> aliases) {
 		super(name, description, usageMessage, aliases);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
-	{
-		
+	public boolean execute(CommandSender sender, String command, String[] args) {
 		// Check if Player has permission
-		if (!sender.hasPermission(Permissions.genPayPerm))
-		{
+		if (!sender.hasPermission(Permissions.genPayPerm)) {
 			sender.sendMessage(Permissions.useError);
 			return false;
 		}
 		
 		// cancel if there's less than 4 sub-commands
-		if (args.length < 3)
-		{
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eUsage: /pay {Player} {Amount} {Currency}"));
+		if (args.length < 3) {
+			sender.sendMessage(String.format("%s» %sUsage: /pay {Player} {Amount} {Currency}", ChatColor.GOLD, ChatColor.GRAY));
 			return false;
 		}
 		
-		// Get sub-command targetting a player
+		// Get command arguments of target player's username, the amount to be given,
+		// and currency type to be paid in.
 		String targetStr = args[0];
-		
-		// Get sub-command targetting amount
 		String amountStr = args[1];
-		
-		// Get Sub-command targetting Currency Type
 		String currencyStr = args[2];
 		
-		// Get Target
-		Player target = Bukkit.getPlayer(targetStr);
+		// Get sender in player format
+		Player playerSender = Bukkit.getPlayer(targetStr);
 		
-		// If target doesn't exist, cancel
-		if (target == null)
+		if (playerSender == null)
 			return false;
+		
+		// Get sender in CustomPlayer format
+		CustomPlayer customPlayerSender = CustomPlayer.get(playerSender.getUniqueId());
 		
 		// Get Amount
 		int amount;
 		
 		// Try convert amount String to Integer
-		try
-		{
+		try {
 			amount = Integer.parseInt(amountStr);
 		}
-		catch (NumberFormatException ee)
-		{
+		catch (NumberFormatException exception) {
 			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown amount. Use digit numbers"));
 			return false;
 		}
@@ -85,10 +77,10 @@ public class GenPayCommand extends Command
 		}
 		
 		// Generate money to player
-		CurrencyClass.genPay(target, amount, currency);
+		CurrencyClass.genPay(customPlayerSender, amount, currency);
 		
 		// Update Target's info side bored
-		ServerScoreBoard.add(target);
+		ServerScoreBoard.add(customPlayerSender);
 		
 		return true;
 	}

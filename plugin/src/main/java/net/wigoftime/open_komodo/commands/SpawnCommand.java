@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -17,10 +18,12 @@ public class SpawnCommand extends Command
 	{
 		super(name, description, usageMessage, aliases);
 	}
+	
+	private final String teleportedMsg = String.format("%s» %steleported to %s%sSpawn", 
+			ChatColor.GOLD, ChatColor.GRAY, ChatColor.GOLD, ChatColor.BOLD);
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
-	{
+	public boolean execute(CommandSender sender, String command, String[] args) {
 		// Don't continue if isn't player
 		if (!(sender instanceof Player))
 			return false;
@@ -30,6 +33,8 @@ public class SpawnCommand extends Command
 		
 		// Teleport to fp
 		player.teleport(Main.getSpawnLocation());
+		
+		player.sendMessage(teleportedMsg);
 		
 		// Set gamemode to survival
 		player.setGameMode(GameMode.SURVIVAL);

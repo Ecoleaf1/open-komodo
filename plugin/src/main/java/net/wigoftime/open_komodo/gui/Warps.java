@@ -5,169 +5,152 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class Warps 
+public class Warps extends CustomGUI
 {
+	public static final String title = ChatColor.RED + "Warps";
 	
 	private static enum warps {AIRPORT, HIGH_SCHOOL, TOWN_HALL, BEACH, CRUISE_SHIP};
-
-	public static final String guiName = ChatColor.translateAlternateColorCodes('&', "&cWarps");
 	
-	private static ItemStack airport;
-	private static String airportName = ChatColor.translateAlternateColorCodes('&', "&lAirport");
+	// All Warp Icons
+	private static ItemStack airportItemStackIcon;
+	private static ItemStack highschoolItemStackIcon;
+	private static ItemStack townHallItemStackIcon;
+	private static ItemStack beachItemStackIcon;
+	private static ItemStack cruiseShipItemStackIcon;
 	
-	private static ItemStack hs;
-	private static String hsName = ChatColor.translateAlternateColorCodes('&', "&lKomodo High School");
-	
-	private static ItemStack th;
-	private static String thName = ChatColor.translateAlternateColorCodes('&', "&r&lTown Hall");
-	
-	private static ItemStack beach;
-	private static String beachName = ChatColor.translateAlternateColorCodes('&', "&r&lBeach");
-	
-	private static ItemStack cruiseShip;
-	private static String cruiseShipName = ChatColor.translateAlternateColorCodes('&', "&r&lCruise Ship");
-	
-	public static void open(CustomPlayer player) 
-	{
-		if (player.isBuilding())
-		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
-		}
+	public Warps(CustomPlayer opener) {
+		super(opener, null, Bukkit.createInventory(null, 27, title));
+		//Inventory gui = Bukkit.createInventory(null, 27,title);
+		gui.setContents(getIcons(gui.getSize()));
 		
-		Inventory gui = Bukkit.createInventory(null, 27,guiName);
-		
-		gui.setItem(10, hs);
-		gui.setItem(11, th);
-		gui.setItem(12, beach);
-		gui.setItem(13, cruiseShip);
-		gui.setItem(14, airport);
-		
-		player.getPlayer().openInventory(gui);
+		return;
 	}
 	
-	public static void clicked(Player player, ItemStack item) 
-	{
+	private static ItemStack[] getIcons(int size) {
+		ItemStack[] itemStacks = new ItemStack[size];
 		
-		if (item.getType() == hs.getType() && item.getItemMeta().getDisplayName().equals(hs.getItemMeta().getDisplayName())) {
-			teleport(player, warps.HIGH_SCHOOL);
-			player.closeInventory();
+		itemStacks[10] = highschoolItemStackIcon;
+		itemStacks[11] = townHallItemStackIcon;
+		itemStacks[12] = beachItemStackIcon;
+		itemStacks[13] = cruiseShipItemStackIcon;
+		itemStacks[14] = airportItemStackIcon;
+		
+		return itemStacks;
+	}
+	
+	public void clicked(InventoryClickEvent clickEvent) {
+		clickEvent.setCancelled(true);
+		final ItemStack clickedItemStack = clickEvent.getCurrentItem();
+		
+		if (!clickedItemStack.getItemMeta().hasCustomModelData())
+			return;
+			
+		int clickedItemID = clickedItemStack.getItemMeta().getCustomModelData();
+		
+		// If clicked on HighSchool Warp Icon
+		if (clickedItemID == highschoolItemStackIcon.getItemMeta().getCustomModelData()) {
+			teleport(opener.getPlayer(), warps.HIGH_SCHOOL);
+			opener.getPlayer().closeInventory();
 			return;
 		}
 		
-		if (item.getType() == th.getType() && item.getItemMeta().getDisplayName().equals(th.getItemMeta().getDisplayName())) {
-			teleport(player, warps.TOWN_HALL);
-			player.closeInventory();
+		// If clicked on TownHall Warp Icon
+		if (clickedItemID == townHallItemStackIcon.getItemMeta().getCustomModelData()) {
+			teleport(opener.getPlayer(), warps.TOWN_HALL);
+			opener.getPlayer().closeInventory();
 			return;
 		}
 		
-		if (item.getType() == beach.getType() && item.getItemMeta().getDisplayName().equals(beach.getItemMeta().getDisplayName())) {
-			teleport(player, warps.BEACH);
-			player.closeInventory();
+		// If clicked on Beach Warp Icon
+		if (clickedItemID == beachItemStackIcon.getItemMeta().getCustomModelData()) {
+			teleport(opener.getPlayer(), warps.BEACH);
+			opener.getPlayer().closeInventory();
 			return;
 		}
 		
-		if (item.getType() == cruiseShip.getType() && item.getItemMeta().getDisplayName().equals(cruiseShip.getItemMeta().getDisplayName())) 
-		{
-			teleport(player, warps.CRUISE_SHIP);
-			player.closeInventory();
+		// If clicked on CruiseShip Warp Icon
+		if (clickedItemID == cruiseShipItemStackIcon.getItemMeta().getCustomModelData()) {
+			teleport(opener.getPlayer(), warps.CRUISE_SHIP);
+			opener.getPlayer().closeInventory();
 			return;
 		}
 		
-		if (item.getType() == airport.getType() && item.getItemMeta().getDisplayName().equals(airport.getItemMeta().getDisplayName())) {
-			teleport(player, warps.AIRPORT);
-			player.closeInventory();
+		// If clicked on Airport Warp Icon
+		if (clickedItemID == airportItemStackIcon.getItemMeta().getCustomModelData()) {
+			teleport(opener.getPlayer(), warps.AIRPORT);
+			opener.getPlayer().closeInventory();
 			return;
 		}
 		
 	}
 	
-	public static void teleport(Player player, warps place) 
-	{
-		
-		if (place == warps.HIGH_SCHOOL) 
-		{
+	public static void teleport(Player player, warps place) {
+		switch(place) {
+		case HIGH_SCHOOL:
 			player.teleport(new Location(Main.world, 302, 68, -160,(float)137, (float) -1.1));
 			return;
-		}
-		
-		if (place == warps.TOWN_HALL) 
-		{
+		case TOWN_HALL: 
 			player.teleport(new Location(Main.world, -257, 62, -237,(float)123.5, (float) 4.1));
 			return;
-		}
-		
-		if (place == warps.BEACH) 
-		{
+		case BEACH:
 			player.teleport(new Location(Main.world, -93, 62, -386,(float)179, (float) 2.2));
 			return;
-		}
-		
-		if (place == warps.CRUISE_SHIP) 
-		{
+		case CRUISE_SHIP:
 			player.teleport(new Location(Main.world, 108, 68, -382,(float)179, (float) 2.2));
 			return;
-		}
 		
-		if (place == warps.AIRPORT) {
+		case AIRPORT:
 			player.teleport(new Location(Main.world, -943, 69, 94));
 			return;
 		}
-		
 	}
 	
-	public static void setup() 
-	{
-		airport = new ItemStack(Material.INK_SAC); 
-		{
-			ItemMeta meta = airport.getItemMeta();
-			meta.setDisplayName(airportName);
-			meta.setCustomModelData(-7);
+	public static void setup() {
+		airportItemStackIcon = new ItemStack(Material.INK_SAC); {
+			ItemMeta itemMeta = airportItemStackIcon.getItemMeta();
+			itemMeta.setDisplayName(ChatColor.BOLD + "Airport");
+			itemMeta.setCustomModelData(-7);
 			
-			airport.setItemMeta(meta);
+			airportItemStackIcon.setItemMeta(itemMeta);
 		}
 		
-		hs = new ItemStack(Material.INK_SAC); 
-		{
-			ItemMeta meta = hs.getItemMeta();
-			meta.setDisplayName(hsName);
-			meta.setCustomModelData(-4);
+		highschoolItemStackIcon = new ItemStack(Material.INK_SAC); {
+			ItemMeta itemMeta = highschoolItemStackIcon.getItemMeta();
+			itemMeta.setDisplayName(ChatColor.BOLD + "Komodo High School");
+			itemMeta.setCustomModelData(-4);
 			
-			hs.setItemMeta(meta);
+			highschoolItemStackIcon.setItemMeta(itemMeta);
 		}
 		
-		th = new ItemStack(Material.INK_SAC); 
-		{
-			ItemMeta meta = th.getItemMeta();
-			meta.setDisplayName(thName);
-			meta.setCustomModelData(-5);
+		townHallItemStackIcon = new ItemStack(Material.INK_SAC); {
+			ItemMeta itemMeta = townHallItemStackIcon.getItemMeta();
+			itemMeta.setDisplayName(ChatColor.BOLD + "Town Hall");
+			itemMeta.setCustomModelData(-5);
 			
-			th.setItemMeta(meta);
+			townHallItemStackIcon.setItemMeta(itemMeta);
 		}
 		
-		beach = new ItemStack(Material.INK_SAC); 
-		{
-			ItemMeta meta = beach.getItemMeta();
-			meta.setDisplayName(beachName);
-			meta.setCustomModelData(-6);
+		beachItemStackIcon = new ItemStack(Material.INK_SAC); {
+			ItemMeta itemMeta = beachItemStackIcon.getItemMeta();
+			itemMeta.setDisplayName(ChatColor.BOLD + "Beach");
+			itemMeta.setCustomModelData(-6);
 			
-			beach.setItemMeta(meta);
+			beachItemStackIcon.setItemMeta(itemMeta);
 		}
 		
-		cruiseShip = new ItemStack(Material.INK_SAC); 
-		{
-			ItemMeta meta = cruiseShip.getItemMeta();
-			meta.setDisplayName(cruiseShipName);
-			meta.setCustomModelData(-7);
+		cruiseShipItemStackIcon = new ItemStack(Material.INK_SAC); {
+			ItemMeta itemMeta = cruiseShipItemStackIcon.getItemMeta();
+			itemMeta.setDisplayName(ChatColor.BOLD + "Cruise Ship");
+			itemMeta.setCustomModelData(-7);
 			
-			cruiseShip.setItemMeta(meta);
+			cruiseShipItemStackIcon.setItemMeta(itemMeta);
 		}
 		
 	}

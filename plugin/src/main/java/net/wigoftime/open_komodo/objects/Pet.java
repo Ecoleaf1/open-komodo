@@ -4,6 +4,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 
 import net.minecraft.server.v1_14_R1.EntityTypes;
@@ -17,6 +21,8 @@ public class Pet
 	private final String displayName;
 	private final List<String> description;
 	private final Permission permission;
+	
+	public static final Material material = Material.GHAST_SPAWN_EGG;
 	
 	private final int pPrice;
 	private final int cPrice;
@@ -33,16 +39,32 @@ public class Pet
 		
 		this.pPrice = pPrice;
 		this.cPrice = cPrice;
-		//this.type = type;
 		this.id = id;
 		this.type = type;
 		
 		pets.add(this);
 	}
 	
+	public ItemStack getItem()
+	{
+		ItemStack petDisplayItemStack = new ItemStack(material);
+		ItemMeta petDisplayItemMeta = petDisplayItemStack.getItemMeta();
+		
+		petDisplayItemMeta.setDisplayName(ChatColor.DARK_AQUA + displayName);
+		petDisplayItemMeta.setCustomModelData(id);
+		
+		petDisplayItemStack.setItemMeta(petDisplayItemMeta);
+		return petDisplayItemStack;
+	}
+	
 	public String getDisplayName()
 	{
 		return displayName;
+	}
+	
+	public Permission getPermission()
+	{
+		return permission;
 	}
 	
 	public int getPrice(Currency currency)
@@ -59,12 +81,6 @@ public class Pet
 	{
 		return type;
 	}
-	
-	/*
-	public EntityType getType()
-	{
-		return type;
-	}*/
 	
 	public int getID()
 	{

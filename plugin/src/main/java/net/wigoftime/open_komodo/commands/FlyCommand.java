@@ -12,8 +12,8 @@ import net.wigoftime.open_komodo.etc.Permissions;
 public class FlyCommand extends Command
 {
 	
-	private static final String flyingOff = ChatColor.GRAY + "Flying off.";
-	private static final String flyingOn = ChatColor.GRAY + "Flying on.";
+	private static final String flyingOff = String.format("%s» %sFlying disabled", ChatColor.GOLD, ChatColor.GRAY);
+	private static final String flyingOn = String.format("%s» %sFlying enabled", ChatColor.GOLD, ChatColor.GRAY);
 	
 	public FlyCommand(String name, String description, String usageMessage,
 			List<String> aliases) 

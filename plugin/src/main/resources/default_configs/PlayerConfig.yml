@@ -1,0 +1,23 @@
+General:
+  Rank ID: 0
+  Active Tag: ''
+  XP: 0.0
+  Date Joined: %s
+  
+Currency:
+  Points: %d
+  Coins: %d
+  
+Moderation:
+  Mute Date: %s
+  Mute Reason: ''
+  Ban Date: %s
+  Ban Reason: ''
+  
+Custom Inventory:
+  Items: []
+  Pets: []
+  
+Homes: {}
+Worlds: {}
+Global Permissions: []

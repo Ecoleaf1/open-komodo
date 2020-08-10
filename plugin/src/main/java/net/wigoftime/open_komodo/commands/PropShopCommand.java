@@ -28,7 +28,8 @@ public class PropShopCommand extends Command
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		// Open Prop Shop
-		PropShop.open(player);
+		PropShop gui = new PropShop(player);
+		gui.open();
 		return true;
 	}
 	

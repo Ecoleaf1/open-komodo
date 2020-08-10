@@ -1,28 +1,30 @@
 package net.wigoftime.open_komodo.etc;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Home;
 
 abstract public class HomeSystem {
 	private static final File playerConfigFolder = new File(Main.dataFolderPath+"/Players/");
 	
 	public static final String noHomes = ChatColor.translateAlternateColorCodes('&', "&4You have no homes!");
-	private static final String invaildHouse = ChatColor.translateAlternateColorCodes('&', "&cYou don't have a house by that name!");
+	public static final String invaildHouse = ChatColor.translateAlternateColorCodes('&', "&cYou don't have a house by that name!");
 	private static final String aboveLimit = ChatColor.translateAlternateColorCodes('&', "&cSorry, but you are above your home limit!");
 	private static final String homeCreated = ChatColor.translateAlternateColorCodes('&', "&b&lHome Created!");
 	
 	private static final String homeDeleted = ChatColor.translateAlternateColorCodes('&', "&cHome deleted.");
 	
+	public static void createHome(CustomPlayer playerCustomPlayer, String name) {
+		Home home = new Home(name, playerCustomPlayer.getPlayer().getLocation());
+		
+		playerCustomPlayer.addHome(home);
+	}
 	
+	/*
 	public static void createHouse(Player player, String name) {
 		File playerConfig = new File(playerConfigFolder.getPath()+"/"+player.getUniqueId()+".yml");
 		YamlConfiguration playerYaml = YamlConfiguration.loadConfiguration(playerConfig);
@@ -115,6 +117,6 @@ abstract public class HomeSystem {
 		}
 		
 		return homes;
-	}
+	}*/
 	
 }

@@ -8,9 +8,10 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PayCommand extends Command
 {
@@ -19,6 +20,8 @@ public class PayCommand extends Command
 	{
 		super(name, description, usageMessage, aliases);
 	}
+	
+	private static final String usageCommand = String.format("%s» %sUsage: /pay {Player} {Amount} {Currency}", ChatColor.GOLD, ChatColor.GRAY);
 
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) 
@@ -28,12 +31,11 @@ public class PayCommand extends Command
 			return false;
 		
 		// Get sender in player format
-		Player player = (Player) sender;
+		Player senderPlayer = (Player) sender;
 		
 		// cancel if there's less than 4 sub-commands
-		if (args.length < 3)
-		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&eUsage: /pay {Player} {Amount} {Currency}"));
+		if (args.length < 3) {
+			senderPlayer.sendMessage(usageCommand);
 			return false;
 		}
 		
@@ -57,13 +59,10 @@ public class PayCommand extends Command
 		int amount;
 		
 		// Try convert amount String to Integer
-		try
-		{
+		try {
 			amount = Integer.parseInt(amountStr);
-		}
-		catch (NumberFormatException ee)
-		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown amount. Use digit numbers"));
+		} catch (NumberFormatException ee) {
+			senderPlayer.sendMessage(String.format("%s» %sUnknown amount. Use digit numbers", ChatColor.GOLD, ChatColor.DARK_RED));
 			return false;
 		}
 		
@@ -74,20 +73,27 @@ public class PayCommand extends Command
 			currency = Currency.POINTS;
 		else if (currencyStr.equalsIgnoreCase("Coins"))
 			currency = Currency.COINS;
-		else
-		{
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&4Unknown Currency Type. Usage: Points/Coins"));
+		else {
+			senderPlayer.sendMessage(String.format("%s» %sUnknown currency type. Use Points or Coins", ChatColor.GOLD, ChatColor.DARK_RED));
 			return false;
 		}
 		
+		// Get Sender in customPlayer
+		CustomPlayer senderCustomPlayer = CustomPlayer.get(senderPlayer.getUniqueId());
+		
 		// Pay player
-		CurrencyClass.pay(player, target, amount, currency);
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				CurrencyClass.pay(senderCustomPlayer, CustomPlayer.get(target.getUniqueId()), amount, currency);
+			}
+		});
 		
+		/*
 		// Update Sender's info side bored
-		ServerScoreBoard.add(player);
+		ServerScoreBoard.add(senderCustomPlayer);
 		
-		if (target != player)
-			ServerScoreBoard.add(target);
+		if (target != senderCustomPlayer.getPlayer())
+			ServerScoreBoard.add(senderCustomPlayer); */
 		
 		return true;
 	}

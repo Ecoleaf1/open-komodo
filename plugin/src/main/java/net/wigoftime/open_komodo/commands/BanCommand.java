@@ -2,7 +2,9 @@ package net.wigoftime.open_komodo.commands;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,11 +12,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Moderation;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class BanCommand extends Command
 {
@@ -53,23 +58,28 @@ public class BanCommand extends Command
 			}
 		}
 		
-		if (PlayerConfig.getPlayerConfig(target) != null)
+		//if (PlayerConfig.getPlayerConfig(target) != null)
+		//{
+		List<Permission> perms; 
+		if (SQLManager.isEnabled())
+		perms = SQLManager.getGlobalPermissions(target.getUniqueId());
+		else
+		perms = PlayerConfig.getGlobalPermissions(target.getUniqueId());
+		
+		for (Permission permission : perms)
 		{
-			List<String> perms = PlayerConfig.getPermissions(target);
-			for (String ss : perms)
+			if (permission.getName().equals(Permissions.abuseMonitorPerm.getName()))
 			{
-				if (ss.equals(Permissions.abuseMonitorPerm.getName()))
+				for (Player p : Bukkit.getOnlinePlayers())
 				{
-					for (Player p : Bukkit.getOnlinePlayers())
-					{
-						if (p.hasPermission(Permissions.abuseMonitorPerm))
-							p.sendMessage(String.format("%s tried to mute another mod %s", sender.getName(), target.getName()));
-					}
-					
-					return false;
+					if (p.hasPermission(Permissions.abuseMonitorPerm))
+						p.sendMessage(String.format("%s tried to mute another mod %s", sender.getName(), target.getName()));
 				}
+				
+				return false;
 			}
 		}
+		//}
 		
 		Instant instant = Instant.now();
 		
@@ -150,6 +160,10 @@ public class BanCommand extends Command
 		}
 		// After loop
 		
+		// Create reference variables to referense on potentially different threads
+		final UUID refUUID = target.getUniqueId();
+		final Instant refInstant = instant;
+		
 		if (args.length > 2)
 		{
 			StringBuilder sb2 = new StringBuilder();
@@ -158,11 +172,19 @@ public class BanCommand extends Command
 				sb2.append(args[i]+" ");
 			}
 			
-			Moderation.ban(target, instant, sb2.toString());
+			Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+				public void run() {
+					Moderation.ban(refUUID, Date.from(refInstant), sb2.toString());
+				}
+			});
+			Moderation.ban(target.getUniqueId(), Date.from(instant), sb2.toString());
 		}
 		else
-			Moderation.ban(target, instant, null);
-		
+			Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+				public void run() {
+					Moderation.ban(refUUID, Date.from(refInstant), null);
+				}
+			});
 		
 		return true;
 	}

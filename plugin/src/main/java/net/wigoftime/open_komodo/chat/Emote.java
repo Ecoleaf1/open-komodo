@@ -16,7 +16,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.config.EmoteConfig;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 
 public class Emote {
 	
@@ -40,26 +39,12 @@ public class Emote {
 		this.msgOthers = msgOthers;
 		this.msgSolo = msgSolo;
 		
-		if (name != null) {
-			name = name.toLowerCase();
-			nameSortMap.put(name, this);
-		}
-		
-		if (command != null) {
-			command = command.toLowerCase();
-			commandSortMap.put(command, this);
-		}
+		if (name != null) nameSortMap.put(name.toLowerCase(), this);
+		if (command != null) commandSortMap.put(command.toLowerCase(), this);
 	}
 	
-	public String getOtherMsg() 
-	{
-		return msgOthers;
-	}
-	
-	public String getSoloMsg() 
-	{
-		return msgSolo;
-	}
+	public String getOtherMsg() { return msgOthers; }
+	public String getSoloMsg() { return msgSolo; }
 	
 	// Static functions
 	
@@ -131,7 +116,7 @@ public class Emote {
 		
 		// Play a sound to direct Player to notify about emote
 		if (directPlayer != null)
-		directPlayer.playSound(directPlayer.getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
+			directPlayer.playSound(directPlayer.getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
 	}
 	
 	public static Emote getByName(String name) {
@@ -182,8 +167,6 @@ public class Emote {
 			// Register new command
 			map.register("emote", new Command(emote.command) 
 			{
-				
-				@Override
 				public boolean execute(CommandSender sender, String command, String[] args) 
 				{
 					if (!(sender instanceof Player))
@@ -192,7 +175,6 @@ public class Emote {
 						return false;
 					}
 					
-					PrintConsole.test("Sending emote.");
 					if (args.length > 0)
 					{
 						if (emote.msgOthers == null)

@@ -1,65 +1,96 @@
 package net.wigoftime.open_komodo.gui;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-abstract public class PetControl 
-{
+public class PetControl extends CustomGUI {
 	public static final String title = "Pet Control";
-	public static final String cancelButton = ChatColor.translateAlternateColorCodes('&', "&lRemove");
-	public static final int cancelID = 1;
 	
-	public static final String changeNameButton = ChatColor.translateAlternateColorCodes('&', "&lSet Name");
-	public static final int changeNameID = 2;
+	private static final ItemStack removeButton = createRemoveButton();
+	private static final ItemStack changeNameButton = createChangeNameButton();
+	private static final ItemStack mountButton = createMountButton();
 	
-	public static final String mountNameButton = ChatColor.translateAlternateColorCodes('&', "&lMount");
-	public static final int mountID = 3;
+	public PetControl(CustomPlayer customPlayer) {
+		super(customPlayer, null, Bukkit.createInventory(null, 9, title));
+		
+		gui.setContents(setButtons(gui.getSize()));
+	}
 	
-	public static void create(CustomPlayer player)
-	{
-		if (player.isBuilding())
-		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
-		}
+	public void clicked(InventoryClickEvent clickEvent) {
+		clickEvent.setCancelled(true);
+		ItemStack clickedItem = clickEvent.getCurrentItem();
 		
-		Inventory gui = Bukkit.createInventory(null, 9, title);
+		// Clicked on Remove Button
+		if (clickedItem.equals(removeButton))
+			PetsManager.removePet(opener.getPlayer());
 		
-		ItemStack remove = new ItemStack(Material.BARRIER);
-		ItemMeta removeMeta = remove.getItemMeta();
+		// Clicked on Change Name Button
+		else if (clickedItem.equals(changeNameButton))
+			PetsManager.setAwaitingNameInput(opener.getPlayer());
 		
-		removeMeta.setDisplayName(cancelButton);
-		removeMeta.setCustomModelData(cancelID);
+		// Clicked on Remove Button
+		else if (clickedItem.equals(mountButton))
+			PetsManager.mount(opener.getPlayer());
 		
-		remove.setItemMeta(removeMeta);
+		opener.getPlayer().closeInventory();
+	}
+	
+	private static ItemStack[] setButtons(int size) {
+		ItemStack[] content = new ItemStack[size];
 		
-		ItemStack changeName = new ItemStack(Material.NAME_TAG);
-		ItemMeta cnMeta = changeName.getItemMeta();
+		content[0] = removeButton;
+		content[1] = changeNameButton;
+		content[2] = mountButton;
 		
-		cnMeta.setDisplayName(changeNameButton);
-		cnMeta.setCustomModelData(changeNameID);
+		return content;
+	}
+	
+	private static ItemStack createRemoveButton() {
+		ItemStack removeButtonItemStack = new ItemStack(Material.BARRIER);
+		ItemMeta removeButtonItemMeta = removeButtonItemStack.getItemMeta();
 		
-		changeName.setItemMeta(cnMeta);
+		// Set button's display name
+		removeButtonItemMeta.setDisplayName(ChatColor.BOLD + "Remove");
 		
-		ItemStack mountButton = new ItemStack(Material.SADDLE);
-		ItemMeta mb = mountButton.getItemMeta();
+		// Set Button ID
+		removeButtonItemMeta.setCustomModelData(1);
 		
-		mb.setDisplayName(mountNameButton);
-		mb.setCustomModelData(mountID);
+		removeButtonItemStack.setItemMeta(removeButtonItemMeta);
+		return removeButtonItemStack;
+	}
+	
+	private static ItemStack createChangeNameButton() {
+		ItemStack changeNameButtonItemStack = new ItemStack(Material.NAME_TAG);
+		ItemMeta changeNameButtonItemMeta = changeNameButtonItemStack.getItemMeta();
 		
-		mountButton.setItemMeta(mb);
+		// Set button's display name
+		changeNameButtonItemMeta.setDisplayName(ChatColor.BOLD + "Set Name");
 		
-		gui.addItem(remove);
-		gui.addItem(changeName);
-		gui.addItem(mountButton);
+		// Set Button ID
+		changeNameButtonItemMeta.setCustomModelData(2);
 		
-		player.getPlayer().openInventory(gui);
+		changeNameButtonItemStack.setItemMeta(changeNameButtonItemMeta);
+		return changeNameButtonItemStack;
+	}
+	
+	private static ItemStack createMountButton() {
+		ItemStack mountButtonItemStack = new ItemStack(Material.SADDLE);
+		ItemMeta mountButtonItemMeta = mountButtonItemStack.getItemMeta();
+		
+		// Set button's display name
+		mountButtonItemMeta.setDisplayName(ChatColor.BOLD + "Mount");
+		
+		// Set Button ID
+		mountButtonItemMeta.setCustomModelData(3);
+		
+		mountButtonItemStack.setItemMeta(mountButtonItemMeta);
+		return mountButtonItemStack;
 	}
 }

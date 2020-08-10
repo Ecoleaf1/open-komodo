@@ -1,20 +1,20 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class Permissions 
 {
@@ -57,6 +57,7 @@ abstract public class Permissions
 	public static final String promotePermError = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you are not permitted to do that.");
 	
 	public static final Permission genPayPerm = new Permission("openkomodo.admin.genpay");
+	public static final Permission genTipPerm = new Permission("openkomodo.console.gentip");
 	public static final Permission emoteReloadPerm = new Permission("openkomodo.admin.emote.reload");
 	public static final Permission rankReloadPerm = new Permission("openkomodo.admin.rank.reload");
 	
@@ -67,6 +68,7 @@ abstract public class Permissions
 	public static final Permission abuseMonitorPerm = new Permission("openkomodo.manager.monitorabuse");
 	
 	public static final Permission petAccess = new Permission("openkomodo.pets.access");
+	public static final Permission particleAccess = new Permission("openkomodo.particles.access");
 	
 	//public static final Permission BuilderBuildPerm = new Permission("fp.worlds.builderworld.build");
 	/*
@@ -101,16 +103,32 @@ abstract public class Permissions
 		return dropError;
 	}
 	
+	public static void addPermission(CustomPlayer customPlayer, Permission permission)
+	{
+		PermissionAttachment attachment = permMap.get(customPlayer.getUniqueId());
+		attachment.setPermission(permission, true);
+		
+		permMap.replace(customPlayer.getUniqueId(), attachment);
+		customPlayer.getPlayer().recalculatePermissions();
+	}
 	
-	public static void setUp(Player player) 
+	public static void removePermission(CustomPlayer customPlayer, Permission permission)
+	{
+		PermissionAttachment attachment = permMap.get(customPlayer.getUniqueId());
+		attachment.unsetPermission(permission);
+		
+		permMap.replace(customPlayer.getUniqueId(), attachment);
+		customPlayer.getPlayer().recalculatePermissions();
+	}
+	
+	public static void setUp(CustomPlayer customPlayer) 
 	{
 		// Get and load Player's configuration
-		File file = PlayerConfig.getPlayerConfig(player);
-		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
+		//File file = PlayerConfig.getPlayerConfig(customPlayer.getPlayer());
+		//YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		
 		// Get Player's Rank
-		String rankStr = config.getConfigurationSection("General").getString("Rank");
-		Rank rank = Rank.getRank(rankStr);
+		Rank rank = customPlayer.getRank();
 		
 		// Get list of permissions inherited by Player's Rank
 		List<Permission> rankPermissions;
@@ -119,38 +137,58 @@ abstract public class Permissions
 		else
 			rankPermissions = rank.getPermissions();
 		
-		// Get permissions inherited by Player
-		List<String> playerPermissions = PlayerConfig.getPermissions(player);
+		// Permissions inherited by Player
+		List<Permission> playerPermissions;
+		// World permissions inherited by Player
+		List<Permission> worldPermissions;
 		
-		// Get world permissions inherited by Player
-		List<Permission> worldPermissions = PlayerConfig.getPermission(player, player.getWorld());
+		if (SQLManager.isEnabled())
+		{
+			// Get player's global permissions
+			playerPermissions = SQLManager.getGlobalPermissions(customPlayer.getUniqueId());
+			
+			// Get player's world permissions
+			worldPermissions = SQLManager.getWorldPermission(customPlayer.getUniqueId(), customPlayer.getPlayer().getWorld().getName());
+		}
+		else
+		{
+			// Get player's global permissions
+			playerPermissions = PlayerConfig.getGlobalPermissions(customPlayer.getUniqueId());
+			
+			// Get player's world permissions
+			worldPermissions = PlayerConfig.getWorldPermissions(customPlayer.getUniqueId(), customPlayer.getPlayer().getWorld().getName());
+		}
 		
 		// Get list of world permissions inherited by Player's Rank
 		List<Permission> worldPermRank;
 		if (rank == null)
 			worldPermRank = new ArrayList<Permission>();
 		else
-			worldPermRank = rank.getWorldPermissions(player.getWorld());
+			worldPermRank = rank.getWorldPermissions(customPlayer.getPlayer().getWorld());
 		
 		PermissionAttachment attachment;
-		attachment = permMap.get(player.getUniqueId());
+		attachment = permMap.get(customPlayer.getPlayer().getUniqueId());
 		
 		if (attachment != null)
 			attachment.remove();
 		
 		// If op, turn it to false to sync with permissions
-		if (player.isOp())
-			player.setOp(false);
+		if (customPlayer.getPlayer().isOp())
+			customPlayer.getPlayer().setOp(false);
 		
 		// Get Player's permission attachment
-		attachment = player.addAttachment(Main.getPlugin());
-		permMap.put(player.getUniqueId(), attachment);
+		attachment = customPlayer.getPlayer().addAttachment(Main.getPlugin());
+		permMap.put(customPlayer.getPlayer().getUniqueId(), attachment);
 		
 		// Add Rank Permissions to the Attachment
 		if (rankPermissions != null)
 			for (Permission p : rankPermissions)
 				if (p.getName().equals("*"))
-					player.setOp(true);
+					Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+						public void run() {
+							customPlayer.getPlayer().setOp(true);
+						}
+					});
 				else if (p.getName().startsWith("openkomodo.home.limit"))
 				{
 					String string = p.getName();
@@ -164,14 +202,14 @@ abstract public class Permissions
 						 sb.append(c);
 					 }
 					 
-					 PlayerConfig.setHomeLimit(player.getUniqueId(), Integer.parseInt(sb.toString()));
+					 customPlayer.setHomeLimit(Integer.parseInt(sb.toString()));
 				}
 				else
 					attachment.setPermission(p, true);
 		
 		// Add Permissions to the Attachment
-		for (String s : playerPermissions)
-			attachment.setPermission(new Permission(s), true);
+		for (Permission p : playerPermissions)
+			attachment.setPermission(p, true);
 		
 		for (Permission p : worldPermissions)
 			attachment.setPermission(p, true);

@@ -5,73 +5,90 @@ import java.util.List;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
 
-abstract public class PetsGui 
-{
+public class PetsGui extends CustomGUI {
 	public static final String title = "Pet Menu";
 	
-	public static void create(CustomPlayer player)
-	{
-		if (player.isBuilding())
-		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
-		}
-		if (!player.getPlayer().hasPermission(Permissions.petAccess))
+	/*
+	public void open(CustomPlayer customPlayer) {
+		if (!canAccess(customPlayer, Permissions.petAccess))
 			return;
 		
-		Inventory inv = Bukkit.createInventory(null, 45, title);
-		
-		Set<Pet> pets = Pet.getPets();
+		customPlayer.getPlayer().openInventory(gui);
+	}*/
+	
+	public PetsGui(CustomPlayer customPlayer) {	
+		super(customPlayer, Permissions.petAccess, Bukkit.createInventory(null, 45, title));
+		gui.setContents(getListofPetIcons());
+		return;
+	}
+	
+	private static ItemStack[] getListofPetIcons() {
+		Set<Pet> petsSet = Pet.getPets();
+		ItemStack[] guiContent = new ItemStack[petsSet.size()];
 		
 		// Loop through each pet to display on gui
-		for (Pet p : pets)
+		int index = 0;
+		for (Pet pet : petsSet)
 		{
-			PrintConsole.test("P NAME" + p.getDisplayName());
-			
-			ItemStack item = new ItemStack(Material.GHAST_SPAWN_EGG);
-			ItemMeta meta = item.getItemMeta();
+			ItemStack petItemStack = new ItemStack(pet.getItem());
+			ItemMeta petItemMeta = petItemStack.getItemMeta();
 			
 			// Set Display Name on item
-			meta.setDisplayName(p.getDisplayName());
+			petItemMeta.setDisplayName(pet.getDisplayName());
 			
 			// Get Prices
-			int pPrice = p.getPrice(Currency.POINTS);
-			int cPrice = p.getPrice(Currency.COINS);
+			int pointPrice = pet.getPrice(Currency.POINTS);
+			int coinPrice = pet.getPrice(Currency.COINS);
 			
+			// Display the pet's description
 			List<String> lore = new ArrayList<String>();
 			
-			if (pPrice > -1 && cPrice > -1)
-				lore.add(0, String.format("Price: %d points or %d coins", pPrice, cPrice));
-			else if (pPrice > -1)
-				lore.add(0, String.format("Price: %d points", pPrice));
-			else if (cPrice > -1)
-				lore.add(0, String.format("Price: %d coins", cPrice));
+			if (pointPrice > -1 && coinPrice > -1)
+				lore.add(0, String.format("Price: %d points or %d coins", pointPrice, coinPrice));
+			else if (pointPrice > -1)
+				lore.add(0, String.format("Price: %d points", pointPrice));
+			else if (coinPrice > -1)
+				lore.add(0, String.format("Price: %d coins", coinPrice));
 			
-			// Set Lore
-			meta.setLore(lore);
+			// Set Description
+			petItemMeta.setLore(lore);
 			
-			// Assigning IDs to items to track
-			meta.setCustomModelData(p.getID());
+			// Assigning ID to to track
+			petItemMeta.setCustomModelData(pet.getID());
 			
 			// Save Changes
-			item.setItemMeta(meta);
+			petItemStack.setItemMeta(petItemMeta);
 			
 			// Add Item
-			inv.addItem(item);
+			guiContent[index++] = petItemStack;
 		}
 		
-		player.getPlayer().openInventory(inv);
+		return guiContent;
+	}
+
+	@Override
+	public void clicked(InventoryClickEvent clickEvent) {
+		clickEvent.setCancelled(true);
+		ItemStack clickedItem = clickEvent.getCurrentItem();
+		
+		int petID = clickedItem.getItemMeta().getCustomModelData();
+		Pet pet = Pet.getPet(petID);
+		
+		if (opener.hasPet(petID)) {
+			PetsManager.create(opener.getPlayer(), pet);
+			return;
+		}
+		BuyConfirm gui = new BuyConfirm(opener, pet, Currency.POINTS);
+		gui.open();
 	}
 }

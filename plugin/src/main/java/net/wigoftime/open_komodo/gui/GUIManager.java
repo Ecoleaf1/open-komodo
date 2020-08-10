@@ -1,327 +1,161 @@
 package net.wigoftime.open_komodo.gui;
 
-import org.bukkit.ChatColor;
+import java.util.Arrays;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftEntity;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.config.WorldInventoryConfig;
-import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.PetsManager;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
-import net.wigoftime.open_komodo.objects.Pet;
 
 abstract public class GUIManager {
 	
-	public static void setUp() {
-		
-	}
-	
-	public static void setGuiToPlayer(CustomPlayer player, int gui) {
-		if (gui == 1)
-			PrintConsole.print("Not added in yet #0002.");
-			//HatMenu.open(player);
-		
-		if (gui == -1)
-			PropShop.open(player);
-	}
-	
-	public static int getGuiID(String gui)
-	{
-		gui = gui.toLowerCase();
-		int id;
-		switch(gui)
-		{
-			case "hatmenu":
-				id = 1;
-			break;
-			
-			default:
-				id = 0;
-			break;
-		}
-		
-		return id;
-	}
-	
-	public static void invItemClicked(InventoryClickEvent e) 
-	{
+	public static void invItemClicked(InventoryClickEvent clickEvent) {
 		// If couldn't get item, return
-		if (e.getCurrentItem() == null)
-			return;
-		
-		ItemStack is = e.getCurrentItem();
-		
-		InventoryView inventoryView = e.getView();
-		String inventoryName = inventoryView.getTitle();
-		CustomPlayer player = CustomPlayer.get(e.getWhoClicked().getUniqueId());
-		
-		// If in phone gui
-		if (inventoryName.equalsIgnoreCase(PhoneGui.titleName)) {
-			e.setCancelled(true);
-			PhoneGui.clicked(player, e.getCurrentItem());
+		if (clickEvent.getCurrentItem() == null) {
+			if (clickEvent.getCursor() != null)
+				return;
+			
+			clickEvent.setCancelled(true);
 			return;
 		}
 		
-		if (is.getType() == Material.STICK)
-			if (InventoryManagement.currentOpen.containsKey(player.getUniqueId()))
-			{
-				int bagID = InventoryManagement.currentOpen.get(player.getUniqueId());
-				
-				if (is.getItemMeta().getCustomModelData() == bagID)
-				{
-					e.setCancelled(true);
-					return;
-				}
-			}
+		// Player's current GUI Title
+		String guiTitle = clickEvent.getView().getTitle();
 		
-		// If in warps gui
-		if (inventoryName.equals(Warps.guiName)) {
-			e.setCancelled(true);
-			Warps.clicked(player.getPlayer(), e.getCurrentItem());
-		}
+		// Clicked ItemStack
+		ItemStack clickedItemStack = clickEvent.getCurrentItem();
 		
-		if (inventoryName.equals(PropShop.title))
-		{
-			e.setCancelled(true);
-			
-			int id;
-			if (is.hasItemMeta())
-				id = is.getItemMeta().getCustomModelData();
-			else
-				id = 0;
-			
-			if (id < 1)
-				return;
-			
-			CustomItem cs = CustomItem.getCustomItem(id);
-			
-			if (cs == null)
-				return;
-			
-			if (cs.getPointPrice() < 0 && cs.getCoinPrice() < 0)
-				return;
-			
-			if (cs.getPointPrice() < 0)
-				return;
-			
-			BuyConfirm.create(player.getPlayer(), cs, Currency.POINTS);
-		}
+		// Get clicker
+		CustomPlayer clickerCustomPlayer = CustomPlayer.get(clickEvent.getWhoClicked().getUniqueId());
 		
-		if (inventoryName.equalsIgnoreCase(TagMenu.title)) 
-		{
-			e.setCancelled(true);
-			
-			if (e.getCurrentItem().getType() == Material.NAME_TAG) 
-			{
-				// Change nametag
-				PlayerConfig.changeCurrentTag(player.getPlayer(), e.getCurrentItem().getItemMeta().getDisplayName());
-				
-				// Refresh scoreboard
-				ServerScoreBoard.add(player.getPlayer());
-				
-				player.getPlayer().closeInventory();
-				return;
-			}
-			
-			if (e.getCurrentItem().getType() == Material.WHITE_WOOL) 
-			{
-				PlayerConfig.changeCurrentTag(player.getPlayer(), "");
-				
-				// Refresh scoreboard
-				ServerScoreBoard.add(player.getPlayer());
-				
-				player.getPlayer().closeInventory();
-				return;
-			}
-			
-			if (e.getCurrentItem().getItemMeta().getDisplayName().equals(TagMenu.shop))
-			{
-				TagShop.open(player);
-			}
-			
-			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Next")) 
-			{
-				TagMenu.open(player, true); 
-			}
-			
-			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Back")) 
-			{
-				TagMenu.open(player, false); 
-			}
+		// Cancel if player in customPlayer format doesn't exist
+		if (clickerCustomPlayer == null) {
+			clickEvent.setCancelled(true);
 			return;
-			
-		}
-
-		if (inventoryName.equalsIgnoreCase("Hat-Menu"))
-		{
-			HatMenu.clicked(player, e.getCurrentItem(), e.getClickedInventory());
-			e.setCancelled(true);
 		}
 		
-		if (inventoryName.equalsIgnoreCase(BuyConfirm.title)) 
-		{
-			e.setCancelled(true);
+		if (clickerCustomPlayer.hasActiveGui()) {
+			CustomGUI gui = clickerCustomPlayer.getActiveGui();
 			
-			ItemStack confirmItem = e.getCurrentItem();
-			
-			if (confirmItem.getType() == Material.LIME_WOOL)
-				BuyConfirm.buy(e.getClickedInventory());
-			if (confirmItem.getType() == Material.RED_WOOL)
-				player.getPlayer().closeInventory();
+			if (gui instanceof CustomGUI)
+				gui.clicked(clickEvent);
 			
 			return;
 		}
 		
-		if (inventoryName.equals(PetsGui.title))
-		{
-			e.setCancelled(true);
-			
-			ItemMeta meta = is.getItemMeta();
-			int id = meta.getCustomModelData();
-			
-			Pet pet = Pet.getPet(id);
-			
-			if (PlayerConfig.containsPet(player.getPlayer(), pet))
-			{
-				PetsManager.create(player.getPlayer(), pet);
-				return;
-			}
-			
-			BuyConfirm.create(player, pet, Currency.POINTS);
-		}
-		
-		if (inventoryName.equals(PetControl.title))
-		{
-			
-			ItemMeta meta = is.getItemMeta();
-			
-			if (meta.getCustomModelData() == PetControl.cancelID)
-				PetsManager.removePet(player.getPlayer());
-			
-			if (meta.getCustomModelData() == PetControl.changeNameID)
-				PetsManager.setAwaitingNameInput(player.getPlayer());
-			
-			if (meta.getCustomModelData() == PetControl.mountID)
-				PetsManager.mount(player.getPlayer());
-			
-			
-			player.getPlayer().closeInventory();
-			e.setCancelled(true);
+		// Clicked in warps GUI
+		if (guiTitle.equals(Warps.title)) {
+			clickEvent.setCancelled(true);
+			Warps gui = new Warps(clickerCustomPlayer);
+			gui.open();
+			//Warps.clicked(clickerCustomPlayer.getPlayer(), clickedItemStack);
 			return;
 		}
 		
-		if (inventoryName.equals(FriendsList.title)) {
-			e.setCancelled(true);
-			
-			if (e.getCurrentItem().getType() == FriendsList.nextButtonMaterial && e.getCurrentItem().getItemMeta().getDisplayName().equals(FriendsList.nextButtonLabel)) {
-				FriendsList.open(player.getPlayer(), (byte) 1);
-				return;
-			}
-			
-			if (e.getCurrentItem().getType() == FriendsList.backButtonMaterial && e.getCurrentItem().getItemMeta().getDisplayName().equals(FriendsList.backButtonLabel)) {
-				FriendsList.open(player.getPlayer(), (byte) 2);
-				return;
-			}
-		}
-		
-		if (inventoryName.equalsIgnoreCase("Tag Shop")) {
-			e.setCancelled(true);
-			
-			if (e.getCurrentItem().getType() == Material.NAME_TAG) {
-				ItemMeta im = e.getCurrentItem().getItemMeta();
-				int id = im.getCustomModelData();
-				
-				BuyConfirm.create(player.getPlayer(), CustomItem.getCustomItem(id), Currency.POINTS);
-			}
-			
-			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Next"))
-				TagShop.open(player);
-			
-			if (e.getCurrentItem().getItemMeta().getDisplayName().equalsIgnoreCase("Back"))
-				TagShop.open(player);
-			
-			return;
-		}
-		
-		if (e.getCurrentItem().getType() == Material.STONE_HOE) {
-			e.setCancelled(true);
+		// Clicked in Tag Menu
+		if (guiTitle.equals(TagMenu.title)) {
+			clickerCustomPlayer.getActiveGui().clicked(clickEvent);
 			return;
 		}
 
-		if (e.getCurrentItem().getType() == Material.INK_SAC) 
-		{	
-			if (!e.getCurrentItem().getItemMeta().hasCustomModelData())
-				return;
-			
-			short id = (short) e.getCurrentItem().getItemMeta().getCustomModelData();
-			CustomItem item = CustomItem.getCustomItem(id);
-			
-			if (e.getSlot() == 39)
-			{
-				if (item.getType() == ItemType.HAT)
-				{
-					e.setCancelled(true);
-					return;
-				}
-			}
-			
-			if (e.getCurrentItem().getItemMeta().getCustomModelData() != 1 && e.getCurrentItem().getItemMeta().getCustomModelData() != 56)
-				return;
-			
-			e.setCancelled(true);
+		// Clicked in Hat Menu
+		if (guiTitle.equals(HatMenu.title)) {
+			clickEvent.setCancelled(true);
+			CustomGUI gui = new HatMenu(clickerCustomPlayer);
+			gui.open();
 			return;
 		}
 		
-		if (e.getCurrentItem().getType() == Material.FLINT) {
-			e.setCancelled(true);
+		if (clickEvent.getClickedInventory().equals(PhoneSwitcher.phoneSwitcherGui)) {
+			clickEvent.setCancelled(true);
+			
+			PhoneSwitcher.clicked(clickerCustomPlayer, clickedItemStack);
 			return;
 		}
 		
-		if (e.getCursor().getType() == Material.STONE_HOE) {
-			e.setCancelled(true);
+		// Checks if clicked on an unmovable item
+		if (clickedItemStack.getType() == Material.INK_SAC) {	
+			unmovableItem(clickedItemStack, clickEvent);
 			return;
 		}
 		
-		if (e.getCursor().getType() == Material.FLINT) {
-			e.setCancelled(true);
-			return;
-		}
-		
-		if (e.getCursor().getType() == Material.INK_SAC) 
-		{
-			if (e.getCursor().getItemMeta() == null)
-				return;
-			
-			if (!e.getCursor().getItemMeta().hasCustomModelData())
-				return;
-			
-			if (e.getCursor().getItemMeta().getCustomModelData() != 1 && e.getCursor().getItemMeta().getCustomModelData() != 56)
-				return;
-			
+		// Clicked on bag
+		if (clickedItemStack.getType() == Material.STICK) {
+			clickedBag(clickerCustomPlayer, clickedItemStack, clickEvent);
 			return;
 		}
 	}
 	
-	public static void inventoryClosed(InventoryCloseEvent e)
-	{	
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
+	private static void clickedBag(CustomPlayer clickerCustomPlayer, ItemStack clickedItemStack ,InventoryClickEvent clickEvent) {
+		if (isSameBag(clickerCustomPlayer.getUniqueId(), clickedItemStack))
+			clickEvent.setCancelled(true);
 		
-		InventoryManagement.saveInventory(player, player.getPlayer().getWorld());
+		return;
+	}
+	
+	private static boolean isSameBag(UUID clickerUUID, ItemStack clickedItemStack) {
+		if (!InventoryManagement.currentOpen.containsKey(clickerUUID))
+			return false;
+		
+		int clickedBagID = clickedItemStack.getItemMeta().getCustomModelData();
+		int currentlyOpenedBagID = InventoryManagement.currentOpen.get(clickerUUID);
+		
+		return clickedBagID == currentlyOpenedBagID ? true : false;
+	}
+	
+	private static void unmovableItem(ItemStack clickedItemStack, InventoryClickEvent clickEvent) {
+		if (!clickedItemStack.getItemMeta().hasCustomModelData())
+			return;
+		
+		int clickedItemID = clickedItemStack.getItemMeta().getCustomModelData();
+		CustomItem item = CustomItem.getCustomItem(clickedItemID);
+		
+		// If clicked on helmet slot
+		if (clickEvent.getSlot() == 39) {
+			if (item.getType() == ItemType.HAT)
+				clickEvent.setCancelled(true);
+			
+			return;
+		}
+		
+		if (clickedItemID != 1 && clickedItemID != 56)
+			return;
+		
+		clickEvent.setCancelled(true);
+		return;
+	}
+	
+	public static void inventoryClosed(InventoryCloseEvent closeEvent) {	
+		CustomPlayer customPlayer = CustomPlayer.get(closeEvent.getPlayer().getUniqueId());
+		
+		if (customPlayer == null)
+			return;
+		
+		if (customPlayer.getActiveGui() != null)
+			customPlayer.setActiveGui(null);
+		
+		customPlayer.setAfk(false);
+		
+		//if (closeEvent)
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (InventoryManagement.currentOpen.containsKey(closeEvent.getPlayer().getUniqueId()))
+				{
+					InventoryManagement.saveBagInventory(customPlayer.getPlayer(), customPlayer.getPlayer().getWorld().getName(), Arrays.asList(closeEvent.getInventory().getContents()));
+					InventoryManagement.currentOpen.remove(closeEvent.getPlayer().getUniqueId());
+				}
+				else
+					InventoryManagement.saveInventory(customPlayer, customPlayer.getPlayer().getWorld());
+			}
+		});
 	}
 	
 }

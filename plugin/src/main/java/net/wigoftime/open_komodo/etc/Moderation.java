@@ -1,18 +1,18 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class Moderation 
 {
@@ -22,110 +22,108 @@ abstract public class Moderation
 	public static final String mutedNoReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted until: $~");
 	public static final String mutedReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted for: $1~\nYou will be unmuted at: $~");
 	
-	public static boolean isMuted(Player player)
+	public static boolean isMuted(CustomPlayer playerCustomPlayer)
 	{
 		// Get date
-		Date muteDate = PlayerConfig.getMuteDate(player);
+		Date muteDate = playerCustomPlayer.getMuteDate();
 		
 		//	If Player is stated clearly not muted.
 		if (muteDate == null) 
+		{ 
+			PrintConsole.test("mute date is null");
 			return false;
+		}
 		else 
 		{
 			//	Get the current Calendar with the current date.
 			Calendar cal = Calendar.getInstance();
 			
 			//	If Player's mute date has passed.
-			if (cal.toInstant().isAfter(muteDate.toInstant()))
-			{
-				
-				//	Try write the Mute Date to none to avoid more checking in the future.
-				try
-				{
-					File file = PlayerConfig.getPlayerConfig(player);
-					YamlConfiguration playerYaml = YamlConfiguration.loadConfiguration(file);
-					playerYaml.getConfigurationSection("Moderation").set("Mute", "");
-					playerYaml.save(file);
-				}
-				catch (IOException exception)
-				{
-					PrintConsole.print(String.format("ERROR: %s's Mute Date Cannot be Removed.", player.getName()));
-				}
-				
-				return false;
-			}
+			if (muteDate.before(cal.getTime())) return false;
 			
 			// If the code made it this fair, then the player is muted.
-			sendMuteMessage(player);
+			sendMuteMessage(playerCustomPlayer);
 			return true;
 		}
 	}
 	
-	public static boolean isBanned(UUID uuid)
+	public static void ban(UUID uuid, Date date, String reason) 
 	{
-		// Get ban date
-		Instant date = PlayerConfig.getBanInstant(uuid);
+		if (SQLManager.isEnabled()) {
+			if (!SQLManager.containsPlayer(uuid)) {
+				SQLManager.createPlayer(uuid);
+			}
+		} else
+			if (!PlayerConfig.contains(uuid))
+				PlayerConfig.createPlayerConfig(uuid);
+				
 		
-		// If date don't exist, not banned
-		if (date == null)
-			return false;
+		setBanDate(uuid, date);
 		
-		// Get today's calendar
-		Instant instant = Instant.now();
-		
-		if (instant.isBefore(date))
-			return true;
-		else
-		{
-			PlayerConfig.setBanDate(uuid, null, null);
-			return false;
-		}
-	}
-	
-	public static void ban(OfflinePlayer player, Instant instant, String reason)
-	{
-		Player onlinePlayer;
-		if (player.isOnline())
-			onlinePlayer = (Player) player;
-		else
-			onlinePlayer = null;
-		
-		PlayerConfig.setBanDate(player.getUniqueId(), instant, reason);
-		
-		String kickMsg;
 		if (reason == null)
-			kickMsg = banNoReason;
+			setBanReason(uuid, "");
 		else
-		{
-			kickMsg = banReason;
-			kickMsg = kickMsg.replace("$1~", reason);
-		}
+			setBanReason(uuid, reason);
 		
-		Calendar cal = Calendar.getInstance();
-		cal.setTimeInMillis(instant.getEpochSecond());
-		// Get a string of text of how long they are muted for
-		String dateString = String.format("%04d/%d/%02d %d:%d %s", 
-				cal.get(Calendar.YEAR), 
-				cal.get(Calendar.MONTH), 
-				cal.get(Calendar.DAY_OF_MONTH), 
-				cal.get(Calendar.HOUR) > 12 ? cal.get(Calendar.MONTH) - 2 : cal.get(Calendar.MONTH), 
-				cal.get(Calendar.MINUTE),
-				cal.get(Calendar.HOUR) > 12 ? "PM" : "AM");
+		Player player = Bukkit.getPlayer(uuid);
+		
+		if (player == null)
+			return;
+		
+		if (reason == null)
+			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+				public void run() {
+					player.kickPlayer(String.format("You have been banned.\nDate: %s", date.toString()));
+				}
+			});
 			
-		kickMsg = kickMsg.replace("$1~", dateString);
-		
-		if (onlinePlayer != null)
-			onlinePlayer.kickPlayer(kickMsg);
+		else
+			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+				public void run() {
+			player.kickPlayer(String.format("You have been banned\nReason: %s\n.\nDate: %s", reason, date.toString()));
+				}
+			});
 	}
 	
-	private static void sendMuteMessage(Player player)
+	private static void setBanDate(UUID uuid, Date date) 
+	{
+		if (SQLManager.isEnabled())
+		SQLManager.setBanDate(uuid, date);
+		else
+		PlayerConfig.setBanDate(uuid, date);
+	}
+	
+	private static void setBanReason(UUID uuid, String reason) 
+	{
+		if (SQLManager.isEnabled())
+		SQLManager.setBanReason(uuid, reason);
+		else
+		PlayerConfig.setBanReason(uuid, reason);
+	}
+	
+	public static String getBanReason(UUID uuid) 
+	{
+		
+		String reason;
+		if (SQLManager.isEnabled())
+		reason = SQLManager.getBanReason(uuid);
+		else
+		reason = PlayerConfig.getBanReason(uuid);
+		
+		if (reason == "")
+			reason = null;
+		
+		return reason;
+	}
+	
+	private static void sendMuteMessage(CustomPlayer playerCustomPlayer)
 	{
 		// Get reason and the replied back message
-		String reason = PlayerConfig.getMuteReason(player);
+		String reason = playerCustomPlayer.getMuteReason();
 		String message;
 		
 		// Get Date
-		Date date = PlayerConfig.getMuteDate(player);
+		Date date = playerCustomPlayer.getMuteDate();
 		
 		// Get calendar and set it to the mute calendar
 		Calendar muteCal = Calendar.getInstance();
@@ -150,7 +148,7 @@ abstract public class Moderation
 			message = message.replace("$~", dateString);
 			
 			// Send message to player
-			player.sendMessage(message);
+			playerCustomPlayer.getPlayer().sendMessage(message);
 		}
 		else
 		{
@@ -169,15 +167,29 @@ abstract public class Moderation
 			// Insert date in message
 			message = message.replace("$~", dateString);
 			// Insert reason in message
-			message = message.replace("$1~", PlayerConfig.getMuteReason(player));
+			message = message.replace("$1~", playerCustomPlayer.getMuteReason());
 			
 			// Send message to player
-			player.sendMessage(message);
+			playerCustomPlayer.getPlayer().sendMessage(message);
 		}
 	}
 	
-	public static void isBanned()
+	
+	public static boolean isBanned(UUID uuid)
 	{
+		Date banDate;
+		if (SQLManager.isEnabled())
+		banDate = SQLManager.getBanDate(uuid);
+		else {
+			if (PlayerConfig.contains(uuid))
+			banDate = PlayerConfig.getBanDate(uuid);
+			else
+			return false;
+		}
 		
+		if (banDate.after(Date.from(Instant.now())))
+			return true;
+		else
+			return false;
 	}
 }

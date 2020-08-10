@@ -10,7 +10,6 @@ import org.bukkit.permissions.Permission;
 
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.TypeToEnum;
 import net.wigoftime.open_komodo.objects.Pet;
 

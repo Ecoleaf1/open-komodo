@@ -14,14 +14,26 @@ Private Message:
   Format (Sent): '&7you &e-> &7$D &7:&f $M'
   Format (Received): '&7$N &e-> &7you &7:&f $M'
 Global Settings:
-  Resource Pack: "https://www.dropbox.com/s/uq63zixj48szg3h/OpenKomodo%20resourcepack.zip?dl=1"
-  Spawn:
-    World: komodo_island
-    Location:
-      ==: Vector
-      x: 330.0
-      y: 68.0
-      z: -215.0
+  Resource Pack: "https://www.dropbox.com/s/yk3pmxg109us0p7/OpenKomodo%20Pack.zip?dl=1"
+
+  # WIP (Work in progress)
+  Enable Propshop: true
+  Enable Petshop: true
+  Enable Hatshop: true
+  Enable Tagshop: true
+  Enable Bin: true
+  Enable Warps: true
+  Website: "&bWebsite link: https://www.wigoftime.net"
+  Discord: "&7Discord link: https://discord.gg/nUJM7dT"
+
+  Spawn Location:
+    ==: org.bukkit.Location
+    world: komodo_island
+    x: 313.5
+    y: 69.0
+    z: -248.5
+    pitch: 0.0
+    yaw: 0.0
   Join Message: ''
   Leave Message: ''
   Allow Item Drops: false
@@ -30,3 +42,11 @@ Global Settings:
   Ice Melts: false
   Allow Damage: false
   Fall Damage: false
+
+# Store player information in MySQL databases instead of files
+SQL:
+  Enabled: false
+  URL: ""
+  User: ""
+  Password: ""
+  EnableSSL: false

@@ -28,9 +28,8 @@ public class ReplyCommand extends Command
 			return false;
 		}
 		
-		if (args.length < 1)
-		{
-			sender.sendMessage(ChatColor.DARK_RED + this.usageMessage);
+		if (args.length < 1) {
+			sender.sendMessage(String.format("%s» %s%s", ChatColor.GOLD, ChatColor.DARK_RED, this.usageMessage));
 			return false;
 		}
 		

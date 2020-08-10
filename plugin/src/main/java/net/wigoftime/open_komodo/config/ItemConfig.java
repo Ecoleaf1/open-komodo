@@ -130,8 +130,7 @@ public abstract class ItemConfig
 			}
 		}
 		
-		if (yc.contains("Tags"))
-		{
+		if (yc.contains("Tags")) {
 			// Get section "Tags"
 			ConfigurationSection c3s1 = yc.getConfigurationSection("Tags");
 			
@@ -146,6 +145,58 @@ public abstract class ItemConfig
 				
 				// Get Info about item
 				String name = c2s2.getString("Display");
+				int id = c2s2.getInt("id");
+				int pc;
+				if (c2s2.contains("Price (Points)"))
+					pc = c2s2.getInt("Price (Points)");
+				else
+					pc = -1;
+				
+				// Get description
+				List<String> description;
+				if (c2s2.contains("Description"))
+					description = c2s2.getStringList("Description");
+				else
+					description = null;
+				
+				boolean equipable;
+				if (c2s2.contains("Equipable"))
+					equipable = c2s2.getBoolean("Equipable");
+				else
+					equipable = false;
+				
+				// Check if has permission or not
+				// Also create item
+				if (c2s2.contains("Permission"))
+				{
+					Permission obtainPermission;
+					obtainPermission = new Permission(c2s2.getString("Permission"));
+					
+					// Create item
+					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
+				}
+				else
+				{
+					// Create Item
+					CustomItem.create(id, name, description, pc, equipable, null, type);
+				}
+			}
+		}
+		
+		if (yc.contains("Phones")) {
+			// Get section "Tags"
+			ConfigurationSection c4s1 = yc.getConfigurationSection("Phones");
+			
+			// Loop through value inside Tags
+			for (String c4ss1: c4s1.getKeys(false)) {
+				// Get Item Section
+				ConfigurationSection c2s2 = c4s1.getConfigurationSection(c4ss1);
+				
+				// Set Itemtype
+				ItemType type = ItemType.PHONE;
+				
+				// Get Info about item
+				String name = c2s2.getString("Display Name");
 				int id = c2s2.getInt("id");
 				int pc;
 				if (c2s2.contains("Price (Points)"))

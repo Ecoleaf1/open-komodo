@@ -1,9 +1,6 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -51,6 +48,8 @@ public class BuildModeCommand extends Command
 			player.getPlayer().setGameMode(GameMode.SURVIVAL);
 			player.setBuilding(false);
 			InventoryManagement.loadInventory(player, player.getPlayer().getWorld());
+			
+			player.getPlayer().setCanPickupItems(false);
 		}
 		else
 		{
@@ -60,6 +59,8 @@ public class BuildModeCommand extends Command
 			player.getPlayer().getInventory().clear();
 			
 			player.getPlayer().setGameMode(GameMode.CREATIVE);
+			
+			player.getPlayer().setCanPickupItems(true);
 		}
 		
 		return;

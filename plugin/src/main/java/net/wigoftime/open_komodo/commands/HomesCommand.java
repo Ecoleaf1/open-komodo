@@ -8,8 +8,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.HomeSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Home;
 
 public class HomesCommand extends Command 
 {
@@ -27,17 +28,17 @@ public class HomesCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		// Get Player
-		Player player = (Player) sender;
+		// Get Player in CustomPlayer format
+		CustomPlayer playerCustomPlayer = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		// Get a list of home names
-		List<String> homes = HomeSystem.getHomes(player);
+		List<Home> homes = playerCustomPlayer.getHomes();
 		
 		// If there are no homes
 		if (homes.size() < 1) 
 		{
 			// Send message that player has no homes
-			player.sendMessage(HomeSystem.noHomes);
+			playerCustomPlayer.getPlayer().sendMessage(HomeSystem.noHomes);
 			return false;
 		}
 		
@@ -45,24 +46,24 @@ public class HomesCommand extends Command
 		StringBuilder sb = new StringBuilder();
 		
 		// Start adding onto the stringbuilder the title of homes
-		sb.append(ChatColor.AQUA + "Homes" + ChatColor.DARK_AQUA +" (Limit: "+ PlayerConfig.getHomeLimit(player.getUniqueId()) +"):\n");
+		sb.append(String.format("%s» %sHomes (Limit: %d):\n", ChatColor.GOLD, ChatColor.GRAY, playerCustomPlayer.getHomeLimit()));
 		
 		// loop through List of home names
-		for (ListIterator<String> iter = homes.listIterator(); iter.hasNext();) 
+		for (ListIterator<Home> iter = homes.listIterator(); iter.hasNext();) 
 		{
 			// Get Name of home
-			String name = iter.next();
+			Home home = iter.next();
 			
 			// If there are more homes after this name, add a comma
 			if (iter.hasNext())
-				sb.append(name + ", ");
+				sb.append(home.name + ", ");
 			// Else don't do a comma
 			else
-				sb.append(name);
+				sb.append(home.name);
 		}
 		
 		// Send message of their list of homes
-		player.sendMessage(sb.toString());
+		playerCustomPlayer.getPlayer().sendMessage(sb.toString());
 		return true;
 	}
 

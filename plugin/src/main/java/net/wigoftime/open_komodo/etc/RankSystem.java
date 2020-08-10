@@ -4,13 +4,13 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
@@ -18,16 +18,16 @@ abstract public class RankSystem
 {
 	public static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
 	
-	public static final String rankedUp = ChatColor.translateAlternateColorCodes('&', "  &6―――――――&5&k| " + Main.nameColoured + " &5&k|&6―――――――" + "\n\n     &bYou ranked up! Congratz!\n\n&6―――――――――――――――――――――――――――――――――");
 	
+	private static final String rankedUp = String.format(" \n                      %s%s| %sOpen Komodo %s|%s\n       You have ranked up to the next %%s!\n       %sCongraz!!\n ",
+			ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.DARK_AQUA, ChatColor.DARK_AQUA);
 	// The setup function, should only be used once when server starting up
 	public static void setup()
 	{
 		// Create a runnable that loops for 10 minutes
 		// Turning pending XP into actual XP that is saved
 		// As well as getting paid salery
-		BukkitRunnable runnable = new BukkitRunnable() 
-		{
+		BukkitRunnable runnable = new BukkitRunnable() {
 			
 			@Override
 			public void run() 
@@ -36,74 +36,68 @@ abstract public class RankSystem
 			}
 		};
 		
-		runnable.runTaskTimer(Main.getPlugin(), 0, 12000);
+		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 12000);
 	}
 	
-	private static void giveDailyXP()
-	{
+	private static void giveDailyXP() {
 		for (Entry<UUID, Double> e : pendingXP.entrySet())
 		{
-			// Get player
-			Player player = Bukkit.getPlayer(e.getKey());
+			// Get CustomPlayer
+			CustomPlayer customPlayer = CustomPlayer.get(e.getKey());
 			
-			// If player isn't online
-			if (player == null)
+			if (customPlayer == null)
 			{
 				pendingXP.remove(e.getKey());
-				return;
+				continue;
 			}
-			
-			// Get Player's Rank
-			String rankStr = PlayerConfig.getRank(player);
-			Rank rank = Rank.getRank(rankStr);
 			
 			// Get Rank's ID
 			int rankID;
-			if (rank == null)
+			if (customPlayer.getRank() == null)
 				rankID = 0;
 			else
-				rankID = rank.getID();
+				rankID = customPlayer.getRank().getID();
 			
 			
 			// get and caulcate XP
-			double currentXP = PlayerConfig.getXP(player);
+			double currentXP = customPlayer.getXP();
 			double pendingXP = e.getValue();
 			
 			double totalXP = currentXP + pendingXP;
 			
-			PlayerConfig.setXP(player, totalXP);
+			customPlayer.setXP(totalXP);
 			
 			// get and caulcate the salery of points
 			int pSalery;
-			if (rank == null)
+			if (customPlayer.getRank() == null)
 				pSalery = 15;
 			else
-				pSalery = rank.getSalery(Currency.POINTS);
+				pSalery = customPlayer.getRank().getSalery(Currency.POINTS);
 			
 			// If has salery, pay player salery
 			if (pSalery > 0)
-				CurrencyClass.genPay(player, pSalery, Currency.POINTS);
+				if (!customPlayer.isAfk())
+					CurrencyClass.genPay(customPlayer, pSalery, Currency.POINTS);
 			
 			e.setValue(0.0);
 			
-			if (rankID > 0)
-				for (Rank r : Rank.getRanks())
-				{
-					
+			//if (rankID > 0)
+				for (Rank r : Rank.getRanks()) {
 					// If not next rank, skip
 					if ((rankID + 1) != r.getID())
 						continue;
 					
-					if (r.getXPPrice() > totalXP || r.getXPPrice() == 0)
+					if (r.getXPPrice() <= 0)
 						break;
 					
-					PlayerConfig.setRank(player.getUniqueId(), r.getName());
-					PlayerConfig.setXP(player, 0.0);
+					if (r.getXPPrice() > totalXP)
+						break;
 					
-					// Play sound effect
-					//player.playSound)
+					customPlayer.setRank(r);
+					customPlayer.setXP(0.0);
 					
-					player.sendMessage(rankedUp);
+					customPlayer.getPlayer().sendMessage(String.format(rankedUp, r.getPrefix()));
+					customPlayer.getPlayer().playSound(customPlayer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 				}
 		}
 	}
@@ -111,6 +105,15 @@ abstract public class RankSystem
 	public static void addPendingPoints(Player player, double xp)
 	{
 		UUID uuid = player.getUniqueId();
+		CustomPlayer playerCustomPlayer = CustomPlayer.get(uuid);
+		
+		// If customplayer format of player doesn't exist, cancel
+		// Can happen if the server hasn't loaded all of the player information when they join
+		if (playerCustomPlayer == null)
+			return;
+		
+		if (playerCustomPlayer.isAfk())
+			return;
 		
 		if (!pendingXP.containsKey(uuid))
 			pendingXP.put(uuid, 0.0);

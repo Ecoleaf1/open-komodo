@@ -1,134 +1,163 @@
 Props:
-   ePhone:
-      Display Name: "&6Phone"
-      id: 1
    Avocado:
-      Display Name: "&6Avocado"
+      Display Name: "&bAvocado"
       id: 2
       Price (Points): 360
    Baseball_Bat:
-      Display Name: "&6Baseball Bat"
+      Display Name: "&bBaseball Bat"
       id: 3
       Price (Points): 360
    Dumbell:
-      Display Name: "&6Dumbbell"
+      Display Name: "&bDumbbell"
       id: 4
       Price (Points): 360
    Knife_Small:
-      Display Name: "&6Knife"
+      Display Name: "&bKnife"
       id: 5
       Price (Points): 360
    Rose:
-      Display Name: "&6Rose"
+      Display Name: "&bRose"
       id: 6
       Price (Points): 360
    Sunglasses:
-      Display Name: "&6Sunglasses"
+      Display Name: "&bSunglasses"
       id: 7
       Price (Points): 360
    Walkie-Talkie:
-      Display Name: "&6Walkie Talkie"
+      Display Name: "&bWalkie Talkie"
       id: 8
       Price (Points): 360
    Pencil:
-      Display Name: "&6Pencil"
+      Display Name: "&bPencil"
       id: 9
       Price (Points): 360
    Paper:
-      Display Name: "&6Paper"
+      Display Name: "&bPaper"
       id: 10
       Price (Points): 360
    Saber:
-      Display Name: "&6Saber"
+      Display Name: "&bSaber"
       id: 11
       Price (Points): 360
    Katana:
-      Display Name: "&6Katana"
+      Display Name: "&bKatana"
       id: 12
       Price (Points): 360
    Golden Staff:
-      Display Name: "&6Golden Staff"
+      Display Name: "&bGolden Staff"
       id: 13
       Price (Points): 360
    Silver Staff:
-      Display Name: "&6Silver Staff"
+      Display Name: "&bSilver Staff"
       id: 14
       Price (Points): 360
    Cane:
-      Display Name: "&6Cane"
+      Display Name: "&bCane"
       id: 15
       Price (Points): 360
    ChainSaw:
-      Display Name: "&6Chainsaw"
+      Display Name: "&bChainsaw"
       id: 16
       Price (Points): 360
    White Handbag:
-      Display Name: "&6White Handbag"
+      Display Name: "&bWhite Handbag"
       id: 17
       Price (Points): 360
    Pink Handbag:
-      Display Name: "&6Pink Handbag"
+      Display Name: "&bPink Handbag"
       id: 18
       Price (Points): 360
    Black Handbag:
-      Display Name: "&6Black Handbag"
+      Display Name: "&bBlack Handbag"
       id: 19
       Price (Points): 360
    Tea Cup:
-      Display Name: "&6Tea Cup"
+      Display Name: "&bTea Cup"
       id: 20
       Price (Points): 360
    Wallet:
-      Display Name: "&6Wallet"
+      Display Name: "&bWallet"
       id: 21
       Price (Points): 360
    Open Book:
-      Display Name: "&6Open Book"
+      Display Name: "&bOpen Book"
       id: 22
       Price (Points): 360
    Water Bottle:
-      Display Name: "&6Water Bottle"
+      Display Name: "&bWater Bottle"
       id: 23
       Price (Points): 360
    DS:
-      Display Name: "&6DS"
+      Display Name: "&bDS"
       id: 24
       Price (Points): 360
    Lunch Box:
-      Display Name: "&6Lunch Box"
+      Display Name: "&bLunch Box"
       id: 25
       Price (Points): 360
    Stuffed Bear:
-      Display Name: "&6Teddy Bear"
+      Display Name: "&bTeddy Bear"
       id: 26
       Price (Points): 360
    Stuffed Bunny:
-      Display Name: "&6Bunny Plushie"
+      Display Name: "&bBunny Plushie"
       id: 27
       Price (Points): 360
    Handcuffs:
-      Display Name: "&6Handcuffs"
+      Display Name: "&bHandcuffs"
       id: 35
       Price (Points): 360
    Waffle:
-      Display Name: "&6Waffle"
+      Display Name: "&bWaffle"
       id: 41
       Price (Points): 360
    Boba Tea:
-      Display Name: "&6Boba Tea"
+      Display Name: "&bBoba Tea"
       id: 55
       Price (Points): 360
    Card:
-      Display Name: "&6Card"
+      Display Name: "&bCard"
       id: 56
       Price (Points): 360
    Pie:
-      Display Name: "&6Pie"
+      Display Name: "&bPie"
       id: 57
       Price (Points): 360
    Gun:
-      Display Name: "&6Gun"
+      Display Name: "&bGun"
       id: 62
+      Price (Points): 360
+   Sand Bucket:
+      Display Name: "&bSand Bucket"
+      id: 68
+      Price (Points): 360
+   Coconut:
+      Display Name: "&bCoconut"
+      id: 69
+      Price (Points): 360
+   Sand Shovel:
+      Display Name: "&bSand Shovel"
+      id: 70
+      Price (Points): 360
+   Ice Cream:
+      Display Name: "&bIce Cream"
+      id: 71
+      Price (Points): 360
+   Camera:
+      Display Name: "&bCamera"
+      id: 72
+      Price (Points): 360
+   Surf Board Green:
+      Display Name: "&bSurf Board"
+      id: 73
+      Price (Points): 360
+   Surf Board Blue:
+      Display Name: "&bSurf Board"
+      id: 74
+      Price (Points): 360
+   Surf Board Red:
+      Display Name: "&bSurf Board"
+      id: 75
       Price (Points): 360
 
 Hats:
@@ -342,6 +371,20 @@ Hats:
       Price (Points): 1250
       Permission: openkomodo.hats.fennecfoxears
       id: 65
+   Snorkel:
+      Display Name: "&bSnorkel"
+      Description:
+          - "&r&eRequire VIP"
+      Price (Points): 1250
+      Permission: openkomodo.hats.snorkel
+      id: 66
+   Flower:
+      Display Name: "&bFlower"
+      Description:
+          - "&r&eRequire VIP+"
+      Price (Points): 1250
+      Permission: openkomodo.hats.flower
+      id: 67
 Tags:
   Freshmen:
     Name: Freshmen
@@ -428,3 +471,29 @@ Tags:
     id: 316
     Display: Robot
     Price (Points): 540
+
+Phones:
+   ePhone:
+      Display Name: "&6Phone"
+      id: 1
+      Price (Points): 0
+   ePhone Black:
+      Display Name: "&6Phone"
+      id: 76
+      Price (Points): 1250
+      Permission: openkomodo.phones.black
+   ePhone Yellow:
+      Display Name: "&6Phone"
+      id: 77
+      Price (Points): 1250
+      Permission: openkomodo.phones.yellow
+   ePhone Orange:
+      Display Name: "&6Phone"
+      id: 78
+      Price (Points): 1250
+      Permission: openkomodo.phones.orange
+   ePhone White:
+      Display Name: "&6Phone"
+      id: 79
+      Price (Points): 1250
+      Permission: openkomodo.phones.white

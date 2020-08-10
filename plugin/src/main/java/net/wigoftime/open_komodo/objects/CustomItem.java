@@ -20,6 +20,7 @@ public class CustomItem
 	
 	private static HashMap<Integer, CustomItem> items = new HashMap<Integer, CustomItem>();
 	
+	private final int id;
 	private final List<String> description;
 	private final boolean equipable;
 	
@@ -33,6 +34,8 @@ public class CustomItem
 	
 	public CustomItem(ItemStack item, int id, String name, List<String> description, boolean equipable, int pointPrice,Permission permission, ItemType type)
 	{
+		// Set ID
+		this.id = id;
 		
 		// Set the CustomModelData to the id
 		ItemMeta meta = item.getItemMeta();
@@ -77,9 +80,15 @@ public class CustomItem
 	{
 		ItemStack item;
 		
-		if (type == ItemType.PROP || type == ItemType.HAT)
+		if (type == ItemType.PROP || type == ItemType.HAT || type == ItemType.PHONE) {
 			item = new ItemStack(Material.INK_SAC);
-		else if (type == ItemType.TAG)
+			ItemMeta meta = item.getItemMeta();
+			if (name != null) {
+				meta.setDisplayName(name);
+			}
+			
+			item.setItemMeta(meta);
+		} else if (type == ItemType.TAG)
 			item = new ItemStack(Material.NAME_TAG);
 		else
 		{
@@ -122,9 +131,9 @@ public class CustomItem
 	public static List<CustomItem> getItems()
 	{
 		List<CustomItem> itemList = new ArrayList<CustomItem>(items.size());
-		for (Entry e : items.entrySet())
+		for (Entry<Integer, CustomItem> e : items.entrySet())
 		{
-			itemList.add((CustomItem) e.getValue());
+			itemList.add(e.getValue());
 		}
 		
 		return itemList;
@@ -140,6 +149,10 @@ public class CustomItem
 		}
 		
 		return itemList;
+	}
+	
+	public int getID() {
+		return id;
 	}
 	
 	public List<String> getDescription()

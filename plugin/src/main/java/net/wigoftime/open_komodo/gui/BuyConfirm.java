@@ -2,379 +2,307 @@ package net.wigoftime.open_komodo.gui;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
 
-import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
-import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
-import net.wigoftime.open_komodo.objects.Tag;
 
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 
-abstract public class BuyConfirm 
+public class BuyConfirm extends CustomGUI
 {
-	
 	public static final String title = ChatColor.translateAlternateColorCodes('&', "Confirmation");
 	
-	private static final Material confirmMaterial = Material.LIME_WOOL;
-	private static final Material cancelMaterial = Material.RED_WOOL;
-	
-	public static void create(CustomPlayer player,Pet pet, Currency currency) 
-	{
-		if (player.isBuilding())
-		{
-			player.getPlayer().sendMessage(CustomPlayer.buildingError);
-			return;
-		}
-		
-		Inventory gui = Bukkit.getServer().createInventory(null, 27, "Confirmation");
-		
-		// Create side to cancel.=
-		ItemStack denyItem = new ItemStack(cancelMaterial,1); 
-		
-		// Change the display name
-		ItemMeta denyMeta = denyItem.getItemMeta();
-		denyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
-		denyItem.setItemMeta(denyMeta);
-		
-		// Create side to confirm
-		ItemStack confirmItem = new ItemStack(confirmMaterial,1); 
-		
-		// Change display name
-		ItemMeta itemMeta = confirmItem.getItemMeta();
-		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lConfirmation"));
-		confirmItem.setItemMeta(itemMeta);
-		
-		// Place the cancel side items to the left side
-		gui.setItem(0,denyItem);
-		gui.setItem(1,denyItem);
-		gui.setItem(9, denyItem);
-		gui.setItem(10, denyItem);
-		gui.setItem(18, denyItem);
-		gui.setItem(19, denyItem);
-		
-		// Place the confirm side items to the right side
-		gui.setItem(7, confirmItem);
-		gui.setItem(8, confirmItem);
-		gui.setItem(16, confirmItem);
-		gui.setItem(17, confirmItem);
-		gui.setItem(25, confirmItem);
-		gui.setItem(26, confirmItem);
-		
-		// Name of Currency
-		String cn = currency == Currency.POINTS ?
-					"Points" : "Coins";
-		
-		// Cost amount of item
-		int amount;
-		amount = currency == Currency.POINTS ? 
-				 pet.getPrice(Currency.POINTS) : pet.getPrice(Currency.COINS);
-		
-		// Display the item on the 12th slot.
-		ItemStack is = new ItemStack(Material.GHAST_SPAWN_EGG);
-		
-		ItemMeta meta = is.getItemMeta();
-		
-		// Put ID
-		meta.setCustomModelData(pet.getID());
-		
-		// Set Display Name on item
-		meta.setDisplayName(pet.getDisplayName());
-		
-		// Save Changes
-		is.setItemMeta(meta);
-		
-		gui.setItem(12, is);
-		
-		// Currency Item
-		ItemStack ci;
-		
-		// Get the currency type
-		if (currency == Currency.POINTS)
-			ci = new ItemStack(Material.IRON_INGOT);
-		else
-			ci = new ItemStack(Material.GOLD_INGOT);
-		
-		// Show price
-		ItemMeta im = ci.getItemMeta();
-		im.setDisplayName(String.format("Cost: %d %s", amount, cn));
-		
-		// Save changes
-		ci.setItemMeta(im);
-		
-		// Set the Currency Item on the 14th slot
-		gui.setItem(14, ci);
-		
-		player.getPlayer().openInventory(gui);
-	}
-	
-	public static void create(Player player,CustomItem item, Currency currency) 
-	{
-		// Check if player has permission for the item
-		if (item.getPermission() != null)
-			if (!player.hasPermission(item.getPermission()))
-			{
-				player.sendMessage(Permissions.useError);
-				
-				player.closeInventory();
-				return;
-			}
-		
-		Inventory gui = Bukkit.getServer().createInventory(null, 27, "Confirmation");
-		
-		// Create side to cancel.=
-		ItemStack denyItem = new ItemStack(cancelMaterial,1); 
-		
-		// Change the display name
-		ItemMeta denyMeta = denyItem.getItemMeta();
-		denyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
-		denyItem.setItemMeta(denyMeta);
-		
-		// Create side to confirm
-		ItemStack confirmItem = new ItemStack(confirmMaterial,1); 
-		
-		// Change display name
-		ItemMeta itemMeta = confirmItem.getItemMeta();
-		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lConfirmation"));
-		confirmItem.setItemMeta(itemMeta);
-		
-		// Place the cancel side items to the left side
-		gui.setItem(0,denyItem);
-		gui.setItem(1,denyItem);
-		gui.setItem(9, denyItem);
-		gui.setItem(10, denyItem);
-		gui.setItem(18, denyItem);
-		gui.setItem(19, denyItem);
-		
-		// Place the confirm side items to the right side
-		gui.setItem(7, confirmItem);
-		gui.setItem(8, confirmItem);
-		gui.setItem(16, confirmItem);
-		gui.setItem(17, confirmItem);
-		gui.setItem(25, confirmItem);
-		gui.setItem(26, confirmItem);
-		
-		// Name of Currency
-		String cn = currency == Currency.POINTS ?
-					"Points" : "Coins";
-		
-		// Cost amount of item
-		int amount;
-		amount = currency == Currency.POINTS ? 
-				 item.getPointPrice() : item.getCoinPrice();
-		
-		ItemStack is;
-		// Display the item on the 12th slot.
-		if (item.getItem().getType() == Material.STICK)
-		{
-			is = new ItemStack(Material.STICK);
-			ItemMeta meta = is.getItemMeta();
-			meta.setDisplayName(item.getItem().getItemMeta().getDisplayName());
-			meta.setCustomModelData(999);
-			is.setItemMeta(meta);
-		}
-		else
-		{
-		is = item.getItem();
-		}
-		
-		gui.setItem(12, is);
-		
-		// Currency Item
-		ItemStack ci;
-		
-		// Get the currency type
-		if (currency == Currency.POINTS)
-			ci = new ItemStack(Material.IRON_INGOT);
-		else
-			ci = new ItemStack(Material.GOLD_INGOT);
-		
-		// Show price
-		ItemMeta im = ci.getItemMeta();
-		im.setDisplayName(String.format("Cost: %d %s", amount, cn));
-		
-		// Save changes
-		ci.setItemMeta(im);
-		
-		// Set the Currency Item on the 14th slot
-		gui.setItem(14, ci);
-		
-		player.openInventory(gui);
-	}
-	
-	public static void buy(Inventory gui)
-	{
-		// Find the player that is using this gui
-		HumanEntity he = gui.getViewers().get(0);
-		CustomPlayer player = CustomPlayer.get(he.getUniqueId());
-		
-		// select the pending item
-		ItemStack cis = gui.getItem(12);
-		
-		// If it is Spawn egg, it is a pet item.
-		if (cis.getType() == Material.GHAST_SPAWN_EGG)
-		{
-			// Get info about item
-			ItemMeta meta = cis.getItemMeta();
-			
-			// Get pet from ID on item
-			Pet pet = Pet.getPet(meta.getCustomModelData());
-			
-			// Currency that is being used
-			Currency currency;
-			
-			// Identify what currency is being used.
-			if (cis.getType() == Material.GOLD_INGOT)
-				currency = Currency.COINS;
-			else
-				currency = Currency.POINTS;
-			
-			// Get the price
-			int price = (currency == Currency.POINTS) ? 
-						pet.getPrice(Currency.POINTS) : pet.getPrice(Currency.COINS);
-			
-			CurrencyClass.buy(player.getPlayer(), price, currency, pet);
-			player.getPlayer().closeInventory();
-			return;
-		}
-		
-		// Get id
-		int id;
-		if (cis.getType() == Material.STICK)
-			id = 999;
-		else
-			id = cis.getItemMeta().getCustomModelData();
-		
-		// About Item
-		CustomItem cs = CustomItem.getCustomItem(id);
-		
-		// Currency that is being used
-		Currency currency;
-		
-		// Identify what currency is being used.
-		if (cis.getType() == Material.GOLD_INGOT)
-			currency = Currency.COINS;
-		else
-			currency = Currency.POINTS;
-		
-		// Get the price
-		int price = (currency == Currency.POINTS) ? 
-					cs.getPointPrice() : cs.getCoinPrice();
-		
-		// Buy item
-		CurrencyClass.buy(player, price, currency, cs);
-		
-		player.getPlayer().closeInventory();
-	}
+	private final Object pendingItem;
+	private final ItemStack cancelButton;
+	private final ItemStack confirmButton;
 	
 	/*
-	public static void confirm(Player player) 
+	// Open with CustomItem
+	public void open() {
+		
+		if (pendingItem instanceof CustomItem) {
+		if (!canAccess(opener, (CustomItem) pendingItem))
+			return;
+		} else if (!canAccess(opener, (Pet) pendingItem))
+			return;
+		
+		opener.setActiveGui(this);
+		opener.getPlayer().openInventory(gui);
+	}
+	
+	// Open with pets
+	public void open(CustomPlayer customPlayer, Pet pet, Currency currencyType)
 	{
-		Inventory gui = player.getOpenInventory().getTopInventory();
+		if (!canAccess(customPlayer, pet))
+			return;
 		
-		ItemStack itemStack = gui.getItem(12);
-		ItemStack currencyItem = gui.getItem(14);
-		
-		String currency;
-		
-		if (currencyItem.getType() == Material.GOLD_INGOT) {
-			currency = "Coins";
-		} else
-			currency = "Points";
-		
-		if (itemStack.getType() == Material.NAME_TAG) 
-		{
-		Tag tag = Tag.findByDisplay(itemStack.getItemMeta().getDisplayName());
-		//buy(player, tag, currency);
-		}
-		InventoryView view = (InventoryView) gui;
-		System.out.println(view.getTitle());
-		
-		player.closeInventory();
+		customPlayer.getPlayer().openInventory(gui);
 	}*/
 	
-	/*
-	public static void confirm(Player player, Inventory gui, Currency currency, byte type) 
+	// Create inventory for CustomItem
+	public BuyConfirm(CustomPlayer customPlayer,CustomItem pendingCustomItem, Currency currencyType, Permission requiredPermissoin) 
 	{
+		super(customPlayer, requiredPermissoin, Bukkit.getServer().createInventory(null, 27, title));
+		pendingItem = pendingCustomItem;
 		
+		confirmButton = new ItemStack(Material.LIME_WOOL,1); {
+		// Change display name
+		ItemMeta itemMeta = confirmButton.getItemMeta();
+		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lConfirmation"));
+		confirmButton.setItemMeta(itemMeta);
+		}
 		
-		// Get the prop that is in the slot 23.
-		Damageable damage = (Damageable) gui.getItem(12).getItemMeta();
+		// Create side to cancel.=
+		cancelButton = new ItemStack(Material.RED_WOOL,1); {
 		
-		//CustomItem prop = CustomItem.getItem(gui.getItem(12).getType(), damage.getDamage());
+		// Change the display name
+		ItemMeta denyMeta = cancelButton.getItemMeta();
+		denyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
+		cancelButton.setItemMeta(denyMeta);
+		}
 		
-		// The Buying item
+		// Display buttons
+		gui.setContents(createButtons((byte) gui.getSize()));
 		
-		ItemStack is = gui.getItem(12);
-		NBTItem nbtItem = new NBTItem(is);
-		int id = nbtItem.getShort("CustomModelData");
-		CustomItem cs = CustomItem.getCustomItem(id);
+		// Display item thats being bought
+		gui.setItem(12, pendingCustomItem.getItem());
 		
-		int amount = currency == Currency.POINTS ?
-				cs.getPointPrice() : cs.getCoinPrice();
+		// Set the Currency Item on the 14th slot
+		gui.setItem(14, createCurrencyIcon(pendingCustomItem, currencyType));
 		
-			if (CurrencyClass.buy(player, amount, currency)) 
-			{
-				player.getInventory().addItem(is);
-			}
-	} */
-			/*
-		if (currency.equalsIgnoreCase("Coins"))
-			if (Currency.buyWithCoins(player,cs.getCoinPrice())) 
-			{
-				if (type == 1)
-					player.getInventory().addItem(is);
-				
-				if (type == 2) 
-				{ */
-					/*
-					File config = PlayerConfig.getPlayerConfig(player);
-					YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-					
-					List<String> items = configYaml.getStringList("Items");
-					items.add(prop.getType() + " " + prop.getDamage());
-					
-					configYaml.set("Items", items);
-					try {
-						configYaml.save(config);
-					} catch (IOException e) {
-						PrintConsole.print("ERROR: Couldn't put it into " + player.getDisplayName() + "'s items in their config.");
-					} *)/
-				}
-			}
-		
-		player.closeInventory();
+		return;
 	}
 	
-	private static void buy(Player player, Tag tag, String currency) {
+	// Create inventory for Pets
+	public BuyConfirm(CustomPlayer customPlayer,Pet pendingPet, Currency currencyType) 
+	{
+		super(customPlayer, pendingPet.getPermission(), Bukkit.getServer().createInventory(null, 27, title));
+		pendingItem = pendingPet;
 		
-		if (currency.equalsIgnoreCase("Points"))
-			if (Currency.buyWithPoints(player, tag.getPointsPrice()) == true) {
-				File config = PlayerConfig.getPlayerConfig(player);
-				YamlConfiguration configYaml = YamlConfiguration.loadConfiguration(config);
-				
-				List<String> tags = configYaml.getStringList("Tags");
-				tags.add(tag.getDisplay());
-				configYaml.set("Tags", tags);
-				
-				try {
-					configYaml.save(config);
-				} catch (IOException e) {
-					PrintConsole.print("ERROR: Couldn't put it into " + player.getDisplayName() + "'s tags in their config.");
-				}
-				
-			}
+		confirmButton = new ItemStack(Material.LIME_WOOL,1); {
+		// Change display name
+		ItemMeta itemMeta = confirmButton.getItemMeta();
+		itemMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&a&lConfirmation"));
+		confirmButton.setItemMeta(itemMeta);
+		}
 		
-	} */
+		// Create side to cancel.=
+		cancelButton = new ItemStack(Material.RED_WOOL,1); {
+		
+		// Change the display name
+		ItemMeta denyMeta = cancelButton.getItemMeta();
+		denyMeta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lCancel"));
+		cancelButton.setItemMeta(denyMeta);
+		}
+		
+		// Display buttons
+		gui.setContents(createButtons((byte) gui.getSize()));
+		
+		// Display item thats being bought
+		gui.setItem(12, pendingPet.getItem());
+		
+		// Set the Currency Item on the 14th slot
+		gui.setItem(14, createCurrencyIcon(pendingPet, currencyType));
+		
+		return;
+	}
+	
+	/*
+	// Can player access CustomItem
+	private boolean canAccess(CustomPlayer player, CustomItem item)
+	{
+		if (!canAccess()) return false;
+		if (item.getPermission() == null) return true;
+		if (player.getPlayer().hasPermission(item.getPermission())) return true;
+		
+		sendErrorMessage(player.getPlayer(), ErrorType.NOT_PERMITTED);
+		return false;
+	}
+	
+	// Can player access Pet
+	private boolean canAccess(CustomPlayer player, Pet pet)
+	{
+		if (!canAccess(player)) return false;
+		if (pet.getPermission() == null) return true;
+		if (player.getPlayer().hasPermission(pet.getPermission())) return true;
+		
+		sendErrorMessage(player.getPlayer(), ErrorType.NOT_PERMITTED);
+		return false;
+	}*/
+	
+	public void clickedBuy() {
+		// Find the player that is using this gui
+		HumanEntity humanEntity = gui.getViewers().get(0);
+		CustomPlayer customPlayer = CustomPlayer.get(humanEntity.getUniqueId());
+		
+		// select the pending item
+		ItemStack pendingItem = gui.getItem(12);
+		
+		// Get ID
+		int customItemID = pendingItem.getItemMeta().getCustomModelData();
+		
+		// Get CustomItem
+		CustomItem pendingCustomItem = CustomItem.getCustomItem(customItemID);
+		
+		// 
+		if (pendingItem.getType() == Pet.material)
+			buyPet(customPlayer, pendingItem);
+		else 
+			buyCustomItem(customPlayer, pendingCustomItem);
+		
+		// Close inventory
+		customPlayer.getPlayer().closeInventory();
+	}
+	
+	private static void buyPet(CustomPlayer playerCustomPlayer, ItemStack pendingItem)
+	{
+			// Get info about item
+			ItemMeta pendingItemMeta = pendingItem.getItemMeta();
+			
+			// Get pet from ID on item
+			Pet pet = Pet.getPet(pendingItemMeta.getCustomModelData());
+			
+			// Currency that is being used
+			Currency currencyType;
+			
+			// Identify what currency is being used.
+			if (pendingItem.getType() == Material.GOLD_INGOT)
+				currencyType = Currency.COINS;
+			else
+				currencyType = Currency.POINTS;
+			
+			// Get the price
+			int price = (currencyType == Currency.POINTS) ? 
+						pet.getPrice(Currency.POINTS) : 
+							pet.getPrice(Currency.COINS);
+			
+			// Buy gui
+			CurrencyClass.buy(playerCustomPlayer, price, currencyType, pet);
+			
+			return;
+	}
+	
+	private static void buyCustomItem(CustomPlayer customPlayer, CustomItem pendingCustomItem)
+	{		
+			// Currency that is being used
+			Currency currencyType;
+			
+			// Identify what currency is being used.
+			if (pendingCustomItem.getItem().getType() == Material.GOLD_INGOT)
+				currencyType = Currency.COINS;
+			else
+				currencyType = Currency.POINTS;
+			
+			// Buy CustomItem
+			CurrencyClass.buy(customPlayer, currencyType == Currency.POINTS ? 
+					pendingCustomItem.getPointPrice() : pendingCustomItem.getCoinPrice(), currencyType, pendingCustomItem);
+	}
+	
+	// Create currency icon for CustomItems
+	private static ItemStack createCurrencyIcon(CustomItem customItem, Currency currencyType)
+	{
+		ItemStack currencyIcon;
+		
+		// Get the currency type
+		
+		if (currencyType == Currency.POINTS)
+			currencyIcon = new ItemStack(Material.IRON_INGOT);
+		else
+			currencyIcon = new ItemStack(Material.GOLD_INGOT);
+		
+		// Display the price
+		
+		ItemMeta meta = currencyIcon.getItemMeta();
+		
+		if (currencyType == Currency.POINTS)
+			meta.setDisplayName(String.format("Cost: %d Points", customItem.getPointPrice()));
+		else
+			meta.setDisplayName(String.format("Cost: %d Coins", customItem.getCoinPrice()));
+		
+		// Set ItemMeta and return
+		
+		currencyIcon.setItemMeta(meta);
+		
+		return currencyIcon;
+	}
+	
+	// Create currency icon for Pets
+	private static ItemStack createCurrencyIcon(Pet pet, Currency currencyType)
+	{
+		ItemStack currencyIcon;
+		
+		// Get the currency type
+		
+		if (currencyType == Currency.POINTS)
+			currencyIcon = new ItemStack(Material.IRON_INGOT);
+		else
+			currencyIcon = new ItemStack(Material.GOLD_INGOT);
+		
+		// Display the price
+		
+		ItemMeta meta = currencyIcon.getItemMeta();
+		
+		if (currencyType == Currency.POINTS)
+			meta.setDisplayName(String.format("Cost: %d Points", pet.getPrice(currencyType)));
+		else
+			meta.setDisplayName(String.format("Cost: %d Coins", pet.getPrice(currencyType)));
+		
+		// Set ItemMeta and return
+		
+		currencyIcon.setItemMeta(meta);
+		
+		return currencyIcon;
+	}
+	
+	private ItemStack[] createButtons(byte size)
+	{
+		
+		ItemStack[] contents = new ItemStack[size];
+		
+		// Place down buttons at left and right side
+		for (byte i = 1; (i * 1) < size; i++)
+		{
+			byte slot = (byte) (i * 9);
+			
+			if (slot > size)
+				break;
+			
+			// Place confirmButton on right side
+			contents[slot - 1] = confirmButton;
+			contents[slot - 2] = confirmButton;
+			
+			// Place cancelButton the left side
+			contents[slot - 8] = cancelButton;
+			contents[slot - 9] = cancelButton;
+		}
+		
+		return contents;
+	}
+
+	public void clicked(InventoryClickEvent clickEvent) {
+		clickEvent.setCancelled(true);
+		ItemStack clickedIcon = clickEvent.getCurrentItem();
+		
+		if (clickedIcon.equals(confirmButton)) {
+			PrintConsole.test("Bought");
+			opener.setActiveGui(null);
+			clickedBuy();
+			return;
+		}
+		
+		if (clickedIcon.equals(cancelButton)) {
+			opener.setActiveGui(null);
+			opener.getPlayer().closeInventory();
+		}
+	}
 	
 }

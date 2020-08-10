@@ -3,10 +3,6 @@ package net.wigoftime.open_komodo.config;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.UUID;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.PrintConsole;
@@ -16,6 +12,7 @@ public abstract class TagConfig
 	
 	private static final File config = new File(Main.dataFolderPath+"/Tags.yml");
 	
+	/*
 	public static String getTag(UUID uuid) 
 	{
 		File playerFile = PlayerConfig.getPlayerConfig(uuid);
@@ -24,8 +21,9 @@ public abstract class TagConfig
 		String tag = playerYaml.getConfigurationSection("General").getString("Tag");
 		
 		return tag;
-	}
+	}*/
 	
+	/*
 	public static void checkTag(Player player) 
 	{
 		
@@ -55,7 +53,7 @@ public abstract class TagConfig
 		{
 			PrintConsole.print("ERROR: Can't save the " + player.getUniqueId() + "'s invaild tag to vaild tag.");
 		}
-	}
+	}*/
 	
 	public static void create() 
 	{

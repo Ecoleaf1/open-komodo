@@ -9,26 +9,30 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 
 abstract public class Promote 
 {
-	private static final String promoted = ChatColor.translateAlternateColorCodes('&', "&e&lYou've been promoted to $G!");
+	private static final String promoted = String.format(" \n                      %s%s| %sOpen Komodo %s|%s\n       A staff member promoted you to %%s\n ", 
+			ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.DARK_AQUA);
 	private static final String senderPromote = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully promoted $D!");
 	private static final String senderPermission = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully added permission on $D!");
 	
+	/*
 	public static boolean promoteRank(OfflinePlayer player, String rankName)
 	{
-		// Check if rank exists
-		if (Rank.getRank(rankName) == null)
+		Rank rank = Rank.getRank(rankName);
+		
+		// Check if rank doesn't exist
+		if (rank == null)
 			return false;
 		
-		PlayerConfig.setRank(player.getUniqueId(), rankName);
+		CustomPlayer.setRankOffline(player.getUniqueId(), rank);
 		return true;
-	}
+	}*/
 	
 	// When command for adding Player to rank
 	public static void commandPromoteRank(CommandSender promoter, String targetName, String rank)
@@ -56,78 +60,84 @@ abstract public class Promote
 			}
 		}
 		
-		PlayerConfig.setRank(target.getUniqueId(), rank);
-		
-		// Setup rank and then their permissions
-		if (target instanceof Player)
-		{
-			Permissions.setUp(((Player) target));
-		}
-		
-		if (target.isOnline())
-		{
-			Player targetPlayer = (Player) target;
+		if (target.isOnline()) {
+			CustomPlayer customTargetPlayer = CustomPlayer.get(target.getUniqueId());
+			customTargetPlayer.setRank(Rank.getRank(rank));
+			
+			// Setup rank and then their permissions
+			if (target instanceof Player) {
+				Permissions.setUp(customTargetPlayer); 
+				ServerScoreBoard.add(customTargetPlayer);
+			}
 				
 			// Message to target that they been promoted
-			String msg = MessageFormat.format(targetPlayer, promoted);
-			targetPlayer.sendMessage(msg);
-		}
+			String msg = String.format(promoted, customTargetPlayer.getRank() == null ? "" : customTargetPlayer.getRank().getPrefix());
+			customTargetPlayer.getPlayer().sendMessage(msg);
+			return;
+		} else
+			CustomPlayer.setRankOffline(target.getUniqueId(), Rank.getRank(rank).getID());
 		
 		// Message to promoter that player been promoted
-		String msg2 = MessageFormat.format(senderPromote, promoter, target, null);
+		String msg2 = MessageFormat.format(senderPromote, promoter.getName(), target.getName(), null);
 		promoter.sendMessage(msg2);
 	}
 	
 	// When command for adding Player permission
-	public static void commandPromoteRank(Player promoter, String targetName, Permission permission, boolean addMode)
+	public static void commandPromoteRank(Player promoterPlayer, String targetName, Permission permission, boolean addMode)
 	{
-		// Get player by name
-		Player target = Bukkit.getPlayer(targetName);
+		// Get target (in Player format) by name
+		Player targetPlayer = Bukkit.getPlayer(targetName);
 		
 		// Check if player is online/exists
-		if (target == null)
-		{
-			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
+		if (targetPlayer == null) {
+			promoterPlayer.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
 			return;
 		}
 		
+		// get target Player in CustomPlayer format.
+		CustomPlayer targetCustomPlayer = CustomPlayer.get(targetPlayer.getUniqueId());
+		
+		// get promoter Player in CustomPlayer format.
+		CustomPlayer promoterCustomPlayer = CustomPlayer.get(promoterPlayer.getUniqueId());
+		
 		// Set Player Permission
-		PlayerConfig.setPermission(target, null, permission, addMode);
-		Permissions.setUp(target);
+		//PlayerConfig.setPermission(targetPlayer, null, permission, addMode);
+		//Permissions.setUp(targetCustomPlayer);
+		targetCustomPlayer.setPermission(permission, null, addMode);
 		
 		// Send to promoter that the command worked
-		String msg2 = MessageFormat.format(senderPermission, promoter, null);
-		promoter.sendMessage(msg2);
+		String msg2 = MessageFormat.format(senderPermission, promoterCustomPlayer, null);
+		promoterPlayer.sendMessage(msg2);
 		
 		// Refresh scoreboard
-		ServerScoreBoard.add(target);
+		ServerScoreBoard.add(targetCustomPlayer);
 	}
 	
 	// When command for adding Player permission
 	public static void commandPromoteRank(CommandSender promoter, String targetName, World world, Permission permission, boolean addMode)
 	{
 		// Get player by name
-		Player target = Bukkit.getPlayer(targetName);
+		Player targetPlayer = Bukkit.getPlayer(targetName);
 		
 		// Check if player is online/exists
-		if (target == null)
-		{
+		if (targetPlayer == null) {
 			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
 			return;
 		}
 		
+		CustomPlayer targetCustomPlayer = CustomPlayer.get(targetPlayer.getUniqueId());
+		
 		// Set Player Permission
-		if (world == null)
-			PlayerConfig.setPermission(target, null, permission, addMode);
-		else
-			PlayerConfig.setPermission(target, world, permission, addMode);
-		Permissions.setUp(target);
+		targetCustomPlayer.setPermission(permission, world, addMode);
+		//PlayerConfig.setPermission(targetPlayer, world, permission, addMode);
+		
+		//Permissions.setUp(targetCustomPlayer);
 		
 		// Send to promoter that the command worked
-		String msg2 = MessageFormat.format(senderPermission, promoter, target, null);
+		String msg2 = MessageFormat.format(senderPermission, promoter, targetPlayer, null);
 		promoter.sendMessage(msg2);
 		
 		// Refresh scoreboard
-		ServerScoreBoard.add(target);
+		ServerScoreBoard.add(targetCustomPlayer);
 	}
 }

@@ -8,6 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.etc.HomeSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class SetHomeCommand extends Command
 {
@@ -26,15 +27,15 @@ public class SetHomeCommand extends Command
 		if (!(sender instanceof Player))
 			return false;
 		
-		Player player = (Player) sender;
+		CustomPlayer playerCustomPlayer = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		// If there are subcommands
 		if (args.length > 0)
 			// Create home
-			HomeSystem.createHouse(player, args[0]);
+			HomeSystem.createHome(playerCustomPlayer, args[0]);
 		// Else send in message to enter a subcommand
 		else
-			player.sendMessage(typeInName);
+			playerCustomPlayer.getPlayer().sendMessage(typeInName);
 		
 		return true;
 	}

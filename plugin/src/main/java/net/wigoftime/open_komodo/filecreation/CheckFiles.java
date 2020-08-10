@@ -6,7 +6,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.Emote;
@@ -14,16 +13,20 @@ import net.wigoftime.open_komodo.config.ConfigType;
 import net.wigoftime.open_komodo.config.ItemConfig;
 import net.wigoftime.open_komodo.config.PetConfig;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
 import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Filter;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.RankSystem;
-import net.wigoftime.open_komodo.gui.BuyOptionsGUI;
+import net.wigoftime.open_komodo.gui.ParticlesGUI;
 import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.gui.PropShop;
+import net.wigoftime.open_komodo.gui.TagMenu;
+import net.wigoftime.open_komodo.gui.TagShop;
 import net.wigoftime.open_komodo.gui.Warps;
 import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomParticle;
 import net.wigoftime.open_komodo.objects.ItemType;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class CheckFiles 
 {
@@ -40,6 +43,7 @@ abstract public class CheckFiles
 		}
 
 		FileCreation.create(ConfigType.NORMAL);
+		SQLManager.setup();
 		
 		FileCreation.create(ConfigType.ITEM);
 		ItemConfig.setup();
@@ -53,11 +57,13 @@ abstract public class CheckFiles
 		FileCreation.create(ConfigType.RANK);
 		RankConfig.setup();
 		
-		PrintConsole.test("c4");
 		FileCreation.create(ConfigType.EMOTE);
+		Emote.setup();
 		
 		FileCreation.create(ConfigType.PET);
 		PetConfig.setup();
+		
+		PlayerSettingsConfig.setup();
 		
 		FileCreation.create(ConfigType.WHITELIST_DICT);
 		Filter.setup();
@@ -65,27 +71,15 @@ abstract public class CheckFiles
 		FileCreation.create(ConfigType.PROPSHOP_DEFAULT);
 		PropShop.setup();
 		
-		/*
-		PrintConsole.test("c5");
-		TagConfig.create(); */
+		PlayerConfig.setupFolder();
 		
-		PrintConsole.test("c6");
-		PlayerConfig.createFolder();
-		
-		PrintConsole.test("c7");
-		Emote.setup();
-		//LegacyItemConfig.setUp();
-		
-		PrintConsole.test("c8");
-		BuyOptionsGUI.setup();
-		
-		PrintConsole.test("c11");
 		PhoneGui.setUp();
-		
-		PrintConsole.test("c12");
 		Warps.setup();
-		
+		TagMenu.setup();
+		TagShop.setup();
 		RankSystem.setup();
+		CustomParticle.setup();
+		ParticlesGUI.setup();
 	}
 	
 }

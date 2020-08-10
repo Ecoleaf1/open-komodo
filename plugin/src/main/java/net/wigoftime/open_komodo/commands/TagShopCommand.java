@@ -27,7 +27,8 @@ public class TagShopCommand extends Command
 		// Get sender in player format
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		TagShop.open(player);
+		TagShop gui = new TagShop(player);
+		gui.open();
 		
 		return false;
 	}

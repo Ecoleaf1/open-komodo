@@ -5,15 +5,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map.Entry;
 
-import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.Rank;
 
 public abstract class RankConfig 
@@ -45,6 +42,13 @@ public abstract class RankConfig
 				pSalery = section.getInt("Salery (Points)");
 			else
 				pSalery = 0;
+			
+			// Get Coins Salery
+			int cSalery;
+			if (section.contains("Salery (Coins)"))
+				cSalery = section.getInt("Salery (Coins)");
+			else
+				cSalery = 0;
 			
 			// Get Prefix
 			String prefix = section.getString("Prefix");
@@ -78,7 +82,7 @@ public abstract class RankConfig
 				}
 			
 			// Create rank
-			new Rank(id, XPPrice, pSalery, rank, prefix, permissions, worldPermissionMap);
+			new Rank(id, XPPrice, pSalery, cSalery, rank, prefix, permissions, worldPermissionMap);
 		}
 	}
 	/*

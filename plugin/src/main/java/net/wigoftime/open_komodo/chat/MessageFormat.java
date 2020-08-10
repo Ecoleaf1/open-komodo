@@ -5,9 +5,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.config.TagConfig;
-import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Rank;
 
 public abstract class MessageFormat 
 {
@@ -18,48 +18,52 @@ public abstract class MessageFormat
 	private static final String tagModFormat = "[\"\",{\"text\":\"$W\",\"color\":\"gray\"},{\"text\":\" | \",\"color\":\"dark_gray\"},{\"text\":\"$G\",\"color\":\"gray\"},{\"text\":\"$S\",\"color\":\"dark_gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Username: $N\"}]}}},{\"text\":\" : \",\"color\":\"gray\"},{\"text\":\"$M\",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}},{\"text\":\" [¶]\",\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/mod $N\"}}]";
 	
 	// Convert it so the message can be understood by JSON, like /tellraw
-	public static String json(Player sender, String message) 
+	public static String json(CustomPlayer senderCustomPlayer, String message) 
 	{
 		message = message.replace("\\", "\\\\");
 		message = message.replace("\"", "\\\"");
 		
-		String userTag = TagConfig.getTag(sender.getUniqueId());
-		
-		if (userTag.equals(""))
-			return MessageFormat.format(format,sender,message);
+		if (senderCustomPlayer.getTagDisplay().equals(""))
+			return MessageFormat.format(format,senderCustomPlayer,message);
 		else
-			return MessageFormat.format(tagFormat,sender,message);
+			return MessageFormat.format(tagFormat, senderCustomPlayer,message);
 	}
 	
-	public static String jsonMod(Player sender, String message) 
+	public static String jsonMod(CustomPlayer senderCustomPlayer, String message) 
 	{
 		message = message.replace("\\", "\\\\");
 		message = message.replace("\"", "\\\"");
 		
-		String userTag = TagConfig.getTag(sender.getUniqueId());
-		
-		if (userTag.equals(""))
-			return MessageFormat.format(modFormat,sender,message);
+		if (senderCustomPlayer.getTagDisplay().equals(""))
+			return MessageFormat.format(modFormat, senderCustomPlayer, message);
 		else
-			return MessageFormat.format(tagModFormat,sender,message);
+			return MessageFormat.format(tagModFormat, senderCustomPlayer, message);
 	}
 	
-	public static String format(String messageFormat,Player sender,String message) 
+	public static String format(String messageFormat,CustomPlayer customSender,String message) 
 	{
-		String tag = TagConfig.getTag(sender.getUniqueId());
-		String rank = PlayerConfig.getRankPrefix(sender.getUniqueId());
 		
-		if (sender != null) 
+		if (customSender != null) 
 		{
-			messageFormat = messageFormat.replace("$N", sender.getDisplayName());
+			Rank rank = customSender.getRank();
 			
-			if (sender.getCustomName() != null)
-				messageFormat = messageFormat.replace("$S", sender.getCustomName());
+			String rankPrefix;
+			
+			if (rank == null)
+				rankPrefix = "";
 			else
-				messageFormat = messageFormat.replace("$S", sender.getDisplayName());
+				rankPrefix = customSender.getRank().getPrefix();
 			
-			messageFormat = messageFormat.replace("$W", tag);
-			messageFormat = messageFormat.replace("$G", rank);
+			messageFormat = messageFormat.replace("$N", customSender.getPlayer().getDisplayName());
+			
+			if (customSender.getPlayer().getCustomName() != null)
+				messageFormat = messageFormat.replace("$S", customSender.getPlayer().getCustomName());
+			else
+				messageFormat = messageFormat.replace("$S", customSender.getPlayer().getDisplayName());
+			
+			messageFormat = messageFormat.replace("$W", customSender.getTagDisplay());
+			
+			messageFormat = messageFormat.replace("$G", rankPrefix);
 		}
 		
 		if (message != null)
@@ -68,30 +72,33 @@ public abstract class MessageFormat
 		return messageFormat;
 	}
 	
-	public static String format(Player player, String text)
+	public static String format(CustomPlayer customPlayer, String text)
 	{
-		text = text.replace("$N", player.getDisplayName());
+		text = text.replace("$N", customPlayer.getPlayer().getDisplayName());
 		
-		if (player.getCustomName() != null)
-			text = text.replace("$S", player.getCustomName());
+		if (customPlayer.getPlayer().getCustomName() != null)
+			text = text.replace("$S", customPlayer.getPlayer().getCustomName());
 		else
-			text = text.replace("$S", player.getDisplayName());
+			text = text.replace("$S", customPlayer.getPlayer().getDisplayName());
 		
-		if (TagConfig.getTag(player.getUniqueId()) != null)
-			text = text.replace("$W", TagConfig.getTag(player.getUniqueId()));
-		else
+		if (customPlayer.getTagDisplay().equals(""))
 			text = text.replace("$W", "");
+		else
+			text = text.replace("$W", customPlayer.getTagDisplay());
 		
-		text = text.replace("$G", PlayerConfig.getRankPrefix(player.getUniqueId()));
+		Rank rank = customPlayer.getRank();
+		if (rank == null)
+			text = text.replace("$G", "");
+		else
+			text = text.replace("$G", customPlayer.getRank().getPrefix());
 		
-		text = text.replace("$T", CurrencyClass.getPoints(player) + "");
-		text = text.replace("$C", CurrencyClass.getCoins(player) + "");
+		text = text.replace("$T", customPlayer.getCurrency(Currency.POINTS)+"");
+		text = text.replace("$C", customPlayer.getCurrency(Currency.COINS)+"");
 		
 		return text;
 	}
 
-	public static String format(String messageFormat,String senderUsername,String recipientUsername,String message) 
-	{
+	public static String format(String messageFormat,String senderUsername,String recipientUsername,String message) {
 		if (senderUsername != null) 
 			messageFormat = messageFormat.replace("$N", senderUsername);
 		
@@ -104,35 +111,43 @@ public abstract class MessageFormat
 		return messageFormat;
 	}
 	
-	public static String format(String messageFormat,Player sender,Player recipient,String message) 
-	{
-		
+	public static String format(String messageFormat,CustomPlayer customPlayerSender,CustomPlayer customPlayerRecipient,String message) {
 		//  If there is a sender, format sender
-		if (sender != null) 
-		{
-			messageFormat = messageFormat.replace("$N", sender.getDisplayName());
+		if (customPlayerSender != null) {
+			messageFormat = messageFormat.replace("$N", customPlayerSender.getPlayer().getDisplayName());
 			
-			if (sender.getCustomName() == null)
-				messageFormat = messageFormat.replace("$S", sender.getDisplayName());
+			if (customPlayerSender.getPlayer().getCustomName() == null)
+				messageFormat = messageFormat.replace("$S", customPlayerSender.getPlayer().getDisplayName());
 			else
-				messageFormat = messageFormat.replace("$S", sender.getCustomName());
+				messageFormat = messageFormat.replace("$S", customPlayerSender.getPlayer().getCustomName());
 			
-			messageFormat = messageFormat.replace("$W", TagConfig.getTag(sender.getUniqueId()));
-			messageFormat = messageFormat.replace("$G", PlayerConfig.getRankPrefix(sender.getUniqueId()));
+			messageFormat = messageFormat.replace("$W", customPlayerSender.getTagDisplay());
+			
+			Rank rank = customPlayerSender.getRank();
+			
+			if (rank == null)
+				messageFormat = messageFormat.replace("$G", "");
+			else
+				messageFormat = messageFormat.replace("$G", customPlayerSender.getRank().getPrefix());
 		}
 		
 	//  If there is a recipient, format recipient
-		if (recipient != null) 
+		if (customPlayerRecipient != null) 
 		{
-			messageFormat = messageFormat.replace("$D", recipient.getDisplayName());
+			messageFormat = messageFormat.replace("$D", customPlayerRecipient.getPlayer().getDisplayName());
 			
-			if (recipient.getCustomName() == null)
-				messageFormat = messageFormat.replace("$R", recipient.getDisplayName());
+			if (customPlayerRecipient.getPlayer().getCustomName() == null)
+				messageFormat = messageFormat.replace("$R", customPlayerRecipient.getPlayer().getDisplayName());
 			else
-				messageFormat = messageFormat.replace("$R", recipient.getCustomName());
+				messageFormat = messageFormat.replace("$R", customPlayerRecipient.getPlayer().getCustomName());
 			
-			messageFormat = messageFormat.replace("$E", TagConfig.getTag(recipient.getUniqueId()));
-			messageFormat = messageFormat.replace("$H", PlayerConfig.getRankPrefix(recipient.getUniqueId()));
+			messageFormat = messageFormat.replace("$E", customPlayerRecipient.getTagDisplay());
+			
+			Rank rank = customPlayerRecipient.getRank();
+			if (rank == null)
+				messageFormat = messageFormat.replace("$H", "");
+			else
+				messageFormat = messageFormat.replace("$H", customPlayerRecipient.getRank().getPrefix());
 		}
 		
 		if (message != null)
@@ -145,71 +160,46 @@ public abstract class MessageFormat
 	
 	public static String format(String messageFormat,CommandSender sender,OfflinePlayer recipient,String message) 
 	{
-		if (sender != null) 
-		{
-			if (sender instanceof Player)
-			{
-				// Get sender as player
-				Player player = (Player) sender;
-				
-				messageFormat = messageFormat.replace("$N", player.getDisplayName());
-				
-				if (player.getCustomName() == null)
-					messageFormat = messageFormat.replace("$S", player.getDisplayName());
-				else
-					messageFormat = messageFormat.replace("$S", player.getCustomName());
-				
-				messageFormat = messageFormat.replace("$W", TagConfig.getTag(player.getUniqueId()));
-				messageFormat = messageFormat.replace("$G", PlayerConfig.getRankPrefix(player.getUniqueId()));
-			}
-			else
-			{
-				messageFormat = messageFormat.replace("$N", sender.getName());
-			}
-		}
-		
-		if (recipient != null) 
-		{
+		if (sender instanceof Player)
 			if (recipient.isOnline())
-			{
-				Player targetPl = (Player) recipient;
-			messageFormat = messageFormat.replace("$D", targetPl.getDisplayName());
-			
-			if (targetPl.getCustomName() == null)
-				messageFormat = messageFormat.replace("$R", targetPl.getDisplayName());
+				return format(messageFormat, CustomPlayer.get(((Player) sender).getUniqueId()), CustomPlayer.get(recipient.getUniqueId()), message);
 			else
-				messageFormat = messageFormat.replace("$R", targetPl.getCustomName());
-			}
+				return formatOfflineRecipient(messageFormat, CustomPlayer.get(((Player) sender).getUniqueId()), recipient, message);
+		else
+			if (recipient.isOnline())
+				return format(messageFormat, null, CustomPlayer.get(recipient.getUniqueId()), message);
 			else
-			{
-			messageFormat = messageFormat.replace("$D", recipient.getName());
-			messageFormat = messageFormat.replace("$R", recipient.getName());
-			messageFormat = messageFormat.replace("$R", recipient.getName());
-			
-			messageFormat = messageFormat.replace("$E", TagConfig.getTag(recipient.getUniqueId()));
-			messageFormat = messageFormat.replace("$H", PlayerConfig.getRankPrefix(recipient.getUniqueId()));
-			}
-		}
+				return formatOfflineRecipient(messageFormat, null, recipient, message);
 		
-		if (message != null)
-			messageFormat = messageFormat.replace("$M", message);
-		
-		return messageFormat;
+		/*
+		if (sender instanceof Player)
+			if (recipient.isOnline())
+			return formatOfflineRecipient(messageFormat, CustomPlayer.get(((Player) sender).getUniqueId()), recipient, message);
+		else {
+			messageFormat = messageFormat.replace("$N", "CONSOLE");
+			//return format(messageFormat, sender, recipient, message);
+			return messageFormat;
+		}*/
 	}
 	
-	public static String format(String messageFormat,Player sender,OfflinePlayer recipient,String message) 
+	public static String formatOfflineRecipient(String messageFormat,CustomPlayer senderCustomPlayer,OfflinePlayer recipient,String message) 
 	{
-		if (sender != null) 
+		if (senderCustomPlayer != null) 
 		{
-			messageFormat = messageFormat.replace("$N", sender.getDisplayName());
+			messageFormat = messageFormat.replace("$N", senderCustomPlayer.getPlayer().getDisplayName());
 			
-			if (sender.getCustomName() != null)
-				messageFormat = messageFormat.replace("$S", sender.getCustomName());
+			if (senderCustomPlayer.getPlayer().getCustomName() != null)
+				messageFormat = messageFormat.replace("$S", senderCustomPlayer.getPlayer().getCustomName());
 			else
-				messageFormat = messageFormat.replace("$S", sender.getDisplayName());
+				messageFormat = messageFormat.replace("$S", senderCustomPlayer.getPlayer().getDisplayName());
 			
-			messageFormat = messageFormat.replace("$W", TagConfig.getTag(sender.getUniqueId()));
-			messageFormat = messageFormat.replace("$G", PlayerConfig.getRankPrefix(sender.getUniqueId()));
+			messageFormat = messageFormat.replace("$W", senderCustomPlayer.getTagDisplay());
+			
+			Rank senderRank = senderCustomPlayer.getRank();
+			if (senderRank == null)
+			messageFormat = messageFormat.replace("$G", "");
+			else
+				messageFormat = messageFormat.replace("$G", CustomPlayer.getRankOffline(senderCustomPlayer.getUniqueId()).getPrefix());
 			}
 			
 			if (recipient != null) 

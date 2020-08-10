@@ -12,31 +12,28 @@ import org.bukkit.permissions.Permission;
 import net.wigoftime.open_komodo.actions.Promote;
 import net.wigoftime.open_komodo.etc.Permissions;
 
-public class PromoteCommand extends Command 
-{
-
+public class PromoteCommand extends Command {
 	public PromoteCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
-	{
+			List<String> aliases) {
 		super(name, description, usageMessage, aliases);
-		// TODO Auto-generated constructor stub
 	}
+	
+	private static final String usage = String.format("%s» %sUsage: /promote {Rank/Player}", 
+			ChatColor.GOLD, ChatColor.GRAY);
+	private static final String usageRankMsg = String.format("%s» %sUsage: /promote {Rank} {Player Name} {Rank}", 
+			ChatColor.GOLD, ChatColor.GRAY);
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
-	{
-		
+	public boolean execute(CommandSender sender, String command, String[] args) {
 		// If player doesn't have promote permission, return
-		if (!sender.hasPermission(Permissions.promotePerm))
-		{
+		if (!sender.hasPermission(Permissions.promotePerm)) {
 			sender.sendMessage(Permissions.promotePermError);
 			return false;
 		}
 		
 		// Skip if no sub-commands
-		if (args.length < 1)
-		{
-			sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&lUsage: /promote {Rank/Player}"));
+		if (args.length < 1) {
+			sender.sendMessage(usage);
 			return false;
 		}
 		
@@ -44,12 +41,10 @@ public class PromoteCommand extends Command
 		String selector = args[0];
 		
 		// If player wants to promote player's rank
-		if (selector.equalsIgnoreCase("rank"))
-		{
+		if (selector.equalsIgnoreCase("rank")) {
 			// skip if less than 3 sub-commands
-			if (args.length < 3)
-			{
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&lUsage: /promote {Rank} {Player Name} {Rank}"));
+			if (args.length < 3) {
+				sender.sendMessage(usageRankMsg);
 				return false;
 			}
 			
@@ -63,9 +58,8 @@ public class PromoteCommand extends Command
 		if (selector.equalsIgnoreCase("player"))
 		{
 			// If has less than 4 sub commands
-			if (args.length < 4)
-			{
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&lUsage: /promote {Player} {Add/Remove} {Player Name} {Permission}"));
+			if (args.length < 4) {
+				sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
 				return false;
 			}
 			
@@ -83,7 +77,7 @@ public class PromoteCommand extends Command
 				
 				if (world == null)
 				{
-					sender.sendMessage(ChatColor.DARK_RED + "Could not find world.");
+					sender.sendMessage(String.format("%s» %sCould not find world", ChatColor.GOLD, ChatColor.DARK_RED));
 					return false;
 				}
 				
@@ -102,9 +96,8 @@ public class PromoteCommand extends Command
 				addMode = true;
 			else if (modifer.equalsIgnoreCase("remove"))
 				addMode = false;
-			else
-			{
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', "&e&lUsage: /promote {Player} {Add/Remove} {Player Name} {Permission}"));
+			else {
+				sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
 				return false;
 			}
 			

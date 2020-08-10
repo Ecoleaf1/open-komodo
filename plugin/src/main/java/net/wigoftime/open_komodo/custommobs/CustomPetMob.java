@@ -13,6 +13,7 @@ import net.minecraft.server.v1_14_R1.EntityHuman;
 import net.minecraft.server.v1_14_R1.EntityTypes;
 import net.minecraft.server.v1_14_R1.EnumHand;
 import net.minecraft.server.v1_14_R1.PathfinderGoalSelector;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.gui.PetControl;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
@@ -67,10 +68,13 @@ public class CustomPetMob extends EntityCreature
 	// When entity is clicked on
     public boolean a(EntityHuman entity, EnumHand enumhand) 
     {
+    	PrintConsole.test("1");
+    	
     	if (entity.getUniqueID() == owner.getUniqueId())
     	{
     		CustomPlayer player = CustomPlayer.get(entity.getUniqueID());
-    		PetControl.create(player);
+    		PetControl gui = new PetControl(player);
+    		gui.open();
     	}
     	
     	return false;

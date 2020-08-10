@@ -1,6 +1,6 @@
 VIP:
   ID: 1
-  Prefix: '&e&lVIP&r&e &2'
+  Prefix: '&e&lVIP&r&e &e'
   XP Price: 15.0
   Salery (Points): 30
   Permissions:
@@ -13,9 +13,10 @@ VIP:
   - openkomodo.hats.chickenhat
   - openkomodo.hats.cowboyhat
   - openkomodo.hats.kingcrown
+  - openkomodo.hats.snorkel
 VIP+:
   ID: 2
-  Prefix: '&e&lVIP+&r&e &2'
+  Prefix: '&e&lVIP+&r&e &e'
   XP Price: 100.0
   Salery (Points): 45
   Permissions:
@@ -54,10 +55,17 @@ VIP+:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
 MVP:
   ID: 3
   Prefix: '&b&lMVP&r&b &3'
   Salery (Points): 60
+  Salery (Coins): 2
   XP Price: 250.0
   Permissions:
   - openkomodo.essentials.*
@@ -96,11 +104,42 @@ MVP:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
+  - openkomodo.particles.access
   - openkomodo.pets.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
 MVP+:
   ID: 4
   Prefix: '&b&lMVP+&r&b &3'
   Salery (Points): 72
+  Salery (Coins): 5
   XP Price: 500.0
   Permissions:
   - openkomodo.essentials.*
@@ -139,8 +178,39 @@ MVP+:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
   - openkomodo.pets.access
+  - openkomodo.particles.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
 MOD:
+  ID: 200
   Prefix: '&e&lMOD&r&e &6'
   Salery (Points): 72
   Permissions:
@@ -180,11 +250,39 @@ MOD:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
   - openkomodo.pets.access
-  - openkomodo.mod.kick
-  - openkomodo.mod.Ban
-  - openkomodo.mod.mute
+  - openkomodo.particles.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
 BUILDER:
+  ID: 201
   Prefix: '&e&lBUILDER&r &6'
   Salery (Points): 72
   Permissions:
@@ -224,7 +322,37 @@ BUILDER:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
   - openkomodo.pets.access
+  - openkomodo.particles.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
   - openkomodo.build.buildmode
   - openkomodo.build.place
   - openkomodo.build.break
@@ -245,6 +373,7 @@ BUILDER:
         Permissions: []
 
 DESIGNER:
+  ID: 202
   Prefix: '&d&lDESIGNER &r&5'
   Salery (Points): 72
   Permissions:
@@ -284,8 +413,39 @@ DESIGNER:
   - openkomodo.hats.articfoxears
   - openkomodo.hats.batearedfoxears
   - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
   - openkomodo.pets.access
+  - openkomodo.particles.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
 MANAGER:
+    ID: 255
     Prefix: "&6&lMANAGER&r "
     Permissions:
         - '*'

@@ -23,9 +23,9 @@ public class RankCommand extends Command
 			if (args.length < 1)
 				return false;
 			
-			if (args[0].equalsIgnoreCase("help"))
-			{
-				sender.sendMessage(ChatColor.AQUA + "Rank help" + ChatColor.DARK_AQUA + ":\nRank up by roleplaying and chatting in public chat. The more often you are active in chat, the quicker you rank up. Ranking up takes time, having no one of checking when you will rank up.");
+			if (args[0].equalsIgnoreCase("help")) {
+				sender.sendMessage(String.format("%s» %sRank Help:\n%s» %sRank up by roleplaying and chatting in public chat. The more often you are active in chat, the quicker you rank up. Ranking up takes time, having no one of checking when you will rank up. ", 
+						ChatColor.GOLD, ChatColor.AQUA, ChatColor.GOLD, ChatColor.DARK_AQUA));
 				return true;
 			}
 			
@@ -33,16 +33,15 @@ public class RankCommand extends Command
 			{
 				if (!sender.hasPermission(Permissions.rankReloadPerm))
 				{
-					sender.sendMessage(ChatColor.DARK_RED + "You don't have permission.");
-					return false;
+					sender.sendMessage(String.format("%s» %sYou are not permitted to use that command", ChatColor.GOLD, ChatColor.DARK_RED));
+					return true;
 				}
 				
 				Rank.reload();
-				sender.sendMessage(ChatColor.DARK_AQUA+ "Ranks reloaded!");
-				
+				sender.sendMessage(String.format("%s» %sRanks reloaded!", ChatColor.GOLD, ChatColor.DARK_GREEN));
 				return true;
 			}
 			
-			return false;
+			return true;
 		}
 }

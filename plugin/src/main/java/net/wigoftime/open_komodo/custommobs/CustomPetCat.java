@@ -67,7 +67,8 @@ public class CustomPetCat extends EntityCat
 	    	if (entity.getUniqueID() == owner.getUniqueId())
 	    	{
 	    		CustomPlayer customOwner = CustomPlayer.get(entity.getUniqueID());
-	    		PetControl.create(customOwner);
+	    		PetControl gui = new PetControl(customOwner);
+	    		gui.open();
 	    	}
 	    	
 	    	return false;
