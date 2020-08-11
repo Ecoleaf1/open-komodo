@@ -120,6 +120,7 @@ import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.events.AsyncPlayerChat;
+import net.wigoftime.open_komodo.events.VotifierEvent;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.gui.GUIManager;
@@ -202,6 +203,13 @@ public class Main extends JavaPlugin implements Listener
 		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), this);
 		Bukkit.getPluginManager().registerEvent(BlockPlaceEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockPlace(), this);
 		Bukkit.getPluginManager().registerEvent(BlockBreakEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockBreak(), this);
+		
+		if (Bukkit.getPluginManager().getPlugin("Votifier") == null)
+			PrintConsole.print("NuVotifier isn't detected, vote rewards disabled.");
+		else {
+			Bukkit.getPluginManager().registerEvent(com.vexsoftware.votifier.model.VotifierEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.VotifierEvent(), this);
+			PrintConsole.print("NuVotifier detected, vote rewards enabled.");
+		}
 		Bukkit.getPluginManager().registerEvent(BlockFertilizeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFertilize(), this);
 		
 		// Set where the plugin's datafolder is

@@ -79,9 +79,6 @@ public class GenPayCommand extends Command
 		// Generate money to player
 		CurrencyClass.genPay(customPlayerSender, amount, currency);
 		
-		// Update Target's info side bored
-		ServerScoreBoard.add(customPlayerSender);
-		
 		return true;
 	}
 

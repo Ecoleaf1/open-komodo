@@ -4,4 +4,5 @@ description: The Offical Open Komodo plugin!
 version: 0.4
 author: Ecoleaf
 depend: [ProtocolLib, BountifulAPI, PlayerParticles]
+softdepend: [NuVotifier]
 api-version: 1.13
