@@ -76,24 +76,42 @@ public class CustomPlayer
 		uuid = player.getUniqueId();
 		
 		if (SQLManager.isEnabled()) {
+			PrintConsole.test(1+"");
 			if (!SQLManager.containsPlayer(uuid))
 				SQLManager.createPlayer(uuid);
+			
+			PrintConsole.test(2+"");
 			if (!PlayerSettingsConfig.contains(uuid))
 				PlayerSettingsConfig.create(uuid);
 			
+			PrintConsole.test(3+"");
 			this.settings = PlayerSettingsConfig.getSettings(uuid);
+			
+			PrintConsole.test(4+"");
 			this.joinDate = SQLManager.getJoinDate(uuid);
+			
+			PrintConsole.test(5+"");
 			this.muteDate = SQLManager.getMuteDate(uuid);
+			
+			PrintConsole.test(6+"");
 			this.muteReason = SQLManager.getMuteReason(uuid);
 			
+			PrintConsole.test(7+"");
 			this.rank = Rank.getRank(SQLManager.getRankID(uuid));
+			
+			PrintConsole.test(8+"");
 			this.xp = SQLManager.getXP(uuid);
 			
+			PrintConsole.test(9+"");
 			usdDonated = SQLManager.getTip(uuid);
 			
+			PrintConsole.test(10+"");
 			pointsBalance = SQLManager.getCurrency(uuid, Currency.POINTS);
+			
+			PrintConsole.test(11+"");
 			coinsBalance = SQLManager.getCurrency(uuid, Currency.COINS);
 			
+			PrintConsole.test(12+"");
 			List<CustomItem> ownedItems = SQLManager.getItems(uuid);
 			
 			List<CustomItem> listOwnedHats = new LinkedList<CustomItem>();
@@ -123,8 +141,10 @@ public class CustomPlayer
 			ownedPhones = new ArrayList<CustomItem>(listOwnedPhones.size());
 			ownedPhones.addAll(listOwnedPhones);
 			
+			PrintConsole.test(13+"");
 			this.ownedPets = SQLManager.getPets(uuid);
 			
+			PrintConsole.test(14+"");
 			homes = SQLManager.getHomes(uuid);
 		}
 		else {

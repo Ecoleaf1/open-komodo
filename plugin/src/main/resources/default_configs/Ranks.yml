@@ -213,7 +213,11 @@ MOD:
   ID: 200
   Prefix: '&e&lMOD&r&e &6'
   Salery (Points): 72
+  Salery (Coins): 5
   Permissions:
+  - openkomodo.mod.mute
+  - openkomodo.mod.kick
+  - openkomodo.mod.ban
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -285,6 +289,7 @@ BUILDER:
   ID: 201
   Prefix: '&e&lBUILDER&r &6'
   Salery (Points): 72
+  Salery (Coins): 5
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
@@ -376,6 +381,7 @@ DESIGNER:
   ID: 202
   Prefix: '&d&lDESIGNER &r&5'
   Salery (Points): 72
+  Salery (Coins): 5
   Permissions:
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
@@ -448,4 +454,5 @@ MANAGER:
     ID: 255
     Prefix: "&6&lMANAGER&r "
     Permissions:
+        - openkomodo.home.limit.99
         - '*'

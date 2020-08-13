@@ -88,7 +88,6 @@ public class PlayerJoin implements EventExecutor {
 						
 						// Make players not collide to each other and unable to pickup stuff
 						playerCustomPlayer.getPlayer().setCanPickupItems(false);
-						playerCustomPlayer.getPlayer().setCollidable(false);
 						
 						// Checks if they read the UpdateLog before
 						UpdateLog.onJoin(playerCustomPlayer.getPlayer());

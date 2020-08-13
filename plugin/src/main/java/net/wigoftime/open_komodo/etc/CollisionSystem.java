@@ -16,11 +16,10 @@ public class CollisionSystem {
 		
 		
 		if (team == null) {
-			PrintConsole.test("Team doesn't exist");
 			team = scoreboard.registerNewTeam("Default");
-			team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 		}
 		
+		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 		return team;
 	}
 	

@@ -29,10 +29,8 @@ abstract public class Moderation
 		
 		//	If Player is stated clearly not muted.
 		if (muteDate == null) 
-		{ 
-			PrintConsole.test("mute date is null");
 			return false;
-		}
+		
 		else 
 		{
 			//	Get the current Calendar with the current date.
@@ -93,6 +91,14 @@ abstract public class Moderation
 		PlayerConfig.setBanDate(uuid, date);
 	}
 	
+	public static Date getBanDate(UUID uuid) 
+	{
+		if (SQLManager.isEnabled())
+		return SQLManager.getBanDate(uuid);
+		else
+		return PlayerConfig.getBanDate(uuid);
+	}
+	
 	private static void setBanReason(UUID uuid, String reason) 
 	{
 		if (SQLManager.isEnabled())
@@ -140,7 +146,7 @@ abstract public class Moderation
 					muteCal.get(Calendar.YEAR), 
 					muteCal.get(Calendar.MONTH), 
 					muteCal.get(Calendar.DAY_OF_MONTH), 
-					muteCal.get(Calendar.HOUR) > 12 ? muteCal.get(Calendar.MONTH) - 2 : muteCal.get(Calendar.MONTH), 
+					muteCal.get(Calendar.HOUR),
 					muteCal.get(Calendar.MINUTE),
 					muteCal.get(Calendar.HOUR) > 12 ? "PM" : "AM");
 			
@@ -160,7 +166,7 @@ abstract public class Moderation
 					muteCal.get(Calendar.YEAR), 
 					muteCal.get(Calendar.MONTH), 
 					muteCal.get(Calendar.DAY_OF_MONTH), 
-					muteCal.get(Calendar.HOUR) > 12 ? muteCal.get(Calendar.MONTH) - 2 : muteCal.get(Calendar.MONTH), 
+					muteCal.get(Calendar.HOUR),
 					muteCal.get(Calendar.MINUTE),
 					muteCal.get(Calendar.HOUR) > 12 ? "PM" : "AM");
 			
@@ -172,6 +178,8 @@ abstract public class Moderation
 			// Send message to player
 			playerCustomPlayer.getPlayer().sendMessage(message);
 		}
+		
+		PrintConsole.test("MuteCal: "+muteCal.toInstant().toString());
 	}
 	
 	

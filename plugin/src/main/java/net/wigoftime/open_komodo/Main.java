@@ -4,8 +4,10 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -106,9 +108,11 @@ import net.wigoftime.open_komodo.commands.TpaCommand;
 import net.wigoftime.open_komodo.commands.TpaDenycommand;
 import net.wigoftime.open_komodo.commands.TpaHereCommand;
 import net.wigoftime.open_komodo.commands.TpaToggleCommand;
+import net.wigoftime.open_komodo.commands.VoteCommand;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import net.wigoftime.open_komodo.etc.ActionBar;
+import net.wigoftime.open_komodo.etc.ChatAnnouncements;
 import net.wigoftime.open_komodo.etc.CoinSalary;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
@@ -143,8 +147,6 @@ public class Main extends JavaPlugin implements Listener
 	//public static final String welcomemsg = String.format("%s%s━━━━━━━━━━━━\n%sWelcome back to %s!%s\n%s%s━━━━━━━━━━━━", 
 			//ChatColor.YELLOW, ChatColor.STRIKETHROUGH, ChatColor.DARK_AQUA, name, ChatColor.DARK_AQUA, creditsLine, ChatColor.YELLOW, ChatColor.STRIKETHROUGH);
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
-	
-	public static final SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy HH:mm");
 	
 	private static String normalMessageFormat;
 	private static String normalTagMessageFormat;
@@ -240,6 +242,7 @@ public class Main extends JavaPlugin implements Listener
 		ActionBar.startLoop();
 		PetsManager.startLoop();
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new AFKChecker(), 0, 60);
+		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new ChatAnnouncements(), 0, 7200);
 		CoinSalary.coinpayPlayersTimer();
 		
 		setupExtraCommands();
@@ -352,9 +355,6 @@ public class Main extends JavaPlugin implements Listener
 	public void dismounted(EntityDismountEvent e)
 	{
 		Entity entity = e.getDismounted();
-		
-		if (e.getEntity().getType() == EntityType.PLAYER)
-			entity.remove();
 		
 		if (entity.getType() == EntityType.ARROW)
 			entity.remove();
@@ -942,11 +942,15 @@ public class Main extends JavaPlugin implements Listener
 		
 		if (isBanned) {
 			String reason = Moderation.getBanReason(uuid);
+			Date date = Moderation.getBanDate(uuid);
 			
 			if (reason == null)
-				e.disallow(Result.KICK_BANNED, "You have been banned");
+				
+				e.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString()));
+				//e.disallow(Result.KICK_BANNED, "You have been banned Due date: "+date.toString());
 			else
-				e.disallow(Result.KICK_BANNED, "You have been banned\nReason: "+reason);
+				e.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s\n  Reason: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString(), reason));
+				//e.disallow(Result.KICK_BANNED, "You have been banned Due date: "+date.toString() + "\nReason: "+reason);
 			return;
 		}
 	}
@@ -1067,8 +1071,6 @@ public class Main extends JavaPlugin implements Listener
 	public static void displayWelcomeMessage(Player player) {
 		String welcomeHeader = String.format("%s%s━━━━━━━━━━━━━━━━━━━━ %s%s Welcome back! %s%s━━━━━━━━━━━━━━", 
 				ChatColor.YELLOW, ChatColor.STRIKETHROUGH, ChatColor.AQUA, ChatColor.BOLD, ChatColor.YELLOW, ChatColor.STRIKETHROUGH);
-		String welcomeContext = String.format("%sWelcome back to %s, %s", ChatColor.DARK_AQUA, name, player.getDisplayName());
-		String welcomeContext2 = String.format("%sType in /rules to view the rules, and check out /credits for everyone who helped out!", ChatColor.DARK_AQUA);
 		
 		BaseComponent[] components = new BaseComponent[5];
 		components[0] = new TextComponent(String.format("%sTo view the rules, ", net.md_5.bungee.api.ChatColor.DARK_AQUA));
@@ -1117,46 +1119,47 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Register commands!
 		map.register("openkomodo", new PetCommand());
-		map.register("openkomodo", new MsgCommand("msg", "Send someone a message!", "/msg (Player) (Message)", new ArrayList<String>()));
-		map.register("openkomodo", new SitCommand("sit", "Take a seat", "/sit", new ArrayList<String>()));
-		map.register("openkomodo", new SetHomeCommand("sethome", "Set a home to teleport", "/sethome (Name)", new ArrayList<String>()));
-		map.register("openkomodo", new HomeCommand("home", "Teleport to your home", "/home (Name)", new ArrayList<String>()));
-		map.register("openkomodo", new DelHomeCommand("delhome", "Delete your home", "/delhome (Name)", new ArrayList<String>()));
-		map.register("openkomodo", new HomesCommand("homes", "Display the list of your current homes", "/homes", new ArrayList<String>()));
-		map.register("openkomodo", new HatsCommand("hats", "Display the hat menu", "/hats", new ArrayList<String>()));
-		map.register("openkomodo", new PropShopCommand("propshop", "Display the Prop Shop", "/propshop", new ArrayList<String>()));
-		map.register("openkomodo", new ReportCommand("report", "Report a bug", "/report", new ArrayList<String>()));
-		map.register("openkomodo", new LogCommand("log", "The newest update log", "/log", new ArrayList<String>()));
-		map.register("openkomodo", new FlyCommand("fly", "Toggle fly mode", "/fly", new ArrayList<String>()));
-		map.register("openkomodo", new EmoteCommand("emote", "The emote command", "/emote (Emote) {Optional: Target Player}", new ArrayList<String>()));
-		map.register("openkomodo", new CheckBalanceCommand("balance", "Check your balance", "/balance", new ArrayList<String>()));
-		map.register("openkomodo", new SpawnCommand("spawn", "Teleport to spawn", "/spawn", new ArrayList<String>()));
-		map.register("openkomodo", new TeleportToBuildWorldCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>()));
-		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", new ArrayList<String>()));
-		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>()));
+		map.register("openkomodo", new MsgCommand("msg", "Send someone a message!", "/msg (Player) (Message)", new ArrayList<String>(0)));
+		map.register("openkomodo", new SitCommand("sit", "Take a seat", "/sit", new ArrayList<String>(0)));
+		map.register("openkomodo", new SetHomeCommand("sethome", "Set a home to teleport", "/sethome (Name)", new ArrayList<String>(0)));
+		map.register("openkomodo", new HomeCommand("home", "Teleport to your home", "/home (Name)", new ArrayList<String>(0)));
+		map.register("openkomodo", new DelHomeCommand("delhome", "Delete your home", "/delhome (Name)", new ArrayList<String>(0)));
+		map.register("openkomodo", new HomesCommand("homes", "Display the list of your current homes", "/homes", new ArrayList<String>(0)));
+		map.register("openkomodo", new HatsCommand("hats", "Display the hat menu", "/hats", new ArrayList<String>(0)));
+		map.register("openkomodo", new PropShopCommand("propshop", "Display the Prop Shop", "/propshop", new ArrayList<String>(0)));
+		map.register("openkomodo", new ReportCommand("report", "Report a bug", "/report", new ArrayList<String>(0)));
+		map.register("openkomodo", new LogCommand("log", "The newest update log", "/log", new ArrayList<String>(0)));
+		map.register("openkomodo", new FlyCommand("fly", "Toggle fly mode", "/fly", new ArrayList<String>(0)));
+		map.register("openkomodo", new EmoteCommand("emote", "The emote command", "/emote (Emote) {Optional: Target Player}", new ArrayList<String>(0)));
+		map.register("openkomodo", new CheckBalanceCommand("balance", "Check your balance", "/balance", new ArrayList<String>(0)));
+		map.register("openkomodo", new SpawnCommand("spawn", "Teleport to spawn", "/spawn", new ArrayList<String>(0)));
+		map.register("openkomodo", new TeleportToBuildWorldCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>(0)));
+		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", new ArrayList<String>(0)));
+		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>(0)));
 		
-		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>()));
-		map.register("openkomodo", new TpaToggleCommand("tptoggle", "Toggle tpa requests", "/tpatoggle", new ArrayList<String>()));
-		map.register("openkomodo", new TagShopCommand("tagshop", "Open the tagshop", "/tagshop", new ArrayList<String>()));
-		map.register("openkomodo", new PetsMenuCommand("pets", "Open the pets menu", "/pets", new ArrayList<String>()));
-		map.register("openkomodo", new PayCommand("pay", "Pay a player with a currency", "/pay (Player) (Amount) (Currency Type)", new ArrayList<String>()));
-		map.register("openkomodo", new MoneyCommand("money", "Info about money", "/money help", new ArrayList<String>()));
-		map.register("openkomodo", new RankCommand("rank", "Info about ranks", "/rank help", new ArrayList<String>()));
-		map.register("openkomodo", new RulesCommand("rules", "Display rules & terms", "/rules", new ArrayList<String>()));
-		map.register("openkomodo", new CreditsCommand("credits", "Display credits", "/credits", new ArrayList<String>()));
+		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>(0)));
+		map.register("openkomodo", new TpaToggleCommand("tptoggle", "Toggle tpa requests", "/tpatoggle", new ArrayList<String>(0)));
+		map.register("openkomodo", new TagShopCommand("tagshop", "Open the tagshop", "/tagshop", new ArrayList<String>(0)));
+		map.register("openkomodo", new PetsMenuCommand("pets", "Open the pets menu", "/pets", new ArrayList<String>(0)));
+		map.register("openkomodo", new PayCommand("pay", "Pay a player with a currency", "/pay (Player) (Amount) (Currency Type)", new ArrayList<String>(0)));
+		map.register("openkomodo", new MoneyCommand("money", "Info about money", "/money help", new ArrayList<String>(0)));
+		map.register("openkomodo", new RankCommand("rank", "Info about ranks", "/rank help", new ArrayList<String>(0)));
+		map.register("openkomodo", new RulesCommand("rules", "Display rules & terms", "/rules", new ArrayList<String>(0)));
+		map.register("openkomodo", new CreditsCommand("credits", "Display credits", "/credits", new ArrayList<String>(0)));
+		map.register("openkomodo", new VoteCommand("vote", "Displays voting websites", "/vote", new ArrayList<String>(0)));
 		
-		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>()));
-		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>()));
-		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/mute (Player) (Amount)", new ArrayList<String>()));
+		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
+		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>(0)));
+		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
 		
-		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>()));
+		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>(0)));
 		
-		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>()));
+		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>(0)));
 		
-		map.register("openkomodo_console", new GenTip("gentip", "Generate Player's tip", "/genpay", new ArrayList<String>()));
-		map.register("openkomodo_admin", new PromoteCommand("promote", "Promote People's Ranks", "/promote {Player} {Add/Remove} {Player Name} {Permission}", new ArrayList<String>()));
+		map.register("openkomodo_console", new GenTip("gentip", "Generate Player's tip", "/genpay", new ArrayList<String>(0)));
+		map.register("openkomodo_admin", new PromoteCommand("promote", "Promote People's Ranks", "/promote {Player} {Add/Remove} {Player Name} {Permission}", new ArrayList<String>(0)));
 		
-		ArrayList<String> tpaDenyAtlas = new ArrayList<String>();
+		ArrayList<String> tpaDenyAtlas = new ArrayList<String>(1);
 		tpaDenyAtlas.add("tpdeny");
 		map.register("openkomodo", new TpaDenycommand("tpadeny", "Request to teleport", "/tpdeny", tpaDenyAtlas));
 		

@@ -1,5 +1,7 @@
 package net.wigoftime.open_komodo.sql;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -7,17 +9,23 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Timer;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -33,6 +41,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Home;
@@ -40,31 +49,24 @@ import net.wigoftime.open_komodo.objects.Pet;
 import net.wigoftime.open_komodo.objects.SQLInfo;
 
 abstract public class SQLManager {
+	private static final int delayAmount = 5000;
+	
+	private static BasicDataSource ds = new BasicDataSource();
+	private static SQLInfo sqlInfo = Config.getSQLInfo();
 	public static void setup() {
-		SQLInfo sqlInfo = Config.getSQLInfo();
 		
-        if (!sqlInfo.enabled) {
-        	sqlConnection = null;
-        	return;
-        }
-        
-        try {
-        	if (sqlInfo.sslEnabled)
-        		sqlConnection = DriverManager.getConnection("jdbc:"+sqlInfo.url+"?useSSL=true&requireSSL=true", sqlInfo.user, sqlInfo.password);
-        	else
-        		sqlConnection = DriverManager.getConnection("jdbc:"+sqlInfo.url, sqlInfo.user, sqlInfo.password);
-        } catch (SQLException exception) {
-        	exception.printStackTrace();
-        	sqlConnection = null;
-        	return;
-        }
+		ds.setUsername(sqlInfo.user);
+		ds.setPassword(sqlInfo.password);
+		ds.setUrl("jdbc:"+sqlInfo.url);
+		ds.setMinIdle(5);
+		ds.setMaxIdle(10);
         
         createMainTable();
         setUpWorlds(Bukkit.getWorlds());
         setupBagInventories();
 	}
 	
-	private static Connection sqlConnection;
+	//private static Connection sqlConnection;
 	
 	private static void setupBagInventories()
 	{
@@ -73,11 +75,14 @@ abstract public class SQLManager {
 	}
 	
 	public static void createMainTable() {
-		// Create Main table in SQL Database
-		Statement statement;
+		Connection connection = null;
+		PreparedStatement statement = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
-			statement.execute("CREATE TABLE IF NOT EXISTS `OpenKomodo.Main` ( "
+			connection = ds.getConnection();
+			
+			statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS `OpenKomodo.Main` ( "
 					+ "`UUID` BINARY(16) NOT NULL, "
 					+ "`Active Tag` VARCHAR(70) DEFAULT '', "
 					+ "`Joined Date` DATE NULL DEFAULT NULL , "
@@ -95,39 +100,64 @@ abstract public class SQLManager {
 					+ "`Pets` MEDIUMTEXT NOT NULL, "
 					+ "`Homes` LONGTEXT NOT NULL, "
 					+ "`Home Limit` INT UNSIGNED DEFAULT 1)");
-			
-			statement.close();
+			PrintConsole.test("boop?");
+			statement.execute();
+			PrintConsole.test("boop");
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			
+			if (statement != null)
+				try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
+		//}
 	}
 	
 	public static void createBagInventoryTable(String worldName) {
+		Connection connection = null;
+		
 		// Create Bag inventory table in SQL Database
-		Statement statement;
+		Statement statement = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			
+			statement = connection.createStatement();
 			statement.execute(String.format("CREATE TABLE IF NOT EXISTS `OpenKomodo.Bag_Inventory.%s` ( "
 					+ "`UUID` BINARY(16) NOT NULL, "
 					+ "`ID` INT UNSIGNED, "
 					+ "`Inventory` TEXT, UNIQUE (`ID`))", worldName));
 			
 			statement.close();
-			
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static int createBagInventory(UUID uuid, String worldName) {
+		Connection connection = null;
+		
 		// Create Bag inventory in SQL Database
-		Statement statement;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
-			
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') ORDER BY `ID` DESC LIMIT 1", worldName, uuid.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') ORDER BY `ID` DESC LIMIT 1", worldName, uuid.toString().replaceAll("-", "")));
 																	// SELECT * FROM `OpenKomodo.Bag_Inventory.komodo_island` WHERE `UUID` = UNHEX('3a401966852e4dd5b9e7d976f6cc7685') AND `ID` = 1 ORDER BY `ID` DESC LIMIT 1;
 			int id;
 			if (result.next())
@@ -140,45 +170,63 @@ abstract public class SQLManager {
 					+ "`Inventory` , "
 					+ "`ID`) VALUES (" 
 					+ "UNHEX('%s'), '', %d)", worldName, uuid.toString().replaceAll("-", ""), id));
-			
-			result.close();
-			statement.close();
 			return id;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return 0;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setBagInventory(UUID uuid, String worldName, int ID, List<ItemStack> inventory) {
+		Connection connection = null;
+		Statement statement = null;
+		while (true)
 		try {
-		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-		BukkitObjectOutputStream objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
-		
-		objectOutputStream.writeObject(inventory);
-		objectOutputStream.close();
-		
-		Statement statement;
-		statement = sqlConnection.createStatement();
-		statement.execute(String.format("UPDATE `OpenKomodo.Bag_Inventory.%s` SET `Inventory` = \"%s\" WHERE `UUID` = UNHEX('%s') AND `ID` = %d", 
-				worldName,
-				Base64Coder.encodeLines(byteOutputStream.toByteArray()),
-				uuid.toString().replaceAll("-", ""), ID 
-				));
-		
-		byteOutputStream.close();
-		statement.close();
+			connection = ds.getConnection();
+			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+			BukkitObjectOutputStream objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
+			
+			objectOutputStream.writeObject(inventory);
+			objectOutputStream.close();
+			statement = connection.createStatement();
+			statement.execute(String.format("UPDATE `OpenKomodo.Bag_Inventory.%s` SET `Inventory` = \"%s\" WHERE `UUID` = UNHEX('%s') AND `ID` = %d", 
+					worldName,
+					Base64Coder.encodeLines(byteOutputStream.toByteArray()),
+					uuid.toString().replaceAll("-", ""), ID 
+					));
+			
+			byteOutputStream.close();
+			statement.close();
+			break;
 		} catch (SQLException | IOException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static List<ItemStack> getBagInventory(UUID uuid, String worldName, int ID) 
 	{
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while(true)
 		try {
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') AND `ID` = %d", 
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') AND `ID` = %d", 
 					worldName, uuid.toString().replaceAll("-", ""), ID));
 			
 			if (!result.next())
@@ -198,14 +246,19 @@ abstract public class SQLManager {
 			
 			objectInputStream.close();
 			byteInputStream.close();
-			result.close();
-			statement.close();
 			
 			return inventory;
 		} catch (SQLException | IOException | ClassNotFoundException exception)
 		{
 			exception.printStackTrace();
-			return null;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 			
 	}
@@ -217,10 +270,14 @@ abstract public class SQLManager {
 	}
 	
 	private static void createWorldTable(String worldName) {
+		Connection connection = null;
+		
 		// Create World table in SQL Database
-		Statement statement;
+		Statement statement = null;
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			final String statementString = String.format(
 					""
@@ -230,31 +287,49 @@ abstract public class SQLManager {
 					+ "`Permissions` TEXT)", worldName);
 			
 			statement.execute(statementString);
-			statement.close();
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void saveItems(String jsonString, UUID playerUUID) {
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
 		
-	try {
-		statement = sqlConnection.createStatement();
-		statement.execute(String.format("UPDATE `OpenKomodo.Main` SET `Items` = '%s\' WHERE `UUID` = UNHEX(\"%s\")", jsonString, playerUUID.toString().replaceAll("-", "")));
-		
-		statement.close();
-	} catch (SQLException exception) {
-		exception.printStackTrace();
-		return;
-	}
+		while(true)
+		try {
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			statement.execute(String.format("UPDATE `OpenKomodo.Main` SET `Items` = '%s\' WHERE `UUID` = UNHEX(\"%s\")", jsonString, playerUUID.toString().replaceAll("-", "")));
+			break;
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+		}
 	}
 	
 	public static List<CustomItem> getItems(UUID playerUUID) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while(true)
 		try {
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE UUID = UNHEX(\"%s\")", playerUUID.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE UUID = UNHEX(\"%s\")", playerUUID.toString().replaceAll("-", "")));
 			
 			result.next();
 			
@@ -265,12 +340,13 @@ abstract public class SQLManager {
 				parser = new JSONParser().parse(itemsString);
 			} catch (ParseException e) {
 				e.printStackTrace();
-				result.close();
-				statement.close();
-				return null;
+				parser = null;
 			}
-			
-			List<Long> idList = (JSONArray) parser;
+			List<Long> idList;
+			if (parser == null)
+				idList = new ArrayList<Long>(0);
+			else
+				idList = (JSONArray) parser;
 			
 			List<CustomItem> ownedItems = new ArrayList<CustomItem>(idList.size());
 			
@@ -296,82 +372,114 @@ abstract public class SQLManager {
 				
 				SQLManager.saveItems(json.toString(), playerUUID);
 			}
-			result.close();
-			statement.close();
 			return ownedItems;
 		}
 		catch (SQLException exception) {
 			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 		
-		return null;
+		//return null;
 	}
 	
 	public static String getActiveTag(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE UUID = UNHEX(\"%s\")", uuid.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE UUID = UNHEX(\"%s\")", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
 			
 			String tagDisplay = result.getString("Active Tag");
 			
-			result.close();
-			statement.close();
 			return tagDisplay;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return "";
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setTag(UUID uuid, String tag) {
-		// Set 
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		
+		while(true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format(""
 					+ "UPDATE `OpenKomodo.Main` " +
 					"SET `Active Tag` = \"%s\" " +
 					"WHERE `UUID` = UNHEX('%s');", tag, uuid.toString().replaceAll("-", "")));
-			
-			statement.close();
-		}
-		catch (SQLException exception)
-		{
+			break;
+		} catch (SQLException exception) {
 			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static Date getJoinDate(UUID uuid) {
-		// Get XP
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while(true)
 		try {
-			statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main`"));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main`"));
 			
 			result.next();
 			
 			Date joinedDate = result.getDate("Joined Date");
-			
-			result.close();
-			statement.close();
-			
 			return joinedDate;
-		}
-		catch (SQLException exception)
-		{
+		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return null;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static boolean containsPlayer(UUID uuid) {
-		// Query Player
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while(true)
 		try {
-			statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s')", uuid.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s')", uuid.toString().replaceAll("-", "")));
 			
 			boolean exists;
 			
@@ -380,64 +488,82 @@ abstract public class SQLManager {
 			else
 				exists = false;
 			
-			result.close();
-			statement.close();
-			
 			return exists;
-		}
-		catch (SQLException exception)
-		{
+		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return false;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setXP(UUID uuid, double xp) {
-		// Set XP
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		
+		while(true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format(""
 					+ "UPDATE `OpenKomodo.Main` " +
 					"SET `XP` = %s" +
 					"WHERE `UUID` = UNHEX('%s');", xp, uuid.toString().replaceAll("-", "")));
 			
-			statement.close();
-		}
-		catch (SQLException exception)
-		{
+			break;
+		} catch (SQLException exception) {
 			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static double getXP(UUID uuid) {
-		// Get XP
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main`"));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main`"));
 			
 			result.next();
 			
 			double xp = result.getDouble("XP");
 			
-			result.close();
-			statement.close();
-			
 			return xp;
-		}
-		catch (SQLException exception)
-		{
+		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return 0.0;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void createPlayer (UUID uuid) {
-		// Create player in SQL Database
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format("INSERT INTO `OpenKomodo.Main` ("
 					+ "`UUID`, "
 					+ "`Mute Date`, "
@@ -452,45 +578,57 @@ abstract public class SQLManager {
 					+ "(UNHEX(\"%s\"), DATE('1990-01-01'), '', DATE('1990-01-01'), '', '', '[]', '', '', DATE(\"%s\"))", 
 					uuid.toString().replaceAll("-", "") ,new SimpleDateFormat("yyyy-MM-dd").format(Date.from(Instant.now()))));
 			
-			statement.close();
-			
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static boolean containsWorldPlayer(UUID uuid, String worldName) {
-		// Query Player
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT `UUID` FROM `OpenKomodo.Worlds.%s` WHERE `UUID` = UNHEX('%s')", worldName, uuid.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT `UUID` FROM `OpenKomodo.Worlds.%s` WHERE `UUID` = UNHEX('%s')", worldName, uuid.toString().replaceAll("-", "")));
 			
 			boolean exists;
-			
 			if (result.next())
 				exists = true;
 			else
 				exists = false;
 			
-			result.close();
-			statement.close();
-			
 			return exists;
-		}
-		catch (SQLException exception)
-		{
+		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return false;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+			try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void createWorldPlayer (UUID uuid, String worldName) {
-		// Create player in SQL Database
-		Statement statement;
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
-			statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format("INSERT INTO `OpenKomodo.Worlds.%s` ("
 					+ "`UUID`, "
 					+ "`Inventory`, "
@@ -498,45 +636,23 @@ abstract public class SQLManager {
 					+ "(UNHEX(\"%s\"), '', '')", 
 					worldName, uuid.toString().replaceAll("-", "")));
 			
-			statement.close();
-			
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
-	/*
-	public static void createPlayer2 (CustomPlayer customPlayer) {
-		// Create player in SQL Database
-		Statement statement;
-		try {
-			statement = sqlConnection.createStatement();
-			statement.execute(String.format("INSERT INTO `OpenKomodo.Main` ("
-					+ "`UUID`, "
-					+ "`Nickname`, "
-					+ "`Joined Date`, "
-					+ "`Mute Date`, "
-					+ "`Ban Date`, "
-					+ "`Rank ID`, "
-					+ "`Permissions`, "
-					+ "`TIP (USD)`, "
-					+ "`Points`, "
-					+ "`Coins`, "
-					+ "`Items`, "
-					+ "`Homes`) VALUES "
-					+ "(UNHEX(\"%s\"), '', DATE(\"%s\"), NULL, NULL, 0, '', %d, 0, 0, '', '')", 
-					customPlayer.getUniqueId().toString().replaceAll("-", ""), new SimpleDateFormat("yyyy-MM-dd").format(Date.from(Instant.now())), customPlayer.getDonated()));
-			
-			statement.close();
-			
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-			return;
-		}
-	}*/
-	
 	public static void setGlobalPermissions(UUID uuid, List<Permission> permissions) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
 			// Serialize the list of permissions
 			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
@@ -551,26 +667,47 @@ abstract public class SQLManager {
 			objectOutputStream.close();
 			
 			// Save the serialized list of permissions into base64 string into the SQL database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
 					"SET `Permissions` = \"%s\"" +
 					"WHERE `UUID` = UNHEX('%s');", Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
 			
 			// Close output Stream and SQL statement
 			byteOutputStream.close();
-			statement.close();
-			} catch (SQLException | IOException exeception) {
-				exeception.printStackTrace();
+			break;
+		} catch (SQLException | IOException exception) {
+			exception.printStackTrace();
+			
+			if (exception instanceof IOException) {
+				Player player = Bukkit.getPlayer(uuid);
+				
+				if (player != null)
+					player.sendMessage(String.format("%sERROR: IOException, global permissions may be lost", ChatColor.DARK_RED));
+				break;
 			}
+			
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+			try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+			try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+		}
 	}
 	
-	
 	public static List<Permission> getGlobalPermissions(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			// Retrieve world permissions
-			ResultSet result = statement.executeQuery(String.format("SELECT `UUID`, `Permissions` FROM `OpenKomodo.Main` " +
+			result = statement.executeQuery(String.format("SELECT `UUID`, `Permissions` FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` = UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			// Get first result
@@ -598,16 +735,26 @@ abstract public class SQLManager {
 			// Close input stream and SQL statement
 			objectInputStream.close();
 			byteInputStream.close();
-			statement.close();
 			
 			return permissions;
 			} catch (SQLException | IOException | ClassNotFoundException exeception) {
 				exeception.printStackTrace();
-				return new ArrayList<Permission>(0);
+				try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+			} finally {
+				if (connection != null)
+				try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (statement != null)
+				try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (result != null)
+				try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 			}
 	}
 	
 	public static void setWorldPermission(UUID uuid, List<Permission> permissions, String worldName) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
 			// Serialize the list of permissions
 			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
@@ -622,25 +769,38 @@ abstract public class SQLManager {
 			objectOutputStream.close();
 			
 			// Save the serialized list of permissions into base64 string into the SQL database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format("UPDATE `OpenKomodo.Worlds.%s` " +
 					"SET `Permissions` = \"%s\"" +
 					"WHERE `UUID` = UNHEX('%s');", worldName, Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
 			
 			// Close output Stream and SQL statement
 			byteOutputStream.close();
-			statement.close();
+			break;
 			} catch (SQLException | IOException exeception) {
 				exeception.printStackTrace();
+				try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+			} finally {
+				if (connection != null)
+				try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (statement != null)
+				try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 			}
 	}
 	
 	public static List<Permission> getWorldPermission(UUID uuid, String worldName) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			// Retrieve world permissions
-			ResultSet result = statement.executeQuery(String.format("SELECT `UUID`, `Permissions` FROM `OpenKomodo.Worlds.%s` " +
+			result = statement.executeQuery(String.format("SELECT `UUID`, `Permissions` FROM `OpenKomodo.Worlds.%s` " +
 					"WHERE `UUID` = UNHEX('%s');", worldName, uuid.toString().replaceAll("-", "")));
 			
 			// Get first result
@@ -664,56 +824,83 @@ abstract public class SQLManager {
 			while (iterator.hasNext())
 				permissions.add(new Permission(iterator.next()));
 			
-			// Close input stream and SQL statement
-			objectInputStream.close();
-			byteInputStream.close();
-			statement.close();
-			
 			return permissions;
 			} catch (SQLException | IOException | ClassNotFoundException exeception) {
 				exeception.printStackTrace();
-				return new ArrayList<Permission>(0);
-			}
+				
+				if (exeception instanceof IOException || exeception instanceof ClassNotFoundException)
+					return new ArrayList<Permission>(0);
+				
+				try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+	        } finally {
+				if (connection != null)
+	        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (statement != null)
+		        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (result != null)
+			        try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+	        }
 	}
 	
 	public static void setInventory(UUID uuid, String worldName, ItemStack[] inventory) {
-		try {
-		Statement statement = sqlConnection.createStatement();
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
 		
+		while (true)
 		try {
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream objectOutput = new BukkitObjectOutputStream(outputStream);
-			
-			objectOutput.writeObject(inventory);
-			objectOutput.close();
-			
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Worlds.%s`", worldName));
-			
-			if (result.next())
-				statement.execute(String.format(""
-						+ "UPDATE `OpenKomodo.Worlds.%s` " +
-						"SET `Inventory` = '%s'" +
-						"WHERE `UUID` = UNHEX('%s');", worldName, Base64Coder.encodeLines(outputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
-			else
-			{
-				createWorldPlayer(uuid, worldName);
-				setInventory(uuid, worldName, inventory);
-				return;
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+		
+			try {
+				ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+				BukkitObjectOutputStream objectOutput = new BukkitObjectOutputStream(outputStream);
+				
+				objectOutput.writeObject(inventory);
+				objectOutput.close();
+				
+				result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Worlds.%s`", worldName));
+				
+				if (result.next())
+					statement.execute(String.format(""
+							+ "UPDATE `OpenKomodo.Worlds.%s` " +
+							"SET `Inventory` = '%s'" +
+							"WHERE `UUID` = UNHEX('%s');", worldName, Base64Coder.encodeLines(outputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
+				else
+				{
+					createWorldPlayer(uuid, worldName);
+					setInventory(uuid, worldName, inventory);
+				}
+				
+				break;
+			} catch (IOException exception) {
+				exception.printStackTrace();
 			}
-		} catch (IOException exception) {
-			exception.printStackTrace();
-		}
 		
 		} catch (SQLException exeception) {
 			exeception.printStackTrace();
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		        try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static ItemStack[] getInventory(UUID uuid, String worldName) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Worlds.%s` " +
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Worlds.%s` " +
 					"WHERE `UUID` = UNHEX('%s');", worldName, uuid.toString().replaceAll("-", "")));
 			
 			if (!result.next()) {
@@ -738,6 +925,10 @@ abstract public class SQLManager {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
 				
+				Player player = Bukkit.getPlayer(uuid);
+				if (player != null)
+					player.sendMessage(String.format("%sError: BukkitObjectInputStream Error for getting inventory, potential inventory loss", ChatColor.DARK_RED));
+				
 				return new ItemStack[0];
 			}
 			
@@ -745,176 +936,225 @@ abstract public class SQLManager {
 			try {
 				inventory = (ItemStack[]) objectInput.readObject();
 			} catch (ClassNotFoundException | IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
-				return null;
+				
+				Player player = Bukkit.getPlayer(uuid);
+				if (player != null)
+					player.sendMessage(String.format("%sError: BukkitObjectInputStream.readObject() Error for getting inventory, potential inventory loss", ChatColor.DARK_RED));
+				
+				return new ItemStack[0];
 			}
 			
 			return inventory;
 		} catch (SQLException exeception) {
 			exeception.printStackTrace();
-			return new ItemStack[0];
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		        try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static void setTip(UUID uuid, int amount) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
-		Statement statement = sqlConnection.createStatement();
-		statement.execute(String.format("UPDATE `OpenKomodo.Main` SET `TIP (USD)` = %d WHERE `UUID` = UNHEX('%s')", amount, uuid.toString().replaceAll("-", "")));
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			statement.execute(String.format("UPDATE `OpenKomodo.Main` SET `TIP (USD)` = %d WHERE `UUID` = UNHEX('%s')", amount, uuid.toString().replaceAll("-", "")));
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			
 			Player player = Bukkit.getPlayer(uuid);
-			if (player == null)
-				return;
-			
-			player.sendMessage(String.format("%sUhh, something went wrong. Try contacting support. Error: SQLException#SetTip Time: %s", ChatColor.DARK_RED, Instant.now().toString()));
-		}
+			if (player != null)
+				player.sendMessage(String.format("%sUhh, something went wrong. Try contacting support. Error: SQLException#SetTip Time: %s", ChatColor.DARK_RED, Instant.now().toString()));
+			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static int getTip(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
         try {
+        	connection = ds.getConnection();
 			// Get Tip in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT `UUID`, `TIP (USD)` FROM `OpenKomodo.Main` " + 
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT `UUID`, `TIP (USD)` FROM `OpenKomodo.Main` " + 
 					"WHERE UUID=UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			// If can't find player, put 0
-			if (!result.next()) {
-				result.close();
-				statement.close();
+			if (!result.next())
 				return 0;
-			}
 			
 			// Get money donated
 			int usdMoney = result.getInt("TIP (USD)");
 			
-			// Close cause finished.
-			result.close();
-			statement.close();
-			
 			// Return with donation money
 			return usdMoney;
-        } catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
-		}
+        } catch (SQLException exception) {
+        	exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		        try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static int getRankID(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
         try {
+        	connection = ds.getConnection();
+        	
 			// Get Player in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " + 
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " + 
 					"WHERE UUID=UNHEX('%s');", uuid.toString().replaceAll("-", "")));
-			
-			//if (!result.next())
-			//	return 0;
 			
 			result.next();
 			
 			// Get RANK ID
 			int rankID = result.getInt("Rank ID");
 			
-			// Close cause finished.
-			result.close();
-			statement.close();
-			
 			// Return with rank ID
 			return rankID;
-        } catch (SQLException e) {
-			e.printStackTrace();
-			return 0;
-		}
+        } catch (SQLException exception) {
+        	exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		        try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static void setRankID(UUID uuid, int rankID) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
         try {
 			// Set rank in SQL
-			Statement statement = sqlConnection.createStatement();
+        	connection = ds.getConnection();
+			statement = connection.createStatement();
 			statement.execute(String.format("UPDATE `OpenKomodo.Main` " + 
 					"SET `Rank ID` = %d " +
 					"WHERE `UUID` = UNHEX(\"%s\");",  rankID, uuid.toString().replaceAll("-", "")));
-			
-			// Close because finished
-			statement.close();
-			
-			// Return with rank ID
-			return;
-        } catch (SQLException e) {
-			e.printStackTrace();
-			return;
+			break;
+        } catch (SQLException exception) {
+			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static List<Home> getHomes(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
         try {
 			// Get Homes in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+        	connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
 			
 			if (result.getString("Homes") == "")
-			{
-				result.close();
 				return new ArrayList<Home>(0);
-			}
 			
 			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(result.getString("Homes")));
 			BukkitObjectInputStream objectInputStream = new BukkitObjectInputStream(byteInputStream);
 			
 			List<Home> homes = (List<Home>) objectInputStream.readObject();
-			
-			result.close();
 			return homes;
         }
         catch (IOException | SQLException | ClassNotFoundException exception) {
         	exception.printStackTrace();
-    		return new ArrayList<Home>(0);
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
         }
-			
-			/*
-			Object parser;
-			try {
-				parser = new JSONParser().parse(result.getString("Homes"));
-			} catch (ParseException e) {
-				e.printStackTrace();
-				result.close();
-				statement.close();
-				return new ArrayList<Home>(0);
-			}
-			
-			return Home.jsonToHomes(((JSONObject) parser));
-			} catch (SQLException exception) {
-				exception.printStackTrace();
-			}*/
         
 	}
 	
 	public static Date getMuteDate(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
 			// Get Results in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
-			
-			return result.getDate("Mute Date");
-			//return Date.from(Instant.ofEpochMilli(result.getDate("Mute Date").getTime()));
+			return result.getTimestamp("Mute Date");
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return null;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static String getMuteReason(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
 			// Get Results in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
@@ -922,81 +1162,156 @@ abstract public class SQLManager {
 			return result.getString("Mute Reason");
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return null;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setMuteDate(UUID uuid, Date date) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		
+		while (true)
 		try {
 			// Set date in database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
 			
-			if (date == null)
-				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
+			if (date == null) {
+				statement = connection.prepareStatement("UPDATE `OpenKomodo.Main` " +
 						"SET `Mute Date` = '1990/01/01' " +
-						"WHERE `UUID` = UNHEX('%s');", uuid.toString().replaceAll("-", "")));
-			else {
-				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
-						"SET `Mute Date` = '%s' " +
-						"WHERE `UUID` = UNHEX('%s');", new SimpleDateFormat("yyyy-MM-dd").format(date), uuid.toString().replaceAll("-", "")));
+						"WHERE `UUID` = UNHEX('?')");
+				
+				statement.setString(1, uuid.toString().replaceAll("-", ""));
 			}
+			else {
+				statement = connection.prepareStatement("UPDATE `OpenKomodo.Main` " +
+						"SET `Mute Date` = ? " +
+						"WHERE `UUID` = UNHEX(?)");
+				
+				statement.setString(2, uuid.toString().replaceAll("-", ""));
+				statement.setTimestamp(1, new Timestamp(date.getTime()));
+			}
+			
+			statement.execute();
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setMuteReason(UUID uuid, String reason) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
 			// Set mute reason in database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
 					"SET `Mute Reason` = \"%s\" " +
 					"WHERE `UUID` = UNHEX('%s');", reason, uuid.toString().replaceAll("-", "")));
+			
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static void setBanDate(UUID uuid, Date date) {
+		Connection connection = null;
+		PreparedStatement statement = null;
+		
+		while (true)
 		try {
-			// Set date in database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
 			
-			if (date == null)
-				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
+			if (date == null) {
+				statement = connection.prepareStatement("UPDATE `OpenKomodo.Main` " +
 						"SET `Ban Date` = '1990/01/01' " +
-						"WHERE `UUID` = UNHEX('%s');", uuid.toString().replaceAll("-", "")));
-			else {
-				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
-						"SET `Ban Date` = '%s' " +
-						"WHERE `UUID` = UNHEX('%s');", new SimpleDateFormat("yyyy-MM-dd").format(date), uuid.toString().replaceAll("-", "")));
+						"WHERE `UUID` = UNHEX('?')");
+				
+				statement.setString(1, uuid.toString().replaceAll("-", ""));
 			}
+			else {
+				statement = connection.prepareStatement("UPDATE `OpenKomodo.Main` " +
+						"SET `Ban Date` = ? " +
+						"WHERE `UUID` = UNHEX(?)");
+				
+				statement.setString(2, uuid.toString().replaceAll("-", ""));
+				statement.setTimestamp(1, new Timestamp(date.getTime()));
+			}
+			
+			statement.execute();
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static Date getBanDate (UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
 			// Get Results in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
 			
-			return result.getDate("Ban Date");
+			return result.getTimestamp("Ban Date");
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return null;
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static void setBanReason(UUID uuid, String reason) {
+		Connection connection = null;
+		Statement statement = null;
+		
+		while (true)
 		try {
 			// Set ban reason in database
-			Statement statement = sqlConnection.createStatement();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			if (reason == null)
 				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
@@ -1007,16 +1322,30 @@ abstract public class SQLManager {
 						"SET `Ban Reason` = \"%s\" " +
 						"WHERE `UUID` = UNHEX('%s');", reason, uuid.toString().replaceAll("-", "")));
 			}
+			
+			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static String getBanReason (UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
 			// Get Results in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
@@ -1024,12 +1353,22 @@ abstract public class SQLManager {
 			return result.getString("Ban Reason");
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			return null;
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
 	}
 	
 	public static void setHomes(UUID uuid, List<Home> homes) {
+		Connection connection = null;
+		Statement statement = null;
 		
+		while (true)
 		try {
 			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 			BukkitObjectOutputStream outputStream = new BukkitObjectOutputStream(byteOutputStream);
@@ -1037,26 +1376,37 @@ abstract public class SQLManager {
 			outputStream.writeObject(homes);
 			outputStream.close();
 			
-			try {
-				Statement statement = sqlConnection.createStatement();
-				
-				statement.execute(String.format("UPDATE `OpenKomodo.Main` " + 
-						"SET `Homes` = '%s' " +
-						"WHERE `UUID` = UNHEX('%s');",  Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
-			} catch (SQLException exception) {
-				exception.printStackTrace();
-			}
-		} catch (IOException exception) {
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			
+			statement.execute(String.format("UPDATE `OpenKomodo.Main` " + 
+					"SET `Homes` = '%s' " +
+					"WHERE `UUID` = UNHEX('%s');",  Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
+			
+			break;
+		} catch (IOException | SQLException exception) {
 			exception.printStackTrace();
-		}
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+        }
+		
 	}
 	
 	public static int getCurrency(UUID uuid, Currency type) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
 		
+		while (true)
         try {
+        	connection = ds.getConnection();
 			// Get Player in SQL Database
-			Statement statement = sqlConnection.createStatement();
-			ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
 					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
 			result.next();
@@ -1073,22 +1423,29 @@ abstract public class SQLManager {
 				return 0;
 			}
 			
-			// Close because finished
-			statement.close();
-			
 			return amount;
         } catch (SQLException e) {
 			e.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try {result.close(); } catch(SQLException e) { e.printStackTrace(); }
         }
-        
-        return 0;
 	}
 	
 	public static void setCurrency(UUID uuid, int amount, Currency type) {
+		Connection connection = null;
+		Statement statement = null;
 		
+		while (true)
         try {
 			// Create statement to run SQL commands
-			Statement statement = sqlConnection.createStatement();
+        	connection = ds.getConnection();
+			statement = connection.createStatement();
 			
 			
 			switch (type) {
@@ -1103,12 +1460,15 @@ abstract public class SQLManager {
 						"WHERE `UUID` = UNHEX(\"%s\");", amount, uuid.toString().replaceAll("-", "")));
 				break;
 			}
-			
-			// Close because finished
-			statement.close();
-			
+			break;
         } catch (SQLException e) {
 			e.printStackTrace();
+			try {Thread.sleep(delayAmount); } catch (InterruptedException interruptedException) { interruptedException.printStackTrace();}
+        } finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
         }
 	}
 	
@@ -1118,104 +1478,121 @@ abstract public class SQLManager {
 		JSONArray json = new JSONArray();
 		for (CustomItem item : items)
 			json.add(item.getID());
-		/*
-		switch (customItem.getType()) {
-		case HAT:
-			List<Long> listOfHats = ((List<Long>)json.get("Hats"));
-			listOfHats.add((long) customItem.getID());
-			
-			json.put("Hats",  listOfHats);
-			break;
-		case TAG:
-			List<Long> listOfTags = ((List<Long>)json.get("Tags"));
-			listOfTags.add((long) customItem.getID());
-			
-			json.put("Tags", listOfTags);
-			break;
 		
-		default:
-			return;
-		}*/
-		
+		Connection connection = null;
+		Statement statement = null;
+		while (true)
 		try {
-		// Create statement to run SQL commands
-		Statement statement = sqlConnection.createStatement();
-		
-		statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
-				"SET `Items` = '%s' " +
-				"WHERE `UUID` = UNHEX('%s');", json.toString(), player.getUniqueId().toString().replaceAll("-", "")));
-		} catch (SQLException exception) {
-			exception.printStackTrace();
-		}
+			// Create statement to run SQL commands
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			
+			statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
+					"SET `Items` = '%s' " +
+					"WHERE `UUID` = UNHEX('%s');", json.toString(), player.getUniqueId().toString().replaceAll("-", "")));
+			break;
+			} catch (SQLException exception) {
+				exception.printStackTrace();
+				try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+			} finally {
+				if (connection != null)
+		        try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (statement != null)
+			    try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			}
 	}
 	
 	public static List<Pet> getPets(UUID uuid) {
+		Connection connection = null;
+		Statement statement = null;
+		ResultSet result = null;
+		
+		while (true)
 		try {
-		// Get Player in SQL Database
-		Statement statement = sqlConnection.createStatement();
-		ResultSet result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
-				"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
-		
-		result.next();
-		
-		if (result.getString("Pets") == "") {
-			result.close();
-			statement.close();
+			connection = ds.getConnection();
+			statement = connection.createStatement();
+			result = statement.executeQuery(String.format("SELECT * FROM `OpenKomodo.Main` " +
+					"WHERE `UUID` =UNHEX('%s');", uuid.toString().replaceAll("-", "")));
 			
-			return new ArrayList<Pet>(0);
-		}
-		
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(result.getString("Pets")));
-		ObjectInputStream objectInputStream = new ObjectInputStream(byteInputStream);
-		
-		List<Integer> idList = (List<Integer>) objectInputStream.readObject();
-		
-		List<Pet> ownedPets = new ArrayList<Pet>(idList.size());
-		for (int id : idList)
-			ownedPets.add(Pet.getPet(id));
-		
-		result.close();
-		statement.close();
-		return ownedPets;
+			result.next();
+			
+			if (result.getString("Pets") == "") {
+				result.close();
+				statement.close();
+				connection.close();
+				
+				return new ArrayList<Pet>(0);
+			}
+			
+			ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(result.getString("Pets")));
+			ObjectInputStream objectInputStream = new ObjectInputStream(byteInputStream);
+			
+			List<Integer> idList = (List<Integer>) objectInputStream.readObject();
+			
+			List<Pet> ownedPets = new ArrayList<Pet>(idList.size());
+			for (int id : idList)
+				ownedPets.add(Pet.getPet(id));
+			
+			return ownedPets;
 		} catch (SQLException | ClassNotFoundException | IOException exception) {
 			exception.printStackTrace();
-			return null;
+			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+		} finally {
+			if (connection != null)
+        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (statement != null)
+	        try {statement.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (result != null)
+		    try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
 	}
 	
 	public static void setPets(CustomPlayer customPlayer) {
+			Connection connection = null;
+			Statement statement = null;
+			
+			while (true)
 			try {
-			List<Pet> ownedPets = customPlayer.getPets();
-			List<Integer> petIDs = new ArrayList<Integer>(ownedPets.size());
-			
-			for (Pet pet : ownedPets)
-				petIDs.add(pet.getID());
-			
-			ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
-			
-			objectOutputStream.writeObject(petIDs);
-			objectOutputStream.close();
-			
-			String base64 = Base64Coder.encodeLines(byteOutputStream.toByteArray());
-			
-			// Create statement to run SQL commands
-			Statement statement = sqlConnection.createStatement();
-			
-			statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
-					"SET `Pets` = '%s' " +
-					"WHERE `UUID` = UNHEX('%s');", base64, customPlayer.getUniqueId().toString().replaceAll("-", "")));
+				List<Pet> ownedPets = customPlayer.getPets();
+				List<Integer> petIDs = new ArrayList<Integer>(ownedPets.size());
+				
+				for (Pet pet : ownedPets)
+					petIDs.add(pet.getID());
+				
+				ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+				ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteOutputStream);
+				
+				objectOutputStream.writeObject(petIDs);
+				objectOutputStream.close();
+				
+				String base64 = Base64Coder.encodeLines(byteOutputStream.toByteArray());
+				
+				// Create statement to run SQL commands
+				connection = ds.getConnection();
+				statement = connection.createStatement();
+				
+				statement.execute(String.format("UPDATE `OpenKomodo.Main` " +
+						"SET `Pets` = '%s' " +
+						"WHERE `UUID` = UNHEX('%s');", base64, customPlayer.getUniqueId().toString().replaceAll("-", "")));
+				break;
 			} catch (SQLException | IOException exception) {
 				exception.printStackTrace();
+				try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+			} finally {
+				if (connection != null)
+	        	try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
+				if (statement != null)
+		        try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 			}
 		}
 	
 	public static void disconnectSQL() {
-		if (sqlConnection == null)
-			return;
+		//if (getConnection() == null)
+			//return;
 		
 		try {
-			sqlConnection.close();
+			//getConnection().close();
+			ds.close();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -1223,7 +1600,7 @@ abstract public class SQLManager {
 	}
 	
 	public static boolean isEnabled() {
-		return sqlConnection == null ? false : true;
+		return sqlInfo.enabled;
 	}
 }
 

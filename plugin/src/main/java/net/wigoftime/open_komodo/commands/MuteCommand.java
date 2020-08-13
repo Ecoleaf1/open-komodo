@@ -140,6 +140,7 @@ public class MuteCommand extends Command {
 		
 		CustomPlayer customPlayer = CustomPlayer.get(player.getUniqueId());
 		// Set mute date
+		PrintConsole.test("instant Time: "+ instant.toString());
 		customPlayer.setMuteDate(Date.from(instant));
 		
 		if (args.length < 3)

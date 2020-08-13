@@ -123,6 +123,7 @@ abstract public class Permissions
 	
 	public static void setUp(CustomPlayer customPlayer) 
 	{
+		PrintConsole.test("Setup Permissions");
 		// Get and load Player's configuration
 		//File file = PlayerConfig.getPlayerConfig(customPlayer.getPlayer());
 		//YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
@@ -174,7 +175,11 @@ abstract public class Permissions
 		
 		// If op, turn it to false to sync with permissions
 		if (customPlayer.getPlayer().isOp())
-			customPlayer.getPlayer().setOp(false);
+			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+				public void run() {
+					customPlayer.getPlayer().setOp(false);
+				}
+			});
 		
 		// Get Player's permission attachment
 		attachment = customPlayer.getPlayer().addAttachment(Main.getPlugin());
