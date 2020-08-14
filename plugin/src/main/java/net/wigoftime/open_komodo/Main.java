@@ -685,7 +685,7 @@ public class Main extends JavaPlugin implements Listener
 			
 			if (item.getType() == Material.STICK)
 			{
-				InventoryManagement.openBagInventory(player.getPlayer(), item.getItemMeta().getCustomModelData());
+				InventoryManagement.openBagInventory(player, item.getItemMeta().getCustomModelData());
 			}
 		}
 	}

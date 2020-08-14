@@ -139,20 +139,22 @@ abstract public class GUIManager {
 		if (customPlayer == null)
 			return;
 		
-		if (customPlayer.getActiveGui() != null)
+		if (customPlayer.getActiveGui() != null) {
+			customPlayer.getActiveGui().closed();
 			customPlayer.setActiveGui(null);
+		}
 		
 		customPlayer.setAfk(false);
 		
 		//if (closeEvent)
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
-				if (InventoryManagement.currentOpen.containsKey(closeEvent.getPlayer().getUniqueId()))
+				/*if (InventoryManagement.currentOpen.containsKey(closeEvent.getPlayer().getUniqueId()))
 				{
 					InventoryManagement.saveBagInventory(customPlayer.getPlayer(), customPlayer.getPlayer().getWorld().getName(), Arrays.asList(closeEvent.getInventory().getContents()));
 					InventoryManagement.currentOpen.remove(closeEvent.getPlayer().getUniqueId());
 				}
-				else
+				else*/
 					InventoryManagement.saveInventory(customPlayer, customPlayer.getPlayer().getWorld());
 			}
 		});

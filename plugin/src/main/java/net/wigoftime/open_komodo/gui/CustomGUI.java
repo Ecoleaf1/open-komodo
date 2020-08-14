@@ -24,6 +24,8 @@ public abstract class CustomGUI
 	public void open() {
 		if (!canAccess())
 			return;
+		if (opener.getActiveGui() != null)
+			opener.getActiveGui().closed();
 		
 		opener.getPlayer().openInventory(gui);
 		opener.setActiveGui(this);
@@ -65,4 +67,8 @@ public abstract class CustomGUI
 	}
 	
 	public abstract void clicked(InventoryClickEvent clickEvent);
+	
+	public void closed() {
+		opener.setActiveGui(null);
+	}
 }

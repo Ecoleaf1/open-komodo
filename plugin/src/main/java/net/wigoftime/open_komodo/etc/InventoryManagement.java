@@ -15,6 +15,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
+import net.wigoftime.open_komodo.gui.BagGui;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
@@ -24,6 +25,7 @@ abstract public class InventoryManagement
 	
 	public static void saveBagInventory(Player player, String worldName, List<ItemStack> inventory)
 	{
+		
 		if (SQLManager.isEnabled())
 		SQLManager.setBagInventory(player.getUniqueId(), worldName, currentOpen.get(player.getUniqueId()), inventory);
 		else
@@ -73,20 +75,20 @@ abstract public class InventoryManagement
 			inventory.setContents(items);
 	}
 	
-	public static void openBagInventory(Player player, int bagID) {	
+	public static void openBagInventory(CustomPlayer player, int bagID) {	
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 				// Get all items
 				List<ItemStack> items;
 				if (SQLManager.isEnabled())
-					items = SQLManager.getBagInventory(player.getUniqueId(), player.getWorld().getName(), bagID);
+					items = SQLManager.getBagInventory(player.getUniqueId(), player.getPlayer().getWorld().getName(), bagID);
 				else
-					items = Arrays.asList(WorldInventoryConfig.getInventory(player, bagID));
+					items = Arrays.asList(WorldInventoryConfig.getInventory(player.getPlayer(), bagID));
 				
 				if (items == null)
 				{
 					PrintConsole.test("Doesn't exist.");
-					SQLManager.setBagInventory(player.getUniqueId(), player.getWorld().getName(), bagID, new ArrayList<ItemStack>(0));
+					//SQLManager.setBagInventory(player.getUniqueId(), player.getPlayer().getWorld().getName(), bagID, new ArrayList<ItemStack>(0));
 					//SQLManager.getBagInventory(player.getUniqueId(), bagID, new ItemStack[0]);
 					items = new ArrayList<ItemStack>(0);
 					//items = WorldInventoryConfig.getInventory(player, bagID);
@@ -94,22 +96,22 @@ abstract public class InventoryManagement
 				
 				final List<ItemStack> itemsFinal = items;
 				Runnable mainThreadRunnable = new Runnable() {
+					/*
 					public void run() {
 						Inventory gui = Bukkit.createInventory(null, 27, "Backpack");
 						
 						byte index = 0;
 						for (ItemStack item : itemsFinal)
 							gui.setItem(index++, item);
-						/*for (int i = 0; i < gui.getSize(); i++)
-						{
-							if (i >= items.size())
-								break;
-							
-							gui.setItem(i, items[i]);
-						}*/
 						
 						InventoryManagement.currentOpen.put(player.getUniqueId(), bagID);
 						player.openInventory(gui);
+					}*/
+
+					@Override
+					public void run() {
+						BagGui gui = new BagGui(player, bagID);
+						gui.open();
 					}
 				};
 				
