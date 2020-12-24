@@ -102,7 +102,7 @@ public class PromoteCommand extends Command {
 			}
 			
 			Promote.commandPromoteRank(sender, targetName, world, permission, addMode);
-		return false;
+			return false;
 		}
 		
 		return true;

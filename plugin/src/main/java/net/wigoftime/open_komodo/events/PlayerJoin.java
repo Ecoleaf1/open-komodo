@@ -24,6 +24,7 @@ import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.etc.UpdateLog;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Rank;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class PlayerJoin implements EventExecutor {
@@ -95,6 +96,7 @@ public class PlayerJoin implements EventExecutor {
 						// Give player resourcepack
 						playerCustomPlayer.getPlayer().setResourcePack(Main.resourcePackLink);
 						
+						playerCustomPlayer.refreshXPBar();
 						playerCustomPlayer.getPlayer().sendTitle(ChatColor.YELLOW + "Finished loading", ChatColor.DARK_AQUA + "Welcome to "+Main.nameColoured+ ChatColor.DARK_AQUA + "!", 10, 140, 10);
 						
 					}

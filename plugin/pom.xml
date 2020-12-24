@@ -10,6 +10,10 @@
 	       <id>spigot-repo</id>
 	       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
 	   </repository>
+	<repository>
+	    <id>Scarsz-Nexus</id>
+	    <url>https://nexus.scarsz.me/content/groups/public/</url>
+	</repository>  
 	   
 	<!-- CodeMC -->
 	<repository>
@@ -67,6 +71,13 @@
   		<version>1.14.4-R0-1</version>
   		<scope>system</scope>
   		<systemPath>${basedir}/../External Dependencies/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
+	</dependency>
+	
+	<dependency>
+	    <groupId>com.discordsrv</groupId>
+	    <artifactId>discordsrv</artifactId>
+	    <version>1.21.0</version>
+	    <scope>provided</scope>
 	</dependency>
 		<!--<dependency>
   	 	<groupId>mysql</groupId>

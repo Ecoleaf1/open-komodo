@@ -7,6 +7,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,7 +18,9 @@ import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -40,6 +43,7 @@ import org.json.simple.parser.ParseException;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import net.wigoftime.open_komodo.config.Config;
+import net.wigoftime.open_komodo.custommobs.CustomPet;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
@@ -47,6 +51,8 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Home;
 import net.wigoftime.open_komodo.objects.Pet;
 import net.wigoftime.open_komodo.objects.SQLInfo;
+import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
+import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
 abstract public class SQLManager {
 	private static final int delayAmount = 5000;
@@ -66,13 +72,431 @@ abstract public class SQLManager {
         setupBagInventories();
 	}
 	
-	//private static Connection sqlConnection;
+	public static void setUpWorlds(List<World> worlds) {
+		for (World world : worlds) {
+			createWorldTable(world.getName());
+		}
+	}
 	
-	private static void setupBagInventories()
-	{
+	private static void createWorldTable(String worldName) {
+		new SQLCard(SQLCodeType.CREATE_WORLD_TABLE, SQLCardType.SET, Arrays.asList(worldName));
+	}
+	
+	public static List<CustomItem> getItems(UUID uuid) {
+		JSONArray array;
+		
+		JSONParser parser = new JSONParser();
+		try {
+			array = (JSONArray) parser.parse((String) new SQLCard(SQLCodeType.GET_ITEMS, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0));
+		} catch (ParseException e) {
+			e.printStackTrace();
+			return new ArrayList<CustomItem>(0);
+		}
+		List<CustomItem> list = new ArrayList<CustomItem>(array.size());
+		
+		Iterator arrayIterator = array.iterator();
+		while (arrayIterator.hasNext()) list.add(CustomItem.getCustomItem(((Long) arrayIterator.next()).intValue()));
+		return list;
+	}
+	
+	public static void setItems(CustomPlayer player) {
+		List<CustomItem> items = player.getItems();
+		JSONArray array = new JSONArray();
+		for (CustomItem item : items) array.add(item.getID());
+		new SQLCard(SQLCodeType.SET_ITEMS, SQLCardType.SET, Arrays.asList(array.toJSONString(), player.getUniqueId().toString().replaceAll("-", ""))).execute();
+	}
+	
+	private static void setupBagInventories() {
 		for (World world : Bukkit.getWorlds())
 			createBagInventoryTable(world.getName());
 	}
+	
+	public static void createMainTable() {
+		new SQLCard(SQLCodeType.CREATE_MAIN_TABLE, SQLCardType.SET, Arrays.asList()).execute();
+	}
+	
+	public static void createBagInventoryTable(String worldName) {
+		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY_TABLE, SQLCardType.SET, Arrays.asList(worldName)).execute();
+	}
+	
+	public static boolean containsPlayer(UUID uuid) {
+		return new SQLCard(SQLCodeType.CONTAINS_PLAYER, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-",""))).execute().size() < 1 ? false : true;
+		//return new SQLCard(SQLCodeType.CONTAINS_PLAYER, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-",""))).execute().get(0) == null ? false : true;
+	}
+	
+	public static boolean containsWorldPlayer(UUID uuid, String worldName) {
+		//return new SQLCard(SQLCodeType.CONTAINS_WORLD_PLAYER, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-",""))).execute().get(0) == null ? false : true;
+		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_WORLD_PLAYER, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-","")));
+		
+		// If Player can't be found in world database
+		if (card.execute().isEmpty())
+			return false;
+		
+		return true;
+	}
+	
+	public static int createBagInventory(UUID uuid, String worldName) {
+		int id = (int) new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""), worldName)).execute().get(0);
+		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""), id)).execute();
+		return id;
+	}
+	
+	public static List<ItemStack> getBagInventory(UUID uuid, String worldName, int id) {
+		String serializedInventory = (String) new SQLCard(SQLCodeType.GET_BAG_INVENTORY, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""), id)).execute().get(0);
+		
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serializedInventory));
+		BukkitObjectInputStream objectInputStream = null;
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			return (List<ItemStack>) objectInputStream.readObject();
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace(); return null;
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) {e.printStackTrace();}
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) {e.printStackTrace();}
+		}
+	}
+	
+	public static void setBagInventory(UUID uuid, String worldName, int id, List<ItemStack> inventory) {
+		ByteArrayOutputStream byteInputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream objectInputStream = null;
+		try {
+			objectInputStream = new BukkitObjectOutputStream(byteInputStream);
+			objectInputStream.writeObject(inventory);
+			
+			new SQLCard(SQLCodeType.SET_BAG_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, Base64Coder.encodeLines(byteInputStream.toByteArray())));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) {e.printStackTrace();}
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) {e.printStackTrace();}
+		}
+	}
+	
+	public static void createPlayer(UUID uuid) {
+		LocalDate date = LocalDate.now();
+		new SQLCard(SQLCodeType.CREATE_PLAYER, SQLCardType.SET, Arrays.asList(uuid.toString().replaceAll("-", ""), String.format("%04d/%02d/%02d", date.getYear(), date.getMonth().getValue(), date.getDayOfMonth()))).execute();
+	}
+	
+	public static void createWorldPlayer(UUID uuid, String worldName) {
+		new SQLCard(SQLCodeType.CREATE_WORLD_PLAYER, SQLCardType.SET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static Date getBanDate(UUID uuid) {
+		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_BANDATE, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0)).toInstant());
+	}
+	
+	public static void setBanDate(UUID uuid, Date date) {
+		new SQLCard(SQLCodeType.SET_BANDATE, SQLCardType.SET, Arrays.asList(Timestamp.from(date.toInstant()).toString() ,uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static String getBanReason(UUID uuid) {
+		return (String) new SQLCard(SQLCodeType.GET_BANREASON, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+	}
+	
+	public static void setBanReason(UUID uuid, String reason) {
+		new SQLCard(SQLCodeType.SET_BANREASON, SQLCardType.SET, Arrays.asList(reason, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static Date getMuteDate(UUID uuid) {
+		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_MUTEDATE, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0)).toInstant());
+	}
+	
+	public static void setMuteDate(UUID uuid, Date date) {
+		new SQLCard(SQLCodeType.SET_MUTEDATE, SQLCardType.SET, Arrays.asList(Timestamp.from(date.toInstant()).toString(),uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static String getMuteReason(UUID uuid) {
+		return (String) new SQLCard(SQLCodeType.GET_MUTEREASON, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+	}
+	
+	public static void setMuteReason(UUID uuid, String reason) {
+		new SQLCard(SQLCodeType.SET_MUTEREASON, SQLCardType.SET, Arrays.asList(reason, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static Date getJoinDate(UUID uuid) {
+		return ((Date) new SQLCard(SQLCodeType.GET_JOINDATE, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0));
+	}
+	
+	public static int getCurrency(UUID uuid, Currency currency) {
+		if (currency == Currency.POINTS)
+		return (int) (long) new SQLCard(SQLCodeType.GET_POINTS, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+		else if (currency == Currency.COINS)
+		return (int) (long) new SQLCard(SQLCodeType.GET_COINS, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+		else
+			return 0;
+	}
+	
+	public static void setCurrency(UUID uuid, int amount, Currency currency) {
+		if (currency == Currency.POINTS)
+		new SQLCard(SQLCodeType.SET_POINTS, SQLCardType.SET, Arrays.asList(amount, uuid.toString().replaceAll("-", ""))).execute();
+		else if (currency == Currency.COINS)
+		new SQLCard(SQLCodeType.SET_COINS, SQLCardType.SET, Arrays.asList(amount, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static void setCurrency(UUID uuid, Currency currency, int amount) {
+		if (currency == Currency.POINTS)
+		new SQLCard(SQLCodeType.SET_POINTS, SQLCardType.SET, Arrays.asList(amount, uuid.toString().replaceAll("-", ""))).execute().get(0);
+		else if (currency == Currency.COINS)
+		new SQLCard(SQLCodeType.GET_COINS, SQLCardType.SET, Arrays.asList(amount, uuid.toString().replaceAll("-", ""))).execute().get(0);
+	}
+	
+	public static List<Permission> getGlobalPermissions(UUID uuid) {
+		SQLCard card = new SQLCard(SQLCodeType.GET_GLOBAL_PERMISSIONS, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", "")));
+		if (card.execute().size() < 1)
+			return new ArrayList<Permission>(0);
+		
+		String serialized = (String) card.execute().get(0);
+
+		// Deserialize permissions to a list of permissions
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		BukkitObjectInputStream objectInputStream = null;
+		
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			List<String> permissionsInString = (List<String>) objectInputStream.readObject();
+			List<Permission> permissions = new ArrayList<Permission>(permissionsInString.size());
+			
+			Iterator<String> iterator = permissionsInString.iterator();
+			while (iterator.hasNext())
+				permissions.add(new Permission(iterator.next()));
+			
+			return permissions;
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}	
+	
+	public static void setGlobalPermissions(UUID uuid, List<Permission> permissions) {
+		// Serialize permissions to a list of permissions
+		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream objectOutputStream = null;
+		
+		List<String> permissionNodes = new ArrayList<String>(permissions.size());
+		Iterator<Permission> iterator = permissions.iterator();
+		while (iterator.hasNext())
+			permissionNodes.add(iterator.next().getName());
+		
+		try {
+			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
+			objectOutputStream.writeObject(permissionNodes);
+			new SQLCard(SQLCodeType.SET_GLOBAL_PERMISSIONS, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()))).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}	
+	
+	public static List<Permission> getWorldPermission(UUID uuid, String worldName) {
+		SQLCard card = new SQLCard(SQLCodeType.GET_WORLD_PERMISSIONS, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-", "")));
+		
+		if (card.execute().size() < 1)
+			return new ArrayList<Permission>(0);
+		
+		String serialized = (String) card.execute().get(0);
+		
+		// Deserialize to a list of permissions
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		BukkitObjectInputStream objectInputStream = null;
+		
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			List<String> permissionsInString = (List<String>) objectInputStream.readObject();
+			List<Permission> permissions = new ArrayList<Permission>(permissionsInString.size());
+			
+			Iterator<String> iterator = permissionsInString.iterator();
+			while (iterator.hasNext())
+				permissions.add(new Permission(iterator.next()));
+			
+			return permissions;
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}	
+	
+	public static void setWorldPermission(UUID uuid, List<Permission> permissions, String worldName) {
+		// Deserialize to a list of permissions
+		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream objectOutputStream = null;
+		
+		try {
+			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
+			List<String> permissionNodes = new ArrayList<String>(permissions.size());
+			
+			Iterator<Permission> iterator = permissions.iterator();
+			while (iterator.hasNext())
+				permissionNodes.add(iterator.next().getName());
+			
+			objectOutputStream.writeObject(permissionNodes);
+			new SQLCard(SQLCodeType.SET_WORLD_PERMISSIONS, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray())));
+			return;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		} finally {
+			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}	
+	
+	public static List<Home> getHomes(UUID uuid) {
+		String serialized = (String) new SQLCard(SQLCodeType.GET_HOMES, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+
+		// Deserialize permissions to a list of homes
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		BukkitObjectInputStream objectInputStream = null;
+		
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			List<Home> homes = (List<Home>) objectInputStream.readObject();
+			
+			return homes;
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return new ArrayList<Home>(0);
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static void setHomes(UUID uuid, List<Home> homes) {
+		// Deserialize permissions to a list of homes
+		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream objectOutputStream = null;
+		
+		try {
+			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
+			objectOutputStream.writeObject(homes);
+			new SQLCard(SQLCodeType.SET_HOMES, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static ItemStack[] getInventory(UUID uuid, String worldName) {
+		String serialized = (String) new SQLCard(SQLCodeType.GET_INVENTORY, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""))).execute().get(0);
+
+		// Deserialize permissions to a list of homes
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		BukkitObjectInputStream objectInputStream = null;
+		
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			ItemStack[] inventory = (ItemStack[]) objectInputStream.readObject();
+			
+			return inventory;
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return new ItemStack[27];
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static void setInventory(UUID uuid, String worldName, ItemStack[] inventory) {
+		// Serialize permissions to a list of homes
+		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream outputStream = null;
+		
+		try {
+			outputStream = new BukkitObjectOutputStream(byteOutputStream);
+			outputStream.writeObject(inventory);
+			new SQLCard(SQLCodeType.SET_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", ""))).execute();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (outputStream != null) try { outputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static int getRankID(UUID uuid) {
+		return (int) new SQLCard(SQLCodeType.GET_RANKID, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+	}
+	
+	public static void setRankID(UUID uuid, int rankID) {
+		new SQLCard(SQLCodeType.SET_RANKID, SQLCardType.SET, Arrays.asList(rankID, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static int getTip(UUID uuid) {
+		return (int) (long) new SQLCard(SQLCodeType.GET_TIP, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+	}
+	
+	public static void setTip(UUID uuid, int amount) {
+		new SQLCard(SQLCodeType.SET_TIP, SQLCardType.SET, Arrays.asList(amount , uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static double getXP(UUID uuid) {
+		return ((BigDecimal) new SQLCard(SQLCodeType.GET_XP, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0)).doubleValue();
+	}
+	
+	public static void setXP(UUID uuid, double amount) {
+		new SQLCard(SQLCodeType.SET_XP, SQLCardType.SET, Arrays.asList(amount, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static List<Pet> getPets(UUID uuid) {
+		String serialized = (String) new SQLCard(SQLCodeType.GET_PETS, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+		
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		BukkitObjectInputStream objectInputStream = null;
+		
+		try {
+			objectInputStream = new BukkitObjectInputStream(byteInputStream);
+			List<Integer> idList = (List<Integer>) objectInputStream.readObject();
+			
+			List<Pet> pets = new ArrayList<Pet>(idList.size());
+			for (int id : idList)
+				pets.add(Pet.getPet(id));
+			
+			return pets;
+		} catch (IOException | ClassNotFoundException e) {
+			e.printStackTrace();
+			return new ArrayList<Pet>(0);
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	public static void setPets(CustomPlayer player) {
+		List<Pet> pets = player.getPets();
+		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
+		BukkitObjectOutputStream objectOutputStream = null;
+		List<Integer> idList = new ArrayList<Integer>(pets.size());
+		for (Pet pet : pets)
+			idList.add(pet.getID());
+		
+		try {
+			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
+			objectOutputStream.writeObject(idList);
+			new SQLCard(SQLCodeType.SET_PETS, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), player.getUniqueId().toString().replaceAll("-", "")));
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
+		}
+	}
+	
+	//public static void 
+	
+	//private static Connection sqlConnection;
+	/*
 	
 	public static void createMainTable() {
 		Connection connection = null;
@@ -1584,7 +2008,7 @@ abstract public class SQLManager {
 				if (statement != null)
 		        try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 			}
-		}
+		} */
 	
 	public static void disconnectSQL() {
 		//if (getConnection() == null)

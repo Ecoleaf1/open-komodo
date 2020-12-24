@@ -63,12 +63,6 @@ abstract public class Promote
 		if (target.isOnline()) {
 			CustomPlayer customTargetPlayer = CustomPlayer.get(target.getUniqueId());
 			customTargetPlayer.setRank(Rank.getRank(rank));
-			
-			// Setup rank and then their permissions
-			if (target instanceof Player) {
-				Permissions.setUp(customTargetPlayer); 
-				ServerScoreBoard.add(customTargetPlayer);
-			}
 				
 			// Message to target that they been promoted
 			String msg = String.format(promoted, customTargetPlayer.getRank() == null ? "" : customTargetPlayer.getRank().getPrefix());

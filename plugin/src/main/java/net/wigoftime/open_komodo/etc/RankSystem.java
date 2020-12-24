@@ -94,35 +94,11 @@ abstract public class RankSystem
 						break;
 					
 					customPlayer.setRank(r);
-					customPlayer.setXP(0.0);
 					
 					customPlayer.getPlayer().sendMessage(String.format(rankedUp, r.getPrefix()));
 					customPlayer.getPlayer().playSound(customPlayer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 				}
 		}
-	}
-	
-	public static void addPendingPoints(Player player, double xp)
-	{
-		UUID uuid = player.getUniqueId();
-		CustomPlayer playerCustomPlayer = CustomPlayer.get(uuid);
-		
-		// If customplayer format of player doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (playerCustomPlayer == null)
-			return;
-		
-		if (playerCustomPlayer.isAfk())
-			return;
-		
-		if (!pendingXP.containsKey(uuid))
-			pendingXP.put(uuid, 0.0);
-		
-		// Add up XP
-		double currentXP = pendingXP.get(uuid);
-		double totalXP = currentXP + xp;
-		
-		pendingXP.replace(uuid, totalXP);
 	}
 	
 	public static void lettersToXP(Player player, String text)
@@ -178,6 +154,30 @@ abstract public class RankSystem
 		}
 		
 		addPendingPoints(player, xp);
+	}
+	
+	
+	public static void addPendingPoints(Player player, double xp)
+	{
+		UUID uuid = player.getUniqueId();
+		CustomPlayer playerCustomPlayer = CustomPlayer.get(uuid);
+		
+		// If customplayer format of player doesn't exist, cancel
+		// Can happen if the server hasn't loaded all of the player information when they join
+		if (playerCustomPlayer == null)
+			return;
+		
+		if (playerCustomPlayer.isAfk())
+			return;
+		
+		if (!pendingXP.containsKey(uuid))
+			pendingXP.put(uuid, 0.0);
+		
+		// Add up XP
+		double currentXP = pendingXP.get(uuid);
+		double totalXP = currentXP + xp;
+		
+		pendingXP.replace(uuid, totalXP);
 	}
 	
 	public static void putPlayer(Player player)

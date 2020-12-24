@@ -51,29 +51,6 @@ abstract public class GUIManager {
 			return;
 		}
 		
-		// Clicked in warps GUI
-		if (guiTitle.equals(Warps.title)) {
-			clickEvent.setCancelled(true);
-			Warps gui = new Warps(clickerCustomPlayer);
-			gui.open();
-			//Warps.clicked(clickerCustomPlayer.getPlayer(), clickedItemStack);
-			return;
-		}
-		
-		// Clicked in Tag Menu
-		if (guiTitle.equals(TagMenu.title)) {
-			clickerCustomPlayer.getActiveGui().clicked(clickEvent);
-			return;
-		}
-
-		// Clicked in Hat Menu
-		if (guiTitle.equals(HatMenu.title)) {
-			clickEvent.setCancelled(true);
-			CustomGUI gui = new HatMenu(clickerCustomPlayer);
-			gui.open();
-			return;
-		}
-		
 		if (clickEvent.getClickedInventory().equals(PhoneSwitcher.phoneSwitcherGui)) {
 			clickEvent.setCancelled(true);
 			
@@ -112,30 +89,22 @@ abstract public class GUIManager {
 	}
 	
 	private static void unmovableItem(ItemStack clickedItemStack, InventoryClickEvent clickEvent) {
-		if (!clickedItemStack.getItemMeta().hasCustomModelData())
-			return;
+		if (!clickedItemStack.getItemMeta().hasCustomModelData()) return;
 		
 		int clickedItemID = clickedItemStack.getItemMeta().getCustomModelData();
 		CustomItem item = CustomItem.getCustomItem(clickedItemID);
 		
-		// If clicked on helmet slot
+		// If Player clicked on the helmet equipment slot.
 		if (clickEvent.getSlot() == 39) {
-			if (item.getType() == ItemType.HAT)
-				clickEvent.setCancelled(true);
-			
+			if (item.getType() == ItemType.HAT) clickEvent.setCancelled(true);
 			return;
 		}
 		
-		if (clickedItemID != 1 && clickedItemID != 56)
-			return;
-		
-		clickEvent.setCancelled(true);
-		return;
+		if (item.getType() == ItemType.PHONE) clickEvent.setCancelled(true);
 	}
 	
 	public static void inventoryClosed(InventoryCloseEvent closeEvent) {	
 		CustomPlayer customPlayer = CustomPlayer.get(closeEvent.getPlayer().getUniqueId());
-		
 		if (customPlayer == null)
 			return;
 		
@@ -145,17 +114,9 @@ abstract public class GUIManager {
 		}
 		
 		customPlayer.setAfk(false);
-		
-		//if (closeEvent)
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
-				/*if (InventoryManagement.currentOpen.containsKey(closeEvent.getPlayer().getUniqueId()))
-				{
-					InventoryManagement.saveBagInventory(customPlayer.getPlayer(), customPlayer.getPlayer().getWorld().getName(), Arrays.asList(closeEvent.getInventory().getContents()));
-					InventoryManagement.currentOpen.remove(closeEvent.getPlayer().getUniqueId());
-				}
-				else*/
-					InventoryManagement.saveInventory(customPlayer, customPlayer.getPlayer().getWorld());
+				InventoryManagement.saveInventory(customPlayer, customPlayer.getPlayer().getWorld());
 			}
 		});
 	}

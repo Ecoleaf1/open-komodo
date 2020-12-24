@@ -65,6 +65,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import dev.esophose.playerparticles.api.PlayerParticlesAPI;
+import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -141,7 +142,7 @@ public class Main extends JavaPlugin implements Listener
 {
 
 	public static final String name = "Open Komodo";
-	//public static final String welcomemsg = String.format("%s%s%s", welcomeHeader, welcomeContext, welcomeCloser);
+	private static Object discordSRV;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
 	//public static final String welcomemsg = String.format("%s%s━━━━━━━━━━━━\n%sWelcome back to %s!%s\n%s%s━━━━━━━━━━━━", 
@@ -815,6 +816,7 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void playerChat(AsyncPlayerChatEvent e) 
 	{
+		PrintConsole.test("Message sent");
 		// Sending it over to the AsyncPlayerChat Class
 		AsyncPlayerChat.function(e);
 	}
@@ -970,6 +972,9 @@ public class Main extends JavaPlugin implements Listener
 	}
 	
 	// Variable Functions
+	public static Object getDiscordSRV() {
+		return discordSRV;
+	}
 	
 	public static String getNormalMessageFormat() {
 		return normalMessageFormat;
@@ -1066,6 +1071,12 @@ public class Main extends JavaPlugin implements Listener
 		damageAllowed = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Allow Damage");
 		// Get if fall damage is enabled in this server
 		fallDamage = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Fall Damage");
+		
+		try {
+			discordSRV = DiscordSRV.getPlugin();
+		} catch (NoClassDefFoundError error) {
+		discordSRV = null;
+		}
 	}
 	
 	public static void displayWelcomeMessage(Player player) {

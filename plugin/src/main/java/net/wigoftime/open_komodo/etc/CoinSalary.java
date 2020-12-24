@@ -7,7 +7,7 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 
 abstract public class CoinSalary {
-	public static final void coinpayPlayersTimer() {
+	public static void coinpayPlayersTimer() {
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 				for (CustomPlayer player : CustomPlayer.getOnlinePlayers()) {

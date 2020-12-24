@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -94,6 +95,9 @@ public class NormalMessage
 		
 		// Messages the server terminal/console as well.
 		Bukkit.getLogger().info(String.format("%s: %s", senderCustomPlayer.getPlayer().getName(), message));
+		
+		// Send message to discord (If enabled)
+		sendToDiscord(senderCustomPlayer.getPlayer(), message);
 	}
 	
 	public static void shout(Player sender, String message) {	
@@ -142,5 +146,16 @@ public class NormalMessage
 		
 		// Messages the server terminal/console as well.
 		Bukkit.getLogger().info(String.format("[shout] %s: %s", sender.getName(), message));
+		
+		// Send message to discord (If enabled)
+		sendToDiscord(senderCustomPlayer.getPlayer(), message);
+	}
+	
+	private static void sendToDiscord(Player player, String message) {
+		if (Main.getDiscordSRV() == null)
+			return;
+		
+		// Send message to Discord
+		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(player, message, null, false);
 	}
 }

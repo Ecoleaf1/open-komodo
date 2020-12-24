@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.objects;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -31,8 +33,13 @@ import net.wigoftime.open_komodo.etc.HomeSystem;
 import net.wigoftime.open_komodo.etc.Moderation;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
+import net.wigoftime.open_komodo.sql.SQLCard;
+import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
+import net.wigoftime.open_komodo.sql.SQLCode;
+import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class CustomPlayer
@@ -76,7 +83,6 @@ public class CustomPlayer
 		uuid = player.getUniqueId();
 		
 		if (SQLManager.isEnabled()) {
-			PrintConsole.test(1+"");
 			if (!SQLManager.containsPlayer(uuid))
 				SQLManager.createPlayer(uuid);
 			
@@ -530,11 +536,13 @@ public class CustomPlayer
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 				if (SQLManager.isEnabled())
-				SQLManager.setXP(uuid, xp);
+					SQLManager.setXP(uuid, xp);
 				else
-				PlayerConfig.setXP(uuid, xp);
+					PlayerConfig.setXP(uuid, xp);
 			}
 		});
+		
+		refreshXPBar();
 	}
 	
 	public List<CustomItem> getItems(ItemType type) {
@@ -578,6 +586,8 @@ public class CustomPlayer
 			break;
 		}
 		
+		PrintConsole.test("Adding.. "+ boughtItemCustomItem.getID());
+		
 		// Create a reference variable to self
 		// to reference in another thread
 		final CustomPlayer selfCustomPlayer = this;
@@ -590,6 +600,25 @@ public class CustomPlayer
 				SQLManager.setItems(selfCustomPlayer);
 				else
 				PlayerConfig.setItems(uuid, getItems());
+			}
+		});
+	}
+	
+	public void refreshXPBar() {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+			public void run() {
+				float leftoverRemaining;
+				
+				if (getRank() == null)
+					leftoverRemaining = (float) (xp / Rank.getRank(1).getXPPrice());
+				else
+					leftoverRemaining = (float) (xp / getRank().getXPPrice());
+				
+				if (leftoverRemaining > 1)
+					leftoverRemaining = 1;
+				
+				player.setLevel(0);
+				player.setExp(leftoverRemaining);
 			}
 		});
 	}
@@ -637,18 +666,28 @@ public class CustomPlayer
 	
 	public void setRank(Rank rank)
 	{
-			// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
-			// from latency the server to the SQL
-			Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-				public void run() {
-					if (SQLManager.isEnabled())
-					SQLManager.setRankID(uuid, rank == null ? 0 : rank.getID());
-					else
-					PlayerConfig.setRankID(uuid, rank == null ? 0 : rank.getID());
-				}
-			});
+		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
+		// from latency the server to the SQL
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (SQLManager.isEnabled()) {
+				SQLManager.setRankID(uuid, rank == null ? 0 : rank.getID());
+				} else
+				PlayerConfig.setRankID(uuid, rank == null ? 0 : rank.getID());
+			}
+		});
+		
+		setXP(0);
 		
 		this.rank = rank == null ? null : rank;
+		
+		CustomPlayer thisPlayer = this;
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+			public void run() {
+				Permissions.setUp(thisPlayer); 
+				ServerScoreBoard.add(thisPlayer);
+			}
+		}, 1);
 	}
 	
 	public static void setRankOffline(UUID uuid, int rankID) {
@@ -656,10 +695,13 @@ public class CustomPlayer
 			// from latency the server to the SQL
 			Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 				public void run() {
-					if (SQLManager.isEnabled())
+					if (SQLManager.isEnabled()) {
 					SQLManager.setRankID(uuid, rankID);
-					else
+					SQLManager.setXP(uuid, 0.0);
+					} else {
 					PlayerConfig.setRankID(uuid, rankID);
+					PlayerConfig.setXP(uuid, 0.0);
+					}
 				}
 			});
 	}

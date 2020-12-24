@@ -10,11 +10,7 @@ public class CollisionSystem {
 	private static final boolean enabled = false;
 	
 	private static Team getDefaultTeam(Scoreboard scoreboard) {
-		
 		Team team = scoreboard.getTeam("Default");
-		
-		
-		
 		if (team == null) {
 			team = scoreboard.registerNewTeam("Default");
 		}

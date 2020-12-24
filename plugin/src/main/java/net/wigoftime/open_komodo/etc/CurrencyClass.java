@@ -155,7 +155,7 @@ public abstract class CurrencyClass
 				
 				// Send message to receiver to notify
 				String msg2 = String.format("%s» %sYou have just got paid %d %s from %s!", 
-						ChatColor.GOLD, ChatColor.GRAY, currency == Currency.POINTS ? "points" : "coins",
+						ChatColor.GOLD, ChatColor.GRAY, amount, currency == Currency.POINTS ? "points" : "coins",
 							givercustomPlayer.getPlayer().getDisplayName());
 				msg2 = MessageFormat.format(msg2, givercustomPlayer, receiverCustomPlayer, null);
 				msg2 = msg2.replaceFirst("$C", amount+"");

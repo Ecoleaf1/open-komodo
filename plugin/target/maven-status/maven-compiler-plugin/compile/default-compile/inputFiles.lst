@@ -74,6 +74,7 @@
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/HomeCommand.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/LogCommand.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/SitCommand.java
+/mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/sql/SQLCode.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/TpaCommand.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/config/ItemConfig.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/objects/Settings.java
@@ -95,6 +96,7 @@
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/actions/Rules.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/custommobs/CustomPetMob.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/Main.java
+/mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/sql/SQLCard.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/chat/PrivateMessage.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/PetsMenuCommand.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/TpaToggleCommand.java
