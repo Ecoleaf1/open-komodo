@@ -26,6 +26,7 @@ import net.wigoftime.open_komodo.gui.Warps;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomParticle;
 import net.wigoftime.open_komodo.objects.ItemType;
+import net.wigoftime.open_komodo.sql.SQLCard;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class CheckFiles 
@@ -43,7 +44,7 @@ abstract public class CheckFiles
 		}
 
 		FileCreation.create(ConfigType.NORMAL);
-		SQLManager.setup();
+		SQLCard.setup();
 		
 		FileCreation.create(ConfigType.ITEM);
 		ItemConfig.setup();

@@ -34,6 +34,7 @@
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/config/EmoteConfig.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/custommobs/CustomPetCat.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/events/PlayerJoin.java
+/mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/OutfitTemplateCommand.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/commands/GenTip.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/etc/CurrencyClass.java
 /mnt/data/Apps/Eclipse/open-komodo Rewrite Neater/plugin/src/main/java/net/wigoftime/open_komodo/etc/RankSystem.java

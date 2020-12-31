@@ -345,8 +345,16 @@ public class CustomPlayer
 					else
 						permissions = PlayerConfig.getGlobalPermissions(uuid);
 					
-					permissions.add(permission);
-					
+					if (addMode) permissions.add(permission);
+					else if (!addMode) {
+						PrintConsole.test("Addmode: false");
+						for (Permission p : permissions)
+							if (p.getName().equalsIgnoreCase(permission.getName())) {
+								permissions.remove(p);
+								PrintConsole.test("found: "+ permission.getName());
+								break;
+							}
+					}
 					if (SQLManager.isEnabled())
 						SQLManager.setGlobalPermissions(uuid, permissions);
 					else
@@ -354,15 +362,21 @@ public class CustomPlayer
 				}
 				else {
 					List<Permission> permissions;
-					if (SQLManager.isEnabled()) {
+					if (SQLManager.isEnabled())
 						permissions = SQLManager.getWorldPermission(uuid, world.getName());
-						permissions.add(permission);
-						SQLManager.setWorldPermission(uuid, permissions, world.getName());
-					} else {
+					else
 						permissions = PlayerConfig.getWorldPermissions(uuid, world.getName());
-						permissions.add(permission);
-						PlayerConfig.setWorldPermissions(uuid, world.getName(), permissions);
-					}
+					
+					if (addMode) permissions.add(permission);
+					else for (Permission permissionForLoop : permissions)
+						if (permissionForLoop.getName().equals(permission.getName())) {
+							permissions.remove(permissionForLoop);
+							PrintConsole.test("Removed: " + permissionForLoop.getName());
+							break;
+						}
+					
+					if (SQLManager.isEnabled()) SQLManager.setWorldPermission(uuid, permissions, world.getName());
+					else PlayerConfig.setWorldPermissions(uuid, world.getName(), permissions);
 				}
 			}
 		});
@@ -616,6 +630,8 @@ public class CustomPlayer
 				
 				if (leftoverRemaining > 1)
 					leftoverRemaining = 1;
+				else if (leftoverRemaining < 0)
+					leftoverRemaining = 0;
 				
 				player.setLevel(0);
 				player.setExp(leftoverRemaining);
@@ -677,7 +693,7 @@ public class CustomPlayer
 			}
 		});
 		
-		setXP(0);
+		setXP(0.0);
 		
 		this.rank = rank == null ? null : rank;
 		

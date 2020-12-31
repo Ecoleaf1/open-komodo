@@ -15,18 +15,22 @@ import java.util.List;
 
 import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 
+import net.wigoftime.open_komodo.config.Config;
+import net.wigoftime.open_komodo.objects.SQLInfo;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
 public class SQLCard {
 	private static BasicDataSource ds = new BasicDataSource();
-	static {
-		connect();
-	}
+	private static SQLInfo info;
 	
-	private static void connect() {
-		ds.setUsername("customer_122860_test");
-		ds.setPassword("SwW5irYS$T~JzwpgCoEg");
-		ds.setUrl("jdbc:"+"mysql://na01-sql.pebblehost.com/customer_122860_test");
+	public static void setup() {
+		info = Config.getSQLInfo();
+		
+		if (!info.enabled) return;
+		
+		ds.setUsername(info.user);
+		ds.setPassword(info.password);
+		ds.setUrl("jdbc:"+info.url);
 		ds.setMinIdle(5);
 		ds.setMaxIdle(10);
 	}
@@ -64,7 +68,7 @@ public class SQLCard {
 		} catch (SQLException exception) {
 			exception.printStackTrace();
 			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
-			connect();
+			setup();
 		} finally {
 			if (connection != null) try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 			if (statement != null) try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }

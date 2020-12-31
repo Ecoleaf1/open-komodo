@@ -90,6 +90,7 @@ import net.wigoftime.open_komodo.commands.MoneyCommand;
 import net.wigoftime.open_komodo.commands.MsgCommand;
 import net.wigoftime.open_komodo.commands.MuteCommand;
 import net.wigoftime.open_komodo.commands.NicknameCommand;
+import net.wigoftime.open_komodo.commands.OutfitTemplateCommand;
 import net.wigoftime.open_komodo.commands.PayCommand;
 import net.wigoftime.open_komodo.commands.PetCommand;
 import net.wigoftime.open_komodo.commands.PetsMenuCommand;
@@ -145,8 +146,6 @@ public class Main extends JavaPlugin implements Listener
 	private static Object discordSRV;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
-	//public static final String welcomemsg = String.format("%s%s━━━━━━━━━━━━\n%sWelcome back to %s!%s\n%s%s━━━━━━━━━━━━", 
-			//ChatColor.YELLOW, ChatColor.STRIKETHROUGH, ChatColor.DARK_AQUA, name, ChatColor.DARK_AQUA, creditsLine, ChatColor.YELLOW, ChatColor.STRIKETHROUGH);
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
 	
 	private static String normalMessageFormat;
@@ -752,6 +751,11 @@ public class Main extends JavaPlugin implements Listener
 		// Save inventory
 		InventoryManagement.saveInventory(player, previousWorld);
 		
+		// Create new world player entry if none in teleported world
+		if (SQLManager.isEnabled())
+			if (!SQLManager.containsWorldPlayer(player.getUniqueId(), world.getName()))
+			SQLManager.createWorldPlayer(player.getUniqueId(), world.getName());
+		
 		// Load inventory
 		InventoryManagement.loadInventory(player, world);
 		
@@ -816,7 +820,6 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void playerChat(AsyncPlayerChatEvent e) 
 	{
-		PrintConsole.test("Message sent");
 		// Sending it over to the AsyncPlayerChat Class
 		AsyncPlayerChat.function(e);
 	}
@@ -1130,6 +1133,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Register commands!
 		map.register("openkomodo", new PetCommand());
+		map.register("openkomodo", new OutfitTemplateCommand("outfit", "Dress up for school!", "/outfit", new ArrayList<String>(0)));
 		map.register("openkomodo", new MsgCommand("msg", "Send someone a message!", "/msg (Player) (Message)", new ArrayList<String>(0)));
 		map.register("openkomodo", new SitCommand("sit", "Take a seat", "/sit", new ArrayList<String>(0)));
 		map.register("openkomodo", new SetHomeCommand("sethome", "Set a home to teleport", "/sethome (Name)", new ArrayList<String>(0)));

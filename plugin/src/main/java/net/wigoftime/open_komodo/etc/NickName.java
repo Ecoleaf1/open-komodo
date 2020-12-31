@@ -23,7 +23,7 @@ abstract public class NickName
 		
 		if (player.hasPermission(Permissions.colorNickPerm)) 
 		{
-			player.setCustomName(ChatColor.translateAlternateColorCodes('&', name));
+			player.setCustomName(ChatColor.DARK_GRAY + ChatColor.translateAlternateColorCodes('&', name));
 			player.sendMessage(ChatColor.DARK_AQUA + String.format("You have changed your name to %s", player.getCustomName()));
 			return;
 		}
@@ -31,7 +31,7 @@ abstract public class NickName
 		// If not permitted to do colornicking
 		if (!name.contains("&")) 
 		{
-			player.setCustomName(name);
+			player.setCustomName(ChatColor.DARK_GRAY + name);
 			player.sendMessage(ChatColor.DARK_AQUA + String.format("You have changed your name to %s", player.getCustomName()));
 		}
 		else
