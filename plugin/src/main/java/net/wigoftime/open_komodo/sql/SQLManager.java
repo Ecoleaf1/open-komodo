@@ -122,7 +122,16 @@ abstract public class SQLManager {
 	}
 	
 	public static int createBagInventory(UUID uuid, String worldName) {
-		int id = (int) new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""), worldName)).execute().get(0);
+		List<Object> sqlElements = new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCardType.GET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""))).execute();
+		int id;
+		
+		if (sqlElements.isEmpty())
+			id = 1;
+		else {
+		id = (int) (long) sqlElements.get(0);
+		id++;
+		}
+		
 		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, uuid.toString().replaceAll("-", ""), id)).execute();
 		return id;
 	}
@@ -135,8 +144,13 @@ abstract public class SQLManager {
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
 			return (List<ItemStack>) objectInputStream.readObject();
-		} catch (IOException | ClassNotFoundException e) {
-			e.printStackTrace(); return null;
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			Bukkit.getPlayer(uuid).sendMessage(ChatColor.DARK_RED + "Error: ClassNotFoundException. Cannot open bag");
+			return null;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
 		} finally {
 			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) {e.printStackTrace();}
 			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) {e.printStackTrace();}
@@ -150,7 +164,7 @@ abstract public class SQLManager {
 			objectInputStream = new BukkitObjectOutputStream(byteInputStream);
 			objectInputStream.writeObject(inventory);
 			
-			new SQLCard(SQLCodeType.SET_BAG_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, Base64Coder.encodeLines(byteInputStream.toByteArray())));
+			new SQLCard(SQLCodeType.SET_BAG_INVENTORY, SQLCardType.SET, Arrays.asList(worldName, Base64Coder.encodeLines(byteInputStream.toByteArray()), uuid.toString().replaceAll("-", ""), id)).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {

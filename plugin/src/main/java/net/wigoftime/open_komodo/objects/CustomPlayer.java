@@ -625,8 +625,14 @@ public class CustomPlayer
 				
 				if (getRank() == null)
 					leftoverRemaining = (float) (xp / Rank.getRank(1).getXPPrice());
-				else
-					leftoverRemaining = (float) (xp / getRank().getXPPrice());
+				else {
+					Rank rank = Rank.getRank(getRank().getID() + 1);
+					
+					if (rank == null)
+						leftoverRemaining = 0;
+					else
+						leftoverRemaining = (float) (xp / rank.getXPPrice());
+				}
 				
 				if (leftoverRemaining > 1)
 					leftoverRemaining = 1;

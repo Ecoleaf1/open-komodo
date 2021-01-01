@@ -85,29 +85,12 @@ abstract public class InventoryManagement
 				else
 					items = Arrays.asList(WorldInventoryConfig.getInventory(player.getPlayer(), bagID));
 				
-				if (items == null)
-				{
+				if (items == null) {
 					PrintConsole.test("Doesn't exist.");
-					//SQLManager.setBagInventory(player.getUniqueId(), player.getPlayer().getWorld().getName(), bagID, new ArrayList<ItemStack>(0));
-					//SQLManager.getBagInventory(player.getUniqueId(), bagID, new ItemStack[0]);
 					items = new ArrayList<ItemStack>(0);
-					//items = WorldInventoryConfig.getInventory(player, bagID);
 				}
 				
-				final List<ItemStack> itemsFinal = items;
 				Runnable mainThreadRunnable = new Runnable() {
-					/*
-					public void run() {
-						Inventory gui = Bukkit.createInventory(null, 27, "Backpack");
-						
-						byte index = 0;
-						for (ItemStack item : itemsFinal)
-							gui.setItem(index++, item);
-						
-						InventoryManagement.currentOpen.put(player.getUniqueId(), bagID);
-						player.openInventory(gui);
-					}*/
-
 					@Override
 					public void run() {
 						BagGui gui = new BagGui(player, bagID);

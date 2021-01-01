@@ -47,10 +47,13 @@ public class BagGui extends CustomGUI {
 	
 	private boolean create() {
 		List<ItemStack> items = getItems();
-		if (items.size() == 0) return false;
+		if (items == null) return true;
 		
 		byte index = 0;
-		for (ItemStack item : items) gui.setItem(index++, item);
+		
+		for (ItemStack item : items)
+			if (index > items.size()) break;
+			else gui.setItem(index++, item);
 		return true;
 	}
 	

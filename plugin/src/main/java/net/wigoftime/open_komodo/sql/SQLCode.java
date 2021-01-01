@@ -70,7 +70,7 @@ public class SQLCode {
 		case GET_ACTIVE_TAG:
 			return "SELECT `Active Tag` FROM `OpenKomodo.Main` WHERE UUID = UNHEX('%s')";
 		case GET_BAG_INVENTORY:
-			return "SELECT * FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
+			return "SELECT `Inventory` FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
 		case GET_LATEST_BAGID:
 			return "SELECT `ID` FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') ORDER BY `ID` DESC LIMIT 1";
 		case GET_BANDATE:
