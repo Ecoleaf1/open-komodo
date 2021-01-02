@@ -390,7 +390,7 @@ abstract public class SQLManager {
 			objectOutputStream.writeObject(homes);
 			
 			// Save Serialized home list to database
-			new SQLCard(SQLCodeType.SET_HOMES, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")));
+			new SQLCard(SQLCodeType.SET_HOMES, SQLCardType.SET, Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", ""))).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
