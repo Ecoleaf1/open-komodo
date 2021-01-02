@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.inventory.ItemStack;
 
 import net.wigoftime.open_komodo.Main;
@@ -68,6 +69,10 @@ abstract public class GUIManager {
 		if (clickedItemStack.getType() == Material.STICK) {
 			clickedBag(clickerCustomPlayer, clickedItemStack, clickEvent);
 			return;
+		}
+		
+		if (clickEvent.getSlotType() == SlotType.CRAFTING || clickEvent.getSlotType() == SlotType.RESULT) {
+			clickEvent.setCancelled(true); return;
 		}
 	}
 	

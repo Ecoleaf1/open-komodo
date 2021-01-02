@@ -23,12 +23,19 @@ abstract public class NickName
 		
 		if (player.hasPermission(Permissions.colorNickPerm)) 
 		{
-			player.setCustomName(ChatColor.DARK_GRAY + ChatColor.translateAlternateColorCodes('&', name));
+			String nameColoured = ChatColor.translateAlternateColorCodes('&', name);
+			
+			if (ChatColor.stripColor(nameColoured).length() == 0) {
+				player.sendMessage(ChatColor.DARK_RED + "Sorry, but that isn't a valid name");
+				return;
+			}
+			
 			player.sendMessage(ChatColor.DARK_AQUA + String.format("You have changed your name to %s", player.getCustomName()));
 			return;
 		}
 		
 		// If not permitted to do colornicking
+		
 		if (!name.contains("&")) 
 		{
 			player.setCustomName(ChatColor.DARK_GRAY + name);
