@@ -30,6 +30,7 @@ abstract public class NickName
 				return;
 			}
 			
+			player.setCustomName(nameColoured);
 			player.sendMessage(ChatColor.DARK_AQUA + String.format("You have changed your name to %s", player.getCustomName()));
 			return;
 		}
