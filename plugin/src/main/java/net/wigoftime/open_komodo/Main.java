@@ -99,6 +99,7 @@ import net.wigoftime.open_komodo.commands.PropShopCommand;
 import net.wigoftime.open_komodo.commands.RankCommand;
 import net.wigoftime.open_komodo.commands.ReplyCommand;
 import net.wigoftime.open_komodo.commands.ReportCommand;
+import net.wigoftime.open_komodo.commands.ResourceCommand;
 import net.wigoftime.open_komodo.commands.RulesCommand;
 import net.wigoftime.open_komodo.commands.SetHomeCommand;
 import net.wigoftime.open_komodo.commands.SitCommand;
@@ -367,9 +368,11 @@ public class Main extends JavaPlugin implements Listener
 	{
 		Entity entity = e.getRightClicked();
 		
-		if (!e.getPlayer().hasPermission(Permissions.changePerm))
+		Creature petCreature = PetsManager.getCreature(e.getPlayer());
+		
+		if (!e.getPlayer().hasPermission(Permissions.changePerm) && petCreature != null)
 		{
-			Creature petCreature = PetsManager.getCreature(e.getPlayer());
+			
 			if (petCreature.getUniqueId().equals(e.getRightClicked().getUniqueId()))
 				return;
 			
@@ -1088,12 +1091,21 @@ public class Main extends JavaPlugin implements Listener
 		
 		BaseComponent[] components = new BaseComponent[5];
 		components[0] = new TextComponent(String.format("%sTo view the rules, ", net.md_5.bungee.api.ChatColor.DARK_AQUA));
+		components[0].setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+		
 		components[1] = new TextComponent(String.format("%sclick here", net.md_5.bungee.api.ChatColor.AQUA));
+		components[1].setColor(net.md_5.bungee.api.ChatColor.AQUA);
 		components[1].setClickEvent(new ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND, "/rules"));
+		
 		components[2] = new TextComponent(String.format("%s and to view the credits ", net.md_5.bungee.api.ChatColor.DARK_AQUA));
+		components[2].setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
+		
 		components[3] = new TextComponent(String.format("%sclick here", ChatColor.AQUA));
 		components[3].setClickEvent(new ClickEvent(net.md_5.bungee.api.chat.ClickEvent.Action.RUN_COMMAND, "/credits"));
+		components[3].setColor(net.md_5.bungee.api.ChatColor.AQUA);
+		
 		components[4] = new TextComponent(String.format(" %sfor everyone who helped out!",net.md_5.bungee.api.ChatColor.DARK_AQUA));
+		components[4].setColor(net.md_5.bungee.api.ChatColor.DARK_AQUA);
 		
 		String welcomeCloser = String.format("%s%s━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━", ChatColor.YELLOW, ChatColor.STRIKETHROUGH);
 		
@@ -1132,9 +1144,15 @@ public class Main extends JavaPlugin implements Listener
 		}
 		
 		// Register commands!
+		map.register("openkomodo", new ResourceCommand("resource", "Reload or download resourcepack maunally", "/resource", new ArrayList<String>(0)));
 		map.register("openkomodo", new PetCommand());
 		map.register("openkomodo", new OutfitTemplateCommand("outfit", "Dress up for school!", "/outfit", new ArrayList<String>(0)));
-		map.register("openkomodo", new MsgCommand("msg", "Send someone a message!", "/msg (Player) (Message)", new ArrayList<String>(0)));
+		
+		ArrayList<String> msgAtlas = new ArrayList<String>(1);
+		msgAtlas.add("msg");
+		msgAtlas.add("whisper");
+		map.register("openkomodo", new MsgCommand("message", "Send someone a message!", "/msg (Player) (Message)", msgAtlas));
+		
 		map.register("openkomodo", new SitCommand("sit", "Take a seat", "/sit", new ArrayList<String>(0)));
 		map.register("openkomodo", new SetHomeCommand("sethome", "Set a home to teleport", "/sethome (Name)", new ArrayList<String>(0)));
 		map.register("openkomodo", new HomeCommand("home", "Teleport to your home", "/home (Name)", new ArrayList<String>(0)));

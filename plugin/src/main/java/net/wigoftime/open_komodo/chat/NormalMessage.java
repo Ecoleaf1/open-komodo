@@ -69,9 +69,12 @@ public class NormalMessage
 		
 		componentList.add(name);
 		
-		TextComponent messageComponent = new TextComponent(String.format("%s: %s%s", ChatColor.WHITE, ChatColor.GRAY, message));
-		//TextComponent messageComponent = new TextComponent(": "+ChatColor.GRAY+message);
+		TextComponent messageComponent = new TextComponent(String.format("%s: ", ChatColor.WHITE));
+		messageComponent.setColor(ChatColor.WHITE);
 		componentList.add(messageComponent);
+		TextComponent message2Component = new TextComponent(String.format("%s", message));
+		messageComponent.setColor(ChatColor.GRAY);
+		componentList.add(message2Component);
 		
 		BaseComponent[] componentBaseMessage = componentList.toArray(new BaseComponent[componentList.size()]);
 		

@@ -8,7 +8,17 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+
 import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 
 abstract public class Sit 
 {
@@ -37,7 +47,7 @@ abstract public class Sit
 		arrow.setTicksLived(Integer.MAX_VALUE);
 		// add player to seat
 		arrow.addPassenger(player);
+		
+		//Packet packet = new PacketPlayOutBe
 	}
-	
-	
 }

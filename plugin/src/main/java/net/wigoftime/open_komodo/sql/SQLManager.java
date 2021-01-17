@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.UUID;
@@ -264,7 +265,8 @@ abstract public class SQLManager {
 			return permissions;
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
-			return null;
+			setGlobalPermissions(uuid, new LinkedList<Permission>());
+			return new LinkedList<Permission>();
 		} finally {
 			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
 			if (byteInputStream != null) try { byteInputStream.close(); } catch (IOException e) { e.printStackTrace(); }
@@ -323,6 +325,8 @@ abstract public class SQLManager {
 			
 			return permissions;
 		}catch (IOException e) {
+			
+			setWorldPermission(uuid, new LinkedList<Permission>(), worldName);
 			return new ArrayList<Permission>(0);
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();

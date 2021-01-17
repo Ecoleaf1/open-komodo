@@ -116,7 +116,7 @@ public class Warps extends CustomGUI
 		airportItemStackIcon = new ItemStack(Material.INK_SAC); {
 			ItemMeta itemMeta = airportItemStackIcon.getItemMeta();
 			itemMeta.setDisplayName(ChatColor.BOLD + "Airport");
-			itemMeta.setCustomModelData(-7);
+			itemMeta.setCustomModelData(-8);
 			
 			airportItemStackIcon.setItemMeta(itemMeta);
 		}
