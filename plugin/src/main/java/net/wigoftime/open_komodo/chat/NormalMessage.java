@@ -73,7 +73,7 @@ public class NormalMessage
 		messageComponent.setColor(ChatColor.WHITE);
 		componentList.add(messageComponent);
 		TextComponent message2Component = new TextComponent(String.format("%s", message));
-		messageComponent.setColor(ChatColor.GRAY);
+		message2Component.setColor(ChatColor.GRAY);
 		componentList.add(message2Component);
 		
 		BaseComponent[] componentBaseMessage = componentList.toArray(new BaseComponent[componentList.size()]);
