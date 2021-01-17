@@ -30,9 +30,9 @@ public class ResourceCommand extends Command {
 		
 		TextComponent text = new TextComponent("If you are having trouble loading the resourcepack, feel free to download it maunally by clicking here");
 		text.setColor(ChatColor.GRAY);
-		
 		text.setClickEvent(new ClickEvent(Action.OPEN_URL, Main.resourcePackLink));
 		
+		player.spigot().sendMessage(text);
 		return false;
 	}
 
