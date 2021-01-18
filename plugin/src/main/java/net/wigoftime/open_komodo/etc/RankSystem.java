@@ -16,8 +16,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 abstract public class RankSystem 
 {
-	public static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
-	
+	private volatile static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
 	
 	private static final String rankedUp = String.format(" \n                      %s%s| %sOpen Komodo %s|%s\n       You have ranked up to the next %%s!\n       %sCongraz!!\n ",
 			ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.DARK_AQUA, ChatColor.DARK_AQUA);
@@ -39,9 +38,8 @@ abstract public class RankSystem
 		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 12000);
 	}
 	
-	private static void giveDailyXP() {
-		for (Entry<UUID, Double> e : pendingXP.entrySet())
-		{
+	private static synchronized void giveDailyXP() {
+		for (Entry<UUID, Double> e : pendingXP.entrySet()) {
 			// Get CustomPlayer
 			CustomPlayer customPlayer = CustomPlayer.get(e.getKey());
 			

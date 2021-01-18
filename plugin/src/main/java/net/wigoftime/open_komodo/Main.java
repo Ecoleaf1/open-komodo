@@ -77,6 +77,7 @@ import net.wigoftime.open_komodo.commands.BuildModeCommand;
 import net.wigoftime.open_komodo.commands.CheckBalanceCommand;
 import net.wigoftime.open_komodo.commands.CreditsCommand;
 import net.wigoftime.open_komodo.commands.DelHomeCommand;
+import net.wigoftime.open_komodo.commands.DisplayXPCommand;
 import net.wigoftime.open_komodo.commands.EmoteCommand;
 import net.wigoftime.open_komodo.commands.FlyCommand;
 import net.wigoftime.open_komodo.commands.GenPayCommand;
@@ -594,12 +595,12 @@ public class Main extends JavaPlugin implements Listener
 			Material material = block.getType();
 			
 			if (player.getPlayer().hasPermission(Permissions.changePerm))
-			{
 				if (player.isBuilding())
 					return;
-			}
-			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR)
-			{	
+			
+			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || 
+					material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR || 
+					material == Material.DISPENSER || material == Material.DROPPER) {	
 				e.setCancelled(true);
 				return;
 			}
@@ -758,6 +759,10 @@ public class Main extends JavaPlugin implements Listener
 		if (SQLManager.isEnabled())
 			if (!SQLManager.containsWorldPlayer(player.getUniqueId(), world.getName()))
 			SQLManager.createWorldPlayer(player.getUniqueId(), world.getName());
+		
+		// switch out of build mode
+		if (player.isBuilding())
+			player.setBuilding(false);
 		
 		// Load inventory
 		InventoryManagement.loadInventory(player, world);
@@ -1147,6 +1152,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new ResourceCommand("resource", "Reload or download resourcepack maunally", "/resource", new ArrayList<String>(0)));
 		map.register("openkomodo", new PetCommand());
 		map.register("openkomodo", new OutfitTemplateCommand("outfit", "Dress up for school!", "/outfit", new ArrayList<String>(0)));
+		map.register("openkomodo", new DisplayXPCommand("xp", "Displays current xp", "/xp", new ArrayList<String>(0)));
 		
 		ArrayList<String> msgAtlas = new ArrayList<String>(1);
 		msgAtlas.add("msg");

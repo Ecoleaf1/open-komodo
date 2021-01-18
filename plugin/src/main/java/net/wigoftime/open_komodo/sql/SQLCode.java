@@ -117,7 +117,7 @@ public class SQLCode {
 			return "SELECT `Permissions` FROM `OpenKomodo.Worlds.%s` " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case GET_XP:
-			return "SELECT `XP` FROM `OpenKomodo.Main`";
+			return "SELECT `XP` FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s')";
 		case SAVE_ITEMS:
 			return "UPDATE `OpenKomodo.Main` SET `Items` = \"%s\" WHERE `UUID` = UNHEX('%s')";
 		case SET_ACTIVE_TAG:
@@ -127,7 +127,7 @@ public class SQLCode {
 		case SET_BANDATE:
 			return "UPDATE `OpenKomodo.Main` SET `Ban Date` = \"%s\" WHERE `UUID` = UNHEX(\"%s\");";
 		case SET_BANREASON:
-			return "UPDATE `OpenKomodo.Main.%s` SET `Ban Reason` = \"%s\" WHERE `UUID` = UNHEX('%s')";
+			return "UPDATE `OpenKomodo.Main` SET `Ban Reason` = \"%s\" WHERE `UUID` = UNHEX('%s')";
 		case SET_COINS:
 			return "UPDATE `OpenKomodo.Main` " +
 			"SET `Coins` = %d " +
