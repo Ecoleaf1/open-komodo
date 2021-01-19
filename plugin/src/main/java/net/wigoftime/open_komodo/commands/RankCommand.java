@@ -24,7 +24,7 @@ public class RankCommand extends Command
 				return false;
 			
 			if (args[0].equalsIgnoreCase("help")) {
-				sender.sendMessage(String.format("%s» %sRank Help:\n%s» %sRank up by roleplaying and chatting in public chat. The more often you are active in chat, the quicker you rank up. Ranking up takes time, having no one of checking when you will rank up. ", 
+				sender.sendMessage(String.format("%s» %sRank Help:\n%s» %sEarn XP to get a new rank by exploring the map and talking! To view your progress, type in /xp", 
 						ChatColor.GOLD, ChatColor.AQUA, ChatColor.GOLD, ChatColor.DARK_AQUA));
 				return true;
 			}
