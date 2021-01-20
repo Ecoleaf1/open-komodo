@@ -44,12 +44,13 @@ public class PlayerJoin implements EventExecutor {
 			public void run() {
 				firstJoined(joinEvent.getPlayer());
 				
+				if (SQLManager.isEnabled()) {
+					if (!SQLManager.containsWorldPlayer(joinEvent.getPlayer().getUniqueId(), joinEvent.getPlayer().getWorld().getName()))
+						SQLManager.createWorldPlayer(joinEvent.getPlayer().getUniqueId(), joinEvent.getPlayer().getWorld().getName());
+				}
+				
 				// Create CustomPlayer to hold custom Variables.
 				CustomPlayer playerCustomPlayer = new CustomPlayer(joinEvent.getPlayer());
-				
-				if (SQLManager.isEnabled())
-					if (!SQLManager.containsWorldPlayer(playerCustomPlayer.getUniqueId(), joinEvent.getPlayer().getWorld().getName()))
-						SQLManager.createWorldPlayer(joinEvent.getPlayer().getUniqueId(), joinEvent.getPlayer().getWorld().getName());
 				
 				// Get saved items from inventory
 				InventoryManagement.loadInventory(playerCustomPlayer, playerCustomPlayer.getPlayer().getWorld());

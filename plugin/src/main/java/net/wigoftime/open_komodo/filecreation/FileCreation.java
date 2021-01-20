@@ -26,9 +26,7 @@ abstract public class FileCreation
 	public static final File itemConfig = ItemConfig.getFile();
 	public static final File rankConfig = RankConfig.getFile();
 	public static final File petConfig = PetConfig.getConfig();
-	//public static final File playerConfigFolder = PlayerConfig.getConfigFolder();
 	public static final File whitelistDict = Filter.fileDict;
-	//public static final File playerConfig = PlayerConfig.getCon();
 
 	public static void create(ConfigType type)
 	{
@@ -77,52 +75,6 @@ abstract public class FileCreation
 			PrintConsole.print("No type was specified to create file.");
 			return;
 		}
-		/*
-		if (type == ConfigType.NORMAL)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/config.yml");
-			file = config;
-		}
-		else if (type == ConfigType.EMOTE)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Emotes.yml");
-			file = emoteConfig;
-		}
-		else if (type == ConfigType.ITEM)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Items.yml");
-			file = itemConfig;
-		}
-		else if (type == ConfigType.RANK)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Ranks.yml");
-			file = rankConfig;
-		}
-		else if (type == ConfigType.PET)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Pets.yml");
-			file = petConfig;
-		}
-		else if (type == ConfigType.WHITELIST_DICT)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Whitelist-Dict.txt");
-			file = whitelistDict;
-		}
-		else if (type == ConfigType.PROPSHOP_DEFAULT)
-		{
-			is = Main.class.getClassLoader().getResourceAsStream("default_gui/propshop/default.yml");
-			
-			File directory = new File(Main.dataFolderPath+"/gui/propshop");
-			if (!directory.exists())
-				directory.mkdirs();
-			
-			file = PropShop.shopPage;
-		}
-		else
-		{
-			PrintConsole.print("No type was specified to create file.");
-			return;
-		}*/
 		
 		// If config exists, don't generate
 		if (file.exists())
@@ -157,18 +109,5 @@ abstract public class FileCreation
 			e.printStackTrace();
 		}
 	}
-	
-	/*public static void createFile(File f) {
-		
-		if (f.exists()) return;
-
-		try {
-			f.createNewFile();
-		} catch (IOException e) {
-			PrintConsole.print("Error: Couldn't create " + f.getName());
-		}
-		
-	}*/
-	
 	
 }

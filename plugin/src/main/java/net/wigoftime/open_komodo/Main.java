@@ -4,6 +4,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Set;
 import java.util.UUID;
@@ -85,9 +86,12 @@ import net.wigoftime.open_komodo.commands.GenTip;
 import net.wigoftime.open_komodo.commands.HatsCommand;
 import net.wigoftime.open_komodo.commands.HomeCommand;
 import net.wigoftime.open_komodo.commands.HomesCommand;
+import net.wigoftime.open_komodo.commands.InvisibleCommand;
 import net.wigoftime.open_komodo.commands.KickCommand;
 import net.wigoftime.open_komodo.commands.LogCommand;
+import net.wigoftime.open_komodo.commands.ModTeleportCommand;
 import net.wigoftime.open_komodo.commands.MoneyCommand;
+import net.wigoftime.open_komodo.commands.MonitorChatCommand;
 import net.wigoftime.open_komodo.commands.MsgCommand;
 import net.wigoftime.open_komodo.commands.MuteCommand;
 import net.wigoftime.open_komodo.commands.NicknameCommand;
@@ -764,6 +768,9 @@ public class Main extends JavaPlugin implements Listener
 		if (player.isBuilding())
 			player.setBuilding(false);
 		
+		if (player.isInvisible())
+			player.setInvisible(false, true);
+		
 		// Load inventory
 		InventoryManagement.loadInventory(player, world);
 		
@@ -948,8 +955,8 @@ public class Main extends JavaPlugin implements Listener
 		UUID uuid = e.getUniqueId();
 		
 		if (SQLManager.isEnabled())
-			if (!SQLManager.containsPlayer(uuid))
-				return;
+		if (!SQLManager.containsModerationPlayer(e.getUniqueId()))
+			SQLManager.createModerationPlayer(e.getUniqueId());
 		
 		boolean isBanned = Moderation.isBanned(uuid);
 		
@@ -1173,7 +1180,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new CheckBalanceCommand("balance", "Check your balance", "/balance", new ArrayList<String>(0)));
 		map.register("openkomodo", new SpawnCommand("spawn", "Teleport to spawn", "/spawn", new ArrayList<String>(0)));
 		map.register("openkomodo", new TeleportToBuildWorldCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>(0)));
-		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", new ArrayList<String>(0)));
+		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", Arrays.asList("teleport", "tp")));
 		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>(0)));
 		
 		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>(0)));
@@ -1189,7 +1196,11 @@ public class Main extends JavaPlugin implements Listener
 		
 		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>(0)));
-		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
+		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/ban (Player) (Amount)", new ArrayList<String>(0)));
+		
+		map.register("openkomodo_mod", new ModTeleportCommand("adminteleport", "Teleport to another player without requesting", "/adminteleport {Player}", Arrays.asList("atp")));
+		map.register("openkomodo_mod", new MonitorChatCommand("monitor", "Monitor chat", "/monitor", new ArrayList<String>(0)));
+		map.register("openkomodo_mod", new InvisibleCommand("invisible", "Turn yourself invisible", "/invisible", Arrays.asList("invis", "vanish")));
 		
 		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>(0)));
 		

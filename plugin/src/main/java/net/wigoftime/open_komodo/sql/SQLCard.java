@@ -33,6 +33,8 @@ public class SQLCard {
 		ds.setUrl("jdbc:"+info.url);
 		ds.setMinIdle(5);
 		ds.setMaxIdle(10);
+		
+		SQLManager.setup();
 	}
 	
 	public static enum SQLCardType {GET, SET};
@@ -47,8 +49,6 @@ public class SQLCard {
 		this.values = values;
 	}
 	
-	private final int delayAmount = 50;
-	
 	public List<Object> execute() {
 		if (type == SQLCardType.SET) { executeSet(); return null;}
 		return executeQuery();
@@ -58,17 +58,13 @@ public class SQLCard {
 		Connection connection = null;
 		PreparedStatement statement = null;
 		
-		while (true)
 		try {
 			connection = ds.getConnection();
 			statement = connection.prepareStatement(sql);
-			
 			statement.execute();
-			break;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
-			setup();
+			return;
 		} finally {
 			if (connection != null) try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 			if (statement != null) try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
@@ -80,7 +76,6 @@ public class SQLCard {
 		PreparedStatement statement = null;
 		ResultSet result = null;
 		
-		while (true)
 		try {
 			connection = ds.getConnection();
 			statement = connection.prepareStatement(sql);
@@ -92,11 +87,10 @@ public class SQLCard {
 			List<Object> listResult = new LinkedList<Object>();
 			for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
 				listResult.add(result.getObject(index));
-			
 			return listResult;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
-			try {Thread.sleep(delayAmount); } catch (InterruptedException e) { e.printStackTrace();}
+			return null;
 		} finally {
 			if (connection != null) try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 			if (statement != null) try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }

@@ -82,4 +82,19 @@ abstract public class PrivateMessage
 		
 		sendMessage(sender, target, message);
 	}
+	
+	private static void sendAllMonitoringPlayers(CustomPlayer messenger, String message, CustomPlayer receiver) {
+		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers())
+			if (playerIndex.isMonitoring())
+			if (messenger != playerIndex && receiver != playerIndex)
+				sendMonitorMessage(messenger, message, receiver);
+	}
+	
+	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {
+		monitorPlayer.getPlayer().sendMessage(String.format("%s[Private] %s%s%s: %s%s", 
+				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), 
+				ChatColor.RESET, ChatColor.GRAY, message));
+		
+		return;
+	}
 }

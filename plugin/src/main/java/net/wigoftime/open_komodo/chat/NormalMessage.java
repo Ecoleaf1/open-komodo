@@ -59,7 +59,6 @@ public class NormalMessage
 		componentHoverDescBuilder.append(String.format("Joined Date: %s", joinDate == null ? "??" : simpleDateFormat.format(joinDate)));
 		if (senderCustomPlayer.getSettings().isDisplayTipEnabled())
 		componentHoverDescBuilder.append(String.format("\nTipped: %d$", senderCustomPlayer.getDonated()));
-		// \nTipped: %d"
 		
 		name.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, componentHoverDescBuilder.create()));
 		name.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
@@ -80,16 +79,23 @@ public class NormalMessage
 		
 		// If DistanceChat is on (If the number is higher than 0)
 		if (distanceR > 0)
-			for(Player pl: Bukkit.getOnlinePlayers()) {
+			for(CustomPlayer pl: CustomPlayer.getOnlinePlayers()) {
+				
 				// If player isnt in same world, skip player
-				if (pl.getWorld() != senderCustomPlayer.getPlayer().getWorld())
-					continue;
+				if (pl.getPlayer() != senderCustomPlayer.getPlayer().getWorld())
+					if (pl.isMonitoring() && senderCustomPlayer != pl) {
+						sendMonitorMessage(senderCustomPlayer, message, pl);
+						break;
+					} else continue;
 				
 				// If Distance between the player and the sender is bigger than Distance Radius, skip the player.
-				if (pl.getLocation().distance(senderLocation) > distanceR) 
-					continue;
+				if (pl.getPlayer().getLocation().distance(senderLocation) > distanceR) 
+					if (pl.isMonitoring() && senderCustomPlayer != pl) {
+						sendMonitorMessage(senderCustomPlayer, message, pl);
+						break;
+					} else continue;
 				
-				pl.spigot().sendMessage(componentBaseMessage);
+				pl.getPlayer().spigot().sendMessage(componentBaseMessage);
 			}
 		// If Disabled
 		else 
@@ -160,5 +166,13 @@ public class NormalMessage
 		
 		// Send message to Discord
 		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(player, message, null, false);
+	}
+	
+	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {
+		monitorPlayer.getPlayer().sendMessage(String.format("%s[Public] %s%s%s: %s%s", 
+				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), 
+				ChatColor.RESET, ChatColor.GRAY, message));
+		
+		return;
 	}
 }

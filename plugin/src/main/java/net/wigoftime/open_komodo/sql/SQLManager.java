@@ -61,6 +61,12 @@ abstract public class SQLManager {
 	private static BasicDataSource ds = new BasicDataSource();
 	private static SQLInfo sqlInfo = Config.getSQLInfo();
 	
+	public static void setup() {
+		createMainTable();
+		setUpWorlds(Bukkit.getWorlds());
+		createModerationTable();
+	}
+	
 	public static void setUpWorlds(List<World> worlds) {
 		for (World world : worlds) {
 			createWorldTable(world.getName());
@@ -100,16 +106,30 @@ abstract public class SQLManager {
 			createBagInventoryTable(world.getName());
 	}
 	
-	public static void createMainTable() {
+	private static void createMainTable() {
 		new SQLCard(SQLCodeType.CREATE_MAIN_TABLE, SQLCardType.SET, Arrays.asList()).execute();
 	}
 	
-	public static void createBagInventoryTable(String worldName) {
+	private static void createModerationTable() {
+		new SQLCard(SQLCodeType.CREATE_MODERATION_TABLE, SQLCardType.SET, Arrays.asList()).execute();
+	}
+	
+	private static void createBagInventoryTable(String worldName) {
 		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY_TABLE, SQLCardType.SET, Arrays.asList(worldName)).execute();
 	}
 	
 	public static boolean containsPlayer(UUID uuid) {
 		return new SQLCard(SQLCodeType.CONTAINS_PLAYER, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-",""))).execute().size() < 1 ? false : true;
+	}
+	
+	public static boolean containsModerationPlayer(UUID uuid) {
+		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_MODERATION_PLAYER, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-","")));
+		
+		// If Player can't be found in world database
+		if (card.execute().isEmpty())
+			return false;
+		
+		return true;
 	}
 	
 	public static boolean containsWorldPlayer(UUID uuid, String worldName) {
@@ -177,6 +197,10 @@ abstract public class SQLManager {
 	public static void createPlayer(UUID uuid) {
 		LocalDate date = LocalDate.now();
 		new SQLCard(SQLCodeType.CREATE_PLAYER, SQLCardType.SET, Arrays.asList(uuid.toString().replaceAll("-", ""), String.format("%04d/%02d/%02d", date.getYear(), date.getMonth().getValue(), date.getDayOfMonth()))).execute();
+	}
+	
+	public static void createModerationPlayer(UUID uuid) {
+		new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCardType.SET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute();
 	}
 	
 	public static void createWorldPlayer(UUID uuid, String worldName) {

@@ -1,5 +1,8 @@
 package net.wigoftime.open_komodo.actions;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -9,10 +12,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.chat.MessageFormat;
+import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
+import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class Promote 
 {
@@ -20,19 +25,7 @@ abstract public class Promote
 			ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.DARK_AQUA);
 	private static final String senderPromote = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully promoted $D!");
 	private static final String senderPermission = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully added permission on $D!");
-	
-	/*
-	public static boolean promoteRank(OfflinePlayer player, String rankName)
-	{
-		Rank rank = Rank.getRank(rankName);
-		
-		// Check if rank doesn't exist
-		if (rank == null)
-			return false;
-		
-		CustomPlayer.setRankOffline(player.getUniqueId(), rank);
-		return true;
-	}*/
+	private static final String senderRemovePermission = ChatColor.translateAlternateColorCodes('&', "&e&lSucessfully removed permission on $D!");
 	
 	// When command for adding Player to rank
 	public static void commandPromoteRank(CommandSender promoter, String targetName, String rank)
@@ -77,61 +70,92 @@ abstract public class Promote
 	}
 	
 	// When command for adding Player permission
-	public static void commandPromoteRank(Player promoterPlayer, String targetName, Permission permission, boolean addMode)
-	{
-		// Get target (in Player format) by name
+	public static void commandPromotePermission(CommandSender promoter, String targetName, World world, Permission permission, boolean addMode) {
 		Player targetPlayer = Bukkit.getPlayer(targetName);
 		
-		// Check if player is online/exists
-		if (targetPlayer == null) {
-			promoterPlayer.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
+		if (targetPlayer != null) {
+			promoteOnline(promoter, targetPlayer, world, permission, addMode);
 			return;
 		}
 		
-		// get target Player in CustomPlayer format.
+		promoteOffline(promoter, addMode, targetName, permission, world);
+	}
+	
+	private static void promoteOnline(CommandSender promoter, Player targetPlayer, World targetWorld, Permission targetPermission, boolean addMode) {
 		CustomPlayer targetCustomPlayer = CustomPlayer.get(targetPlayer.getUniqueId());
 		
-		// get promoter Player in CustomPlayer format.
-		CustomPlayer promoterCustomPlayer = CustomPlayer.get(promoterPlayer.getUniqueId());
-		
 		// Set Player Permission
-		//PlayerConfig.setPermission(targetPlayer, null, permission, addMode);
-		//Permissions.setUp(targetCustomPlayer);
-		targetCustomPlayer.setPermission(permission, null, addMode);
-		
-		// Send to promoter that the command worked
-		String msg2 = MessageFormat.format(senderPermission, promoterCustomPlayer, null);
-		promoterPlayer.sendMessage(msg2);
+		targetCustomPlayer.setPermission(targetPermission, targetWorld, addMode);
 		
 		// Refresh scoreboard
 		ServerScoreBoard.add(targetCustomPlayer);
+		
+		String promotedMsgFormatted = MessageFormat.format(senderPermission, promoter, targetPlayer, null);
+		promoter.sendMessage(promotedMsgFormatted);
+		return;
 	}
 	
-	// When command for adding Player permission
-	public static void commandPromoteRank(CommandSender promoter, String targetName, World world, Permission permission, boolean addMode)
-	{
-		// Get player by name
-		Player targetPlayer = Bukkit.getPlayer(targetName);
-		
-		// Check if player is online/exists
-		if (targetPlayer == null) {
+	private static void promoteOffline(CommandSender promoter, boolean addMode, String targetName, Permission targetPermission, World targetWorld) {
+		OfflinePlayer offlineTarget = Bukkit.getOfflinePlayer(targetName);
+				
+		if (offlineTarget == null) {
 			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
 			return;
 		}
 		
-		CustomPlayer targetCustomPlayer = CustomPlayer.get(targetPlayer.getUniqueId());
+		List<Permission> permissions = getPermissions(offlineTarget.getUniqueId(), targetWorld);
 		
-		// Set Player Permission
-		targetCustomPlayer.setPermission(permission, world, addMode);
-		//PlayerConfig.setPermission(targetPlayer, world, permission, addMode);
+		if (permissions == null) {
+			promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown player in database! Have they joined before?");
+			return;
+		}
 		
-		//Permissions.setUp(targetCustomPlayer);
+		// add Permission
+		if (addMode) permissions.add(targetPermission);
+		else {
+			boolean permissionFound = false;
+			for (Permission p : permissions) {
+				if (p.getName().equalsIgnoreCase(targetPermission.getName())) {
+					permissions.remove(p);
+					permissionFound = true;
+					break;
+				}
+			}
+			
+			if (!permissionFound) {
+			promoter.sendMessage(String.format("%sWarning: %s did not have the permission %s", ChatColor.GOLD, offlineTarget.getName(), targetPermission.getName()));
+			return;
+			}
+		}
 		
-		// Send to promoter that the command worked
-		String msg2 = MessageFormat.format(senderPermission, promoter, targetPlayer, null);
-		promoter.sendMessage(msg2);
+		setPermissions(offlineTarget.getUniqueId(), permissions, targetWorld);
 		
-		// Refresh scoreboard
-		ServerScoreBoard.add(targetCustomPlayer);
+		String promotedMsgFormatted;
+		if (addMode) promotedMsgFormatted = MessageFormat.format(senderPermission, promoter.getName(), offlineTarget.getName(), null);
+		else promotedMsgFormatted = MessageFormat.format(senderRemovePermission, promoter.getName(), offlineTarget.getName(), null);
+		
+		promoter.sendMessage(promotedMsgFormatted);
+	}
+	
+	private static List<Permission> getPermissions(UUID uuid, World world) {
+		if (SQLManager.isEnabled())
+		if (world == null) return SQLManager.getGlobalPermissions(uuid);
+		else return SQLManager.getWorldPermission(uuid, world.getName());
+		
+		// If SQL not enabled
+		else
+		if (world == null) return PlayerConfig.getGlobalPermissions(uuid);
+		else return PlayerConfig.getWorldPermissions(uuid, world.getName());
+	}
+	
+	private static void setPermissions(UUID uuid, List<Permission> permissions, World world) {
+		if (SQLManager.isEnabled())
+		if (world == null) SQLManager.setGlobalPermissions(uuid, permissions);
+		else SQLManager.setWorldPermission(uuid, permissions, world.getName());
+		
+		// If SQL not enabled
+		else
+		if (world == null) PlayerConfig.setGlobalPermissions(uuid, permissions);
+		else PlayerConfig.setWorldPermissions(uuid, world.getName(), permissions);
 	}
 }

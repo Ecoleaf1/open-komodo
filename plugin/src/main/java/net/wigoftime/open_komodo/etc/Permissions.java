@@ -61,9 +61,13 @@ abstract public class Permissions
 	public static final Permission emoteReloadPerm = new Permission("openkomodo.admin.emote.reload");
 	public static final Permission rankReloadPerm = new Permission("openkomodo.admin.rank.reload");
 	
+	public static final Permission modteleport = new Permission("openkomodo.mod.teleport");
 	public static final Permission mutePerm = new Permission("openkomodo.mod.mute");
 	public static final Permission banPerm = new Permission("openkomodo.mod.ban");
 	public static final Permission kickPerm = new Permission("openkomodo.mod.kick");
+	public static final Permission invis = new Permission("openkomodo.mod.invisible");
+	public static final Permission seeOtherInvis = new Permission("openkomodo.mod.seeotherinvisible");
+	public static final Permission chatmonitor = new Permission("openkomodo.mod.chatmonitor");
 	
 	public static final Permission abuseMonitorPerm = new Permission("openkomodo.manager.monitorabuse");
 	

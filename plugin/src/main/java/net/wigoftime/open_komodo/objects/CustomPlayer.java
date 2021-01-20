@@ -17,6 +17,8 @@ import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -73,6 +75,8 @@ public class CustomPlayer
 	private List<Pet> ownedPets;
 	
 	private boolean buildMode;
+	private boolean isInvisible;
+	private boolean isMonitoring;
 	
 	private TpRequest tpRequest;
 	
@@ -767,9 +771,72 @@ public class CustomPlayer
 		return buildMode;
 	}
 	
+	public boolean isInvisible()
+	{
+		return isInvisible;
+	}
+	
+	public boolean isMonitoring()
+	{
+		return isMonitoring;
+	}
+	
 	public void setBuilding(boolean isBuilding)
 	{
+		setBuilding(isBuilding, false);
+	}
+	
+	public void setBuilding(boolean isBuilding, boolean isSilent)
+	{
 		buildMode = isBuilding;
+		
+		if (buildMode) {
+			PotionEffect effect = new PotionEffect(PotionEffectType.GLOWING, 1000000, 255, true);
+			getPlayer().addPotionEffect(effect);
+			if (!isSilent)
+			getPlayer().sendMessage(String.format("%s» %sYou are now in building mode", ChatColor.GOLD, ChatColor.GRAY));
+		} else {
+			getPlayer().removePotionEffect(PotionEffectType.GLOWING);
+			if (!isSilent)
+			getPlayer().sendMessage(String.format("%s» %sYou are now in roleplay mode", ChatColor.GOLD, ChatColor.GRAY));
+		}
+	}
+	
+	public void setInvisible(boolean isInvisible) 
+	{
+		setInvisible(isInvisible, false);
+	}
+	
+	public void setInvisible(boolean isInvisible, boolean isSilent)
+	{
+		if (isInvisible) { 
+			for (Player playerIndex: Bukkit.getOnlinePlayers()) {
+			if (playerIndex.hasPermission(Permissions.seeOtherInvis))
+				continue;
+			
+			playerIndex.hidePlayer(Main.getPlugin(), this.getPlayer());
+			}
+			
+			if (!isSilent)
+				getPlayer().sendMessage(String.format("%s» %sYou are now in invisible mode", ChatColor.GOLD, ChatColor.GRAY));
+		}
+		else { 
+			for (Player playerIndex: Bukkit.getOnlinePlayers()) {
+				playerIndex.showPlayer(Main.getPlugin(), this.getPlayer());
+			}
+			
+			if (!isSilent)
+				getPlayer().sendMessage(String.format("%s» %sYou are now visible", ChatColor.GOLD, ChatColor.GRAY));
+		}
+		
+		this.isInvisible = isInvisible;
+	}
+	
+	public void setMonitoring (boolean isMonitoring)
+	{
+		this.isMonitoring = isMonitoring;
+		
+		player.sendMessage(String.format(isMonitoring == true ? "%s» %sYou are now monitoring" : "%s» %sMonitoring stopped", ChatColor.GOLD, ChatColor.GRAY));
 	}
 	
 	public void reload()

@@ -1,8 +1,8 @@
 package net.wigoftime.open_komodo.sql;
 
 public class SQLCode {
-	public static enum SQLCodeType {CREATE_MAIN_TABLE, CREATE_BAG_INVENTORY, CREATE_BAG_INVENTORY_TABLE, SET_BAG_INVENTORY, GET_BAG_INVENTORY, GET_LATEST_BAGID, CREATE_WORLD_TABLE,
-		SAVE_ITEMS, GET_ITEMS, GET_ACTIVE_TAG, SET_ACTIVE_TAG, GET_JOINDATE, CONTAINS_PLAYER, SET_XP, GET_XP, CREATE_PLAYER, CONTAINS_WORLD_PLAYER, CREATE_WORLD_PLAYER,
+	public static enum SQLCodeType {CREATE_MAIN_TABLE, CREATE_MODERATION_TABLE, CREATE_BAG_INVENTORY, CREATE_BAG_INVENTORY_TABLE, SET_BAG_INVENTORY, GET_BAG_INVENTORY, GET_LATEST_BAGID, CREATE_WORLD_TABLE,
+		SAVE_ITEMS, GET_ITEMS, GET_ACTIVE_TAG, SET_ACTIVE_TAG, GET_JOINDATE, CONTAINS_PLAYER, SET_XP, GET_XP, CREATE_PLAYER, CREATE_MODERATION_PLAYER, CONTAINS_MODERATION_PLAYER, CONTAINS_WORLD_PLAYER, CREATE_WORLD_PLAYER,
 		SET_GLOBAL_PERMISSIONS, GET_GLOBAL_PERMISSIONS, SET_WORLD_PERMISSIONS, GET_WORLD_PERMISSIONS, SET_INVENTORY, GET_INVENTORY, SET_TIP, GET_TIP, GET_RANKID, SET_RANKID,
 		GET_MUTEDATE, SET_MUTEDATE, GET_BANDATE, SET_BANDATE, GET_MUTEREASON, SET_MUTEREASON, GET_BANREASON, SET_BANREASON, SET_HOMES, GET_HOMES, GET_POINTS, GET_COINS, SET_POINTS, SET_COINS,
 		SET_ITEMS, GET_PETS, SET_PETS}
@@ -11,6 +11,8 @@ public class SQLCode {
 		switch (type) {
 		case CONTAINS_PLAYER:
 			return "SELECT `UUID` FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s');";
+		case CONTAINS_MODERATION_PLAYER:
+			return "SELECT `UUID` FROM `OpenKomodo.Moderation` WHERE `UUID` = UNHEX('%s');";
 		case CONTAINS_WORLD_PLAYER:
 			return "SELECT `UUID` FROM `OpenKomodo.Worlds.%s` WHERE `UUID` = UNHEX('%s');";
 		case CREATE_BAG_INVENTORY:
@@ -43,6 +45,13 @@ public class SQLCode {
 					+ "`Pets` MEDIUMTEXT NOT NULL, "
 					+ "`Homes` LONGTEXT NOT NULL, "
 					+ "`Home Limit` INT UNSIGNED DEFAULT 1);";
+		case CREATE_MODERATION_TABLE:
+			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Moderation` ( "
+					+ "`UUID` BINARY(16) NOT NULL, "
+					+ "`Mute Date` DATETIME NULL DEFAULT NULL , "
+					+ "`Mute Reason` VARCHAR(150) NOT NULL DEFAULT '' , "
+					+ "`Ban Date` DATETIME NULL DEFAULT NULL , "
+					+ "`Ban Reason` VARCHAR(100) NOT NULL DEFAULT '');";
 		case CREATE_PLAYER:
 			return "INSERT INTO `OpenKomodo.Main` ("
 					+ "`UUID`, "
@@ -56,6 +65,14 @@ public class SQLCode {
 					+ "`Homes`, "
 					+ "`Joined Date`) VALUES "
 					+ "(UNHEX('%s'), DATE('1990-01-01'), '', DATE('1990-01-01'), '', 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '[]', \"rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==\", 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '%s');";
+		case CREATE_MODERATION_PLAYER:
+			return "INSERT INTO `OpenKomodo.Moderation` ("
+					+ "`UUID`, "
+					+ "`Mute Date`, "
+					+ "`Mute Reason`, "
+					+ "`Ban Date`, "
+					+ "`Ban Reason` ) VALUES "
+					+ "(UNHEX('%s'), DATE('1990-01-01'), '', DATE('1990-01-01'), '');";
 		case CREATE_WORLD_PLAYER:
 			return "INSERT INTO `OpenKomodo.Worlds.%s` ("
 					+ "`UUID`, "
@@ -74,10 +91,10 @@ public class SQLCode {
 		case GET_LATEST_BAGID:
 			return "SELECT `ID` FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') ORDER BY `ID` DESC LIMIT 1";
 		case GET_BANDATE:
-			return "SELECT `Ban Date` FROM `OpenKomodo.Main` " +
+			return "SELECT `Ban Date` FROM `OpenKomodo.Moderation` " +
 			"WHERE `UUID` = UNHEX('%s');";
 		case GET_BANREASON:
-			return "SELECT `Ban Reason` FROM `OpenKomodo.Main` " +
+			return "SELECT `Ban Reason` FROM `OpenKomodo.Moderation` " +
 			"WHERE `UUID` = UNHEX('%s');";
 		case GET_COINS:
 			return "SELECT `Coins` FROM `OpenKomodo.Main` " +
@@ -96,10 +113,10 @@ public class SQLCode {
 		case GET_JOINDATE:
 			return "SELECT `Joined Date` FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s');";
 		case GET_MUTEDATE:
-			return "SELECT `Mute Date` FROM `OpenKomodo.Main` " +
+			return "SELECT `Mute Date` FROM `OpenKomodo.Moderation` " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case GET_MUTEREASON:
-			return "SELECT `Ban Reason` FROM `OpenKomodo.Main` " +
+			return "SELECT `Ban Reason` FROM `OpenKomodo.Moderation` " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case GET_POINTS:
 			return "SELECT `Points` FROM `OpenKomodo.Main` " +
@@ -125,9 +142,9 @@ public class SQLCode {
 		case SET_BAG_INVENTORY:
 			return "UPDATE `OpenKomodo.Bag_Inventory.%s` SET `Inventory` = \"%s\" WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
 		case SET_BANDATE:
-			return "UPDATE `OpenKomodo.Main` SET `Ban Date` = \"%s\" WHERE `UUID` = UNHEX(\"%s\");";
+			return "UPDATE `OpenKomodo.Moderation` SET `Ban Date` = \"%s\" WHERE `UUID` = UNHEX(\"%s\");";
 		case SET_BANREASON:
-			return "UPDATE `OpenKomodo.Main` SET `Ban Reason` = \"%s\" WHERE `UUID` = UNHEX('%s')";
+			return "UPDATE `OpenKomodo.Moderation` SET `Ban Reason` = \"%s\" WHERE `UUID` = UNHEX('%s')";
 		case SET_COINS:
 			return "UPDATE `OpenKomodo.Main` " +
 			"SET `Coins` = %d " +
@@ -149,11 +166,11 @@ public class SQLCode {
 					"SET `Items` = \"%s\" " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case SET_MUTEDATE:
-			return "UPDATE `OpenKomodo.Main` " +
+			return "UPDATE `OpenKomodo.Moderation` " +
 			"SET `Mute Date` = '%s' " +
 			"WHERE `UUID` = UNHEX('%s');";
 		case SET_MUTEREASON:
-			return "UPDATE `OpenKomodo.Main` " +
+			return "UPDATE `OpenKomodo.Moderation` " +
 			"SET `Mute Reason` = \"%s\" " +
 			"WHERE `UUID` = UNHEX('%s');";
 		case SET_PETS:
