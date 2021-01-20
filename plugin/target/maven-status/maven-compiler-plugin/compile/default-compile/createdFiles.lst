@@ -18,7 +18,6 @@ net\wigoftime\open_komodo\config\ItemConfig.class
 net\wigoftime\open_komodo\sql\SQLCard.class
 net\wigoftime\open_komodo\objects\AFKChecker.class
 net\wigoftime\open_komodo\gui\PhoneGui.class
-net\wigoftime\open_komodo\commands\BanCommand$2.class
 net\wigoftime\open_komodo\objects\CustomPlayer$13.class
 net\wigoftime\open_komodo\commands\DelHomeCommand.class
 net\wigoftime\open_komodo\events\PlayerJoin.class
@@ -49,6 +48,7 @@ net\wigoftime\open_komodo\etc\CurrencyClass$2.class
 net\wigoftime\open_komodo\etc\Status_Bar$1.class
 net\wigoftime\open_komodo\objects\TpRequest.class
 net\wigoftime\open_komodo\gui\HatMenu.class
+net\wigoftime\open_komodo\etc\Moderation$3.class
 net\wigoftime\open_komodo\objects\CustomPlayer$7.class
 net\wigoftime\open_komodo\Main$1.class
 net\wigoftime\open_komodo\chat\PrivateMessage.class

@@ -85,8 +85,8 @@ public class NormalMessage
 				if (pl.getPlayer() != senderCustomPlayer.getPlayer().getWorld())
 					if (pl.isMonitoring() && senderCustomPlayer != pl) {
 						sendMonitorMessage(senderCustomPlayer, message, pl);
-						break;
-					} else continue;
+						continue;
+					}
 				
 				// If Distance between the player and the sender is bigger than Distance Radius, skip the player.
 				if (pl.getPlayer().getLocation().distance(senderLocation) > distanceR) 
