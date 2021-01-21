@@ -9,11 +9,10 @@ import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class ModTeleportCommand extends Command {
+public class ModTeleportHereCommand extends Command {
 
-	public ModTeleportCommand(String name, String description, String usageMessage, List<String> aliases) {
+	public ModTeleportHereCommand(String name, String description, String usageMessage, List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 
@@ -37,9 +36,15 @@ public class ModTeleportCommand extends Command {
 		if (targetPlayer == null)
 			return false;
 		
-		senderPlayer.teleport(targetPlayer);
-		senderPlayer.sendMessage(String.format("%s» %sTeleported to %s%s", ChatColor.GOLD, ChatColor.GRAY, ChatColor.GOLD, senderPlayer.getDisplayName()));
+		targetPlayer.teleport(senderPlayer);
+		senderPlayer.sendMessage(String.format("%s» %sTeleported %s%s%s to your location", 
+				ChatColor.GOLD, ChatColor.GRAY, ChatColor.GOLD, senderPlayer.getDisplayName(),
+				ChatColor.GRAY));
+		
+		targetPlayer.sendMessage(String.format("%s» %sA mod or higher has teleported you", 
+				ChatColor.GOLD, ChatColor.GRAY));
 		return true;
 	}
+
 
 }

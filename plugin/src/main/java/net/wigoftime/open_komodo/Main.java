@@ -90,6 +90,7 @@ import net.wigoftime.open_komodo.commands.InvisibleCommand;
 import net.wigoftime.open_komodo.commands.KickCommand;
 import net.wigoftime.open_komodo.commands.LogCommand;
 import net.wigoftime.open_komodo.commands.ModTeleportCommand;
+import net.wigoftime.open_komodo.commands.ModTeleportHereCommand;
 import net.wigoftime.open_komodo.commands.MoneyCommand;
 import net.wigoftime.open_komodo.commands.MonitorChatCommand;
 import net.wigoftime.open_komodo.commands.MsgCommand;
@@ -1199,6 +1200,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/ban (Player) (Amount)", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_mod", new ModTeleportCommand("adminteleport", "Teleport to another player without requesting", "/adminteleport {Player}", Arrays.asList("atp")));
+		map.register("openkomodo_mod", new ModTeleportHereCommand("adminteleporthere", "Teleport player to you without requesting", "/adminteleporthere {Player}", Arrays.asList("atphere")));
 		map.register("openkomodo_mod", new MonitorChatCommand("monitor", "Monitor chat", "/monitor", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new InvisibleCommand("invisible", "Turn yourself invisible", "/invisible", Arrays.asList("invis", "vanish")));
 		

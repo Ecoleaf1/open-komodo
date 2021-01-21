@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.etc;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import net.wigoftime.open_komodo.Main;
@@ -36,19 +37,22 @@ abstract public class RankSystem
 			}
 		};
 		
-		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 12000);
+		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 80); //12000
 	}
 	
 	private static void giveDailyXP() {
 		
 		synchronized (pendingXP) {
+			LinkedList<UUID> removeQuery = new LinkedList<UUID>();
+			
 			for (Entry<UUID, Double> e : pendingXP.entrySet()) {
 				// Get CustomPlayer
 				CustomPlayer customPlayer = CustomPlayer.get(e.getKey());
 				
 				if (customPlayer == null)
 				{
-					pendingXP.remove(e.getKey());
+					PrintConsole.test("loop: ");
+					removeQuery.add(e.getKey());
 					continue;
 				}
 				
@@ -100,6 +104,9 @@ abstract public class RankSystem
 						customPlayer.getPlayer().playSound(customPlayer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
 					}
 			}
+			
+			for (UUID uuidIndex : removeQuery)
+				pendingXP.remove(uuidIndex);
 		}
 	}
 	

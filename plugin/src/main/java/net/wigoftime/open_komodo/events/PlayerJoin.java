@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.potion.PotionEffectType;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
@@ -74,6 +75,7 @@ public class PlayerJoin implements EventExecutor {
 						playerCustomPlayer.getPlayer().getInventory().setItem(8, playerCustomPlayer.getSettings().getPhone().getItem());
 						playerCustomPlayer.getPlayer().getInventory().setItem(7, getCard());
 						
+						playerCustomPlayer.getPlayer().removePotionEffect(PotionEffectType.GLOWING);
 						joinMessage(playerCustomPlayer, joinEvent);
 						
 						// Display welcome message!
