@@ -81,19 +81,19 @@ public class NormalMessage
 		if (distanceR > 0)
 			for(CustomPlayer pl: CustomPlayer.getOnlinePlayers()) {
 				
+				if (pl.isMonitoring() && senderCustomPlayer != pl) {
+					sendMonitorMessage(senderCustomPlayer, message, pl);
+					continue;
+				}
+				
 				// If player isnt in same world, skip player
-				if (pl.getPlayer() != senderCustomPlayer.getPlayer().getWorld())
-					if (pl.isMonitoring() && senderCustomPlayer != pl) {
-						sendMonitorMessage(senderCustomPlayer, message, pl);
-						continue;
-					}
+				if (pl.getPlayer().getWorld() != senderCustomPlayer.getPlayer().getWorld())
+					continue;
+				
 				
 				// If Distance between the player and the sender is bigger than Distance Radius, skip the player.
-				if (pl.getPlayer().getLocation().distance(senderLocation) > distanceR) 
-					if (pl.isMonitoring() && senderCustomPlayer != pl) {
-						sendMonitorMessage(senderCustomPlayer, message, pl);
-						break;
-					} else continue;
+				if (pl.getPlayer().getLocation().distance(senderLocation) > distanceR)
+					continue;
 				
 				pl.getPlayer().spigot().sendMessage(componentBaseMessage);
 			}
