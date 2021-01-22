@@ -77,6 +77,7 @@ C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wig
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\etc\ActionBar.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\GenTip.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\custommobs\CustomPetCat.java
+C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\TagsCommand.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\ReportCommand.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\etc\InventoryManagement.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\events\BlockPlace.java
@@ -123,6 +124,7 @@ C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wig
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\TpaAcceptCommand.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\objects\CustomItem.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\DelHomeCommand.java
+C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\ModTeleportHereCommand.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\config\WorldInventoryConfig.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\commands\HatsCommand.java
 C:\Users\Ecoleaf\Documents\eclipse-java\open-komodo\plugin\src\main\java\net\wigoftime\open_komodo\gui\HatMenu.java

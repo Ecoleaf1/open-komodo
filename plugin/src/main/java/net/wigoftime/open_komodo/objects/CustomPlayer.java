@@ -74,6 +74,7 @@ public class CustomPlayer
 	private List<CustomItem> ownedPhones;
 	private List<Pet> ownedPets;
 	
+	private static List<CustomPlayer> buildingPlayers = new LinkedList<CustomPlayer>();
 	private boolean buildMode;
 	private boolean isInvisible;
 	private boolean isMonitoring;
@@ -771,6 +772,12 @@ public class CustomPlayer
 		return buildMode;
 	}
 	
+	public static List<CustomPlayer> getBuildingPlayers() {
+		synchronized (acceptedRequester) {
+			return buildingPlayers;
+		}
+	}
+	
 	public boolean isInvisible()
 	{
 		return isInvisible;
@@ -793,10 +800,18 @@ public class CustomPlayer
 		if (buildMode) {
 			PotionEffect effect = new PotionEffect(PotionEffectType.GLOWING, 1000000, 255, true);
 			getPlayer().addPotionEffect(effect);
+			synchronized (buildingPlayers) {
+				buildingPlayers.add(this);
+			}
+			
 			if (!isSilent)
 			getPlayer().sendMessage(String.format("%s» %sYou are now in building mode", ChatColor.GOLD, ChatColor.GRAY));
 		} else {
 			getPlayer().removePotionEffect(PotionEffectType.GLOWING);
+			synchronized (buildingPlayers) {
+				buildingPlayers.add(this);
+			}
+			
 			if (!isSilent)
 			getPlayer().sendMessage(String.format("%s» %sYou are now in roleplay mode", ChatColor.GOLD, ChatColor.GRAY));
 		}

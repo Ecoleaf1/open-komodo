@@ -113,7 +113,6 @@ net\wigoftime\open_komodo\commands\MoneyCommand.class
 net\wigoftime\open_komodo\config\RankConfig.class
 net\wigoftime\open_komodo\commands\HomeCommand.class
 net\wigoftime\open_komodo\gui\BinGUI.class
-net\wigoftime\open_komodo\etc\ActionBar$1$1.class
 net\wigoftime\open_komodo\commands\MsgCommand.class
 net\wigoftime\open_komodo\commands\TpaDenycommand.class
 net\wigoftime\open_komodo\etc\CurrencyClass$1.class

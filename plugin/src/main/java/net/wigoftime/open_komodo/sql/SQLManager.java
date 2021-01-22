@@ -1,7 +1,5 @@
 package net.wigoftime.open_komodo.sql;
 
-import static org.junit.Assert.assertNotNull;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

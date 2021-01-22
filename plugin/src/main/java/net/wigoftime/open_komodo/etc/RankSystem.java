@@ -37,7 +37,7 @@ abstract public class RankSystem
 			}
 		};
 		
-		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 80); //12000
+		runnable.runTaskTimerAsynchronously(Main.getPlugin(), 0, 12000); //12000
 	}
 	
 	private static void giveDailyXP() {

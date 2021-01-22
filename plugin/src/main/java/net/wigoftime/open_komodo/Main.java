@@ -65,6 +65,9 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+
 import dev.esophose.playerparticles.api.PlayerParticlesAPI;
 import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -111,6 +114,7 @@ import net.wigoftime.open_komodo.commands.SetHomeCommand;
 import net.wigoftime.open_komodo.commands.SitCommand;
 import net.wigoftime.open_komodo.commands.SpawnCommand;
 import net.wigoftime.open_komodo.commands.TagShopCommand;
+import net.wigoftime.open_komodo.commands.TagsCommand;
 import net.wigoftime.open_komodo.commands.TeleportToBuildWorldCommand;
 import net.wigoftime.open_komodo.commands.TpaAcceptCommand;
 import net.wigoftime.open_komodo.commands.TpaCommand;
@@ -151,6 +155,7 @@ public class Main extends JavaPlugin implements Listener
 
 	public static final String name = "Open Komodo";
 	private static Object discordSRV;
+	public static ProtocolManager protocolManager;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
@@ -207,6 +212,7 @@ public class Main extends JavaPlugin implements Listener
 		Bukkit.getPluginManager().registerEvents(this, this);
 		
 		Listener listener = new Listener() {};
+		protocolManager = ProtocolLibrary.getProtocolManager();
 		
 		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerJoin(), this);
 		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), this);
@@ -1186,6 +1192,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>(0)));
 		map.register("openkomodo", new TpaToggleCommand("tptoggle", "Toggle tpa requests", "/tpatoggle", new ArrayList<String>(0)));
+		map.register("openkomodo", new TagsCommand("tags", "Open the tags menu", "/tags", new ArrayList<String>(0)));
 		map.register("openkomodo", new TagShopCommand("tagshop", "Open the tagshop", "/tagshop", new ArrayList<String>(0)));
 		map.register("openkomodo", new PetsMenuCommand("pets", "Open the pets menu", "/pets", new ArrayList<String>(0)));
 		map.register("openkomodo", new PayCommand("pay", "Pay a player with a currency", "/pay (Player) (Amount) (Currency Type)", new ArrayList<String>(0)));
