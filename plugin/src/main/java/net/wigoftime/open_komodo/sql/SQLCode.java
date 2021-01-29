@@ -3,7 +3,7 @@ package net.wigoftime.open_komodo.sql;
 public class SQLCode {
 	public static enum SQLCodeType {CREATE_MAIN_TABLE, CREATE_MODERATION_TABLE, CREATE_BAG_INVENTORY, CREATE_BAG_INVENTORY_TABLE, SET_BAG_INVENTORY, GET_BAG_INVENTORY, GET_LATEST_BAGID, CREATE_WORLD_TABLE,
 		SAVE_ITEMS, GET_ITEMS, GET_ACTIVE_TAG, SET_ACTIVE_TAG, GET_JOINDATE, CONTAINS_PLAYER, SET_XP, GET_XP, CREATE_PLAYER, CREATE_MODERATION_PLAYER, CONTAINS_MODERATION_PLAYER, CONTAINS_WORLD_PLAYER, CREATE_WORLD_PLAYER,
-		SET_GLOBAL_PERMISSIONS, GET_GLOBAL_PERMISSIONS, SET_WORLD_PERMISSIONS, GET_WORLD_PERMISSIONS, SET_INVENTORY, GET_INVENTORY, SET_TIP, GET_TIP, GET_RANKID, SET_RANKID,
+		SET_GLOBAL_PERMISSIONS, GET_GLOBAL_PERMISSIONS, SET_NICKNAME, GET_NICKNAME, SET_WORLD_PERMISSIONS, GET_WORLD_PERMISSIONS, SET_INVENTORY, GET_INVENTORY, SET_TIP, GET_TIP, GET_RANKID, SET_RANKID,
 		GET_MUTEDATE, SET_MUTEDATE, GET_BANDATE, SET_BANDATE, GET_MUTEREASON, SET_MUTEREASON, GET_BANREASON, SET_BANREASON, SET_HOMES, GET_HOMES, GET_POINTS, GET_COINS, SET_POINTS, SET_COINS,
 		SET_ITEMS, GET_PETS, SET_PETS}
 	
@@ -29,12 +29,9 @@ public class SQLCode {
 		case CREATE_MAIN_TABLE:
 			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Main` ( "
 					+ "`UUID` BINARY(16) NOT NULL, "
+					+ "`Nickname` VARCHAR(50) NOT NULL DEFAULT '', "
 					+ "`Active Tag` VARCHAR(70) DEFAULT '', "
 					+ "`Joined Date` DATE NULL DEFAULT NULL , "
-					+ "`Mute Date` DATETIME NULL DEFAULT NULL , "
-					+ "`Mute Reason` VARCHAR(150) NOT NULL DEFAULT '' , "
-					+ "`Ban Date` DATETIME NULL DEFAULT NULL , "
-					+ "`Ban Reason` VARCHAR(100) NOT NULL DEFAULT '' , "
 					+ "`Rank ID` TINYINT UNSIGNED DEFAULT 0 , "
 					+ "`XP` DECIMAL(10,6) UNSIGNED NOT NULL DEFAULT '0.0' , "
 					+ "`Permissions` LONGTEXT NOT NULL , "
@@ -55,16 +52,13 @@ public class SQLCode {
 		case CREATE_PLAYER:
 			return "INSERT INTO `OpenKomodo.Main` ("
 					+ "`UUID`, "
-					+ "`Mute Date`, "
-					+ "`Mute Reason`, "
-					+ "`Ban Date`, "
-					+ "`Ban Reason`, "
+					+ "`Nickname`, "
 					+ "`Permissions`, "
 					+ "`Items`, "
 					+ "`Pets`, "
 					+ "`Homes`, "
 					+ "`Joined Date`) VALUES "
-					+ "(UNHEX('%s'), DATE('1990-01-01'), '', DATE('1990-01-01'), '', 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '[]', \"rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==\", 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '%s');";
+					+ "(UNHEX('%s'), '%s', 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '[]', \"rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==\", 'rO0ABXNyABNqYXZhLnV0aWwuQXJyYXlMaXN0eIHSHZnHYZ0DAAFJAARzaXpleHAAAAAAdwQAAAAAeA==', '%s');";
 		case CREATE_MODERATION_PLAYER:
 			return "INSERT INTO `OpenKomodo.Moderation` ("
 					+ "`UUID`, "
@@ -112,6 +106,8 @@ public class SQLCode {
 			return "SELECT `Items` FROM `OpenKomodo.Main` WHERE UUID = UNHEX('%s');";
 		case GET_JOINDATE:
 			return "SELECT `Joined Date` FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s');";
+		case GET_NICKNAME:
+			return "SELECT `Nickname` FROM `OpenKomodo.Main` WHERE `UUID` = UNHEX('%s');";
 		case GET_MUTEDATE:
 			return "SELECT `Mute Date` FROM `OpenKomodo.Moderation` " +
 					"WHERE `UUID` = UNHEX('%s');";
@@ -164,6 +160,10 @@ public class SQLCode {
 		case SET_ITEMS:
 			return "UPDATE `OpenKomodo.Main` " +
 					"SET `Items` = \"%s\" " +
+					"WHERE `UUID` = UNHEX('%s');";
+		case SET_NICKNAME:
+			return "UPDATE `OpenKomodo.Main` " +
+					"SET `Nickname` = \"%s\" " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case SET_MUTEDATE:
 			return "UPDATE `OpenKomodo.Moderation` " +

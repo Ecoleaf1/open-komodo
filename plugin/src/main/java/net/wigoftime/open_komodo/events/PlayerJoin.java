@@ -62,8 +62,7 @@ public class PlayerJoin implements EventExecutor {
 				// Setup player's permissions
 				Permissions.setUp(playerCustomPlayer);
 				
-				// Create in SQL
-				//SQLManager.createPlayer(playerCustomPlayer);
+				playerCustomPlayer.setupCustomName();
 				
 				Runnable mainThreadSetup = new Runnable() {
 					

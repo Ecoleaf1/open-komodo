@@ -49,9 +49,6 @@ public class NormalMessage
 			componentList.add(componentRank);
 		}
 		
-		//TextComponent name;
-		BaseComponent[] name = senderCustomPlayer.getCustomName();
-		//name = new TextComponent(String.format("%s%s", ChatColor.DARK_GRAY + senderCustomPlayer.getPlayer().getCustomName() == null ? senderCustomPlayer.getPlayer().getDisplayName() : senderCustomPlayer.getPlayer().getCustomName())); 
 		{
 		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", senderCustomPlayer.getPlayer().getDisplayName()));
 		
@@ -62,11 +59,15 @@ public class NormalMessage
 		componentHoverDescBuilder.append(String.format("\nTipped: %d$", senderCustomPlayer.getDonated()));
 		
 		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
-		for (BaseComponent componentIndex : name) {
+		BaseComponent[] name = senderCustomPlayer.getCustomName();
+		if (name == null) {
+			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
+			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			componentList.add(name[0]);
+		} else for (BaseComponent componentIndex : name) {
 			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
-			
-			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,hoverDescription));
 			componentList.add(componentIndex);
 		}
 		}
@@ -144,11 +145,14 @@ public class NormalMessage
 		
 		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
 		
-		for (BaseComponent componentIndex : name) {
+		if (name == null) {
+			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
+			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			componentList.add(name[0]);
+		} else for (BaseComponent componentIndex : name) {
 			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
-			
-			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,hoverDescription));
 			componentList.add(componentIndex);
 		}
 		}

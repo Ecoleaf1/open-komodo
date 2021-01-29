@@ -2,8 +2,10 @@ package net.wigoftime.open_komodo;
 
 import java.util.Iterator;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
@@ -19,6 +21,7 @@ import net.minecraft.server.v1_16_R1.EntityPose;
 import net.minecraft.server.v1_16_R1.MinecraftServer;
 import net.minecraft.server.v1_16_R1.PlayerInteractManager;
 import net.minecraft.server.v1_16_R1.WorldServer;
+import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 abstract public class CommandPreprocess 
@@ -41,32 +44,6 @@ abstract public class CommandPreprocess
 		
 		// Get the command
 		String command = args[0];
-		
-		if (command.equalsIgnoreCase("/memory")) {
-			Long freeMemory = Runtime.getRuntime().freeMemory();
-			Long totalMemory = Runtime.getRuntime().totalMemory();
-			
-			freeMemory = freeMemory / 1000;
-			freeMemory = freeMemory / 1000;
-			
-			totalMemory = totalMemory / 1000;
-			totalMemory = totalMemory / 1000;
-			
-			player.sendMessage(String.format("Free Memory: %d/%d", freeMemory, totalMemory));
-			return;
-		}
-		
-		if (command.equalsIgnoreCase("/test")) {
-			MinecraftServer mcServer = MinecraftServer.getServer();
-			Iterator<WorldServer> worldInterator = mcServer.getWorlds().iterator();
-			WorldServer theWorld = worldInterator.next();
-			PlayerInteractManager manager = new PlayerInteractManager(theWorld);
-			EntityPlayer player2 = new EntityPlayer(MinecraftServer.getServer(),theWorld, new GameProfile(player.getUniqueId(), "Test"), manager);
-			
-			Location loc = player.getLocation();
-			//player2.teleportAndSync(loc.getX(), loc.getY(), loc.getZ());
-			player2.teleportTo(theWorld, new BlockPosition(loc.getX(), loc.getY(), loc.getZ()));
-		}
 		
 		if (command.equalsIgnoreCase("/help") || command.equalsIgnoreCase("/minecraft:help"))
 		{

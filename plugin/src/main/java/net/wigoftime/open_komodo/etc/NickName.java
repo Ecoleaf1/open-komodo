@@ -17,47 +17,54 @@ abstract public class NickName
 	private static final String errorNotPermittedHexColor = ChatColor.DARK_RED + "Only MVP+ and up can have hex colors on their nicknames.";
 	
 	
-	public static void changeNick(Player player, String name) 
+	public static void changeNick(CustomPlayer playerCustom, String name) 
 	{
 		
 		if (name == null) 
 		{
-			player.setCustomName(player.getName());
+			playerCustom.setCustomName(null, null);
 			return;
 		}
 		
-		if (!Filter.checkMessage(player, name))
+		if (name.length() > 50) {
+			playerCustom.getPlayer().sendMessage(String.format("%s%sHEY! %sSorry, but please reduce your letters", 
+					ChatColor.RED, ChatColor.BOLD, ChatColor.DARK_RED));
+			return;
+		}
+		
+		if (!Filter.checkMessage(playerCustom.getPlayer(), name))
 			return;
 		
-		if (!player.hasPermission(Permissions.moreColorNickPerm))
+		if (!playerCustom.getPlayer().hasPermission(Permissions.moreColorNickPerm))
 		if (name.contains("#")) {
-			player.sendMessage(errorNotPermittedHexColor);
+			playerCustom.getPlayer().sendMessage(errorNotPermittedHexColor);
 			return;
-		} else if (!player.hasPermission(Permissions.colorNickPerm))
+		} else if (!playerCustom.getPlayer().hasPermission(Permissions.colorNickPerm))
 			if (name.contains("&")) {
-			player.sendMessage(errorNotPermittedColor);
+				playerCustom.getPlayer().sendMessage(errorNotPermittedColor);
 			return;
 			}
 		
-		CustomPlayer playerCustom = CustomPlayer.get(player.getUniqueId());
 		BaseComponent[] customName;
-		if (player.hasPermission(Permissions.moreColorNickPerm)) customName = translateRGBColorCodes('#', '&', name);
-		else if (player.hasPermission(Permissions.colorNickPerm)) customName = translateRGBColorCodes('\u0000', '&', name);
+		
+		if (playerCustom.getPlayer().hasPermission(Permissions.moreColorNickPerm)) customName = translateRGBColorCodes('#', '&', name);
+		else if (playerCustom.getPlayer().hasPermission(Permissions.colorNickPerm)) customName = translateRGBColorCodes('\u0000', '&', name);
 		else customName = translateRGBColorCodes('\u0000', '\u0000', name);
 		
-		if (customName != null)
-		playerCustom.setCustomName(customName);
+		if (customName == null) playerCustom.setCustomName(null, null);
+		else playerCustom.setCustomName(customName, name);
 		
 		ComponentBuilder builder = new ComponentBuilder();
 		builder.append(new TextComponent("You have changed your name to "));
 		builder.color(ChatColor.DARK_AQUA);
 		
-		builder.append(playerCustom.getCustomName());
+		if (customName == null) builder.append(playerCustom.getPlayer().getDisplayName());
+		else builder.append(customName);
 		
-		player.spigot().sendMessage(builder.create());
+		playerCustom.getPlayer().spigot().sendMessage(builder.create());
 	}
 	
-	private static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
+	public static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
 		StringBuilder hexStringBuilder = new StringBuilder();
 		boolean awaitingBukkitColorFormat = false;
 		

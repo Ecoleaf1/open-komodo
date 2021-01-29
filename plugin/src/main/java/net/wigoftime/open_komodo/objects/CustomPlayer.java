@@ -34,6 +34,7 @@ import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.HomeSystem;
 import net.wigoftime.open_komodo.etc.Moderation;
+import net.wigoftime.open_komodo.etc.NickName;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
@@ -89,9 +90,6 @@ public class CustomPlayer
 	public CustomPlayer(Player player) {
 		this.player = player;
 		uuid = player.getUniqueId();
-		BaseComponent[] array = {new TextComponent(player.getDisplayName())};
-		array[0].setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
-		customName = array;
 		
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsPlayer(uuid))
@@ -242,7 +240,12 @@ public class CustomPlayer
 		return customName;
 	}
 	
-	public void setCustomName(BaseComponent[] name) {
+	public void setupCustomName() {
+		customName = SQLManager.getNickName(player);
+	}
+	
+	public void setCustomName(BaseComponent[] name, String rawFormatName) {
+		SQLManager.setNickName(uuid, rawFormatName);
 		customName = name;
 	}
 	

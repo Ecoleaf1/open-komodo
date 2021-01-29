@@ -40,9 +40,12 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.custommobs.CustomPet;
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.NickName;
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
@@ -216,6 +219,22 @@ abstract public class SQLManager {
 	
 	public static void setBanReason(UUID uuid, String reason) {
 		new SQLCard(SQLCodeType.SET_BANREASON, SQLCardType.SET, Arrays.asList(reason, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static void setNickName(UUID uuid, String nickname) {
+		new SQLCard(SQLCodeType.SET_NICKNAME, SQLCardType.SET, Arrays.asList(nickname, uuid.toString().replaceAll("-", ""))).execute();
+	}
+	
+	public static BaseComponent[] getNickName(Player player) {
+		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCardType.GET, Arrays.asList(player.getUniqueId().toString().replaceAll("-", ""))).execute().get(0);
+		if (nicknameRaw.length() == 0) return null;
+		BaseComponent[] nickname;
+		
+		if (player.hasPermission(Permissions.moreColorNickPerm)) nickname = NickName.translateRGBColorCodes('#', '&', nicknameRaw);
+		else if (player.hasPermission(Permissions.colorNickPerm)) nickname = NickName.translateRGBColorCodes('&', '\u0000', nicknameRaw);
+		else nickname = NickName.translateRGBColorCodes('\u0000', '\u0000', nicknameRaw);
+		
+		return nickname;
 	}
 	
 	public static Date getMuteDate(UUID uuid) {
