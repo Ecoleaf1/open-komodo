@@ -62,6 +62,7 @@ public class NormalMessage
 		BaseComponent[] name = senderCustomPlayer.getCustomName();
 		if (name == null) {
 			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
+			name[0].setColor(ChatColor.DARK_GRAY);
 			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
 			componentList.add(name[0]);
@@ -147,6 +148,7 @@ public class NormalMessage
 		
 		if (name == null) {
 			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
+			name[0].setColor(ChatColor.DARK_GRAY);
 			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
 			componentList.add(name[0]);

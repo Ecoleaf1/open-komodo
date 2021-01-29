@@ -25,7 +25,7 @@ public abstract class BuilderWorld
 	
 	public static void joinWorld(Player player)
 	{
-		Location location = new Location(world, 0, 10, 0);
+		Location location = new Location(world, 359, 68, -225);
 		player.teleport(location);
 		
 		player.setGameMode(GameMode.CREATIVE);
