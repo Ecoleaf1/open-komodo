@@ -10,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
 
-import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.wigoftime.open_komodo.etc.Currency;
 
 public class Pet

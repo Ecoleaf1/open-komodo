@@ -24,6 +24,7 @@ abstract public class Permissions
 	public static final String notPermFlyingError = ChatColor.DARK_RED + "Flying is permitted to MVP and above";
 	
 	public static final Permission colorNickPerm = new Permission("openkomodo.abilities.colornick");
+	public static final Permission moreColorNickPerm = new Permission("openkomodo.abilities.morecolornick");
 	
 	public static final Permission placePerm = new Permission("openkomodo.build.place");
 	private static final String placePermError = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you cannot place blocks here.");
@@ -73,14 +74,6 @@ abstract public class Permissions
 	
 	public static final Permission petAccess = new Permission("openkomodo.pets.access");
 	public static final Permission particleAccess = new Permission("openkomodo.particles.access");
-	
-	//public static final Permission BuilderBuildPerm = new Permission("fp.worlds.builderworld.build");
-	/*
-	public static final Permission builderBreakPerm = new Permission("fp.worlds.builderworld.break");
-	public static final String builderBreak = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you cannot break blocks here.");
-	public static final Permission builderPlacePerm = new Permission("fp.worlds.builderworld.place");
-	public static final String builderPlace = ChatColor.translateAlternateColorCodes('&', "&c&lHEY!&r&7 Sorry, but you cannot place blocks here."); */
-	
 	
 	public static String getPlaceError() 
 	{
@@ -137,9 +130,9 @@ abstract public class Permissions
 		
 		// Get list of permissions inherited by Player's Rank
 		List<Permission> rankPermissions;
-		if (rank == null)
+		if (rank == null) {
 			rankPermissions = new ArrayList<Permission>();
-		else
+		} else
 			rankPermissions = rank.getPermissions();
 		
 		// Permissions inherited by Player

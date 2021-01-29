@@ -142,6 +142,7 @@ import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.gui.GUIManager;
 import net.wigoftime.open_komodo.gui.PetControl;
+import net.wigoftime.open_komodo.gui.PetsGui;
 import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.objects.AFKChecker;
 import net.wigoftime.open_komodo.objects.CustomItem;
@@ -337,6 +338,7 @@ public class Main extends JavaPlugin implements Listener
 			return;
 		}
 		
+		
 		if (e.getRightClicked() == PetsManager.getCreature(player.getPlayer()))
 		{
 			e.setCancelled(true);
@@ -378,19 +380,6 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler
 	public void interactedEntity(PlayerInteractEntityEvent e) 
 	{
-		Entity entity = e.getRightClicked();
-		
-		Creature petCreature = PetsManager.getCreature(e.getPlayer());
-		
-		if (!e.getPlayer().hasPermission(Permissions.changePerm) && petCreature != null)
-		{
-			
-			if (petCreature.getUniqueId().equals(e.getRightClicked().getUniqueId()))
-				return;
-			
-			e.setCancelled(true);
-			return;
-		}
 		
 		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
 		
@@ -399,6 +388,19 @@ public class Main extends JavaPlugin implements Listener
 		if (player == null)
 		{
 			e.setCancelled(true);
+			return;
+		}
+		
+		PrintConsole.test("test");
+		
+		Entity entity = e.getRightClicked();
+		
+		
+		if (PetsManager.isPet(player.getUniqueId(), entity.getUniqueId())) {
+			PrintConsole.test("is pet");
+			e.setCancelled(true);
+			PetControl gui = new PetControl(player);
+			gui.open();
 			return;
 		}
 		
@@ -674,7 +676,7 @@ public class Main extends JavaPlugin implements Listener
 		if (item.getItemMeta().hasCustomModelData())
 		{
 			// If ID is 1 (IPlay Phone)
-			if (item.getType() == Material.INK_SAC)
+			if (item.getType() == Material.INK_SAC && !player.hasActiveGui())
 			{
 				// And if the item is an ink sac, open IPlay
 				CustomItem customItem = CustomItem.getCustomItem(item.getItemMeta().getCustomModelData());

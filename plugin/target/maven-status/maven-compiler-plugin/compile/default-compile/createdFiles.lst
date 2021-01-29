@@ -23,7 +23,6 @@ net\wigoftime\open_komodo\commands\DelHomeCommand.class
 net\wigoftime\open_komodo\events\PlayerJoin.class
 net\wigoftime\open_komodo\gui\Warps$warps.class
 net\wigoftime\open_komodo\commands\BanCommand$1.class
-net\wigoftime\open_komodo\custommobs\CustomPetZombie.class
 net\wigoftime\open_komodo\config\PlayerConfig$13.class
 net\wigoftime\open_komodo\events\PlayerJoin$1$1.class
 net\wigoftime\open_komodo\sql\Items.class
@@ -77,7 +76,6 @@ net\wigoftime\open_komodo\events\PlayerJoin$1.class
 net\wigoftime\open_komodo\etc\Permissions$1.class
 net\wigoftime\open_komodo\commands\SitCommand.class
 net\wigoftime\open_komodo\config\PlayerConfig$10.class
-net\wigoftime\open_komodo\custommobs\CustomPetCat.class
 net\wigoftime\open_komodo\objects\FriendProfile.class
 net\wigoftime\open_komodo\commands\HatsCommand.class
 net\wigoftime\open_komodo\commands\TagShopCommand.class

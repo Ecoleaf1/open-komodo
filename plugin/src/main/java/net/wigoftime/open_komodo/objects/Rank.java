@@ -14,6 +14,7 @@ import org.bukkit.permissions.Permission;
 import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 
 public class Rank 
 {
@@ -95,10 +96,7 @@ public class Rank
 	
 	// Get rank from ID
 	public static Rank getRank(int id)
-	{
-		if (id == 0)
-			return null;
-		
+	{	
 		for (Rank r : ranks) {
 			if (r.getID() == id)
 				return r;

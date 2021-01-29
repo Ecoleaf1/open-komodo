@@ -13,14 +13,15 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+import org.apache.tomcat.dbcp.dbcp2.DataSourceConnectionFactory;
 
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.objects.SQLInfo;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
 public class SQLCard {
-	private static BasicDataSource ds = new BasicDataSource();
+	private static BasicDataSource dataSource = new BasicDataSource();
 	private static SQLInfo info;
 	
 	public static void setup() {
@@ -28,13 +29,11 @@ public class SQLCard {
 		
 		if (!info.enabled) return;
 		
-		ds.setUsername(info.user);
-		ds.setPassword(info.password);
-		ds.setUrl("jdbc:"+info.url);
-		ds.setMinIdle(5);
-		ds.setMaxIdle(10);
-		
-		SQLManager.setup();
+		dataSource.setUsername(info.user);
+		dataSource.setPassword(info.password);
+		dataSource.setUrl("jdbc:"+info.url);
+		dataSource.setMinIdle(5);
+		dataSource.setMaxIdle(10);
 	}
 	
 	public static enum SQLCardType {GET, SET};
@@ -59,7 +58,7 @@ public class SQLCard {
 		PreparedStatement statement = null;
 		
 		try {
-			connection = ds.getConnection();
+			connection = dataSource.getConnection();
 			statement = connection.prepareStatement(sql);
 			statement.execute();
 		} catch (SQLException exception) {
@@ -77,7 +76,7 @@ public class SQLCard {
 		ResultSet result = null;
 		
 		try {
-			connection = ds.getConnection();
+			connection = dataSource.getConnection();
 			statement = connection.prepareStatement(sql);
 			result = statement.executeQuery();
 			
@@ -92,9 +91,15 @@ public class SQLCard {
 			exception.printStackTrace();
 			return null;
 		} finally {
-			if (connection != null) try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 			if (statement != null) try { statement.close(); } catch(SQLException e) { e.printStackTrace(); }
 			if (result != null) try { result.close(); } catch(SQLException e) { e.printStackTrace(); }
+			if (connection != null) try { connection.close(); } catch(SQLException e) { e.printStackTrace(); }
 		}
+	}
+	
+	static protected void disconnect() {
+		try {
+			dataSource.close();
+		} catch (SQLException e) {e.printStackTrace();}
 	}
 }

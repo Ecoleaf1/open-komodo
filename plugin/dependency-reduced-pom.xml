@@ -5,6 +5,13 @@
   <artifactId>open-komodo</artifactId>
   <name>OpenKomodo</name>
   <version>v0.2</version>
+  <licenses>
+    <license>
+      <name>GNU GENERAL PUBLIC LICENSE - Version 3, 29 June 2007</name>
+      <url>http://www.gnu.org/licenses/gpl-3.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
   <build>
     <plugins>
       <plugin>
@@ -64,9 +71,21 @@
   </repositories>
   <dependencies>
     <dependency>
+      <groupId>com.comphenix.protocol</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>4.5.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.discordsrv</groupId>
       <artifactId>discordsrv</artifactId>
       <version>1.21.0</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>dev.esophose</groupId>
+      <artifactId>playerparticles</artifactId>
+      <version>7.13</version>
       <scope>provided</scope>
     </dependency>
     <dependency>
@@ -78,9 +97,9 @@
     <dependency>
       <groupId>org.bucket</groupId>
       <artifactId>craftbucket</artifactId>
-      <version>1.14.4-R0-1</version>
+      <version>1.16.1-R0-1</version>
       <scope>system</scope>
-      <systemPath>${basedir}/../External Dependencies/craftbukkit-1.14.4-R0.1-SNAPSHOT.jar</systemPath>
+      <systemPath>${basedir}/../External Dependencies/craftbukkit-1.16.1-R0.1-SNAPSHOT.jar</systemPath>
     </dependency>
   </dependencies>
 </project>

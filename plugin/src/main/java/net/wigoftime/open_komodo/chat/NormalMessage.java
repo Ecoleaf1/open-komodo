@@ -49,8 +49,9 @@ public class NormalMessage
 			componentList.add(componentRank);
 		}
 		
-		TextComponent name;
-		name = new TextComponent(String.format("%s", senderCustomPlayer.getPlayer().getCustomName() == null ? senderCustomPlayer.getPlayer().getDisplayName() : senderCustomPlayer.getPlayer().getCustomName())); 
+		//TextComponent name;
+		BaseComponent[] name = senderCustomPlayer.getCustomName();
+		//name = new TextComponent(String.format("%s%s", ChatColor.DARK_GRAY + senderCustomPlayer.getPlayer().getCustomName() == null ? senderCustomPlayer.getPlayer().getDisplayName() : senderCustomPlayer.getPlayer().getCustomName())); 
 		{
 		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", senderCustomPlayer.getPlayer().getDisplayName()));
 		
@@ -60,13 +61,15 @@ public class NormalMessage
 		if (senderCustomPlayer.getSettings().isDisplayTipEnabled())
 		componentHoverDescBuilder.append(String.format("\nTipped: %d$", senderCustomPlayer.getDonated()));
 		
-		name.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, componentHoverDescBuilder.create()));
-		name.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
-		
-		name.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,componentHoverDescBuilder.create()));
+		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
+		for (BaseComponent componentIndex : name) {
+			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			
+			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,hoverDescription));
+			componentList.add(componentIndex);
 		}
-		
-		componentList.add(name);
+		}
 		
 		TextComponent messageComponent = new TextComponent(String.format("%s: ", ChatColor.WHITE));
 		messageComponent.setColor(ChatColor.WHITE);
@@ -130,7 +133,7 @@ public class NormalMessage
 			componentList.add(componentRank);
 		}
 		
-		TextComponent name = new TextComponent(sender.getCustomName() == null ? sender.getDisplayName() : sender.getCustomName()); {
+		BaseComponent[] name = senderCustomPlayer.getCustomName(); {
 		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", sender.getDisplayName()));
 		
 		Date joinDate = senderCustomPlayer.getJoinDate();
@@ -139,13 +142,16 @@ public class NormalMessage
 		if (senderCustomPlayer.getSettings().isDisplayTipEnabled())
 		componentHoverDescBuilder.append(String.format("\nTipped: %d$", senderCustomPlayer.getDonated()));
 		
-		name.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, componentHoverDescBuilder.create()));
-		name.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", sender.getDisplayName())));
+		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
 		
-		name.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,componentHoverDescBuilder.create()));
+		for (BaseComponent componentIndex : name) {
+			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			
+			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,hoverDescription));
+			componentList.add(componentIndex);
 		}
-		
-		componentList.add(name);
+		}
 		
 		TextComponent messageComponent = new TextComponent(": "+ChatColor.GRAY+message);
 		componentList.add(messageComponent);

@@ -27,7 +27,6 @@ import java.util.Timer;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.tomcat.dbcp.dbcp.BasicDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -55,8 +54,6 @@ import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
 abstract public class SQLManager {
 	private static final int delayAmount = 5000;
-	
-	private static BasicDataSource ds = new BasicDataSource();
 	private static SQLInfo sqlInfo = Config.getSQLInfo();
 	
 	public static void setup() {
@@ -543,16 +540,12 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void disconnectSQL() {
-		try {
-			ds.close();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
 	public static boolean isEnabled() {
 		return sqlInfo.enabled;
+	}
+	
+	public static void disconnectSQL() {
+		SQLCard.disconnect();
 	}
 }
 

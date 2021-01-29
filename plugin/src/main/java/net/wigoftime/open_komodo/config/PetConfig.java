@@ -8,7 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.Permission;
 
-import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.TypeToEnum;
 import net.wigoftime.open_komodo.objects.Pet;

@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
@@ -49,6 +50,8 @@ public class CustomPlayer
 	private final Player player;
 	private final UUID uuid;
 	private final Date joinDate;
+	
+	private BaseComponent[] customName;
 	
 	private Instant lastActiveTime;
 	private boolean isAfk;
@@ -86,6 +89,9 @@ public class CustomPlayer
 	public CustomPlayer(Player player) {
 		this.player = player;
 		uuid = player.getUniqueId();
+		BaseComponent[] array = {new TextComponent(player.getDisplayName())};
+		array[0].setColor(net.md_5.bungee.api.ChatColor.DARK_GRAY);
+		customName = array;
 		
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsPlayer(uuid))
@@ -230,6 +236,14 @@ public class CustomPlayer
 	
 	public Player getPlayer() {
 		return player;
+	}
+	
+	public BaseComponent[] getCustomName() {
+		return customName;
+	}
+	
+	public void setCustomName(BaseComponent[] name) {
+		customName = name;
 	}
 	
 	public void setActivePhone(CustomItem phone) {

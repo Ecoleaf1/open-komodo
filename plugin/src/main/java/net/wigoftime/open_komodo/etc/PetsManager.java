@@ -10,16 +10,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_14_R1.CraftServer;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftCreature;
-import org.bukkit.craftbukkit.v1_14_R1.entity.CraftHorse;
+import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
-import net.minecraft.server.v1_14_R1.EntityCreature;
-import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.EntityCreature;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import net.wigoftime.open_komodo.objects.Pet;
@@ -28,7 +28,6 @@ abstract public class PetsManager
 {
 	private static HashMap<UUID, CraftCreature> pets = new HashMap<UUID, CraftCreature>();
 	private static Set<UUID> awaitingInput = new HashSet<UUID>();
-	
 	public static void create(Player player, Pet pet)
 	{
 		if (pets.containsKey(player.getUniqueId()))
@@ -52,6 +51,17 @@ abstract public class PetsManager
 		if (entityPet.getType() == EntityType.HORSE)
 			((CraftHorse) entityPet).getInventory().setSaddle(new ItemStack(Material.SADDLE));
 		
+	}
+	
+	public static boolean isPet(UUID playerUUID, UUID entryUUID) {
+		CraftCreature petCreature = pets.get(playerUUID);
+		if (petCreature == null)
+			return false;
+		
+		if (petCreature.getUniqueId().toString().equals(entryUUID.toString()))
+			return true;
+		
+		return false;
 	}
 	
 	public static CraftCreature getCreature(Player player)
@@ -132,7 +142,7 @@ abstract public class PetsManager
 						entityPet.teleport(l);
 					
 					// Follow player
-					entityPet.getHandle().getNavigation().a(l.getX(), l.getY(), l.getZ(), 0.5);
+					entityPet.getHandle().getNavigation().a(l.getX(), l.getY(), l.getZ(), 1f);
 				}
 			}
 		};

@@ -1,6 +1,6 @@
 package net.wigoftime.open_komodo.etc;
 
-import net.minecraft.server.v1_14_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.EntityTypes;
 
 public abstract class TypeToEnum 
 {
@@ -209,7 +209,7 @@ public abstract class TypeToEnum
 			case "ZOMBIE_HORSE":
 				return EntityTypes.ZOMBIE_HORSE;
 			case "ZOMBIE_PIGMAN":
-				return EntityTypes.ZOMBIE_PIGMAN;
+				return EntityTypes.ZOMBIFIED_PIGLIN;
 			case "ZOMBIE_VILLAGER":
 				return EntityTypes.ZOMBIE_VILLAGER;
 			
