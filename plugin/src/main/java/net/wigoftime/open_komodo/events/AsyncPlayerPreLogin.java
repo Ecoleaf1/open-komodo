@@ -1,3 +1,11 @@
+/*		************************************
+ * 		Use Cases:
+ * 		Prevents Banned Players from joining,
+ * 		Give a message to banned players of expiry date and reason,
+ * 		Create Moderation Player Entry (if not created) to be able to ban online players easier
+ * 		************************************		
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import java.util.Date;
@@ -27,17 +35,16 @@ public class AsyncPlayerPreLogin implements EventExecutor {
 			SQLManager.createModerationPlayer(preLoginEvent.getUniqueId());
 		
 		boolean isBanned = Moderation.isBanned(uuid);
+		if (!isBanned) return;
 		
-		if (isBanned) {
-			String reason = Moderation.getBanReason(uuid);
-			Date date = Moderation.getBanDate(uuid);
-			
-			if (reason == null)
-				preLoginEvent.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString()));
-			else
-				preLoginEvent.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s\n  Reason: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString(), reason));
-			return;
-		}
+		String reason = Moderation.getBanReason(uuid);
+		Date date = Moderation.getBanDate(uuid);
+		
+		if (reason == null)
+			preLoginEvent.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString()));
+		else
+			preLoginEvent.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s\n  Reason: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString(), reason));
+		return;
 	}
 
 }

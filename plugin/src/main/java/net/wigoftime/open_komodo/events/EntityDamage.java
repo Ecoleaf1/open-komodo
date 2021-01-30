@@ -1,3 +1,10 @@
+/*		************************************
+ * 		Use cases:
+ * 		Entity Damage Protection,
+ * 		Entity Fall Damage Protection
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.entity.EntityType;
@@ -18,25 +25,22 @@ public class EntityDamage implements EventExecutor {
 	public void execute(Listener listener, Event event) throws EventException {
 		EntityDamageEvent damageEvent = (EntityDamageEvent) event;
 		
-		if (damageEvent.getEntityType() == EntityType.PLAYER) {
-			Player player = (Player) damageEvent.getEntity();
-			
-			if (!Main.damageAllowed) {
-				damageEvent.setCancelled(true);
-				return;
-			}
-			
-			if (player != null)
-				if (damageEvent.getCause() == DamageCause.FALL && !Main.fallDamage)
-					damageEvent.setCancelled(true);
-		
-			
+		// Prevent Pets from being damaged
+		if (damageEvent.getEntity() instanceof CustomPetMob) {
+			damageEvent.setCancelled(true);
 			return;
 		}
 		
-		if (damageEvent.getEntity() instanceof CustomPetMob) {
+		if (damageEvent.getEntityType() == EntityType.PLAYER) {
+			if (Main.damageAllowed) return;
+			
 			damageEvent.setCancelled(true);
+			return;
 		}
+		
+		if (damageEvent.getCause() == DamageCause.FALL && !Main.fallDamage)
+			damageEvent.setCancelled(true);
+		
 	}
 
 }

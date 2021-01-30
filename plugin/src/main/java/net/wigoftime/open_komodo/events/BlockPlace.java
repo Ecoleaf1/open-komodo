@@ -1,3 +1,9 @@
+/*		************************************
+ * 		Use Cases:
+ * 		Prevent players from placing blocks
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.event.Event;
@@ -15,17 +21,16 @@ public class BlockPlace implements EventExecutor {
 	@Override
 	public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
 		BlockPlaceEvent placeEvent  = (BlockPlaceEvent) event;
-		
-		// Get Player
 		CustomPlayer player = CustomPlayer.get(placeEvent.getPlayer().getUniqueId());
 		
-		if (player == null)
-		{
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
+		if (player == null) {
 			placeEvent.setCancelled(true);
 			return;
 		}
 		
-		// If player has permission to drop, allow
 		if (!player.getPlayer().hasPermission(Permissions.placePerm)) {
 			placeEvent.setCancelled(true);
 			player.getPlayer().sendMessage(Permissions.getPlaceError());
@@ -33,8 +38,7 @@ public class BlockPlace implements EventExecutor {
 			return;
 		}
 		
-		if (!player.isBuilding())
-			placeEvent.setCancelled(true);
+		if (!player.isBuilding()) placeEvent.setCancelled(true);
 	}
 
 }

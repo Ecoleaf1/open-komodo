@@ -1,3 +1,9 @@
+/*		************************************
+ * 		Use cases:
+ * 		Item Drop Prevention
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.event.Event;
@@ -17,26 +23,22 @@ public class DropItem implements EventExecutor {
 	public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
 		PlayerDropItemEvent dropItemEvent = (PlayerDropItemEvent) event;
 		
-		// If server allows items to be dropped, allow
-		if (Main.allowDrop)
-			return;
+		if (Main.allowDrop) return;
 		
 		CustomPlayer dropperCustomPlayer = CustomPlayer.get(dropItemEvent.getPlayer().getUniqueId());
 		
-		if (dropperCustomPlayer == null)
-		{
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
+		if (dropperCustomPlayer == null) {
 			dropItemEvent.setCancelled(true);
 			return;
 		}
 		
-		// If the player themselves has permission to drop, allow
 		if (dropItemEvent.getPlayer().hasPermission(Permissions.dropPerm))
-			if (dropperCustomPlayer.isBuilding())
-				return;
+		if (dropperCustomPlayer.isBuilding()) return;
 		
-		// Otherwise, stop the player from dropping their item
 		dropItemEvent.setCancelled(true);
-		// Message the player that it isn't allowed
 		dropItemEvent.getPlayer().sendMessage(Permissions.getDropError());
 	}
 	

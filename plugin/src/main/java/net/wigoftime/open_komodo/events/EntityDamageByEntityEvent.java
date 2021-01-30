@@ -1,3 +1,9 @@
+/*		************************************
+ * 		Use cases:
+ * 		Entity Damage Protection from Players
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.entity.EntityType;
@@ -16,29 +22,27 @@ public class EntityDamageByEntityEvent implements EventExecutor {
 	public void execute(Listener listener, Event event) throws EventException {
 		org.bukkit.event.entity.EntityDamageByEntityEvent entityDamageEvent = (org.bukkit.event.entity.EntityDamageByEntityEvent) event;
 		
-		if (entityDamageEvent.getDamager().getType() != EntityType.PLAYER) 
-			return;
-		
+		if (entityDamageEvent.getDamager().getType() != EntityType.PLAYER) return;
 		
 		Player damager = (Player) entityDamageEvent.getDamager();
+		
 		if (!damager.hasPermission(Permissions.hurtPerm)) {
-			// Other wise, cancel it and tell player that they are not allowed
 			entityDamageEvent.setCancelled(true);
 			damager.sendMessage(Permissions.getHurtError());
 			
 			return;
 		}
+		CustomPlayer damagerCustom = CustomPlayer.get(damager.getUniqueId());
 		
-		CustomPlayer player = CustomPlayer.get(damager.getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null) {
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
+		if (damagerCustom == null) {
 			entityDamageEvent.setCancelled(true);
 			return;
 		}
 		
-		if (!player.isBuilding()) {
+		if (!damagerCustom.isBuilding()) {
 			entityDamageEvent.setCancelled(true);
 			return;
 		}

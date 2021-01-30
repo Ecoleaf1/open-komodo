@@ -1,3 +1,13 @@
+/*		************************************
+ *		uses chat for:
+ *		Pet Name Obtaining, 
+ *		Muting, 
+ *		Filter, 
+ *		sending text to Custom Chat, 
+ *		Giving Players Pending XP
+ *		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.event.Event;
@@ -13,43 +23,33 @@ import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.etc.Filter;
 
-public class AsyncPlayerChat implements EventExecutor
-{
+public class AsyncPlayerChat implements EventExecutor {
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
 		AsyncPlayerChatEvent chatEvent = (AsyncPlayerChatEvent) event;
-		
-		CustomPlayer chatterCustomPlayer = CustomPlayer.get(chatEvent.getPlayer().getUniqueId());
+		CustomPlayer playerCustom = CustomPlayer.get(chatEvent.getPlayer().getUniqueId());
 		chatEvent.setCancelled(true);
 		
-		if (chatterCustomPlayer == null)
-			return;
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
+		if (playerCustom == null) return;
 		
-		chatterCustomPlayer.setAfk(false);
-		
+		playerCustom.setAfk(false);
 		String message = chatEvent.getMessage();
 		
-		
-		if (PetsManager.awaitingNameInput(chatterCustomPlayer.getPlayer())) {
-			PetsManager.changeName(chatterCustomPlayer.getPlayer(), message);
+		if (PetsManager.awaitingNameInput(playerCustom.getPlayer())) {
+			PetsManager.changeName(playerCustom.getPlayer(), message);
 			return;
 		}
 		
+		if (Moderation.isMuted(playerCustom)) return;
+		if (!Filter.checkMessage(playerCustom.getPlayer(), message)) return;
 		
-		if (Moderation.isMuted(chatterCustomPlayer))
-			return;
+		if (message.charAt(0) == '!') NormalMessage.shout(playerCustom.getPlayer(), message);
+		else NormalMessage.sendMessage(playerCustom, message);
 		
-		if (!Filter.checkMessage(chatterCustomPlayer.getPlayer(), message))
-			return;
-		
-		// Send message
-		if (message.charAt(0) == '!')
-			NormalMessage.shout(chatterCustomPlayer.getPlayer(), message);
-		else
-			NormalMessage.sendMessage(chatterCustomPlayer, message);
-		
-		// Add XP
-		RankSystem.lettersToXP(chatterCustomPlayer.getPlayer(), message);
+		RankSystem.lettersToXP(playerCustom.getPlayer(), message);
 	}
 	
 }

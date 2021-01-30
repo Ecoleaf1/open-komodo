@@ -1,3 +1,9 @@
+/*		************************************
+ * 		Use Cases:
+ * 		Prevent player from growing things
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.event.Event;
@@ -15,20 +21,20 @@ public class BlockFertilize implements EventExecutor {
 	@Override
 	public void execute(@NotNull Listener listener, @NotNull Event event) throws EventException {
 		BlockFertilizeEvent fertilizeEvent = (BlockFertilizeEvent) event;
-		
-		// Get CustomPlayer
 		CustomPlayer causerCustomPlayer = CustomPlayer.get(fertilizeEvent.getPlayer().getUniqueId());
 		
-		if (causerCustomPlayer == null)
-		{
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
+		if (causerCustomPlayer == null) {
 			fertilizeEvent.setCancelled(true);
 			return;
 		}
 		
-		permissions(causerCustomPlayer, fertilizeEvent);
+		hasPermission(causerCustomPlayer, fertilizeEvent);
 	}
 	
-	private void permissions(CustomPlayer causerCustomPlayer, BlockFertilizeEvent fertilizeEvent) {
+	private void hasPermission(CustomPlayer causerCustomPlayer, BlockFertilizeEvent fertilizeEvent) {
 		if (!causerCustomPlayer.getPlayer().hasPermission(Permissions.breakPerm)) {
 			fertilizeEvent.setCancelled(true);
 			causerCustomPlayer.getPlayer().sendMessage(Permissions.getBreakError());

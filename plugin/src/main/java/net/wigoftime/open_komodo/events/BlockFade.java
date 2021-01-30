@@ -1,3 +1,9 @@
+/* 		************************************
+ * 		Use Cases:
+ * 		Prevent ice from melting
+ *		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import org.bukkit.Material;
@@ -20,7 +26,6 @@ public class BlockFade implements EventExecutor {
 		if (Main.iceMelts == true) return;
 		
 		if (block.getType() == Material.ICE) {
-			System.out.println(blockFadeEvent.getBlock().getType());
 			blockFadeEvent.setCancelled(true);
 			return;
 		}

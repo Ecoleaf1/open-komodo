@@ -82,7 +82,6 @@ net\wigoftime\open_komodo\commands\TagShopCommand.class
 net\wigoftime\open_komodo\etc\PlayerList.class
 net\wigoftime\open_komodo\gui\CustomGUI.class
 net\wigoftime\open_komodo\commands\PayCommand$1.class
-net\wigoftime\open_komodo\CommandPreprocess.class
 net\wigoftime\open_komodo\commands\RankCommand.class
 net\wigoftime\open_komodo\gui\PetControl.class
 net\wigoftime\open_komodo\objects\CustomPlayer$5.class

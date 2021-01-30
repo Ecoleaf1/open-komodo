@@ -288,19 +288,15 @@ public class Main extends JavaPlugin implements Listener
 	
 	@Override
 	public void onDisable() {
-		// Save everyone's inventory
 		for (CustomPlayer p : CustomPlayer.getOnlinePlayers())
 			InventoryManagement.saveInventory(p, p.getPlayer().getWorld());
 		
-		// Disconnect SQL Connection as the server is shutting down.
 		SQLManager.disconnectSQL();
-		
 		PetsManager.serverShuttingDown();
 	}
 	
 	/* Events Below */
 	
-	// When something in inventory is clicked.
 	@EventHandler 
 	public void inventoryClick(InventoryClickEvent clickEvent) {	
 		GUIManager.invItemClicked(clickEvent);
@@ -312,7 +308,9 @@ public class Main extends JavaPlugin implements Listener
 		GUIManager.inventoryClosed(e);
 	}
 	
-	// Variable Functions
+	/* Variable Functions */
+	
+	
 	public static Object getDiscordSRV() {
 		return discordSRV;
 	}

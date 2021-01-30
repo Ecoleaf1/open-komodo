@@ -1,3 +1,10 @@
+/*		************************************
+ * 		Use Cases:
+ * 		Reset AFK timer when player uses a command,
+ * 		Overwrite /help with information about the server
+ * 		************************************
+ */
+
 package net.wigoftime.open_komodo.events;
 
 import java.util.Iterator;
@@ -33,10 +40,11 @@ public class CommandPreprocess implements EventExecutor {
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
 		PlayerCommandPreprocessEvent commandEvent = (PlayerCommandPreprocessEvent) event;
-		
-		// Get Player
 		Player player = commandEvent.getPlayer();
 		
+		// One possibility would be if the player has not loaded in yet.
+		// To prevent errors from occurring, players who has not loaded in
+		// can not proceed.
 		CustomPlayer playerCustomPlayer = CustomPlayer.get(player.getUniqueId());
 		if (playerCustomPlayer == null) {
 			commandEvent.setCancelled(true);
@@ -45,14 +53,10 @@ public class CommandPreprocess implements EventExecutor {
 		
 		playerCustomPlayer.setAfk(false);
 		
-		// The command arguments, first string is the actual command
-		String[] args = commandEvent.getMessage().split(" ");
+		String[] commandArguments = commandEvent.getMessage().split(" ");
+		String command = commandArguments[0];
 		
-		// Get the command
-		String command = args[0];
-		
-		if (command.equalsIgnoreCase("/help") || command.equalsIgnoreCase("/minecraft:help"))
-		{
+		if (command.equalsIgnoreCase("/help") || command.equalsIgnoreCase("/minecraft:help")) {
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bHelp:&3\nFor info about ranks, type in /rank help\nFor info about points, type in /money help\n"
 					+ "/msg (Player) (message) to message someone!\n/tpa (player) to send a teleport request!\n/home help for setting homes!"));
 			commandEvent.setCancelled(true);
