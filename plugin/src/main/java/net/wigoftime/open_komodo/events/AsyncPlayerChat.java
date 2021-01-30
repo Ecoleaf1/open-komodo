@@ -1,6 +1,10 @@
 package net.wigoftime.open_komodo.events;
 
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.chat.NormalMessage;
 import net.wigoftime.open_komodo.etc.Moderation;
@@ -9,20 +13,21 @@ import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.etc.Filter;
 
-abstract public class AsyncPlayerChat 
+public class AsyncPlayerChat implements EventExecutor
 {
-
-	public static void function(AsyncPlayerChatEvent e)
-	{
-		CustomPlayer chatterCustomPlayer = CustomPlayer.get(e.getPlayer().getUniqueId());
-		e.setCancelled(true);
+	@Override
+	public void execute(Listener listener, Event event) throws EventException {
+		AsyncPlayerChatEvent chatEvent = (AsyncPlayerChatEvent) event;
+		
+		CustomPlayer chatterCustomPlayer = CustomPlayer.get(chatEvent.getPlayer().getUniqueId());
+		chatEvent.setCancelled(true);
 		
 		if (chatterCustomPlayer == null)
 			return;
 		
 		chatterCustomPlayer.setAfk(false);
 		
-		String message = e.getMessage();
+		String message = chatEvent.getMessage();
 		
 		
 		if (PetsManager.awaitingNameInput(chatterCustomPlayer.getPlayer())) {

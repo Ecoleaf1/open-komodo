@@ -137,6 +137,7 @@ import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.events.AsyncPlayerChat;
+import net.wigoftime.open_komodo.events.CommandPreprocess;
 import net.wigoftime.open_komodo.events.VotifierEvent;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -169,15 +170,15 @@ public class Main extends JavaPlugin implements Listener
 	private static String PMSentFormat;
 	private static String PMReceivedFormat;
 	
-	private static boolean explosionEnabled;
-	private static boolean leavesDecayEnabled;
+	public static boolean explosionEnabled;
+	public static boolean leavesDecayEnabled;
 	
-	private static boolean fallDamage;
-	private static boolean damageAllowed;
+	public static boolean fallDamage;
+	public static boolean damageAllowed;
 	
-	private static boolean iceMelts;
+	public static boolean iceMelts;
 	public static String joinMessage;
-	private static String leaveMessage;
+	public static String leaveMessage;
 	
 	public static boolean allowDrop;
 	
@@ -219,6 +220,28 @@ public class Main extends JavaPlugin implements Listener
 		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), this);
 		Bukkit.getPluginManager().registerEvent(BlockPlaceEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockPlace(), this);
 		Bukkit.getPluginManager().registerEvent(BlockBreakEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockBreak(), this);
+		Bukkit.getPluginManager().registerEvent(VehicleDestroyEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.VehicleDestroyEvent(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerInteractAtEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteractAtEntityEvent(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerInteractEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteractEntityEvent(), this);
+		Bukkit.getPluginManager().registerEvent(EntityDamageByEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDamageByEntityEvent(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerMove(), this);
+		Bukkit.getPluginManager().registerEvent(EntityDismountEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDismount(), this);
+		Bukkit.getPluginManager().registerEvent(BlockFadeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFade(), this);
+		Bukkit.getPluginManager().registerEvent(HangingBreakByEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.HangingBreakByEntity(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerEggThrowEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerEggThrow(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerInteractEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteract(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerChangedWorldEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerChangedWorld(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerQuitEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerQuit(), this);
+		Bukkit.getPluginManager().registerEvent(ExplosionPrimeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.ExplosionPrime(), this);
+		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDamage(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerSwapHandItemsEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerSwapHandItems(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerEditBookEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerEditBook(), this);
+		Bukkit.getPluginManager().registerEvent(AsyncPlayerPreLoginEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.AsyncPlayerPreLogin(), this);
+		Bukkit.getPluginManager().registerEvent(EntityDeathEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDeath(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerRespawnEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerRespawn(), this);
+		Bukkit.getPluginManager().registerEvent(PlayerCommandPreprocessEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.CommandPreprocess(), this);
+		Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.AsyncPlayerChat(), this);
+		
 		
 		if (Bukkit.getPluginManager().getPlugin("Votifier") == null)
 			PrintConsole.print("NuVotifier isn't detected, vote rewards disabled.");
@@ -283,720 +306,10 @@ public class Main extends JavaPlugin implements Listener
 		GUIManager.invItemClicked(clickEvent);
 	}
 	
-	
-	// When vehicle of any kind (Such as boats or minecarts) was attempted to be destroyed
-	@EventHandler
-	public void vehicleDestroy(VehicleDestroyEvent e) 
-	{
-		// If it wasn't player, return
-		if (!(e.getAttacker() instanceof Player))
-		{
-			// Cancel vehicle being destroyed
-			e.setCancelled(true);
-			return;
-		}
-		
-		// If player has permission, return
-		if (!e.getAttacker().hasPermission(Permissions.changePerm))
-		{
-			// Cancel vehicle being destroyed
-			e.setCancelled(true);
-			// Send message to player that it isn't allowed
-			e.getAttacker().sendMessage(Permissions.getChangeError());
-			
-			return;
-		}
-		
-		// Get CustomPlayer
-		CustomPlayer player = CustomPlayer.get(((Player) e.getAttacker()).getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		if (!player.isBuilding())
-		{
-			e.setCancelled(true);
-		}
-		
-	}
-	
-	// An Event for example when player takes off or put Armor Stand
-	@EventHandler
-	public void playerInteractAt(PlayerInteractAtEntityEvent e) 
-	{
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		
-		if (e.getRightClicked() == PetsManager.getCreature(player.getPlayer()))
-		{
-			e.setCancelled(true);
-			PetControl gui = new PetControl(player);
-			gui.open();
-			return;
-		}
-		
-		if (!player.getPlayer().hasPermission(Permissions.changePerm))
-		{
-			if (e.getRightClicked().getType() == EntityType.ARMOR_STAND) 
-			{
-				e.setCancelled(true);
-				e.getPlayer().sendMessage(Permissions.getChangeError());
-				return;
-			}
-		}
-		
-		if (!player.isBuilding())
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-	}
-	
-	// If Entity dismounts something
-	@EventHandler
-	public void dismounted(EntityDismountEvent e)
-	{
-		Entity entity = e.getDismounted();
-		
-		if (entity.getType() == EntityType.ARROW)
-			entity.remove();
-		
-		return;
-	}
-	
-	@EventHandler
-	public void interactedEntity(PlayerInteractEntityEvent e) 
-	{
-		
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		PrintConsole.test("test");
-		
-		Entity entity = e.getRightClicked();
-		
-		
-		if (PetsManager.isPet(player.getUniqueId(), entity.getUniqueId())) {
-			PrintConsole.test("is pet");
-			e.setCancelled(true);
-			PetControl gui = new PetControl(player);
-			gui.open();
-			return;
-		}
-		
-		if (!player.isBuilding())
-		{
-			if (entity.getType() == EntityType.ARMOR_STAND) 
-			{
-				e.setCancelled(true);
-				e.getPlayer().sendMessage(Permissions.getChangeError());
-				return;
-			}
-			
-			if (entity.getType() == EntityType.ITEM_FRAME) 
-			{
-				e.setCancelled(true);
-				e.getPlayer().sendMessage(Permissions.getChangeError());
-				return;
-			}
-		}
-	}
-	
-	// When blocks fade like fire and ice
-	@EventHandler
-	public void blockFades(BlockFadeEvent e) 
-	{
-		// Get Block
-		Block block = e.getBlock();
-		
-		if (iceMelts == true)
-			return;
-		
-		if (block.getType() == Material.ICE) 
-		{
-			System.out.println(e.getBlock().getType());
-			e.setCancelled(true);
-			return;
-		}
-	}
-	
-	// Called when an entity is damaged by an entity
-	@EventHandler
-	public void entityDamageByEntity(EntityDamageByEntityEvent e) 
-	{
-		// If the damager wasn't a player, skip
-		if (e.getDamager().getType() != EntityType.PLAYER) 
-			return;
-		
-		// Get damager
-		Player damager = (Player) e.getDamager();
-		
-		// If player has permission to damage entity
-		if (!damager.hasPermission(Permissions.hurtPerm))
-		{
-			// Other wise, cancel it and tell player that they are not allowed
-			e.setCancelled(true);
-			damager.sendMessage(Permissions.getHurtError());
-			
-			return;
-		}
-		
-		CustomPlayer player = CustomPlayer.get(damager.getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		if (!player.isBuilding())
-		{
-			e.setCancelled(true);
-			return;
-		}
-	}
-	
-	@EventHandler
-	public void playerMove(PlayerMoveEvent e)
-	{
-		Player player = e.getPlayer();
-		
-		CustomPlayer moverCustomPlayer = CustomPlayer.get(player.getUniqueId());
-		
-		// If customplayer format of it doesn't exist, stop
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (moverCustomPlayer == null)
-			return;
-		
-		moverCustomPlayer.setAfk(false);
-		
-		if (moverCustomPlayer.isAfk())
-			moverCustomPlayer.setAfk(false);
-		
-		if (player.isFlying())
-			return;
-		
-		if (player.getFallDistance() > 0)
-			return;
-		
-		if (e.getFrom().distance(e.getTo()) > 0.2)
-		{	
-			double add = 0.000015;
-			RankSystem.addPendingPoints(player, add);
-		}
-	}
-	
-	// Triggered when a hanging entity is removed by an entity
-	@EventHandler
-	public void hangEvent(HangingBreakByEntityEvent e) 
-	{
-		// If remover wasn't a player, skip
-		if (e.getRemover().getType() != EntityType.PLAYER)
-			return;
-		
-		// Get player in CustomPlayer form
-		CustomPlayer player = CustomPlayer.get(((Player) e.getRemover()).getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		// If player has permission
-		if (!player.getPlayer().hasPermission(Permissions.changePerm))
-		{
-			// Otherwise, canscel and send a msg that they are not allowed
-			e.setCancelled(true);
-			player.getPlayer().sendMessage(Permissions.getChangeError());
-			
-			return;
-		}
-		
-		if (!!player.isBuilding())
-		{
-			e.setCancelled(true);
-			return;
-		}
-	}
-	
-	// If Egg thrown, set hatching to false to prevent chickens from spawning
-	@EventHandler
-	public void eggThrown(PlayerEggThrowEvent e)
-	{
-		e.setHatching(false);
-	}
-	
-	// When player interacts
-	@EventHandler
-	public void onInteract(PlayerInteractEvent e) 
-	{
-		if (e.getAction() == Action.PHYSICAL)
-		{
-			if (e.getClickedBlock().getType() == Material.FARMLAND)
-				e.setCancelled(true);
-			
-			return;
-		}
-		
-		// Get player in CustomPlayer format
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-		{
-			e.setCancelled(true);
-			return;
-		}
-		
-		// Get Action
-		Action action = e.getAction();
-		// Get Item
-		ItemStack item = e.getItem();
-			
-		// If not left and right click on block, cancel it.
-		// This is to prevent players quickly moving their cursor out right
-		// when they left click on the fire to put it out.
-		if (action != Action.LEFT_CLICK_BLOCK && action != Action.RIGHT_CLICK_BLOCK)
-			e.setCancelled(true);
-		
-			// If clicked on fire
-			if (player.getPlayer().getTargetBlock((Set<Material>) null, 20).getType() == Material.FIRE)
-			{
-				// If player does not have permission, cancel and return
-				if (!player.getPlayer().hasPermission(Permissions.changePerm))
-				{
-					player.getPlayer().sendMessage(Permissions.getChangeError());
-					
-					e.setCancelled(true);
-				}
-				
-				return;
-			}
-		
-		// If right clicked on block
-		if (action == Action.RIGHT_CLICK_BLOCK)
-		{
-			// Get block
-			Block block = e.getClickedBlock();
-			// Get Material
-			Material material = block.getType();
-			
-			if (player.getPlayer().hasPermission(Permissions.changePerm))
-				if (player.isBuilding())
-					return;
-			
-			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || 
-					material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR || 
-					material == Material.DISPENSER || material == Material.DROPPER) {	
-				e.setCancelled(true);
-				return;
-			}
-			
-			if (material == Material.FLOWER_POT || material.name().startsWith("POTTED"))
-			{
-				player.getPlayer().sendMessage(Permissions.getChangeError());
-				e.setCancelled(true);
-				return;
-			}
-			
-			if (material.name().endsWith("SHULKER_BOX"))
-			{
-				e.setCancelled(true);
-				return;
-			}
-			
-			// If Enderchest
-			if (block.getType() == Material.ENDER_CHEST)
-			{
-				// Allow open if player has permission
-				if (player.getPlayer().hasPermission(Permissions.changePerm))
-					return;
-				
-				if (player.isBuilding())
-					return;
-				
-				// Other wise, cancel it
-				e.setCancelled(true);
-				player.getPlayer().sendMessage(Permissions.useError);
-				return;
-			}
-		}
-		
-		if (item == null)
-			return;
-		
-		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
-		{
-			if (item.getType() == Material.INK_SAC)
-			{
-				ItemMeta meta = item.getItemMeta();
-				if (meta.hasCustomModelData())
-				{
-					CustomItem cs = CustomItem.getCustomItem(meta.getCustomModelData());
-					
-					if (cs == null)
-						return;
-					
-					if (cs.isEquipable())
-					{
-						player.getPlayer().getInventory().setHelmet(item);
-						item.setAmount(0);
-					}
-				}
-			}
-		}
-		
-		// Checks if Item could have an ID
-		if (item.getItemMeta().hasCustomModelData())
-		{
-			// If ID is 1 (IPlay Phone)
-			if (item.getType() == Material.INK_SAC && !player.hasActiveGui())
-			{
-				// And if the item is an ink sac, open IPlay
-				CustomItem customItem = CustomItem.getCustomItem(item.getItemMeta().getCustomModelData());
-				
-				if (customItem == null)
-					return;
-				
-				if (customItem.getType() == ItemType.PHONE) {	
-					e.setCancelled(true);
-					CustomGUI gui = new PhoneGui(player);
-					gui.open();
-					//PhoneGui.open(player);
-					return;
-				}
-				
-				if (item.getItemMeta().getCustomModelData() == 56)
-				{
-					e.setCancelled(true);
-					CurrencyClass.displayBalance(player);
-					return;
-				}
-			}
-			
-			if (item.getType() == Material.STICK)
-			{
-				InventoryManagement.openBagInventory(player, item.getItemMeta().getCustomModelData());
-			}
-		}
-	}
-	
-	@EventHandler
-	public void onLeave(PlayerQuitEvent e) 
-	{	
-		// Get CustomPlayer
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
-		
-		// If player in CustomPlayer doesn't exist
-		// This could happen when a player joins and CustomPlayer is still trying to be created
-		// but is still waiting for information like from a SQL database
-		if (player == null) {
-			e.setQuitMessage(null);
-			return;
-		}
-		
-		// Get Message
-		String message = leaveMessage;
-		
-		// If message doesn't exist
-		if (message == null)
-			return;
-		
-		// If message is empty
-		if (message == "")
-		{
-			e.setQuitMessage(null);
-			return;
-		}
-		
-		// format message
-		message = MessageFormat.format(player, message);
-		
-		// Format colours
-		message = ChatColor.translateAlternateColorCodes('&', message);
-		
-		// Show quit message
-		e.setQuitMessage(message);
-		
-		// Unop the player (To sync with the permissions)
-		if (player.getPlayer().isOp())
-			player.getPlayer().setOp(false);
-		
-		PrivateMessage.playerLeft(player.getUniqueId());
-		player.prepareDestroy();
-	}
-	
-	@EventHandler
-	public void switchWorld(PlayerChangedWorldEvent e)
-	{
-		CustomPlayer player = CustomPlayer.get(e.getPlayer().getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null)
-			return;
-		
-		World previousWorld = e.getFrom();
-		World world = player.getPlayer().getWorld();
-		
-		// Save inventory
-		InventoryManagement.saveInventory(player, previousWorld);
-		
-		// Create new world player entry if none in teleported world
-		if (SQLManager.isEnabled())
-			if (!SQLManager.containsWorldPlayer(player.getUniqueId(), world.getName()))
-			SQLManager.createWorldPlayer(player.getUniqueId(), world.getName());
-		
-		// switch out of build mode
-		if (player.isBuilding())
-			player.setBuilding(false);
-		
-		if (player.isInvisible())
-			player.setInvisible(false, true);
-		
-		// Load inventory
-		InventoryManagement.loadInventory(player, world);
-		
-		// Reload permissions
-		Permissions.setUp(player);
-		
-	}
-	
-	@EventHandler
-	public void onCommand(PlayerCommandPreprocessEvent e) 
-	{
-		CommandPreprocess.commands(e);
-	}
-	
-	@EventHandler
-	public void explosion(ExplosionPrimeEvent e) 
-	{
-		
-		if (explosionEnabled == false) 
-		{
-			e.setCancelled(true);
-			Bukkit.getLogger().info(e.getEntity().getName() +" tried to blow up");
-		}
-	}
-	
-	@EventHandler
-	public void entityDamage(EntityDamageEvent e) 
-	{
-		if (e.getEntityType() == EntityType.PLAYER) 
-		{
-			Player player = (Player) e.getEntity();
-			
-			if (!damageAllowed)
-			{
-				e.setCancelled(true);
-				return;
-			}
-			
-			if (player != null)
-				if (e.getCause() == DamageCause.FALL && !fallDamage)
-					e.setCancelled(true);
-		
-			
-			return;
-		}
-		
-		if (e.getEntity() instanceof CustomPetMob)
-		{
-			e.setCancelled(true);
-		}
-	}
-	
-	@EventHandler
-	public void leavesDecay(LeavesDecayEvent e) 
-	{
-		if (leavesDecayEnabled == false) {
-			e.setCancelled(true);
-		}
-		
-	}
-	
-	@EventHandler
-	public void playerChat(AsyncPlayerChatEvent e) 
-	{
-		// Sending it over to the AsyncPlayerChat Class
-		AsyncPlayerChat.function(e);
-	}
-	
-	// When player swap item in offhand
-	@EventHandler
-	public void playerSwap(PlayerSwapHandItemsEvent e)
-	{
-		
-		// Get Player
-		Player player = e.getPlayer();
-		
-		// Get Item
-		ItemStack item = e.getOffHandItem();
-		
-		if (item == null)
-			return;
-		
-		// Get more info about Item
-		ItemMeta meta = item.getItemMeta();
-		
-		if (meta == null)
-			return;
-		
-		// If has ID
-		if (meta.hasCustomModelData())
-		{
-			// Get ID
-			int id = meta.getCustomModelData();
-			
-			// Get Custom Item
-			CustomItem ci = CustomItem.getCustomItem(id);
-			
-			// If it isn't a custom item, ignore
-			if (ci == null)
-				return;
-			
-			// If item is a hat or the phone, prevent
-			if (ci.getType() == ItemType.HAT || id == 1)
-				e.setCancelled(true);
-			
-			// If it is FPBank card
-			if (item.getType() == Material.INK_SAC || id == 56)
-				e.setCancelled(true);
-			
-			return;
-		}
-	}
-	
 	@EventHandler
 	public void inventoryClose(InventoryCloseEvent e)
 	{
 		GUIManager.inventoryClosed(e);
-	}
-	
-	@EventHandler
-	public void editBook(PlayerEditBookEvent e)
-	{
-		// Get info about book
-		BookMeta meta = e.getNewBookMeta();
-		
-		// If has ID, resume
-		if (!meta.hasCustomModelData())
-			return;
-		
-		// If ID matches BugReporter book, resume
-		if (meta.getCustomModelData() != BugReporter.id)
-			return;
-		
-		// Report the bug/feature
-		BugReporter.complete(e.getPlayer(), meta);
-		
-		// Get Player
-		Player player = e.getPlayer();
-		// Get player's Inventory
-		PlayerInventory inventory = player.getInventory();
-		
-		// Get Item where their book is (Guessing being held)
-		ItemStack item;
-		item = inventory.getItemInMainHand();
-		
-		// If doesn't exist, try get their off-hand item
-		if (item == null)
-		{
-			item = inventory.getItemInOffHand();
-			
-			if (item == null)
-				return;
-			
-		}
-		
-		// Resume if item has ItemMeta
-		if (!item.hasItemMeta())
-			return;
-		
-		// Get info about item
-		ItemMeta meta2 = item.getItemMeta();
-		
-		// If item doesn't have ID
-		if (!meta2.hasCustomModelData())
-			return;
-		
-		// Get ID from item
-		int id = meta2.getCustomModelData();
-		
-		// If ID matches the BugReporter book, resume
-		if (id != BugReporter.id)
-			return;
-		
-		// Remove Report book from Inventory
-		item.setAmount(-1);
-		e.setCancelled(true);
-	}
-	
-	@EventHandler
-	public static void preLogin (AsyncPlayerPreLoginEvent e)
-	{	
-		UUID uuid = e.getUniqueId();
-		
-		if (SQLManager.isEnabled())
-		if (!SQLManager.containsModerationPlayer(e.getUniqueId()))
-			SQLManager.createModerationPlayer(e.getUniqueId());
-		
-		boolean isBanned = Moderation.isBanned(uuid);
-		
-		if (isBanned) {
-			String reason = Moderation.getBanReason(uuid);
-			Date date = Moderation.getBanDate(uuid);
-			
-			if (reason == null)
-				
-				e.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString()));
-				//e.disallow(Result.KICK_BANNED, "You have been banned Due date: "+date.toString());
-			else
-				e.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s\n  Reason: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString(), reason));
-				//e.disallow(Result.KICK_BANNED, "You have been banned Due date: "+date.toString() + "\nReason: "+reason);
-			return;
-		}
-	}
-	
-	@EventHandler
-	public static void onDeath(EntityDeathEvent e)
-	{
-		e.getEntity();
-		e.getDrops().clear();
-	}
-	
-	// Player Respawned
-	@EventHandler
-	public static void respawn(PlayerRespawnEvent e)
-	{
-		e.setRespawnLocation(spawnLocation);
 	}
 	
 	// Variable Functions
@@ -1083,21 +396,13 @@ public class Main extends JavaPlugin implements Listener
 		// Set diffculty to peaceful
 		world.setDifficulty(Difficulty.PEACEFUL);
 		
-		// Get how the message should look when a player joins. Leaving the text empty means no message
 		joinMessage = yamlConfig.getConfigurationSection("Global Settings").getString("Join Message");
-		// Get how the message should look when a player leaves. Leaving the text empty means no message
 		leaveMessage = yamlConfig.getConfigurationSection("Global Settings").getString("Leave Message");
-		// Get if players are allowed to drop items.
 		allowDrop = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Allow Item Drops");
-		// Get if Explosions are enabled in this server
 		explosionEnabled = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Explosion Enabled");
-		// Get if leaves can Decay in this server
 		leavesDecayEnabled = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Leaves Decay");
-		// Get if ice can melt in this server
 		iceMelts = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Ice Melts");
-		// Get if damage is enabled in this server
 		damageAllowed = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Allow Damage");
-		// Get if fall damage is enabled in this server
 		fallDamage = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Fall Damage");
 		
 		try {
@@ -1165,7 +470,7 @@ public class Main extends JavaPlugin implements Listener
 			return;
 		}
 		
-		// Register commands!
+		// Register commands
 		map.register("openkomodo", new ResourceCommand("resource", "Reload or download resourcepack maunally", "/resource", new ArrayList<String>(0)));
 		map.register("openkomodo", new PetCommand());
 		map.register("openkomodo", new OutfitTemplateCommand("outfit", "Dress up for school!", "/outfit", new ArrayList<String>(0)));
@@ -1174,6 +479,7 @@ public class Main extends JavaPlugin implements Listener
 		ArrayList<String> msgAtlas = new ArrayList<String>(1);
 		msgAtlas.add("msg");
 		msgAtlas.add("whisper");
+		msgAtlas.add("tell");
 		map.register("openkomodo", new MsgCommand("message", "Send someone a message!", "/msg (Player) (Message)", msgAtlas));
 		
 		map.register("openkomodo", new SitCommand("sit", "Take a seat", "/sit", new ArrayList<String>(0)));

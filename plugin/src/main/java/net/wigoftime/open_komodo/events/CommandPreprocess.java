@@ -1,4 +1,4 @@
-package net.wigoftime.open_komodo;
+package net.wigoftime.open_komodo.events;
 
 import java.util.Iterator;
 
@@ -8,7 +8,11 @@ import org.bukkit.craftbukkit.v1_16_R1.entity.CraftPlayer;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Pose;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.plugin.EventExecutor;
 
 import com.comphenix.protocol.PacketType.Protocol;
 import com.mojang.authlib.GameProfile;
@@ -24,23 +28,25 @@ import net.minecraft.server.v1_16_R1.WorldServer;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-abstract public class CommandPreprocess 
-{
-	
-	public static void commands(PlayerCommandPreprocessEvent e) {	
+public class CommandPreprocess implements EventExecutor {
+
+	@Override
+	public void execute(Listener listener, Event event) throws EventException {
+		PlayerCommandPreprocessEvent commandEvent = (PlayerCommandPreprocessEvent) event;
+		
 		// Get Player
-		Player player = e.getPlayer();
+		Player player = commandEvent.getPlayer();
 		
 		CustomPlayer playerCustomPlayer = CustomPlayer.get(player.getUniqueId());
 		if (playerCustomPlayer == null) {
-			e.setCancelled(true);
+			commandEvent.setCancelled(true);
 			return;
 		}
 		
 		playerCustomPlayer.setAfk(false);
 		
 		// The command arguments, first string is the actual command
-		String[] args = e.getMessage().split(" ");
+		String[] args = commandEvent.getMessage().split(" ");
 		
 		// Get the command
 		String command = args[0];
@@ -49,7 +55,7 @@ abstract public class CommandPreprocess
 		{
 			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&bHelp:&3\nFor info about ranks, type in /rank help\nFor info about points, type in /money help\n"
 					+ "/msg (Player) (message) to message someone!\n/tpa (player) to send a teleport request!\n/home help for setting homes!"));
-			e.setCancelled(true);
+			commandEvent.setCancelled(true);
 			return;
 		}
 	}
