@@ -1,9 +1,0 @@
-What's new!
-v0.11
-
-Added Features:
- * Added a changelog
- * Added a /sit command
- * Do /report to get given a report book to sign to report. Book titles are the title of the issue
-
-Fixed bugs:
