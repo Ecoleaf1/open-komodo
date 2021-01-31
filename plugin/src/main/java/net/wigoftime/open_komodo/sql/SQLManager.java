@@ -229,10 +229,7 @@ abstract public class SQLManager {
 		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCardType.GET, Arrays.asList(player.getUniqueId().toString().replaceAll("-", ""))).execute().get(0);
 		if (nicknameRaw.length() == 0) return null;
 		BaseComponent[] nickname;
-		
-		if (player.hasPermission(Permissions.moreColorNickPerm)) nickname = NickName.translateRGBColorCodes('#', '&', nicknameRaw);
-		else if (player.hasPermission(Permissions.colorNickPerm)) nickname = NickName.translateRGBColorCodes('&', '\u0000', nicknameRaw);
-		else nickname = NickName.translateRGBColorCodes('\u0000', '\u0000', nicknameRaw);
+		nickname = NickName.translateRGBColorCodes('#', '&', nicknameRaw);
 		
 		return nickname;
 	}

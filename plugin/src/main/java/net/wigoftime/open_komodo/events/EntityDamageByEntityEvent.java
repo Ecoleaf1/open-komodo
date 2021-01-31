@@ -14,20 +14,24 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class EntityDamageByEntityEvent implements EventExecutor {
 
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
-		org.bukkit.event.entity.EntityDamageByEntityEvent entityDamageEvent = (org.bukkit.event.entity.EntityDamageByEntityEvent) event;
+		if (!(event instanceof org.bukkit.event.entity.EntityDamageByEntityEvent))
+			return;
 		
-		if (entityDamageEvent.getDamager().getType() != EntityType.PLAYER) return;
+		org.bukkit.event.entity.EntityDamageByEntityEvent entityDamgedByEvent = (org.bukkit.event.entity.EntityDamageByEntityEvent) event;
 		
-		Player damager = (Player) entityDamageEvent.getDamager();
+		if (entityDamgedByEvent.getDamager().getType() != EntityType.PLAYER) return;
+		
+		Player damager = (Player) entityDamgedByEvent.getDamager();
 		
 		if (!damager.hasPermission(Permissions.hurtPerm)) {
-			entityDamageEvent.setCancelled(true);
+			entityDamgedByEvent.setCancelled(true);
 			damager.sendMessage(Permissions.getHurtError());
 			
 			return;
@@ -38,12 +42,12 @@ public class EntityDamageByEntityEvent implements EventExecutor {
 		// To prevent errors from occurring, players who has not loaded in
 		// can not proceed.
 		if (damagerCustom == null) {
-			entityDamageEvent.setCancelled(true);
+			entityDamgedByEvent.setCancelled(true);
 			return;
 		}
 		
 		if (!damagerCustom.isBuilding()) {
-			entityDamageEvent.setCancelled(true);
+			entityDamgedByEvent.setCancelled(true);
 			return;
 		}
 	}

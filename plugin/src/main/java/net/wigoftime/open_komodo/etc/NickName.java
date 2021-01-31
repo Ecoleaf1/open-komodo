@@ -48,8 +48,8 @@ abstract public class NickName
 		BaseComponent[] customName;
 		
 		if (playerCustom.getPlayer().hasPermission(Permissions.moreColorNickPerm)) customName = translateRGBColorCodes('#', '&', name);
-		else if (playerCustom.getPlayer().hasPermission(Permissions.colorNickPerm)) customName = translateRGBColorCodes('\u0000', '&', name);
-		else customName = translateRGBColorCodes('\u0000', '\u0000', name);
+		else if (playerCustom.getPlayer().hasPermission(Permissions.colorNickPerm)) customName = translateRGBColorCodes(' ', '&', name);
+		else customName = translateRGBColorCodes(' ', ' ', name);
 		
 		if (customName == null) playerCustom.setCustomName(null, null);
 		else playerCustom.setCustomName(customName, name);
@@ -65,6 +65,7 @@ abstract public class NickName
 	}
 	
 	public static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
+		
 		StringBuilder hexStringBuilder = new StringBuilder();
 		boolean awaitingBukkitColorFormat = false;
 		
@@ -73,7 +74,7 @@ abstract public class NickName
 		ChatColor indexColor = ChatColor.DARK_GRAY;
 		boolean endOfHexCode = false;
 		for (char charIndex : textToTranslate.toCharArray()) {
-			if (hexStringBuilder.length() > 0) {
+			if (hexStringBuilder.toString().length() > 0) {
 				if (hexStringBuilder.toString().length() > 6) {
 					text.setColor(indexColor);
 					builder.append(text);
@@ -96,7 +97,7 @@ abstract public class NickName
 			}
 			endOfHexCode = false;
 			
-			if (charIndex == colorChar) {
+			if (charIndex == colorChar && colorChar != ' ') {
 				hexStringBuilder.append(colorChar);
 				continue;
 			}
@@ -134,7 +135,7 @@ abstract public class NickName
 				continue;
 			}
 			
-			if (charIndex == bukkitColorChar) {
+			if (charIndex == bukkitColorChar && bukkitColorChar != ' ') {
 				awaitingBukkitColorFormat = true;
 				continue;
 			}
