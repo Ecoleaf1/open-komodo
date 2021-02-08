@@ -172,7 +172,7 @@ public class NormalMessage
 		sendToDiscord(senderCustomPlayer.getPlayer(), message);
 	}
 	
-	private static void sendToDiscord(Player player, String message) {
+	public static void sendToDiscord(Player player, String message) {
 		if (Main.getDiscordSRV() == null)
 			return;
 		

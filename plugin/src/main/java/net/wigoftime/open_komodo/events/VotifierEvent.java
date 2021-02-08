@@ -10,6 +10,7 @@ import org.bukkit.plugin.EventExecutor;
 
 import com.vexsoftware.votifier.model.Vote;
 
+import net.wigoftime.open_komodo.chat.NormalMessage;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
@@ -30,6 +31,7 @@ public class VotifierEvent implements EventExecutor {
 		String votedMsg = String.format("%s%s has voted for the server on %s and earned additional points!", ChatColor.GOLD, vote.getUsername(), vote.getServiceName());
 		for (Player onlinePlayer : Bukkit.getOnlinePlayers())
 			onlinePlayer.sendMessage(votedMsg);
+		NormalMessage.sendToDiscord(playerCustomPlayer.getPlayer(), votedMsg);
 		
 		int amount;
 		if (playerCustomPlayer.getRank() != null)
