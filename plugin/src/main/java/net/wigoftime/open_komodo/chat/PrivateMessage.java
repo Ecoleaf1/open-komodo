@@ -63,6 +63,8 @@ abstract public class PrivateMessage
 			lastReply.put(player.getUniqueId(), receiver.getUniqueId());
 			lastReply.put(receiver.getUniqueId(), player.getUniqueId());
 		}
+		
+		sendAllMonitoringPlayers(senderCustomPlayer, sentMessage, receiverCustomPlayer);
 	}
 	
 	public static void playerLeft(UUID uuid)
@@ -87,12 +89,12 @@ abstract public class PrivateMessage
 		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers())
 			if (playerIndex.isMonitoring())
 			if (messenger != playerIndex && receiver != playerIndex)
-				sendMonitorMessage(messenger, message, receiver);
+				sendMonitorMessage(messenger, receiver, message, receiver);
 	}
 	
-	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {
-		monitorPlayer.getPlayer().sendMessage(String.format("%s[Private] %s%s%s: %s%s", 
-				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), 
+	private static void sendMonitorMessage(CustomPlayer messenger, CustomPlayer receiver, String message, CustomPlayer monitorPlayer) {
+		monitorPlayer.getPlayer().sendMessage(String.format("%s[Private] %s%s (to %s)%s: %s%s", 
+				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), receiver.getPlayer().getDisplayName(),
 				ChatColor.RESET, ChatColor.GRAY, message));
 		
 		return;
