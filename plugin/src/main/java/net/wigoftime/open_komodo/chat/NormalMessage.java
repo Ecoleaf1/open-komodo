@@ -159,7 +159,9 @@ public class NormalMessage
 		}
 		}
 		
-		TextComponent messageComponent = new TextComponent(": "+ChatColor.GRAY+message);
+		if (message.contains("! ")) message = message.replaceFirst("! ", "");
+		else message = message.replaceFirst("!", "");
+		TextComponent messageComponent = new TextComponent(": "+ChatColor.GOLD + ChatColor.BOLD + "! " + ChatColor.GRAY + message);
 		componentList.add(messageComponent);
 		
 		for (Player p : Bukkit.getOnlinePlayers())
