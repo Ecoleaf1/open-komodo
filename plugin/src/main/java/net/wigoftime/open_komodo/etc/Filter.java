@@ -211,14 +211,11 @@ public abstract class Filter
 			if (!word.endsWith(suffix))
 				continue;
 			
-			
-			//char[] cutOutSuffixCharArray = new char[word.length() - suffix.length()];
-			//word.getChars(0, cutOutSuffixLength, cutOutSuffixCharArray, 0);
-			//String cutOutSuffixText = String.copyValueOf(cutOutSuffixCharArray);
-			
 			StringBuilder removeSuffixStringBuilder = new StringBuilder();
 			for (int index = 0; index < word.length() - suffix.length(); index++)
 				removeSuffixStringBuilder.append(word.charAt(index));
+			
+			if (removeSuffixStringBuilder.length() < 1) continue;
 			
 			if (whitelistWords.contains(removeSuffixStringBuilder.toString().toLowerCase()))
 				return true;
@@ -228,6 +225,8 @@ public abstract class Filter
 					continue;
 				
 				int cutOutPrefixIndex = prefix.length();
+				
+				PrintConsole.test("Maths: " + removeSuffixStringBuilder.length() + " - " + cutOutPrefixIndex + " = " + (removeSuffixStringBuilder.length() - cutOutPrefixIndex));
 				char[] cutOutPrefixCharArray = new char[removeSuffixStringBuilder.length() - cutOutPrefixIndex];
 				
 				word.getChars(cutOutPrefixIndex, removeSuffixStringBuilder.length(), cutOutPrefixCharArray, 0);
