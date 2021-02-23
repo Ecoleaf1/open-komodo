@@ -11,9 +11,9 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public abstract class CustomGUI 
 {
-	final CustomPlayer opener;
+	protected final CustomPlayer opener;
 	private final Permission requiredPermission;
-	final Inventory gui;
+	protected final Inventory gui;
 	
 	public CustomGUI(CustomPlayer openerCustomPlayer, Permission requiredPermission, Inventory gui) {
 		opener = openerCustomPlayer;

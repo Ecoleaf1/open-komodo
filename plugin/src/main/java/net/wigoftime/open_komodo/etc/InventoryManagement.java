@@ -34,6 +34,8 @@ abstract public class InventoryManagement
 	// Save inventory under a world uuid.
 	public static void saveInventory(CustomPlayer player,  World world)
 	{
+		PrintConsole.test("Saving inventory..");
+		
 		if (player.isBuilding())
 			return;
 		
@@ -48,7 +50,8 @@ abstract public class InventoryManagement
 			SQLManager.setInventory(player.getUniqueId(), world.getName(), items);
 		else
 			WorldInventoryConfig.setInventory(player.getPlayer(), world, items);
-		//WorldInventoryConfig.setInventory(player.getPlayer(), world, items);
+		
+		PrintConsole.test("Saved Inventory");
 	}
 	
 	// Load a world inventory

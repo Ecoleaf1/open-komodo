@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
@@ -108,10 +109,13 @@ abstract public class GUIManager {
 		if (item.getType() == ItemType.PHONE) clickEvent.setCancelled(true);
 	}
 	
-	public static void inventoryClosed(InventoryCloseEvent closeEvent) {	
+	 public static void inventoryClosed(InventoryCloseEvent closeEvent) {	
+		 PrintConsole.test("1");
 		CustomPlayer customPlayer = CustomPlayer.get(closeEvent.getPlayer().getUniqueId());
 		if (customPlayer == null)
 			return;
+		
+		PrintConsole.test("2");
 		
 		if (customPlayer.getActiveGui() != null) {
 			customPlayer.getActiveGui().closed();

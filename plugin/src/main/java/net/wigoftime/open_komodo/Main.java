@@ -79,6 +79,7 @@ import net.wigoftime.open_komodo.chat.PrivateMessage;
 import net.wigoftime.open_komodo.commands.BanCommand;
 import net.wigoftime.open_komodo.commands.BuildModeCommand;
 import net.wigoftime.open_komodo.commands.CheckBalanceCommand;
+import net.wigoftime.open_komodo.commands.ConnectFourCommand;
 import net.wigoftime.open_komodo.commands.CreditsCommand;
 import net.wigoftime.open_komodo.commands.DelHomeCommand;
 import net.wigoftime.open_komodo.commands.DisplayXPCommand;
@@ -210,11 +211,12 @@ public class Main extends JavaPlugin implements Listener
 	public void onEnable() {
 		PrintConsole.print("Enabled");
 		
-		// Register the Events with this class, with this plugin
-		Bukkit.getPluginManager().registerEvents(this, this);
 		
-		Listener listener = new Listener() {};
+		Listener listener = this;
 		protocolManager = ProtocolLibrary.getProtocolManager();
+		
+		// Register the Events with this class, with this plugin
+		Bukkit.getPluginManager().registerEvents(listener, this);
 		
 		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerJoin(), this);
 		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), this);
@@ -241,7 +243,7 @@ public class Main extends JavaPlugin implements Listener
 		Bukkit.getPluginManager().registerEvent(PlayerRespawnEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerRespawn(), this);
 		Bukkit.getPluginManager().registerEvent(PlayerCommandPreprocessEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.CommandPreprocess(), this);
 		Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.AsyncPlayerChat(), this);
-		
+		Bukkit.getPluginManager().registerEvent(InventoryCloseEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.InventoryClose(), this);
 		
 		if (Bukkit.getPluginManager().getPlugin("Votifier") == null)
 			PrintConsole.print("NuVotifier isn't detected, vote rewards disabled.");
@@ -300,12 +302,6 @@ public class Main extends JavaPlugin implements Listener
 	@EventHandler 
 	public void inventoryClick(InventoryClickEvent clickEvent) {	
 		GUIManager.invItemClicked(clickEvent);
-	}
-	
-	@EventHandler
-	public void inventoryClose(InventoryCloseEvent e)
-	{
-		GUIManager.inventoryClosed(e);
 	}
 	
 	/* Variable Functions */
@@ -543,5 +539,7 @@ public class Main extends JavaPlugin implements Listener
 		
 		// Register the nickname command
 		map.register("openkomodo", new ReplyCommand("reply", "Reply to a player", "/reply (message)", replyAtlas));
+		
+		map.register("openkomodo-games", new ConnectFourCommand("connect4", "Play connect four!", "usage: /connectfour help", Arrays.asList("connectfour", "c4")));
 	}
 }
