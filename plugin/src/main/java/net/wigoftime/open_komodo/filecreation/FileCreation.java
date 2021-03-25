@@ -61,7 +61,7 @@ abstract public class FileCreation
 			if (!directory.exists())
 				directory.mkdirs();
 			
-			file = PropShop.shopPage;
+			file = new File(Main.dataFolderPath+"/gui/propshop/default.yml");
 			break;
 		case RANK:
 			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Ranks.yml");

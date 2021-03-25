@@ -216,7 +216,7 @@ public class PhoneGui extends CustomGUI {
 		
 		// If clicked on Props Icon
 		if (clickedItemID == props.getItemMeta().getCustomModelData()) {
-			CustomGUI gui = new PropShop(opener);
+			CustomGUI gui = new PropShop(opener, "default");
 			gui.open();
 			//PropShop.open(opener);
 			return;

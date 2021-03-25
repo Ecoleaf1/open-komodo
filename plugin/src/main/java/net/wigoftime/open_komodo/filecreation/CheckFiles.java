@@ -70,7 +70,6 @@ abstract public class CheckFiles
 		Filter.setup();
 		
 		FileCreation.create(ConfigType.PROPSHOP_DEFAULT);
-		PropShop.setup();
 		
 		PlayerConfig.setupFolder();
 		

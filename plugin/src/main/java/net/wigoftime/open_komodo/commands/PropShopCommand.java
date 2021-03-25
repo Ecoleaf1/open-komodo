@@ -22,13 +22,23 @@ public class PropShopCommand extends Command
 	public boolean execute(CommandSender sender, String command, String[] args) 
 	{
 		if (!(sender instanceof Player))
-			return false;
+			return true;
 		
 		// Get player in CustomPlayer
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
+		PropShop gui;
+		
+		if (args.length > 0) {
+			if (!PropShop.isValidPropShop(args[0]))
+				return true;
+			
+			gui = new PropShop(player, args[0]);
+		} else {
+			gui = new PropShop(player, "default");	
+		}
+		
 		// Open Prop Shop
-		PropShop gui = new PropShop(player);
 		gui.open();
 		return true;
 	}

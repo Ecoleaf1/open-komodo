@@ -1,6 +1,7 @@
 package net.wigoftime.open_komodo.gui;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -17,18 +18,20 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PropShop extends CustomGUI
 {
-	public static File shopPage = new File(Main.dataFolderPath+"/gui/propshop/default.yml");
 	public static final String title =  ChatColor.translateAlternateColorCodes('&', "&6&lProps");
-	public static List<Integer> idList;
+	private List<Integer> idList;
 	
-	public static void setup()
+	private void setup(String fileName)
 	{
+		File shopPage = new File(String.format("%s/gui/propshop/%s.yml",Main.dataFolderPath,fileName));
+		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(shopPage);
 		idList = config.getIntegerList("ID");
 	}
 	
-	public PropShop(CustomPlayer player) {
+	public PropShop(CustomPlayer player, String fileName) {
 		super(player, null, Bukkit.getServer().createInventory(null, 45, title));
+		setup(fileName);
 		
 		int slot = 0;
 		Iterator<Integer> iterator = idList.listIterator();
@@ -73,5 +76,10 @@ public class PropShop extends CustomGUI
 			gui = new BuyConfirm(opener, clickedCustomItem, Currency.COINS, clickedCustomItem.getPermission());
 		
 		gui.open();
+	}
+	
+	public static boolean isValidPropShop(String fileName) {
+		File shopPage = new File(String.format("%s/gui/propshop/%s.yml",Main.dataFolderPath,fileName));
+		return shopPage.exists();
 	}
 }
