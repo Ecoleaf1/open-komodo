@@ -38,10 +38,12 @@ Props:
    Saber:
       Display Name: "&bSaber"
       id: 11
+      Equipable: true
       Price (Points): 360
    Katana:
       Display Name: "&bKatana"
       id: 12
+      Equipable: true
       Price (Points): 360
    Golden Staff:
       Display Name: "&bGolden Staff"
@@ -74,6 +76,7 @@ Props:
    Tea Cup:
       Display Name: "&bTea Cup"
       id: 20
+      Equipable: true
       Price (Points): 360
    Wallet:
       Display Name: "&bWallet"
@@ -82,6 +85,7 @@ Props:
    Open Book:
       Display Name: "&bOpen Book"
       id: 22
+      Equipable: true
       Price (Points): 360
    Water Bottle:
       Display Name: "&bWater Bottle"
@@ -98,10 +102,12 @@ Props:
    Stuffed Bear:
       Display Name: "&bTeddy Bear"
       id: 26
+      Equipable: true
       Price (Points): 360
    Stuffed Bunny:
       Display Name: "&bBunny Plushie"
       id: 27
+      Equipable: true
       Price (Points): 360
    Handcuffs:
       Display Name: "&bHandcuffs"
@@ -114,6 +120,7 @@ Props:
    Boba Tea:
       Display Name: "&bBoba Tea"
       id: 55
+      Equipable: true
       Price (Points): 360
    Card:
       Display Name: "&bCard"
@@ -122,6 +129,7 @@ Props:
    Pie:
       Display Name: "&bPie"
       id: 57
+      Equipable: true
       Price (Points): 360
    Gun:
       Display Name: "&bGun"
@@ -130,6 +138,7 @@ Props:
    Sand Bucket:
       Display Name: "&bSand Bucket"
       id: 68
+      Equipable: true
       Price (Points): 360
    Coconut:
       Display Name: "&bCoconut"
@@ -146,6 +155,7 @@ Props:
    Camera:
       Display Name: "&bCamera"
       id: 72
+      Equipable: true
       Price (Points): 360
    Surf Board Green:
       Display Name: "&bSurf Board"
