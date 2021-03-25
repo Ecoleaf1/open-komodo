@@ -35,7 +35,7 @@ public class SettingsGui extends CustomGUI {
 	
 	private static ItemStack createDiscordChatToggle(CustomPlayer player) {
 		ItemStack onTpaRequests;
-		if (player.getSettings().isPlayerParticlesEnabled()) {
+		if (player.getSettings().isDiscordChatEnabled()) {
 			onTpaRequests = new ItemStack(Material.BOOK); {
 				ItemMeta meta = onTpaRequests.getItemMeta();
 				meta.setDisplayName("Discord Chat enabled");

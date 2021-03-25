@@ -163,6 +163,7 @@ abstract public class PlayerSettingsConfig {
 		config.set("Master Sounds",settings.isMasterSoundsOn());
 		config.set("Tpa Enabled",settings.isTpaEnabled());
 		config.set("Player Particles Enabled",settings.isPlayerParticlesEnabled());
+		config.set("Discord Chat",settings.isDiscordChatEnabled());
 		
 		try {
 			config.save(file);
