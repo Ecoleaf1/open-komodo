@@ -13,6 +13,7 @@ public class SettingsGui extends CustomGUI {
 	ItemStack onTpaRequests;
 	ItemStack displayTips;
 	ItemStack particleToggle;
+	ItemStack DiscordChatToggle;
 	
 	public SettingsGui(CustomPlayer opener) {
 		super(opener, null, Bukkit.createInventory(null, 9, "Settings"));
@@ -24,10 +25,31 @@ public class SettingsGui extends CustomGUI {
 		onTpaRequests = createTpaRequestButton(opener);
 		displayTips = createDisplayTips(opener);
 		particleToggle = createParticleToggle(opener);
+		DiscordChatToggle = createDiscordChatToggle(opener);
 		
 		gui.setItem(0, displayTips);
 		gui.setItem(1, onTpaRequests);
 		gui.setItem(2, particleToggle);
+		gui.setItem(3, DiscordChatToggle);
+	}
+	
+	private static ItemStack createDiscordChatToggle(CustomPlayer player) {
+		ItemStack onTpaRequests;
+		if (player.getSettings().isPlayerParticlesEnabled()) {
+			onTpaRequests = new ItemStack(Material.BOOK); {
+				ItemMeta meta = onTpaRequests.getItemMeta();
+				meta.setDisplayName("Discord Chat enabled");
+				onTpaRequests.setItemMeta(meta);
+			}
+		} else {
+			onTpaRequests = new ItemStack(Material.PAPER); {
+				ItemMeta meta = onTpaRequests.getItemMeta();
+				meta.setDisplayName("Discord Chat disabled");
+				onTpaRequests.setItemMeta(meta);
+			}
+		}
+		
+		return onTpaRequests;
 	}
 	
 	private static ItemStack createParticleToggle(CustomPlayer player) {
@@ -128,6 +150,18 @@ public class SettingsGui extends CustomGUI {
 			Main.particlesApi.togglePlayerParticleVisibility(opener.getPlayer(), false);
 			else
 			Main.particlesApi.togglePlayerParticleVisibility(opener.getPlayer(), true);
+			refresh();
+			return;
+		}
+		
+		if (clickedItem.equals(DiscordChatToggle)) {
+			boolean discordChatEnabled;
+			if (opener.getSettings().isDiscordChatEnabled())
+				discordChatEnabled = false;
+			else
+				discordChatEnabled = true;
+			
+			opener.getSettings().enableDiscordChat(discordChatEnabled);
 			refresh();
 			return;
 		}

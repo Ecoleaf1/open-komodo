@@ -111,7 +111,7 @@ public class NormalMessage
 		Bukkit.getLogger().info(String.format("%s: %s", senderCustomPlayer.getPlayer().getName(), message));
 		
 		// Send message to discord (If enabled)
-		sendToDiscord(senderCustomPlayer.getPlayer(), message);
+		sendToDiscord(senderCustomPlayer, message);
 	}
 	
 	public static void shout(Player sender, String message) {	
@@ -171,15 +171,18 @@ public class NormalMessage
 		Bukkit.getLogger().info(String.format("[shout] %s: %s", sender.getName(), message));
 		
 		// Send message to discord (If enabled)
-		sendToDiscord(senderCustomPlayer.getPlayer(), message);
+		sendToDiscord(senderCustomPlayer, message);
 	}
 	
-	public static void sendToDiscord(Player player, String message) {
+	public static void sendToDiscord(CustomPlayer playerCustomPlayer, String message) {
 		if (Main.getDiscordSRV() == null)
 			return;
 		
+		if (!playerCustomPlayer.getSettings().isDiscordChatEnabled())
+			return;
+		
 		// Send message to Discord
-		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(player, message, null, false);
+		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(playerCustomPlayer.getPlayer(), message, null, false);
 	}
 	
 	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {

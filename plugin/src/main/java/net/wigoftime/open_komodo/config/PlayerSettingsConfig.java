@@ -134,6 +134,15 @@ abstract public class PlayerSettingsConfig {
 			beenWritten = true;
 		}
 		
+		boolean isDiscordChatEnabled;
+		if (config.contains("Discord Chat"))
+			isDiscordChatEnabled = config.getBoolean("Discord Chat");
+		else {
+			config.set("Discord Chat", true);
+			isDiscordChatEnabled = true;
+			beenWritten = true;
+		}
+		
 		if (beenWritten)
 			try {
 				config.save(file);
@@ -141,7 +150,7 @@ abstract public class PlayerSettingsConfig {
 				exception.printStackTrace();
 			}
 		
-		return new Settings(uuid, currentPhone, activeTagDisplay, displayTip, masterSounds, tpaEnabled, playerParticlesEnabled);
+		return new Settings(uuid, currentPhone, activeTagDisplay, displayTip, masterSounds, tpaEnabled, playerParticlesEnabled, isDiscordChatEnabled);
 	}
 	
 	public static void setSettings(Settings settings, UUID uuid) {

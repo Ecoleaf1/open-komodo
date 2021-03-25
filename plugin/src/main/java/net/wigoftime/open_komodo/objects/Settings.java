@@ -13,9 +13,10 @@ public class Settings {
 	private boolean masterSounds;
 	private boolean tpaEnabled;
 	private boolean playerParticlesEnabled;
+	private boolean isDiscordChatEnabled;
 	
 	public Settings(UUID uuidOwner, CustomItem currentPhone, String activeTagDisplay, 
-			boolean displayTip, boolean masterSounds, boolean tpaEnabled, boolean playerParticlesEnabled) {
+			boolean displayTip, boolean masterSounds, boolean tpaEnabled, boolean playerParticlesEnabled, boolean isDiscordChatEnabled) {
 		this.uuidOwner = uuidOwner;
 		this.currentPhone = currentPhone;
 		this.activeTagDisplay = activeTagDisplay;
@@ -23,6 +24,7 @@ public class Settings {
 		this.masterSounds = masterSounds;
 		this.tpaEnabled = tpaEnabled;
 		this.playerParticlesEnabled = playerParticlesEnabled;
+		this.isDiscordChatEnabled = isDiscordChatEnabled;
 	}
 	
 	public CustomItem getPhone() {
@@ -77,5 +79,14 @@ public class Settings {
 	public void setTpa(boolean isOn) {
 		this.tpaEnabled = isOn;
 		PlayerSettingsConfig.setSettings(this, uuidOwner);
+	}
+	
+	public void enableDiscordChat(boolean enable) {
+		this.isDiscordChatEnabled = enable;
+		PlayerSettingsConfig.setSettings(this, uuidOwner);
+	}
+	
+	public boolean isDiscordChatEnabled() {
+		return isDiscordChatEnabled;
 	}
 }
