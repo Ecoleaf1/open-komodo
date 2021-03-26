@@ -209,7 +209,7 @@ public class PhoneGui extends CustomGUI {
 		
 		// If clicked on Hats Icon
 		if (clickedItemID == hats.getItemMeta().getCustomModelData()) {
-			HatMenu gui = new HatMenu(opener);
+			HatMenu gui = new HatMenu(opener, "default");
 			gui.open();
 			return;
 		}

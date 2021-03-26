@@ -57,11 +57,22 @@ abstract public class FileCreation
 		case PROPSHOP_DEFAULT:
 			is = Main.class.getClassLoader().getResourceAsStream("default_gui/propshop/default.yml");
 			
-			File directory = new File(Main.dataFolderPath+"/gui/propshop");
-			if (!directory.exists())
-				directory.mkdirs();
+			String s;
+			
+			File directoryOfPropShop = new File(Main.dataFolderPath+"/gui/propshop");
+			if (!directoryOfPropShop.exists())
+				directoryOfPropShop.mkdirs();
 			
 			file = new File(Main.dataFolderPath+"/gui/propshop/default.yml");
+			break;
+		case HATSHOP_DEFAULT:
+			is = Main.class.getClassLoader().getResourceAsStream("default_gui/hatshop/default.yml");
+			
+			File directoryOfHatMenu = new File(Main.dataFolderPath+"/gui/hatshop");
+			if (!directoryOfHatMenu.exists())
+				directoryOfHatMenu.mkdirs();
+			
+			file = new File(Main.dataFolderPath+"/gui/hatshop/default.yml");
 			break;
 		case RANK:
 			is = Main.class.getClassLoader().getResourceAsStream("default_configs/Ranks.yml");

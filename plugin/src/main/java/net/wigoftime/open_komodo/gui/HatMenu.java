@@ -1,16 +1,21 @@
 package net.wigoftime.open_komodo.gui;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
@@ -20,8 +25,12 @@ public class HatMenu extends CustomGUI {
 	public static final String title = "Hat-menu";
 	private static final int pageCap = 27;
 	private static byte page = 1;
-	public HatMenu(CustomPlayer customPlayer) {
+	private final String fileName;
+	
+	public HatMenu(CustomPlayer customPlayer, String fileName) {
 		super(customPlayer, null, Bukkit.createInventory(null, 36, title));
+		
+		this.fileName = fileName;
 		
 		gui.setContents(createButtons(page, (byte) gui.getSize()));
 		
@@ -44,11 +53,19 @@ public class HatMenu extends CustomGUI {
 		gui.setContents(guicontent);
 	}
 	
-	private static List<ItemStack> listHats(CustomPlayer customPlayer, byte page, byte sizeOfGui) {
+	private List<ItemStack> listHats(CustomPlayer customPlayer, byte page, byte sizeOfGui) {
 		List<ItemStack> contentList = new ArrayList<ItemStack>(pageCap);
 		
-		// List of hats on the server
-		List<CustomItem> hatList = CustomItem.getItems(ItemType.HAT);
+		File shopPage = new File(String.format("%s/gui/hatshop/%s.yml",Main.dataFolderPath,fileName));
+		
+		YamlConfiguration config = YamlConfiguration.loadConfiguration(shopPage);
+		List<Integer> idList = config.getIntegerList("ID");
+		Iterator<Integer> idIterator = idList.iterator();
+		
+		// List of hats in the hat menu
+		List<CustomItem> hatList = new LinkedList<CustomItem>();
+		while (idIterator.hasNext())
+			hatList.add(CustomItem.getCustomItem(idIterator.next()));
 		
 		// Index of hatList
 		int hatListIndex = 0;
@@ -296,4 +313,8 @@ public class HatMenu extends CustomGUI {
 		return;
 	}
 	
+	public static boolean isValid(String fileName) {
+		File shopPage = new File(String.format("%s/gui/hatshop/%s.yml",Main.dataFolderPath,fileName));
+		return shopPage.exists();
+	}
 }

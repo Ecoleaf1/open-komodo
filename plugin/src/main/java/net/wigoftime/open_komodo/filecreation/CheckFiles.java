@@ -70,6 +70,7 @@ abstract public class CheckFiles
 		Filter.setup();
 		
 		FileCreation.create(ConfigType.PROPSHOP_DEFAULT);
+		FileCreation.create(ConfigType.HATSHOP_DEFAULT);
 		
 		PlayerConfig.setupFolder();
 		

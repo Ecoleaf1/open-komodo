@@ -27,8 +27,18 @@ public class HatsCommand extends Command
 		
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
-		// Give player the hats gui
-		HatMenu gui = new HatMenu(player);
+		HatMenu gui;
+		
+		if (args.length > 0) {
+			if (!HatMenu.isValid(args[0]))
+				return true;
+			
+			gui = new HatMenu(player, args[0]);
+		} else {
+			gui = new HatMenu(player, "default");	
+		}
+		
+		// Open HatMenu
 		gui.open();
 		return false;
 	}
