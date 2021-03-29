@@ -87,8 +87,19 @@ public class CustomItem
 				meta.setDisplayName(name);
 			}
 			
+			meta.setCustomModelData(id);
+			
 			item.setItemMeta(meta);
-		} else if (type == ItemType.TAG)
+		}  else if (type == ItemType.FURNITURE) {
+			item = new ItemStack(Material.INK_SAC);
+			ItemMeta meta = item.getItemMeta();
+			if (name != null) {
+				meta.setDisplayName(name);
+			}
+			
+			item.setItemMeta(meta);
+		}
+		else if (type == ItemType.TAG)
 			item = new ItemStack(Material.NAME_TAG);
 		else
 		{

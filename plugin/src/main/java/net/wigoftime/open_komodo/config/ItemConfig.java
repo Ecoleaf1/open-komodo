@@ -234,6 +234,23 @@ public abstract class ItemConfig
 				}
 			}
 		}
+		
+		if (yc.contains("Furniture")) {
+			// Get section "Furniture"
+			ConfigurationSection c5s1 = yc.getConfigurationSection("Furniture");
+			
+			// Loop through value inside Tags
+			for (String c5ss1: c5s1.getKeys(false)) {
+				// Get Item Section
+				ConfigurationSection c2s2 = c5s1.getConfigurationSection(c5ss1);
+				
+				String name = c2s2.getString("Name");
+				int id = c2s2.getInt("ID");
+				
+				// Create Item
+				CustomItem.create(id, name, null, 0, false, null, ItemType.FURNITURE);
+			}
+		}
 	}
 		
 	

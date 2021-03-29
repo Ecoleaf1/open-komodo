@@ -13,6 +13,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
+import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
@@ -49,6 +50,11 @@ public class EntityDamageByEntityEvent implements EventExecutor {
 		if (!damagerCustom.isBuilding()) {
 			entityDamgedByEvent.setCancelled(true);
 			return;
+		}
+		
+		if (FurnitureMangement.isValid(entityDamgedByEvent.getEntity())) {
+			entityDamgedByEvent.setCancelled(true);
+			FurnitureMangement.deleteFurniture(entityDamgedByEvent);
 		}
 	}
 

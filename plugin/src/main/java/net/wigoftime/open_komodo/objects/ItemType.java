@@ -4,5 +4,6 @@ public enum ItemType {
 	PROP,
 	HAT,
 	TAG,
-	PHONE
+	PHONE,
+	FURNITURE
 }

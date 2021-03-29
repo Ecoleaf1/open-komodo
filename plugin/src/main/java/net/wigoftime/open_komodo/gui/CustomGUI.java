@@ -15,10 +15,21 @@ public abstract class CustomGUI
 	private final Permission requiredPermission;
 	protected final Inventory gui;
 	
+	private final byte roleplayModeOnly;
+	
 	public CustomGUI(CustomPlayer openerCustomPlayer, Permission requiredPermission, Inventory gui) {
 		opener = openerCustomPlayer;
 		this.requiredPermission = requiredPermission;
 		this.gui = gui;
+		this.roleplayModeOnly = 1;
+	}
+	
+	public CustomGUI(CustomPlayer openerCustomPlayer, Permission requiredPermission, Inventory gui, byte roleplayModeOnly) {
+		opener = openerCustomPlayer;
+		this.requiredPermission = requiredPermission;
+		this.gui = gui;
+		
+		this.roleplayModeOnly = roleplayModeOnly;
 	}
 	
 	public void open() {
@@ -41,6 +52,12 @@ public abstract class CustomGUI
 						+ "build mode to access this. "
 						+ "(/build)");
 				break;
+			case IN_ROLEPLAYMODE:
+				player.sendMessage(ChatColor.DARK_RED + 
+						"Sorry, but you need to get into "
+						+ "build mode to access this. "
+						+ "(/build)");
+				break;
 			case NOT_PERMITTED:
 				player.sendMessage(ChatColor.DARK_RED + 
 						"Sorry, but you don't have "
@@ -51,7 +68,12 @@ public abstract class CustomGUI
 	
 	boolean canAccess() {
 		if (opener.isBuilding()) {
-			sendErrorMessage(opener.getPlayer(), ErrorType.IN_BUILDMODE);
+			if (roleplayModeOnly == 1) {
+				sendErrorMessage(opener.getPlayer(), ErrorType.IN_BUILDMODE);
+				return false;
+			}
+		} else if (roleplayModeOnly == 0) {
+			sendErrorMessage(opener.getPlayer(), ErrorType.IN_ROLEPLAYMODE);
 			return false;
 		}
 		

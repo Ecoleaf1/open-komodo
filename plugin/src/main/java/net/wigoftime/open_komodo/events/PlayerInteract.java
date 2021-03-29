@@ -14,6 +14,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -80,10 +81,6 @@ public class PlayerInteract implements EventExecutor {
 			// Get Material
 			Material material = block.getType();
 			
-			if (player.getPlayer().hasPermission(Permissions.changePerm))
-				if (player.isBuilding())
-					return;
-			
 			if (material == Material.OAK_TRAPDOOR || material == Material.SPRUCE_TRAPDOOR || material == Material.JUNGLE_TRAPDOOR || 
 					material == Material.DARK_OAK_TRAPDOOR || material == Material.BIRCH_TRAPDOOR || material == Material.ACACIA_TRAPDOOR || 
 					material == Material.DISPENSER || material == Material.DROPPER) {	
@@ -123,6 +120,17 @@ public class PlayerInteract implements EventExecutor {
 		
 		if (item == null)
 			return;
+		
+		if (action == Action.RIGHT_CLICK_BLOCK)
+		if (player.getPlayer().hasPermission(Permissions.changePerm))
+			if (player.isBuilding()) {
+				if (FurnitureMangement.isValid(item)) {
+					playerInteractEvent.setCancelled(true);
+					FurnitureMangement.createFurniture(item, playerInteractEvent);
+				}
+				
+				return;
+			}
 		
 		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK)
 		{

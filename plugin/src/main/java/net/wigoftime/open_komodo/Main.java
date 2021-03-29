@@ -58,6 +58,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
@@ -104,6 +105,7 @@ import net.wigoftime.open_komodo.commands.OutfitTemplateCommand;
 import net.wigoftime.open_komodo.commands.PayCommand;
 import net.wigoftime.open_komodo.commands.PetCommand;
 import net.wigoftime.open_komodo.commands.PetsMenuCommand;
+import net.wigoftime.open_komodo.commands.PlaceCommand;
 import net.wigoftime.open_komodo.commands.PromoteCommand;
 import net.wigoftime.open_komodo.commands.PropShopCommand;
 import net.wigoftime.open_komodo.commands.RankCommand;
@@ -515,6 +517,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_mod", new InvisibleCommand("invisible", "Turn yourself invisible", "/invisible", Arrays.asList("invis", "vanish")));
 		
 		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>(0)));
+		map.register("openkomodo_builder", new PlaceCommand("place", "Place furniture", "/place [id]", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>(0)));
 		

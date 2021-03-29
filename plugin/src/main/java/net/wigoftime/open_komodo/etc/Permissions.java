@@ -75,6 +75,8 @@ abstract public class Permissions
 	public static final Permission petAccess = new Permission("openkomodo.pets.access");
 	public static final Permission particleAccess = new Permission("openkomodo.particles.access");
 	
+	public static final Permission accessFurnitureMenu = new Permission("openkomodo.builder.furnituremenu");
+	
 	public static String getPlaceError() 
 	{
 		return placePermError;

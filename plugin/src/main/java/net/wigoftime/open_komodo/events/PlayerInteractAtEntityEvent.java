@@ -6,6 +6,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
+import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.gui.PetControl;
@@ -45,6 +46,10 @@ public class PlayerInteractAtEntityEvent implements EventExecutor {
 			return;
 		}
 		
+		if (FurnitureMangement.isValid(playerInteractedAt.getRightClicked())) {
+			playerInteractedAt.setCancelled(true);
+			FurnitureMangement.rotateFurniture(playerInteractedAt);
+		}
 	}
 
 }
