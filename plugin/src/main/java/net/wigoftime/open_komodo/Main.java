@@ -141,6 +141,7 @@ import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.events.AsyncPlayerChat;
 import net.wigoftime.open_komodo.events.CommandPreprocess;
+import net.wigoftime.open_komodo.events.DiscordSRVListener;
 import net.wigoftime.open_komodo.events.VotifierEvent;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -202,6 +203,8 @@ public class Main extends JavaPlugin implements Listener
 	private static JavaPlugin plugin;
 	public static PlayerParticlesAPI particlesApi;
 	
+	private DiscordSRVListener discordListener = null;
+	
 	// When plugin starts loading
 	@Override
 	public void onLoad() {
@@ -255,6 +258,9 @@ public class Main extends JavaPlugin implements Listener
 		}
 		Bukkit.getPluginManager().registerEvent(BlockFertilizeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFertilize(), this);
 		
+		discordListener = new DiscordSRVListener();
+		DiscordSRV.api.subscribe(discordListener);
+		
 		// Set where the plugin's datafolder is
 		dataFolderPath = getDataFolder().getAbsolutePath();
 		
@@ -297,6 +303,8 @@ public class Main extends JavaPlugin implements Listener
 		
 		SQLManager.disconnectSQL();
 		PetsManager.serverShuttingDown();
+		
+		if (discordListener != null) DiscordSRV.api.subscribe(discordListener);
 	}
 	
 	/* Events Below */

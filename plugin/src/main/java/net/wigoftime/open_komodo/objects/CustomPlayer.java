@@ -21,6 +21,10 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.mojang.authlib.yggdrasil.response.User;
+
+import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.util.DiscordUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -84,6 +88,8 @@ public class CustomPlayer
 	private boolean isMonitoring;
 	
 	private TpRequest tpRequest;
+	
+	public final github.scarsz.discordsrv.dependencies.jda.api.entities.User discordUser;
 	
 	private static Map<UUID, CustomPlayer> mapOfPlayers = new HashMap<UUID, CustomPlayer>();
 	
@@ -218,6 +224,13 @@ public class CustomPlayer
 		
 		buildMode = false;
 		lastActiveTime = Instant.now();
+		
+		final String discordTag;
+		if (Main.getDiscordSRV() == null) discordTag = null;
+		else discordTag = DiscordSRV.getPlugin().getAccountLinkManager().getDiscordId(uuid);
+		
+		if (discordTag == null) discordUser = null;
+		else discordUser = DiscordUtil.getUserById(discordTag);
 		
 		if (!player.isOnline())
 			return;
