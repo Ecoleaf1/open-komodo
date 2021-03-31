@@ -56,7 +56,6 @@ public class PlayerInteract implements EventExecutor {
 			} else if (isItemEquipable(itemStack)) {
 				ItemStack currentHat = playerCustom.getPlayer().getInventory().getHelmet();
 				
-				
 				if (currentHat != null) {
 					CustomItem currentHatCustom = CustomItem.getCustomItem(currentHat.getItemMeta().getCustomModelData());
 					if (currentHatCustom != null)
@@ -64,9 +63,9 @@ public class PlayerInteract implements EventExecutor {
 					
 					currentHat.setAmount(0);
 				}
+				
 				playerCustom.getPlayer().getInventory().setHelmet(new ItemStack(itemStack));
 				itemStack.setAmount(0);
-				
 			}
 			
 			event.setCancelled(true);
@@ -83,7 +82,6 @@ public class PlayerInteract implements EventExecutor {
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
 		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
-		
 		CustomPlayer player = CustomPlayer.get(playerInteractEvent.getPlayer().getUniqueId());
 		
 		// If customplayer format of it doesn't exist, cancel
