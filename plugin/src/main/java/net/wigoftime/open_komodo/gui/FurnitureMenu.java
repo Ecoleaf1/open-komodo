@@ -49,4 +49,9 @@ public class FurnitureMenu extends CustomItemMenuType1 {
 		
 		return items;
 	}
+	
+	public static boolean isValidFurnitureMenu(String fileName) {
+		File shopPage = new File(String.format("%s/gui/furniture-menu/%s.yml",Main.dataFolderPath,fileName));
+		return shopPage.exists();
+	}
 }

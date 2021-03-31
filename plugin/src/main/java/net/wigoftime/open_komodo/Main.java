@@ -105,7 +105,7 @@ import net.wigoftime.open_komodo.commands.OutfitTemplateCommand;
 import net.wigoftime.open_komodo.commands.PayCommand;
 import net.wigoftime.open_komodo.commands.PetCommand;
 import net.wigoftime.open_komodo.commands.PetsMenuCommand;
-import net.wigoftime.open_komodo.commands.PlaceCommand;
+import net.wigoftime.open_komodo.commands.FurnitureCommand;
 import net.wigoftime.open_komodo.commands.PromoteCommand;
 import net.wigoftime.open_komodo.commands.PropShopCommand;
 import net.wigoftime.open_komodo.commands.RankCommand;
@@ -146,6 +146,7 @@ import net.wigoftime.open_komodo.events.EventListener;
 import net.wigoftime.open_komodo.events.VotifierEvent;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
+import net.wigoftime.open_komodo.gui.FurnitureMenu;
 import net.wigoftime.open_komodo.gui.GUIManager;
 import net.wigoftime.open_komodo.gui.PetControl;
 import net.wigoftime.open_komodo.gui.PetsGui;
@@ -470,7 +471,9 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_mod", new InvisibleCommand("invisible", "Turn yourself invisible", "/invisible", Arrays.asList("invis", "vanish")));
 		
 		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>(0)));
-		map.register("openkomodo_builder", new PlaceCommand("place", "Place furniture", "/place [id]", new ArrayList<String>(0)));
+		
+		if (FurnitureMenu.isValidFurnitureMenu("default"))
+		map.register("openkomodo_builder", new FurnitureCommand("furniture", "Place furniture", "/place [id]", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>(0)));
 		

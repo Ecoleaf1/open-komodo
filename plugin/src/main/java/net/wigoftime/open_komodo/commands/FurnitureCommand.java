@@ -19,9 +19,9 @@ import net.wigoftime.open_komodo.gui.FurnitureMenu;
 import net.wigoftime.open_komodo.gui.HatMenu;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class PlaceCommand extends Command {
+public class FurnitureCommand extends Command {
 
-	public PlaceCommand(String name, String description, String usageMessage, List<String> aliases) {
+	public FurnitureCommand(String name, String description, String usageMessage, List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 
