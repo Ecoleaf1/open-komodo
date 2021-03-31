@@ -25,17 +25,34 @@ import net.wigoftime.open_komodo.objects.ItemType;
 
 public class PlayerInteract implements EventExecutor {
 	
-	private static boolean isItemEquipable(ItemStack itemStack) {
-		if (itemStack.getType() != Material.INK_SAC) return false;
+	@Override
+	public void execute(Listener listener, Event event) throws EventException {
+		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
+		CustomPlayer player = CustomPlayer.get(playerInteractEvent.getPlayer().getUniqueId());
 		
-		ItemMeta meta = itemStack.getItemMeta();
+		// If customplayer format of it doesn't exist, cancel
+		// Can happen if the server hasn't loaded all of the player information when they join
+		if (player == null) {
+			playerInteractEvent.setCancelled(true);
+			return;
+		}
 		
-		if (!(meta.hasCustomModelData())) return false;
+		if (player.getPlayer().getTargetBlock((Set<Material>) null, 20).getType() == Material.FIRE) {
+			if (!player.getPlayer().hasPermission(Permissions.changePerm)){
+				player.getPlayer().sendMessage(Permissions.getChangeError());
+				playerInteractEvent.setCancelled(true);
+			}
+			
+			return;
+		}
 		
-		CustomItem itemCustom = CustomItem.getCustomItem(meta.getCustomModelData());
-		if (itemCustom == null) return false;
-				
-		return itemCustom.isEquipable() ? true : false;
+		ItemStack item = playerInteractEvent.getItem();
+		actionManage(playerInteractEvent, player, item);
+		if (item == null) return;
+		
+		
+		// If special item, call function and return
+		if (specialItem(item, player, playerInteractEvent)) return;
 	}
 	
 	private static boolean specialItem(ItemStack itemStack, CustomPlayer playerCustom, PlayerInteractEvent event) {
@@ -79,36 +96,6 @@ public class PlayerInteract implements EventExecutor {
 		}
 	}
 	
-	@Override
-	public void execute(Listener listener, Event event) throws EventException {
-		PlayerInteractEvent playerInteractEvent = (PlayerInteractEvent) event;
-		CustomPlayer player = CustomPlayer.get(playerInteractEvent.getPlayer().getUniqueId());
-		
-		// If customplayer format of it doesn't exist, cancel
-		// Can happen if the server hasn't loaded all of the player information when they join
-		if (player == null) {
-			playerInteractEvent.setCancelled(true);
-			return;
-		}
-		
-		if (player.getPlayer().getTargetBlock((Set<Material>) null, 20).getType() == Material.FIRE) {
-			if (!player.getPlayer().hasPermission(Permissions.changePerm)){
-				player.getPlayer().sendMessage(Permissions.getChangeError());
-				playerInteractEvent.setCancelled(true);
-			}
-			
-			return;
-		}
-		
-		ItemStack item = playerInteractEvent.getItem();
-		actionManage(playerInteractEvent, player, item);
-		if (item == null) return;
-		
-		
-		// If special item, call function and return
-		if (specialItem(item, player, playerInteractEvent)) return;
-	}
-	
 	private void actionManage(PlayerInteractEvent event, CustomPlayer playerCustom, ItemStack itemStack) {
 		switch(event.getAction()) {
 		case PHYSICAL:
@@ -117,6 +104,9 @@ public class PlayerInteract implements EventExecutor {
 		case RIGHT_CLICK_BLOCK:
 			Block clickedBlock = event.getClickedBlock();
 			
+			
+			if (playerCustom.getPlayer().hasPermission(Permissions.changePerm))
+			if (!playerCustom.isBuilding()) {
 			if (clickedBlock.getType() == Material.OAK_TRAPDOOR || clickedBlock.getType() == Material.SPRUCE_TRAPDOOR || clickedBlock.getType() == Material.JUNGLE_TRAPDOOR || 
 					clickedBlock.getType() == Material.DARK_OAK_TRAPDOOR || clickedBlock.getType() == Material.BIRCH_TRAPDOOR || clickedBlock.getType() == Material.ACACIA_TRAPDOOR || 
 					clickedBlock.getType() == Material.DISPENSER || clickedBlock.getType() == Material.DROPPER) {	
@@ -130,26 +120,32 @@ public class PlayerInteract implements EventExecutor {
 				event.setCancelled(true);
 				break;
 			} else if (clickedBlock.getType() == Material.ENDER_CHEST) {
-				if (playerCustom.getPlayer().hasPermission(Permissions.changePerm)) break;
-				if (playerCustom.isBuilding()) break;
-				
 				event.setCancelled(true);
 				playerCustom.getPlayer().sendMessage(Permissions.useError);
 				break;
 			}
-			
-			if (itemStack == null) break;
-			
-			if (playerCustom.getPlayer().hasPermission(Permissions.changePerm))
-				if (playerCustom.isBuilding()) {
-					if (FurnitureMangement.isValid(itemStack)) {
-						event.setCancelled(true);
-						FurnitureMangement.createFurniture(itemStack, event);
-					}
-					
-					break;
-				}
-			break;
+			} else {
+				if (itemStack == null) break; 
+				if (!FurnitureMangement.isValid(itemStack)) break;
+				
+				event.setCancelled(true);
+				FurnitureMangement.createFurniture(itemStack, event);
+			}
 		}
+		
+	}
+	
+	
+	private static boolean isItemEquipable(ItemStack itemStack) {
+		if (itemStack.getType() != Material.INK_SAC) return false;
+		
+		ItemMeta meta = itemStack.getItemMeta();
+		
+		if (!(meta.hasCustomModelData())) return false;
+		
+		CustomItem itemCustom = CustomItem.getCustomItem(meta.getCustomModelData());
+		if (itemCustom == null) return false;
+				
+		return itemCustom.isEquipable() ? true : false;
 	}
 }
