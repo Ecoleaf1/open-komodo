@@ -25,7 +25,6 @@ public class PlayerInteractAtEntityEvent implements EventExecutor {
 			return;
 		}
 		
-		
 		if (playerInteractedAt.getRightClicked() == PetsManager.getCreature(player.getPlayer())) {
 			playerInteractedAt.setCancelled(true);
 			PetControl gui = new PetControl(player);
@@ -33,12 +32,11 @@ public class PlayerInteractAtEntityEvent implements EventExecutor {
 			return;
 		}
 		
-		if (!player.getPlayer().hasPermission(Permissions.changePerm)) {
-			if (playerInteractedAt.getRightClicked().getType() == EntityType.ARMOR_STAND) {
-				playerInteractedAt.setCancelled(true);
-				playerInteractedAt.getPlayer().sendMessage(Permissions.getChangeError());
-				return;
-			}
+		if (!player.getPlayer().hasPermission(Permissions.changePerm))
+		if (playerInteractedAt.getRightClicked().getType() == EntityType.ARMOR_STAND) {
+			playerInteractedAt.setCancelled(true);
+			playerInteractedAt.getPlayer().sendMessage(Permissions.getChangeError());
+			return;
 		}
 		
 		if (!player.isBuilding()) {

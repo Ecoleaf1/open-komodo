@@ -30,7 +30,7 @@ public class BasicCrate extends CustomGUI {
 	public BasicCrate(CustomPlayer player, List<CustomParticle> items) {
 		super(player, Permissions.particleAccess, Bukkit.getServer().createInventory(null, 27, "Particles Loot Box"));
 		
-		if (!CurrencyClass.buy(opener, cost, Currency.COINS)) {
+		if (!CurrencyClass.takeOutFromBalance(opener, cost, Currency.COINS)) {
 			opener.getPlayer().closeInventory();
 			return;
 		}

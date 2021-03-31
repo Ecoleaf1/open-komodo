@@ -13,12 +13,10 @@ abstract public class CoinSalary {
 				for (CustomPlayer player : CustomPlayer.getOnlinePlayers()) {
 					Rank rank = player.getRank();
 					
-					if (rank == null)
-						return;
+					if (rank == null) return;
 					
 					int salery = rank.getSalery(Currency.COINS);
-					if (salery < 1)
-						return;
+					if (salery < 1) return;
 					
 					CurrencyClass.genPay(player, salery, Currency.COINS);
 				}

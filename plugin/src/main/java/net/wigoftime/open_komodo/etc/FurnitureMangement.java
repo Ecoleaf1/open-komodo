@@ -50,6 +50,6 @@ public class FurnitureMangement {
 		ItemStack itemInHand = ((ArmorStand)entity).getEquipment().getItemInMainHand();
 		
 		return itemInHand.getType() == Material.INK_SAC && itemInHand.getItemMeta().hasCustomModelData() ?
-				true : false;
+		true : false;
 	}
 }

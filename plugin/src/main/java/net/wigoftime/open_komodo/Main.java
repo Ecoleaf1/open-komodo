@@ -142,6 +142,7 @@ import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.events.AsyncPlayerChat;
 import net.wigoftime.open_komodo.events.CommandPreprocess;
 import net.wigoftime.open_komodo.events.DiscordSRVListener;
+import net.wigoftime.open_komodo.events.EventListener;
 import net.wigoftime.open_komodo.events.VotifierEvent;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -158,10 +159,11 @@ import net.wigoftime.open_komodo.world.BuilderWorld;
 
 public class Main extends JavaPlugin implements Listener 
 {
-
 	public static final String name = "Open Komodo";
 	private static Object discordSRV;
 	public static ProtocolManager protocolManager;
+	
+	private static EventListener eventListener = null;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
@@ -203,8 +205,6 @@ public class Main extends JavaPlugin implements Listener
 	private static JavaPlugin plugin;
 	public static PlayerParticlesAPI particlesApi;
 	
-	private DiscordSRVListener discordListener = null;
-	
 	// When plugin starts loading
 	@Override
 	public void onLoad() {
@@ -215,65 +215,18 @@ public class Main extends JavaPlugin implements Listener
 	@Override
 	public void onEnable() {
 		PrintConsole.print("Enabled");
-		
-		
-		Listener listener = this;
+		plugin = this;
 		protocolManager = ProtocolLibrary.getProtocolManager();
 		
-		// Register the Events with this class, with this plugin
-		Bukkit.getPluginManager().registerEvents(listener, this);
-		
-		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerJoin(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), this);
-		Bukkit.getPluginManager().registerEvent(BlockPlaceEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockPlace(), this);
-		Bukkit.getPluginManager().registerEvent(BlockBreakEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockBreak(), this);
-		Bukkit.getPluginManager().registerEvent(VehicleDestroyEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.VehicleDestroyEvent(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerInteractAtEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteractAtEntityEvent(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerInteractEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteractEntityEvent(), this);
-		Bukkit.getPluginManager().registerEvent(EntityDamageByEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDamageByEntityEvent(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerMoveEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerMove(), this);
-		Bukkit.getPluginManager().registerEvent(EntityDismountEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDismount(), this);
-		Bukkit.getPluginManager().registerEvent(BlockFadeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFade(), this);
-		Bukkit.getPluginManager().registerEvent(HangingBreakByEntityEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.HangingBreakByEntity(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerEggThrowEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerEggThrow(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerInteractEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerInteract(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerChangedWorldEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerChangedWorld(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerQuitEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerQuit(), this);
-		Bukkit.getPluginManager().registerEvent(ExplosionPrimeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.ExplosionPrime(), this);
-		Bukkit.getPluginManager().registerEvent(EntityDamageEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDamage(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerSwapHandItemsEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerSwapHandItems(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerEditBookEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerEditBook(), this);
-		Bukkit.getPluginManager().registerEvent(AsyncPlayerPreLoginEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.AsyncPlayerPreLogin(), this);
-		Bukkit.getPluginManager().registerEvent(EntityDeathEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.EntityDeath(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerRespawnEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerRespawn(), this);
-		Bukkit.getPluginManager().registerEvent(PlayerCommandPreprocessEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.CommandPreprocess(), this);
-		Bukkit.getPluginManager().registerEvent(AsyncPlayerChatEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.AsyncPlayerChat(), this);
-		Bukkit.getPluginManager().registerEvent(InventoryCloseEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.InventoryClose(), this);
-		
-		if (Bukkit.getPluginManager().getPlugin("Votifier") == null)
-			PrintConsole.print("NuVotifier isn't detected, vote rewards disabled.");
-		else {
-			Bukkit.getPluginManager().registerEvent(com.vexsoftware.votifier.model.VotifierEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.VotifierEvent(), this);
-			PrintConsole.print("NuVotifier detected, vote rewards enabled.");
-		}
-		Bukkit.getPluginManager().registerEvent(BlockFertilizeEvent.class, listener, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFertilize(), this);
-		
-		discordListener = new DiscordSRVListener();
-		DiscordSRV.api.subscribe(discordListener);
-		
-		// Set where the plugin's datafolder is
+		eventListener = new EventListener(this);
+		Bukkit.getPluginManager().registerEvents(eventListener, this);
 		dataFolderPath = getDataFolder().getAbsolutePath();
-		
-		plugin = this;
 		particlesApi = PlayerParticlesAPI.getInstance();
 		
-		// Setup Builderworld
 		BuilderWorld.setup();
 		
-		// Check the files (Like if config exists) and setup the files so it is ready to be used.
+		// Check the files (Example if config exists) and setup the files so it is ready to be used.
 		CheckFiles.checkFiles();
-		
-		// Setup Global Variables
 		setupGlobalVariables();
 		
 		// Loop through each player (in customPlayer format) and set up the permissions and display the rank prefix.
@@ -299,23 +252,15 @@ public class Main extends JavaPlugin implements Listener
 	@Override
 	public void onDisable() {
 		for (CustomPlayer p : CustomPlayer.getOnlinePlayers())
-			InventoryManagement.saveInventory(p, p.getPlayer().getWorld());
+		InventoryManagement.saveInventory(p, p.getPlayer().getWorld());
 		
 		SQLManager.disconnectSQL();
 		PetsManager.serverShuttingDown();
 		
-		if (discordListener != null) DiscordSRV.api.subscribe(discordListener);
-	}
-	
-	/* Events Below */
-	
-	@EventHandler 
-	public void inventoryClick(InventoryClickEvent clickEvent) {	
-		GUIManager.invItemClicked(clickEvent);
+		eventListener.disable();
 	}
 	
 	/* Variable Functions */
-	
 	
 	public static Object getDiscordSRV() {
 		return discordSRV;

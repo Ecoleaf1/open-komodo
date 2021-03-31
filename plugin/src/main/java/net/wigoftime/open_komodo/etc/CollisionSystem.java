@@ -7,8 +7,6 @@ import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
 
 public class CollisionSystem {
-	private static final boolean enabled = false;
-	
 	private static Team getDefaultTeam(Scoreboard scoreboard) {
 		Team team = scoreboard.getTeam("Default");
 		if (team == null) {
@@ -20,9 +18,7 @@ public class CollisionSystem {
 	}
 	
 	public static void playerJoins(Player player) {
-		
 		Scoreboard scoreboard = player.getScoreboard();
-		
 		getDefaultTeam(scoreboard).addEntry(player.getDisplayName());
 	}
 }
