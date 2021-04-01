@@ -70,7 +70,7 @@ public abstract class Filter
 		}
 	}
 	
-	private static String[] bannedWords = {"fuck" ,"f@ck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast", "boner", "rape", "r*pe", "stripper"};
+	private static String[] bannedWords = {"fuck" ,"f@ck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast", "boner", "rape", "r*pe", "stripper", "slut"};
 	
 	private static Set<String> prefixes = new HashSet<String>();
 	private static Set<String> suffixes = new HashSet<String>();

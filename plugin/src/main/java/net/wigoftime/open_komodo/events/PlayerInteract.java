@@ -48,11 +48,6 @@ public class PlayerInteract implements EventExecutor {
 		
 		ItemStack item = playerInteractEvent.getItem();
 		actionManage(playerInteractEvent, player, item);
-		if (item == null) return;
-		
-		
-		// If special item, call function and return
-		if (specialItem(item, player, playerInteractEvent)) return;
 	}
 	
 	private static boolean specialItem(ItemStack itemStack, CustomPlayer playerCustom, PlayerInteractEvent event) {
@@ -75,14 +70,15 @@ public class PlayerInteract implements EventExecutor {
 				
 				if (currentHat != null) {
 					CustomItem currentHatCustom = CustomItem.getCustomItem(currentHat.getItemMeta().getCustomModelData());
-					if (currentHatCustom != null)
-					if (currentHatCustom.getType() == ItemType.PROP) playerCustom.getPlayer().getInventory().addItem(new ItemStack(currentHat));
-					
-					currentHat.setAmount(0);
+					if (currentHatCustom != null) {
+						ItemStack oldHat = new ItemStack(currentHat);
+						playerCustom.getPlayer().getInventory().setHelmet(null);
+						if (currentHatCustom.getType() == ItemType.PROP) playerCustom.getPlayer().getInventory().addItem(oldHat);
+					}
 				}
 				
 				playerCustom.getPlayer().getInventory().setHelmet(new ItemStack(itemStack));
-				itemStack.setAmount(0);
+				playerCustom.getPlayer().getInventory().setItem(playerCustom.getPlayer().getInventory().getHeldItemSlot(), null);
 			}
 			
 			event.setCancelled(true);
@@ -125,12 +121,23 @@ public class PlayerInteract implements EventExecutor {
 				break;
 			}
 			} else {
-				if (itemStack == null) break; 
 				if (!FurnitureMangement.isValid(itemStack)) break;
-				
-				event.setCancelled(true);
 				FurnitureMangement.createFurniture(itemStack, event);
+				event.setCancelled(true);
+				break;
 			}
+			
+			if (itemStack == null) break; 
+			
+			if (specialItem(itemStack, playerCustom, event)) {
+				event.setCancelled(true);
+				break;
+			}
+			break;
+		case RIGHT_CLICK_AIR:
+			if (!specialItem(itemStack, playerCustom, event)) break;
+			event.setCancelled(true);
+			break;
 		}
 		
 	}

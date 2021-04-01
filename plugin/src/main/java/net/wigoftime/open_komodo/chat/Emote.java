@@ -1,11 +1,13 @@
 package net.wigoftime.open_komodo.chat;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.command.Command;
@@ -15,7 +17,14 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import net.wigoftime.open_komodo.config.EmoteConfig;
+import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class Emote {
 	
@@ -48,9 +57,8 @@ public class Emote {
 	
 	// Static functions
 	
-	public static void send(String emote, Player sender, Player directPlayer) 
+	public static void send(String emote, CustomPlayer sender, CustomPlayer directPlayer) 
 	{
-		String message;
 		Emote emoteObj;
 		
 		if (emote.startsWith("/"))
@@ -61,62 +69,75 @@ public class Emote {
 		if (emoteObj == null)
 			return;
 		
-		if (directPlayer == null) 
-		{
+		BaseComponent[] message;
+		
+		if (directPlayer == null) {
 			
-			if (emoteObj.getSoloMsg() == null) 
-			{
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', errorOnlyDirect));
-				return;
-			}
-				
-			message = emoteObj.getSoloMsg();
-			
-			message = ChatColor.translateAlternateColorCodes('&', message);
-			
-			if (sender.getCustomName() != null)
-				message = message.replace("$S", sender.getCustomName());
-			else
-				message = message.replace("$S", sender.getDisplayName());
-			
-			message = message.replace("$N", sender.getDisplayName());
-		} 
-		else 
-		{
-			
-			if (emoteObj.getOtherMsg() == null) 
-			{
-				sender.sendMessage(ChatColor.translateAlternateColorCodes('&', errorOnlySolo));
+			if (emoteObj.getSoloMsg() == null) {
+				sender.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', errorOnlyDirect));
 				return;
 			}
 			
-			message = emoteObj.getOtherMsg();
+			message = getFormattedMessage(emoteObj.getSoloMsg(), false, sender, null);
+		} else {
 			
-			message = ChatColor.translateAlternateColorCodes('&', message);
+			if (emoteObj.getOtherMsg() == null) {
+				sender.getPlayer().sendMessage(ChatColor.translateAlternateColorCodes('&', errorOnlySolo));
+				return;
+			}
 			
-			if (sender.getCustomName() != null)
-				message = message.replace("$S", sender.getCustomName());
-			else
-				message = message.replace("$S", sender.getDisplayName());
-			
-			message = message.replace("$N", sender.getDisplayName());
-			
-			if (directPlayer.getCustomName() != null)
-				message = message.replace("$R", directPlayer.getCustomName());
-			else
-				message = message.replace("$R", directPlayer.getDisplayName());
-			
-			message = message.replace("$D", directPlayer.getDisplayName());
+			message = getFormattedMessage(emoteObj.msgOthers, true, sender, directPlayer);
 		}
 		
-		for(Player p : Bukkit.getOnlinePlayers()) 
-		{
-			p.sendMessage(message);
+		for(Player player : Bukkit.getOnlinePlayers()) {
+			player.spigot().sendMessage(message);
 		}
 		
 		// Play a sound to direct Player to notify about emote
 		if (directPlayer != null)
-			directPlayer.playSound(directPlayer.getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
+		directPlayer.getPlayer().playSound(directPlayer.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
+	}
+	
+	private static BaseComponent[] getFormattedMessage(String unformattedText, boolean isOtherMsg, CustomPlayer sender, CustomPlayer directPlayer) {
+		ComponentBuilder messageBuilder = new ComponentBuilder();
+		String previousChatColor = "";
+		String[] splitMessageString = unformattedText.split(" ");
+		
+		
+		if (isOtherMsg)
+		for (String index : splitMessageString) {
+			index = previousChatColor + ChatColor.translateAlternateColorCodes('&', index);
+			if (index.contains("$S"))
+				if (sender.getCustomName() == null) messageBuilder.append(sender.getPlayer().getDisplayName());
+				else messageBuilder.append(sender.getCustomName());
+			else if (index.contains("$N"))
+				messageBuilder.append(sender.getPlayer().getDisplayName());
+			else if (index.contains("$R"))
+				if (directPlayer.getCustomName() == null) messageBuilder.append(directPlayer.getPlayer().getDisplayName());
+				else messageBuilder.append(directPlayer.getCustomName());
+			else if (index.contains("$D"))
+				messageBuilder.append(directPlayer.getPlayer().getDisplayName()); 
+			else
+				messageBuilder.append(index);
+			
+			messageBuilder.append(" ");
+			previousChatColor = org.bukkit.ChatColor.getLastColors(index);
+		}
+		else
+			for (String index : splitMessageString) {
+				index = previousChatColor + ChatColor.translateAlternateColorCodes('&', index);
+				if (index.contains("$S"))
+					if (sender.getCustomName() == null) messageBuilder.append(sender.getPlayer().getDisplayName());
+					else messageBuilder.append(sender.getCustomName());
+				else if (index.contains("$N"))
+					messageBuilder.append(sender.getPlayer().getDisplayName());
+				else
+					messageBuilder.append(index);
+				
+				messageBuilder.append(" ");
+				previousChatColor = org.bukkit.ChatColor.getLastColors(index);
+			}
+		return messageBuilder.create();
 	}
 	
 	public static Emote getByName(String name) {
@@ -167,24 +188,34 @@ public class Emote {
 			// Register new command
 			map.register("emote", new Command(emote.command) 
 			{
-				public boolean execute(CommandSender sender, String command, String[] args) 
+				public boolean execute(CommandSender commandSender, String command, String[] args) 
 				{
-					if (!(sender instanceof Player))
+					if (!(commandSender instanceof Player))
 					{
-						sender.sendMessage("You need to be a player to use this command.");
+						commandSender.sendMessage("You need to be a player to use this command.");
 						return false;
 					}
+					
+					CustomPlayer senderCustom = CustomPlayer.get(((Player) commandSender).getUniqueId());
+					
+					if (senderCustom == null) return false;
 					
 					if (args.length > 0)
 					{
 						if (emote.msgOthers == null)
 						{
-							sender.sendMessage(emote.msgSolo);
+							commandSender.sendMessage(emote.msgSolo);
 							return false;
 						}
 						
+						CustomPlayer directCustom;
 						Player direct = Bukkit.getServer().getPlayer(args[0]);
-						Emote.send(emotestr, (Player) sender, direct);
+						if (direct == null) directCustom = null;
+						else directCustom = CustomPlayer.get(direct.getUniqueId());
+						
+						if (directCustom == null) return false;
+						
+						Emote.send(emotestr, senderCustom, directCustom);
 						return true;
 					}
 					
@@ -192,11 +223,11 @@ public class Emote {
 					{
 						if (emote.msgSolo == null)
 						{
-							sender.sendMessage(emote.msgOthers);
+							senderCustom.getPlayer().sendMessage(emote.msgOthers);
 							return false;
 						}
 						
-						Emote.send(emotestr, (Player) sender, null);
+						Emote.send(emotestr, senderCustom, null);
 						return true;
 					}
 					

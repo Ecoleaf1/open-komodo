@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class EmoteCommand extends Command
 {
@@ -30,6 +31,9 @@ public class EmoteCommand extends Command
 		
 		// Get player
 		Player player = (Player) sender;
+		
+		CustomPlayer playerCustom = CustomPlayer.get(player.getUniqueId());
+		if (playerCustom == null) return false;
 		
 		// If player didnt enter in emote
 		if (args.length < 1)
@@ -78,12 +82,14 @@ public class EmoteCommand extends Command
 			Player directPlayer = Bukkit.getPlayer(args[1]);
 			
 			// If player exists, send
-			if (directPlayer != null)
-				Emote.send(args[0].toLowerCase(), player, directPlayer);
+			if (directPlayer != null) {
+				CustomPlayer directCustom = CustomPlayer.get(directPlayer.getUniqueId());
+				if (directCustom != null) Emote.send(args[0].toLowerCase(), playerCustom, directCustom);
+			}
 		}
 		else
 			// If a solo emote
-			Emote.send(args[0], player, null);
+			Emote.send(args[0], playerCustom, null);
 		
 		return true;
 	}

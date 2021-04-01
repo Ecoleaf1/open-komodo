@@ -1,9 +1,25 @@
+DEFAULT:
+  ID: 0
+  Prefix: ''
+  XP Price: 15.0
+  Salery (Points): 15
+  Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
 VIP:
   ID: 1
   Prefix: '&e&lVIP&r&e &e'
   XP Price: 15.0
   Salery (Points): 30
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.home.limit.3
@@ -20,6 +36,11 @@ VIP+:
   XP Price: 100.0
   Salery (Points): 45
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.home.limit.5
@@ -68,6 +89,11 @@ MVP:
   Salery (Coins): 2
   XP Price: 250.0
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -142,6 +168,11 @@ MVP+:
   Salery (Coins): 5
   XP Price: 500.0
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -209,15 +240,18 @@ MVP+:
   - openkomodo.pets.trader_llama
   - openkomodo.pets.turtle
   - openkomodo.pets.wolf
+  - openkomodo.abilities.morecolornick
 MOD:
   ID: 200
   Prefix: '&e&lMOD&r&e &6'
   Salery (Points): 72
   Salery (Coins): 5
   Permissions:
-  - openkomodo.mod.mute
-  - openkomodo.mod.kick
-  - openkomodo.mod.ban
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -285,12 +319,45 @@ MOD:
   - openkomodo.pets.trader_llama
   - openkomodo.pets.turtle
   - openkomodo.pets.wolf
+  - openkomodo.abilities.morecolornick
+  - openkomodo.mod.teleport
+  - openkomodo.mod.mute
+  - openkomodo.mod.ban
+  - openkomodo.mod.kick
+  - openkomodo.mod.invisible
+  - openkomodo.mod.seeotherinvisible
+  - openkomodo.mod.chatmonitor
+  - openkomodo.abilities.morecolornick
+  Worlds:
+     BuilderWorld:
+        Permissions: 
+        - openkomodo.build.buildmode
+        - openkomodo.build.place
+        - openkomodo.build.break
+        - openkomodo.build.change
+        - openkomodo.build.hurt
+        - worldedit.history.undo.self
+        - worldedit.history.redo.self
+        - worldedit.navigation.ceiling
+        - worldedit.navigation.ascend
+        - worldedit.navigation.thru.command
+        - worldedit.navigation.jumpto.command
+        - worldedit.navigation.up
+        - worldedit.selection.*
+        - worldedit.region.*
+        - worldedit.clipboard.*
+
 BUILDER:
   ID: 201
   Prefix: '&e&lBUILDER&r &6'
   Salery (Points): 72
   Salery (Coins): 5
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -358,11 +425,13 @@ BUILDER:
   - openkomodo.pets.trader_llama
   - openkomodo.pets.turtle
   - openkomodo.pets.wolf
+  - openkomodo.abilities.morecolornick
   - openkomodo.build.buildmode
   - openkomodo.build.place
   - openkomodo.build.break
   - openkomodo.build.change
   - openkomodo.build.hurt
+  - openkomodo.teleport.builderworld
   - worldedit.history.undo.self
   - worldedit.history.redo.self
   - worldedit.navigation.ceiling
@@ -373,16 +442,22 @@ BUILDER:
   - worldedit.selection.*
   - worldedit.region.*
   - worldedit.clipboard.*
+  - imagemaps.*
   Worlds:
      BuilderWorld:
         Permissions: []
 
-DESIGNER:
-  ID: 202
-  Prefix: '&d&lDESIGNER &r&5'
+LESSERBUILDER:
+  ID: 203
+  Prefix: '&e&lBUILDER&r &6'
   Salery (Points): 72
   Salery (Coins): 5
   Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -450,9 +525,110 @@ DESIGNER:
   - openkomodo.pets.trader_llama
   - openkomodo.pets.turtle
   - openkomodo.pets.wolf
+  - openkomodo.abilities.morecolornick
+  - openkomodo.teleport.builderworld
+  Worlds:
+     BuilderWorld:
+        Permissions:
+          - openkomodo.build.buildmode
+          - openkomodo.build.place
+          - openkomodo.build.break
+          - openkomodo.build.change
+          - openkomodo.build.hurt
+          - worldedit.history.undo.self
+          - worldedit.history.redo.self
+          - worldedit.navigation.ceiling
+          - worldedit.navigation.ascend
+          - worldedit.navigation.thru.command
+          - worldedit.navigation.jumpto.command
+          - worldedit.navigation.up
+          - worldedit.selection.*
+          - worldedit.region.*
+          - worldedit.clipboard.*
+          - imagemaps.*
+  
+
+DESIGNER:
+  ID: 202
+  Prefix: '&d&lDESIGNER &r&5'
+  Salery (Points): 72
+  Salery (Coins): 5
+  Permissions:
+  - GSit.Sit
+  - GSit.SitCommand
+  - GSit.SitToggle
+  - GSit.Lay
+  - GSit.Crawl
+  - openkomodo.essentials.*
+  - openkomodo.abilities.colornick
+  - openkomodo.abilities.flight
+  - openkomodo.home.limit.20
+  - openkomodo.hats.ribbon
+  - openkomodo.hats.bowlerhat
+  - openkomodo.hats.backswardcap
+  - openkomodo.hats.chickenhat
+  - openkomodo.hats.cowboyhat
+  - openkomodo.hats.kingcrown
+  - openkomodo.hats.brownbearears
+  - openkomodo.hats.whitebunnyears
+  - openkomodo.hats.graybunnyears
+  - openkomodo.hats.brownbunnyears
+  - openkomodo.hats.blackbunnyears
+  - openkomodo.hats.orangecatears
+  - openkomodo.hats.whitecatears
+  - openkomodo.hats.graycatears
+  - openkomodo.hats.blackcatears
+  - openkomodo.hats.witchhat
+  - openkomodo.hats.tophatwithmustache
+  - openkomodo.hats.wolfears
+  - openkomodo.hats.wolfearsblack
+  - openkomodo.hats.wolfearsblackred
+  - openkomodo.hats.wolfearsblackpurple
+  - openkomodo.hats.wolfearspink
+  - openkomodo.hats.wolfearswhite
+  - openkomodo.hats.polarbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.blackbearears
+  - openkomodo.hats.pandabearears
+  - openkomodo.hats.foxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.articfoxears
+  - openkomodo.hats.batearedfoxears
+  - openkomodo.hats.fennecfoxears
+  - openkomodo.hats.snorkel
+  - openkomodo.hats.flower
+  - openkomodo.phones.black
+  - openkomodo.phones.yellow
+  - openkomodo.phones.orange
+  - openkomodo.phones.white
+  - openkomodo.pets.access
+  - openkomodo.particles.access
+  - openkomodo.pets.cat
+  - openkomodo.pets.chicken
+  - openkomodo.pets.cow
+  - openkomodo.pets.fox
+  - openkomodo.pets.husk
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.llama
+  - openkomodo.pets.mooshroom
+  - openkomodo.pets.mule
+  - openkomodo.pets.ocelot
+  - openkomodo.pets.panda
+  - openkomodo.pets.parrot
+  - openkomodo.pets.pig
+  - openkomodo.pets.polar_bear
+  - openkomodo.pets.rabbit
+  - openkomodo.pets.sheep
+  - openkomodo.pets.slime
+  - openkomodo.pets.trader_llama
+  - openkomodo.pets.turtle
+  - openkomodo.pets.wolf
+  - openkomodo.abilities.morecolornick
 MANAGER:
     ID: 255
     Prefix: "&6&lMANAGER&r "
     Permissions:
-        - openkomodo.home.limit.99
         - '*'
