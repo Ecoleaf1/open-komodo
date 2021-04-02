@@ -1,6 +1,7 @@
 package net.wigoftime.open_komodo.chat;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -67,10 +68,20 @@ public class NormalMessage
 			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
 			componentList.add(name[0]);
-		} else for (BaseComponent componentIndex : name) {
+		} else {
+			ComponentBuilder nameBuilder = new ComponentBuilder();
+			TextComponent defaultColor = new TextComponent();
+			defaultColor.setColor(ChatColor.DARK_GRAY);
+			nameBuilder.append(defaultColor);
+			
+			for (BaseComponent componentIndex : name) {
 			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
-			componentList.add(componentIndex);
+			
+			nameBuilder.append(componentIndex);
+			}
+			
+			componentList.addAll(Arrays.asList(nameBuilder.create()));
 		}
 		}
 		
@@ -154,10 +165,20 @@ public class NormalMessage
 			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
 			componentList.add(name[0]);
-		} else for (BaseComponent componentIndex : name) {
+		} else {
+			ComponentBuilder nameBuilder = new ComponentBuilder();
+			TextComponent defaultColor = new TextComponent();
+			defaultColor.setColor(ChatColor.DARK_GRAY);
+			nameBuilder.append(defaultColor);
+			
+			for (BaseComponent componentIndex : name) {
 			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
 			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
-			componentList.add(componentIndex);
+			
+			nameBuilder.append(componentIndex);
+			}
+			
+			componentList.addAll(Arrays.asList(nameBuilder.create()));
 		}
 		}
 		

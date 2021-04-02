@@ -23,6 +23,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 import net.wigoftime.open_komodo.config.EmoteConfig;
+import net.wigoftime.open_komodo.etc.NickName;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
@@ -97,46 +98,156 @@ public class Emote {
 		if (directPlayer != null)
 		directPlayer.getPlayer().playSound(directPlayer.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
 	}
+		
+	/*
+		public static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
+		
+		StringBuilder hexStringBuilder = new StringBuilder();
+		boolean awaitingBukkitColorFormat = false;
+		
+		ComponentBuilder builder = new ComponentBuilder();
+		TextComponent text = new TextComponent();
+		ChatColor indexColor = null;
+		boolean endOfHexCode = false;
+		for (char charIndex : textToTranslate.toCharArray()) {
+			PrintConsole.test("char:" + charIndex);
+			
+			if (hexStringBuilder.toString().length() > 0) {
+				if (hexStringBuilder.toString().length() > 6) {
+					
+					if (indexColor != null) text.setColor(indexColor);
+					builder.append(text);
+					text = new TextComponent();
+					
+					text.setBold(false);
+					text.setItalic(false);
+					text.setStrikethrough(false);
+					text.setObfuscated(false);
+					ChatColor nextColor = ChatColor.of(hexStringBuilder.toString());
+					
+					if (nextColor != null) indexColor = nextColor;
+					//indexColor = nextColor == null ? ChatColor.DARK_GRAY : nextColor;
+					hexStringBuilder = new StringBuilder();
+					endOfHexCode = true;
+				}
+				
+				if (!endOfHexCode) {
+					hexStringBuilder.append(charIndex);
+					continue;
+				}
+			}
+			endOfHexCode = false;
+			
+			if (charIndex == colorChar && colorChar != ' ') {
+				hexStringBuilder.append(colorChar);
+				continue;
+			}
+			
+			if (awaitingBukkitColorFormat) {
+				builder.append(text);
+				text = new TextComponent();
+				switch (charIndex) {
+				case 'l':
+					text.setBold(true);
+					break;
+				case 'o':
+					text.setItalic(true);
+					break;
+				case 'm':
+					text.setStrikethrough(true);
+					break;
+				case 'k':
+					text.setObfuscated(true);
+					break;
+				case 'r':
+					text.setBold(false);
+					text.setItalic(false);
+					text.setStrikethrough(false);
+					text.setObfuscated(false);
+					indexColor = ChatColor.RESET;
+					text.setColor(indexColor);
+					break;
+					
+				default:
+					indexColor = ChatColor.getByChar(charIndex);
+					text.setColor(indexColor);
+				}
+				awaitingBukkitColorFormat = false;
+				continue;
+			}
+			
+			if (charIndex == bukkitColorChar && bukkitColorChar != ' ') {
+				awaitingBukkitColorFormat = true;
+				continue;
+			}
+			
+			text.addExtra(charIndex +"");
+		}
+		
+		if (text.toPlainText().length() > 0) {
+			text.setColor(indexColor);
+			builder.append(text);
+		}
+		
+		BaseComponent[] components = builder.create();
+		if (components.length == 0)
+			return null;
+		
+		// Check if player has empty name
+		boolean isEmptyName = true;
+		for (BaseComponent componentIndex : components) {
+			if (componentIndex.toPlainText().length() > 0) {
+				PrintConsole.test(componentIndex.toPlainText());
+				isEmptyName = false;
+				break;
+			}
+		}
+		
+		if (isEmptyName)
+			return null;
+		
+		return components;
+	}*/
 	
 	private static BaseComponent[] getFormattedMessage(String unformattedText, boolean isOtherMsg, CustomPlayer sender, CustomPlayer directPlayer) {
 		ComponentBuilder messageBuilder = new ComponentBuilder();
 		String previousChatColor = "";
 		String[] splitMessageString = unformattedText.split(" ");
 		
+		BaseComponent[] colorFormatted = NickName.translateRGBColorCodes('#', '&', unformattedText);
 		
 		if (isOtherMsg)
-		for (String index : splitMessageString) {
-			index = previousChatColor + ChatColor.translateAlternateColorCodes('&', index);
-			if (index.contains("$S"))
-				if (sender.getCustomName() == null) messageBuilder.append(sender.getPlayer().getDisplayName());
-				else messageBuilder.append(sender.getCustomName());
-			else if (index.contains("$N"))
-				messageBuilder.append(sender.getPlayer().getDisplayName());
-			else if (index.contains("$R"))
-				if (directPlayer.getCustomName() == null) messageBuilder.append(directPlayer.getPlayer().getDisplayName());
-				else messageBuilder.append(directPlayer.getCustomName());
-			else if (index.contains("$D"))
-				messageBuilder.append(directPlayer.getPlayer().getDisplayName()); 
-			else
-				messageBuilder.append(index);
-			
-			messageBuilder.append(" ");
-			previousChatColor = org.bukkit.ChatColor.getLastColors(index);
-		}
-		else
-			for (String index : splitMessageString) {
-				index = previousChatColor + ChatColor.translateAlternateColorCodes('&', index);
-				if (index.contains("$S"))
-					if (sender.getCustomName() == null) messageBuilder.append(sender.getPlayer().getDisplayName());
-					else messageBuilder.append(sender.getCustomName());
-				else if (index.contains("$N"))
-					messageBuilder.append(sender.getPlayer().getDisplayName());
+			for (BaseComponent index : colorFormatted) {
+				TextComponent beforeFormat = new TextComponent();
+				beforeFormat.copyFormatting(index);
+				
+				if (index.toPlainText().contains("$S"))
+					if (sender.getCustomName() == null) messageBuilder.append(beforeFormat).append(sender.getPlayer().getDisplayName());
+					else messageBuilder.append(beforeFormat).append(sender.getCustomName());
+				else if (index.toPlainText().contains("$N"))
+					 messageBuilder.append(beforeFormat).append(sender.getPlayer().getDisplayName());
+				else if (index.toPlainText().contains("$R"))
+					if (directPlayer.getCustomName() == null)  messageBuilder.append(beforeFormat).append(directPlayer.getPlayer().getDisplayName());
+					else  messageBuilder.append(beforeFormat).append(directPlayer.getCustomName());
+				else if (index.toPlainText().contains("$D"))
+					 messageBuilder.append(beforeFormat).append(directPlayer.getPlayer().getDisplayName()); 
 				else
 					messageBuilder.append(index);
-				
-				messageBuilder.append(" ");
-				previousChatColor = org.bukkit.ChatColor.getLastColors(index);
 			}
+		else
+			for (BaseComponent index : colorFormatted) {
+				TextComponent beforeFormat = new TextComponent();
+				beforeFormat.copyFormatting(index);
+				
+				if (index.toPlainText().contains("$S"))
+					if (sender.getCustomName() == null) messageBuilder.append(beforeFormat).append(sender.getPlayer().getDisplayName());
+					else messageBuilder.append(beforeFormat).append(sender.getCustomName());
+				else if (index.toPlainText().contains("$N"))
+					 messageBuilder.append(beforeFormat).append(sender.getPlayer().getDisplayName());
+				else
+					messageBuilder.append(index);
+			}
+		
 		return messageBuilder.create();
 	}
 	

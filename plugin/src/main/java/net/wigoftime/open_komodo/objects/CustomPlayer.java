@@ -255,12 +255,12 @@ public class CustomPlayer
 	public BaseComponent[] getCustomName() {
 		if (customName == null) return null;
 		
-		ComponentBuilder builder = new ComponentBuilder();
-		for (BaseComponent baseIndex : customName) {
-			builder.append(baseIndex.duplicate());
+		BaseComponent[] nameClone = new BaseComponent[customName.length];
+		for (int index = 0; index < customName.length; index++) {
+			nameClone[index] = customName[index].duplicate();
 		}
 		
-		return builder.create();
+		return nameClone;
 	}
 	
 	public void setupCustomName() {
@@ -273,12 +273,12 @@ public class CustomPlayer
 			return;
 		}
 		
-		ComponentBuilder builder = new ComponentBuilder();
-		for (BaseComponent baseIndex : name) {
-			builder.append(baseIndex.duplicate());
+		BaseComponent[] nameClone = new BaseComponent[name.length];
+		for (int index = 0; index < name.length; index++) {
+			nameClone[index] = name[index].duplicate();
 		}
 		
-		customName = builder.create();
+		customName = nameClone;
 		SQLManager.setNickName(uuid, rawFormatName);
 	}
 	

@@ -65,7 +65,7 @@ abstract public class NickName
 	}
 	
 	public static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
-		
+			
 		StringBuilder hexStringBuilder = new StringBuilder();
 		boolean awaitingBukkitColorFormat = false;
 		
@@ -74,6 +74,8 @@ abstract public class NickName
 		ChatColor indexColor = null;
 		boolean endOfHexCode = false;
 		for (char charIndex : textToTranslate.toCharArray()) {
+			PrintConsole.test("char:" + charIndex);
+			
 			if (hexStringBuilder.toString().length() > 0) {
 				if (hexStringBuilder.toString().length() > 6) {
 					
@@ -126,7 +128,7 @@ abstract public class NickName
 					text.setItalic(false);
 					text.setStrikethrough(false);
 					text.setObfuscated(false);
-					indexColor = ChatColor.DARK_GRAY;
+					indexColor = ChatColor.RESET;
 					text.setColor(indexColor);
 					break;
 					
