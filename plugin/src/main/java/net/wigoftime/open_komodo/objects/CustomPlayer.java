@@ -16,6 +16,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -140,6 +141,8 @@ public class CustomPlayer
 			List<CustomItem> listOwnedPhones = new LinkedList<CustomItem>();
 			
 			for (CustomItem item : ownedItems) {
+				if (item == null) continue;
+				
 				switch (item.getType()) {
 					case HAT:
 						listOwnedHats.add(item);
@@ -250,7 +253,14 @@ public class CustomPlayer
 	}
 	
 	public BaseComponent[] getCustomName() {
-		return customName;
+		if (customName == null) return null;
+		
+		ComponentBuilder builder = new ComponentBuilder();
+		for (BaseComponent baseIndex : customName) {
+			builder.append(baseIndex.duplicate());
+		}
+		
+		return builder.create();
 	}
 	
 	public void setupCustomName() {
@@ -258,8 +268,18 @@ public class CustomPlayer
 	}
 	
 	public void setCustomName(BaseComponent[] name, String rawFormatName) {
+		if (name == null) {
+			customName = null;
+			return;
+		}
+		
+		ComponentBuilder builder = new ComponentBuilder();
+		for (BaseComponent baseIndex : name) {
+			builder.append(baseIndex.duplicate());
+		}
+		
+		customName = builder.create();
 		SQLManager.setNickName(uuid, rawFormatName);
-		customName = name;
 	}
 	
 	public void setActivePhone(CustomItem phone) {
@@ -329,6 +349,19 @@ public class CustomPlayer
 		});
 		
 		muteDate = date;
+	}
+	
+	public void setHat(ItemStack hat) {
+		ItemStack currentHelmet = player.getEquipment().getHelmet();
+		if (currentHelmet != null) 
+		if (currentHelmet.getItemMeta().hasCustomModelData()){
+			CustomItem currentCustomHelmet = CustomItem.getCustomItem(currentHelmet.getItemMeta().getCustomModelData());
+			player.getEquipment().setHelmet(null);
+			
+			if (currentCustomHelmet.getType() == ItemType.PROP) player.getInventory().addItem(currentHelmet);
+		}
+		
+		player.getEquipment().setHelmet(hat);
 	}
 	
 	public void ban(Date date, String reason) {

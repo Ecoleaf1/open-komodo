@@ -71,12 +71,13 @@ abstract public class NickName
 		
 		ComponentBuilder builder = new ComponentBuilder();
 		TextComponent text = new TextComponent();
-		ChatColor indexColor = ChatColor.DARK_GRAY;
+		ChatColor indexColor = null;
 		boolean endOfHexCode = false;
 		for (char charIndex : textToTranslate.toCharArray()) {
 			if (hexStringBuilder.toString().length() > 0) {
 				if (hexStringBuilder.toString().length() > 6) {
-					text.setColor(indexColor);
+					
+					if (indexColor != null) text.setColor(indexColor);
 					builder.append(text);
 					text = new TextComponent();
 					
@@ -85,7 +86,9 @@ abstract public class NickName
 					text.setStrikethrough(false);
 					text.setObfuscated(false);
 					ChatColor nextColor = ChatColor.of(hexStringBuilder.toString());
-					indexColor = nextColor == null ? ChatColor.DARK_GRAY : nextColor;
+					
+					if (nextColor != null) indexColor = nextColor;
+					//indexColor = nextColor == null ? ChatColor.DARK_GRAY : nextColor;
 					hexStringBuilder = new StringBuilder();
 					endOfHexCode = true;
 				}

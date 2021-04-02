@@ -43,7 +43,8 @@ public class HatMenu extends CustomItemMenuType1 {
 			if (!clickEvent.getCurrentItem().getItemMeta().hasCustomModelData()) break;
 			if (clickEvent.getCurrentItem().getItemMeta().getCustomModelData() != 2) return;
 			
-			clickEvent.getWhoClicked().getEquipment().setHelmet(null);
+			CustomPlayer playerCustom = CustomPlayer.get(clickEvent.getWhoClicked().getUniqueId());
+			playerCustom.setHat(null);
 			clickEvent.getWhoClicked().closeInventory();
 			break;
 		}
@@ -134,11 +135,8 @@ public class HatMenu extends CustomItemMenuType1 {
 		
 		if (clicker.hasItem(clickedItemID, ItemType.HAT))
 		{	
-			// Get Player Equipment
-			EntityEquipment equipment = clicker.getPlayer().getEquipment();
-			
 			// Put hat on player
-			equipment.setHelmet(clickedItem);
+			clicker.setHat(clickedItem);
 			
 			clicker.getPlayer().closeInventory();
 			return;

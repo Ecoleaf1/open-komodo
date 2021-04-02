@@ -66,21 +66,9 @@ public class PlayerInteract implements EventExecutor {
 			} else if (itemCustom.getItem().getItemMeta().getCustomModelData() == 56) {
 				CurrencyClass.displayBalance(playerCustom);
 			} else if (isItemEquipable(itemStack)) {
-				ItemStack currentHat = playerCustom.getPlayer().getInventory().getHelmet();
-				
-				if (currentHat != null) {
-					CustomItem currentHatCustom = CustomItem.getCustomItem(currentHat.getItemMeta().getCustomModelData());
-					if (currentHatCustom != null) {
-						ItemStack oldHat = new ItemStack(currentHat);
-						playerCustom.getPlayer().getInventory().setHelmet(null);
-						if (currentHatCustom.getType() == ItemType.PROP) playerCustom.getPlayer().getInventory().addItem(oldHat);
-					}
-				}
-				
-				playerCustom.getPlayer().getInventory().setHelmet(new ItemStack(itemStack));
-				playerCustom.getPlayer().getInventory().setItem(playerCustom.getPlayer().getInventory().getHeldItemSlot(), null);
+				playerCustom.getPlayer().getInventory().setItemInMainHand(null);
+				playerCustom.setHat(itemStack);
 			}
-			
 			event.setCancelled(true);
 			return true;
 		case STICK:
