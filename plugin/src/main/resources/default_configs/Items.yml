@@ -481,6 +481,51 @@ Tags:
     id: 316
     Display: Robot
     Price (Points): 540
+  Homeless:
+    Name: Homeless
+    id: 317
+    Display: Homeless
+    Price (Points): 240
+  Cultist:
+    Name: Cultist
+    id: 318
+    Display: Cultist
+    Price (Points): 640
+  Eboy:
+    Name: Eboi
+    id: 619
+    Display: Eboi
+    Price (Points): 640
+  Egirl:
+    Name: Egirl
+    id: 620
+    Display: Egirl
+    Price (Points): 640
+  Principal:
+    Name: Principal
+    id: 621
+    Display: Principal
+    Price (Points): 840
+  Teacher:
+    Name: Teacher
+    id: 622
+    Display: Teacher
+    Price (Points): 440
+  Janitor:
+    Name: Janitor
+    id: 623
+    Display: Janitor
+    Price (Points): 80
+  Cashier:
+    Name: Cashier
+    id: 624
+    Display: Cashier
+    Price (Points): 150
+  Fabulous:
+    Name: Fabulous
+    id: 625
+    Display: Fabulous
+    Price (Points): 4000
 
 Phones:
    ePhone:
