@@ -74,8 +74,6 @@ abstract public class NickName
 		ChatColor indexColor = null;
 		boolean endOfHexCode = false;
 		for (char charIndex : textToTranslate.toCharArray()) {
-			PrintConsole.test("char:" + charIndex);
-			
 			if (hexStringBuilder.toString().length() > 0) {
 				if (hexStringBuilder.toString().length() > 6) {
 					
