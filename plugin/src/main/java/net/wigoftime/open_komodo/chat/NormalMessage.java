@@ -130,7 +130,6 @@ public class NormalMessage
 		CustomPlayer senderCustomPlayer = CustomPlayer.get(sender.getUniqueId());
 		
 		// Get message in JSON template
-		//String format = MessageFormat.json(senderCustomPlayer, message);
 		
 		List<BaseComponent> componentList = new LinkedList<BaseComponent>();
 		

@@ -17,6 +17,7 @@ import org.bukkit.permissions.Permission;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ModerationResults;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class Moderation 
@@ -50,7 +51,7 @@ abstract public class Moderation
 		}
 	}
 	
-	public static void ban(UUID uuid, Date date, String reason) 
+	public static ModerationResults ban(UUID uuid, Date date, String reason) 
 	{
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(uuid)) {
@@ -60,7 +61,6 @@ abstract public class Moderation
 			if (!PlayerConfig.contains(uuid))
 				PlayerConfig.createPlayerConfig(uuid);
 				
-		
 		setBanDate(uuid, date);
 		
 		if (reason == null)
@@ -71,7 +71,7 @@ abstract public class Moderation
 		Player player = Bukkit.getPlayer(uuid);
 		
 		if (player == null)
-			return;
+			return new ModerationResults(null, date, reason);
 		
 		if (reason == null)
 			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
@@ -83,9 +83,11 @@ abstract public class Moderation
 		else
 			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
 				public void run() {
-			player.kickPlayer(String.format("You have been banned\nReason: %s\n.\nDate: %s", reason, date.toString()));
+					player.kickPlayer(String.format("You have been banned\nReason: %s\n.\nDate: %s", reason, date.toString()));
 				}
 			});
+		
+		return new ModerationResults(player, date, reason);
 	}
 	
 	public static void mute(OfflinePlayer targetPlayer, Date date, String reason) 

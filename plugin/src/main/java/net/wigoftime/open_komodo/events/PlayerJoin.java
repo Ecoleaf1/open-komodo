@@ -80,11 +80,13 @@ public class PlayerJoin implements EventExecutor {
 						// Display welcome message!
 						Main.displayWelcomeMessage(playerCustomPlayer.getPlayer());
 						
-						// Setup the sidebar, playerlist prefix rank, etc
-						ServerScoreBoard.add(playerCustomPlayer);
 						CollisionSystem.playerJoins(joinEvent.getPlayer());
 						Status_Bar.addPlayer(playerCustomPlayer);
 						PlayerList.add(playerCustomPlayer);
+						// Setup the sidebar, playerlist prefix rank, etc
+						playerCustomPlayer.getPlayer().setScoreboard(Bukkit.getScoreboardManager().getNewScoreboard());
+						ServerScoreBoard.add(playerCustomPlayer);
+						ServerScoreBoard.sync(playerCustomPlayer);
 						
 						// Set Gamemode to survival, in case of other worlds
 						playerCustomPlayer.getPlayer().setGameMode(GameMode.SURVIVAL);

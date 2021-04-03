@@ -10,6 +10,7 @@ import org.bukkit.plugin.EventExecutor;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.chat.PrivateMessage;
+import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PlayerQuit implements EventExecutor {
@@ -57,6 +58,7 @@ public class PlayerQuit implements EventExecutor {
 			player.getPlayer().setOp(false);
 		
 		PrivateMessage.playerLeft(player.getUniqueId());
+		
 		player.prepareDestroy();
 	}
 

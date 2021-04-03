@@ -41,8 +41,7 @@ public class Emote {
 	public static HashMap<String, Emote> nameSortMap = new HashMap<String, Emote>();
 	private static HashMap<String, Emote> commandSortMap = new HashMap<String, Emote>();
 	
-	public Emote(String name,String command,String msgSolo, String msgOthers) 
-	{
+	public Emote(String name,String command,String msgSolo, String msgOthers)  {
 		this.name = name;
 		this.command = command;
 		
@@ -58,8 +57,7 @@ public class Emote {
 	
 	// Static functions
 	
-	public static void send(String emote, CustomPlayer sender, CustomPlayer directPlayer) 
-	{
+	public static void send(String emote, CustomPlayer sender, CustomPlayer directPlayer)  {
 		Emote emoteObj;
 		
 		if (emote.startsWith("/"))

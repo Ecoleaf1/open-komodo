@@ -72,6 +72,7 @@ abstract public class GUIManager {
 			return;
 		}
 		
+		if (!clickerCustomPlayer.isBuilding())
 		if (clickEvent.getSlotType() == SlotType.CRAFTING || clickEvent.getSlotType() == SlotType.RESULT) {
 			clickEvent.setCancelled(true); return;
 		}

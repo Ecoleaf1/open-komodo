@@ -17,6 +17,7 @@ import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
 import net.wigoftime.open_komodo.config.RankConfig;
 import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.etc.RankSystem;
+import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.gui.ParticlesGUI;
 import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.gui.PropShop;

@@ -18,6 +18,7 @@ import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class EntityDamage implements EventExecutor {
 
@@ -27,13 +28,6 @@ public class EntityDamage implements EventExecutor {
 		
 		// Prevent Pets from being damaged
 		if (damageEvent.getEntity() instanceof CustomPetMob) {
-			damageEvent.setCancelled(true);
-			return;
-		}
-		
-		if (damageEvent.getEntityType() == EntityType.PLAYER) {
-			if (Main.damageAllowed) return;
-			
 			damageEvent.setCancelled(true);
 			return;
 		}

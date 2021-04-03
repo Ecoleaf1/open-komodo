@@ -242,7 +242,6 @@ public class Main extends JavaPlugin implements Listener
 		Status_Bar.startLoop();
 		ActionBar.startLoop();
 		PetsManager.startLoop();
-		ServerScoreBoard.createBoard();
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new AFKChecker(), 0, 60);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new ChatAnnouncements(), 0, 7200);
 		CoinSalary.coinpayPlayersTimer();

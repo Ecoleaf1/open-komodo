@@ -9,16 +9,18 @@ import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class HangingBreakByEntity implements EventExecutor {
 
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
+		if (!(event instanceof HangingBreakByEntityEvent)) return;
+		
 		HangingBreakByEntityEvent hangingBreakEvent = (HangingBreakByEntityEvent) event;
 		
-		if (hangingBreakEvent.getRemover().getType() != EntityType.PLAYER)
-			return;
+		if (hangingBreakEvent.getRemover().getType() != EntityType.PLAYER) return;
 		
 		CustomPlayer playerCustom = CustomPlayer.get(((Player) hangingBreakEvent.getRemover()).getUniqueId());
 		
@@ -37,7 +39,7 @@ public class HangingBreakByEntity implements EventExecutor {
 			return;
 		}
 		
-		if (!!playerCustom.isBuilding()) {
+		if (!playerCustom.isBuilding()) {
 			hangingBreakEvent.setCancelled(true);
 			return;
 		}

@@ -13,6 +13,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
@@ -26,6 +27,8 @@ public class EntityDamageByEntityEvent implements EventExecutor {
 			return;
 		
 		org.bukkit.event.entity.EntityDamageByEntityEvent entityDamgedByEvent = (org.bukkit.event.entity.EntityDamageByEntityEvent) event;
+		
+		if (Main.damageAllowed) return;
 		
 		if (entityDamgedByEvent.getDamager().getType() != EntityType.PLAYER) return;
 		

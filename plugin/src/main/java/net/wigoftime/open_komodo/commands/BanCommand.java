@@ -2,6 +2,8 @@ package net.wigoftime.open_komodo.commands;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +21,8 @@ import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Moderation;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ModerationResults;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class BanCommand extends Command
@@ -35,15 +39,17 @@ public class BanCommand extends Command
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] commandArguments) 
 	{
-		if (commandArguments.length < 1)
+		if (commandArguments.length < 1) {
+			sender.sendMessage(this.usageMessage);
 			return false;
+		}
 		
 		OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(commandArguments[0]);
 		
 		if (!isCommandValid(sender, targetPlayer, commandArguments))
 			return false;
 		
-		processCommand(commandArguments, targetPlayer);
+		processCommand(commandArguments, sender, targetPlayer);
 		return true;
 	}
 	
@@ -73,7 +79,7 @@ public class BanCommand extends Command
 		return true;
 	}
 	
-	private void processCommand(String[] commandArguments, OfflinePlayer playerTarget) {
+	private void processCommand(String[] commandArguments, CommandSender banner, OfflinePlayer playerTarget) {
 		StringBuilder reasonStringBuilder;
 		if (commandArguments.length > 2) {
 			reasonStringBuilder = new StringBuilder();
@@ -92,9 +98,21 @@ public class BanCommand extends Command
 		
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
-				if (reasonStringBuilder == null) Moderation.ban(refUUID, Date.from(refInstant), null);
-				else Moderation.ban(refUUID, Date.from(refInstant), reasonStringBuilder.toString());
+				ModerationResults banResult;
+				
+				if (reasonStringBuilder == null) banResult = Moderation.ban(refUUID, Date.from(refInstant), null);
+				else banResult = Moderation.ban(refUUID, Date.from(refInstant), reasonStringBuilder.toString());
+				
+				banResult.affectedPlayer = playerTarget;
+				if (banner instanceof Player) sendBanResultMessage((Player)banner, banResult);
 			}
 		});
+	}
+	
+	private static void sendBanResultMessage(Player banner, ModerationResults result) {
+
+		banner.getPlayer().sendMessage(String.format("%s» %s%s has been banned for reason %s. Ban date %s", 
+				ChatColor.GOLD, ChatColor.DARK_RED,
+				result.affectedPlayer.getName(), result.reason == null ? "[No Reason Specified]" : result.reason,  result.date.toString()));
 	}
 }

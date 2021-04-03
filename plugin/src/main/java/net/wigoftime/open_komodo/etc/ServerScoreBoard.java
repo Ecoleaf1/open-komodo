@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.etc;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -42,71 +43,65 @@ abstract public class ServerScoreBoard
 	
 	public static void add(CustomPlayer customPlayer)
 	{	
-		Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-		// Register object to write on sidebar
-		Objective obj = scoreboard.registerNewObjective("Sidebar", "", 
+		Scoreboard scoreboard = customPlayer.getPlayer().getScoreboard();
+		
+		for (Objective objectiveIndex : scoreboard.getObjectives())
+			objectiveIndex.unregister();
+		
+		// Sidebar top to bottom
+		Objective sidebarObjective = scoreboard.registerNewObjective("Sidebar", "", 
 			ChatColor.translateAlternateColorCodes('&', "&e&lWoT &e&l• &b&lOpen &a&lKomodo")	
 			);
 		
-		// Set object to display on the sidebar
-		obj.setDisplaySlot(DisplaySlot.SIDEBAR);
+		sidebarObjective.setDisplaySlot(DisplaySlot.SIDEBAR);
 		
-		// Loop through each text to add on the sidebar
 		for (int i = 0; i < text.length; i++) {
-			Score score = obj.getScore(MessageFormat.format(customPlayer, text[i]));
+			Score score = sidebarObjective.getScore(MessageFormat.format(customPlayer, text[i]));
 			score.setScore(i);
 		}
 		
-		Team team = scoreboard.registerNewTeam("team");
-		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+		Team team = getTeam(scoreboard, customPlayer);
+		
 		team.addEntry(customPlayer.getUniqueId().toString());
 		customPlayer.getPlayer().setScoreboard(scoreboard);
+		
+		
+		syncToOthers(customPlayer);
 	}
 	
-	private static Scoreboard globalBoard;
-	
-	private static HashMap<UUID, Integer> countIDMap = new HashMap<UUID, Integer>();
-	private static int count = 0;
-	
-	public static void createBoard() {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-			public void run() {
-				globalBoard = Bukkit.getScoreboardManager().getNewScoreboard();
-			}
-		});
-	}
-	/*
-	public static void addExtraPlayer(Player player) {
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+	private static void syncToOthers(CustomPlayer playerJoined) {
+		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers()) {
+			if (playerIndex == playerJoined) continue;
 			
-			@Override
-			public void run() {
-				int id;
-				if (countIDMap.containsKey(player.getUniqueId()))
-					id = countIDMap.get(player.getUniqueId());
-				else {
-					id = count++;
-					countIDMap.put(player.getUniqueId(), id);
-				}
-					
-				Team team = globalBoard.registerNewTeam(id + "");
-				team.addEntry(player.getUniqueId().toString());
-				player.setScoreboard(globalBoard);
-				
-				turnOnDefaultSettings(player);
-			}
-		});
+			Scoreboard currentScoreboard = playerIndex.getPlayer().getScoreboard();
+			Team team = getTeam(currentScoreboard, playerJoined);
+			team.addEntry(playerJoined.getPlayer().getDisplayName());
+			
+			playerIndex.getPlayer().setScoreboard(currentScoreboard);
+		}
 	}
 	
-	public static void setPrefix(Player player, String prefix) {
-		Team team = globalBoard.getTeam(countIDMap.get(player.getUniqueId()) + "");
-		team.setPrefix(prefix);
+	public static void sync(CustomPlayer playerJoined) {
+		Scoreboard currentScoreboard = playerJoined.getPlayer().getScoreboard();
+		
+		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers()) {
+			if (playerIndex == playerJoined) continue;
+			Team team = getTeam(currentScoreboard, playerIndex);
+			team.addEntry(playerIndex.getPlayer().getDisplayName());
+			
+		}
+		
+		playerJoined.getPlayer().setScoreboard(currentScoreboard);
 	}
 	
-	public static void turnOnDefaultSettings(Player player) {
-		String stringTest = countIDMap.get(player.getUniqueId()) + "";
-		PrintConsole.test("turnondefault: "+ stringTest);
-		Team team = globalBoard.getTeam(stringTest);
+	private static Team getTeam(Scoreboard playerScoreBoard, CustomPlayer toSyncPlayer) {
+		Team team = playerScoreBoard.getTeam(toSyncPlayer.getRank().getName());
+		
+		if (team == null) team = playerScoreBoard.registerNewTeam(toSyncPlayer.getRank().getName());
+		
 		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
-	}*/
+		
+		if (toSyncPlayer.getRank() != null) team.setPrefix(toSyncPlayer.getRank().getPrefix());
+		return team;
+	}
 }

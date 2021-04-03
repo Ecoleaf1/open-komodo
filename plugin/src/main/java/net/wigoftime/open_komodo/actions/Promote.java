@@ -60,7 +60,6 @@ abstract public class Promote
 			// Message to target that they been promoted
 			String msg = String.format(promoted, customTargetPlayer.getRank() == null ? "" : customTargetPlayer.getRank().getPrefix());
 			customTargetPlayer.getPlayer().sendMessage(msg);
-			return;
 		} else
 			CustomPlayer.setRankOffline(target.getUniqueId(), Rank.getRank(rank).getID());
 		
