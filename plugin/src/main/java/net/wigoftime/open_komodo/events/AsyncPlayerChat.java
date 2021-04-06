@@ -17,6 +17,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.EventExecutor;
 
 import net.wigoftime.open_komodo.chat.NormalMessage;
+import net.wigoftime.open_komodo.chat.ShoutMessage;
 import net.wigoftime.open_komodo.etc.Moderation;
 import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.etc.RankSystem;
@@ -46,7 +47,7 @@ public class AsyncPlayerChat implements EventExecutor {
 		if (Moderation.isMuted(playerCustom)) return;
 		if (!Filter.checkMessage(playerCustom.getPlayer(), message)) return;
 		
-		if (message.charAt(0) == '!') NormalMessage.shout(playerCustom.getPlayer(), message);
+		if (message.charAt(0) == '!') ShoutMessage.shout(playerCustom, message);
 		else NormalMessage.sendMessage(playerCustom, message);
 		
 		RankSystem.lettersToXP(playerCustom.getPlayer(), message);

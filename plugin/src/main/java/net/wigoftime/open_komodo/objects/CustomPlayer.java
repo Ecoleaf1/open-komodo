@@ -43,12 +43,15 @@ import net.wigoftime.open_komodo.etc.NickName;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
+import net.wigoftime.open_komodo.etc.homesystem.AddHome;
+import net.wigoftime.open_komodo.etc.homesystem.TeleportHome;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 import net.wigoftime.open_komodo.sql.SQLCard;
 import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
 import net.wigoftime.open_komodo.sql.SQLCode;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
+import net.wigoftime.open_komodo.tutorial.Tutorial;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class CustomPlayer
@@ -70,12 +73,13 @@ public class CustomPlayer
 	
 	private int pointsBalance;
 	private int coinsBalance;
-	private int usdDonated;
+	private float usdDonated;
 	
 	private Rank rank;
 	private double xp;
 	
 	private int homeLimit = 1;
+	private List<Home> tutorialHomes;
 	private List<Home> homes;
 	
 	private List<CustomItem> ownedHats;
@@ -90,6 +94,10 @@ public class CustomPlayer
 	
 	private TpRequest tpRequest;
 	
+	private Tutorial tutorial = null;
+	
+	public boolean isNew = false;
+	
 	public final github.scarsz.discordsrv.dependencies.jda.api.entities.User discordUser;
 	
 	private static Map<UUID, CustomPlayer> mapOfPlayers = new HashMap<UUID, CustomPlayer>();
@@ -99,8 +107,10 @@ public class CustomPlayer
 		uuid = player.getUniqueId();
 		
 		if (SQLManager.isEnabled()) {
-			if (!SQLManager.containsPlayer(uuid))
+			if (!SQLManager.containsPlayer(uuid)) {
 				SQLManager.createPlayer(uuid);
+				isNew = true;
+			}
 			
 			PrintConsole.test(2+"");
 			if (!PlayerSettingsConfig.contains(uuid))
@@ -172,11 +182,14 @@ public class CustomPlayer
 			homes = SQLManager.getHomes(uuid);
 		}
 		else {
-			if (!PlayerConfig.contains(uuid))
+			if (!PlayerConfig.contains(uuid)) {
 				PlayerConfig.createPlayerConfig(uuid);
+				isNew = true;
+			}
 			
-			if (!PlayerSettingsConfig.contains(uuid))
+			if (!PlayerSettingsConfig.contains(uuid)) {
 				PlayerSettingsConfig.create(uuid);
+			}
 			
 			this.settings = PlayerSettingsConfig.getSettings(uuid);
 			this.joinDate = PlayerConfig.getJoinDate(uuid);
@@ -467,26 +480,16 @@ public class CustomPlayer
 	}
 	
 	public void addHome(Home home) {
-		if (homes.size() >= homeLimit)
-		{
-			getPlayer().sendMessage(String.format("%s%sHEY! %sSorry, but you maxed out your home limit.", ChatColor.RED, ChatColor.BOLD, ChatColor.DARK_RED));
-			return;
-		}
-		
-		homes.add(home);
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled())
-				SQLManager.setHomes(uuid, homes);
-				else
-				PlayerConfig.setHomes(uuid, homes);
-			}
-		});
+		AddHome.execute(this, home);
 	}
 	
 	public Home getHome(String homeName) {
-		for (Home home : homes) {
+		if (isInTutorial()) {
+			for (Home home : tutorialHomes)
+				if (home.name.equalsIgnoreCase(homeName))
+					return home;
+		} 
+		else for (Home home : homes) {
 			if (home.name.equalsIgnoreCase(homeName))
 				return home;
 		}
@@ -495,18 +498,11 @@ public class CustomPlayer
 	}
 	
 	public List<Home> getHomes() {
-		return homes;
+		return isInTutorial() ? tutorialHomes :  homes;
 	}
 	
 	public void teleportHome(String homeName) {
-		for (Home home : homes) {
-			if (home.name.equalsIgnoreCase(homeName)) {
-				player.teleport(home.location);
-				return;
-			}
-		}
-		
-		player.sendMessage(HomeSystem.invaildHouse);
+		TeleportHome.teleport(this, homeName);
 	}
 	
 	public void deleteHome(String homeName) {
@@ -539,11 +535,11 @@ public class CustomPlayer
 		return uuid;
 	}
 	
-	public int getDonated() {
+	public float getDonated() {
 		return usdDonated;
 	}
 	
-	public static int getDonated(UUID uuid) {
+	public static float getDonated(UUID uuid) {
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsPlayer(uuid))
 				return 0;
@@ -557,11 +553,11 @@ public class CustomPlayer
 		return PlayerConfig.getTip(uuid);
 	}
 	
-	public static void setDonated(UUID uuid, int amount) {
+	public static void setDonated(UUID uuid, float amount) {
 		CustomPlayer donater = CustomPlayer.get(uuid);
 		
 		if (SQLManager.isEnabled()) {
-			int balance;
+			float balance;
 			if (donater != null)
 			balance = donater.getDonated();
 			else {
@@ -570,11 +566,11 @@ public class CustomPlayer
 			balance = SQLManager.getTip(uuid);
 			}
 			
-			int total = balance + amount;
+			float total = balance + amount;
 			SQLManager.setTip(uuid, total);
 			donater.usdDonated = total;
 		} else {
-			int balance;
+			float balance;
 			if (donater != null)
 			balance = donater.getDonated();
 			else {
@@ -583,7 +579,7 @@ public class CustomPlayer
 			balance = PlayerConfig.getTip(uuid);
 			}
 			
-			int total = balance + amount;
+			float total = balance + amount;
 			PlayerConfig.setTip(uuid, total);
 			donater.usdDonated = total;
 		}
@@ -1028,6 +1024,26 @@ public class CustomPlayer
 	public void setTpaRequestAllowed(boolean isAllowed)
 	{
 		settings.setTpa(isAllowed);
+	}
+	
+	public void setTutorial(boolean isInTutorial) {
+		if (isInTutorial == true) {
+			tutorial = new Tutorial(this);
+			tutorialHomes = new LinkedList<Home>();
+			tutorial.begin();
+		} else {
+			tutorial = null;
+			tutorialHomes = null;
+			player.teleport(Main.spawnLocation);
+		}
+	}
+	
+	public boolean isInTutorial() {
+		return tutorial == null ? false : true;
+	}
+	
+	public Tutorial getTutorial() {
+		return tutorial;
 	}
 	
 	public static Rank getRankOffline(UUID uuid) {

@@ -26,6 +26,7 @@ import net.wigoftime.open_komodo.config.EmoteConfig;
 import net.wigoftime.open_komodo.etc.NickName;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
 
 public class Emote {
 	
@@ -86,6 +87,12 @@ public class Emote {
 			}
 			
 			message = getFormattedMessage(emoteObj.msgOthers, true, sender, directPlayer);
+		}
+		
+		if (sender.isInTutorial()) {
+			sender.getPlayer().spigot().sendMessage(message);
+			sender.getTutorial().trigger(Emote.class);
+			return;
 		}
 		
 		for(Player player : Bukkit.getOnlinePlayers()) {

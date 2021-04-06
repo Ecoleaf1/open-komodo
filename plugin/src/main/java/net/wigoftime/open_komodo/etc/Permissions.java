@@ -102,6 +102,10 @@ abstract public class Permissions
 		return dropError;
 	}
 	
+	public static String getWorldBorderMessage() {
+		return String.format("%s» %sHey! I am afraid you cannot travel that far... Teleporting you back to spawn.", ChatColor.GOLD, ChatColor.DARK_RED);
+	}
+	
 	public static void addPermission(CustomPlayer customPlayer, Permission permission)
 	{
 		PermissionAttachment attachment = permMap.get(customPlayer.getUniqueId());

@@ -6,6 +6,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Vector;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.SQLInfo;
@@ -78,6 +79,15 @@ abstract public class Config
 		return (Location) normalMessageSection.get("Spawn Location");
 	}
 	
+	public static Location getTutorialLocation() {
+		File configFile = getConfigFile();
+		
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return (Location) normalMessageSection.get("Tutorial Location");
+	}
+	
 	public static boolean isPropShopEnabled() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
@@ -118,6 +128,20 @@ abstract public class Config
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return normalMessageSection.getBoolean("Enable Warps");
+	}
+	
+	public static Vector getBorderPosition1() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getVector("Border Position 1");
+	}
+	
+	public static Vector getBorderPosition2() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+		
+		return normalMessageSection.getVector("Border Position 2");
 	}
 	
 	public static String getWebsiteDescription() {

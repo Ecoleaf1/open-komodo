@@ -28,7 +28,7 @@ public class GenTip extends Command {
 		}
 		
 		UUID uuid = UUID.fromString(args[0]);
-		int tip = Integer.parseInt(args[1]);
+		float tip = Float.parseFloat(args[1]);
 		
 		CustomPlayer.setDonated(uuid, tip);
 		

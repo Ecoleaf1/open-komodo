@@ -1,17 +1,20 @@
 package net.wigoftime.open_komodo.events;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
+import org.bukkit.util.Vector;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.RankSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PlayerMove implements EventExecutor {
-
 	@Override
 	public void execute(Listener listener, Event event) throws EventException {
 		PlayerMoveEvent moveEvent = (PlayerMoveEvent) event;
@@ -25,10 +28,14 @@ public class PlayerMove implements EventExecutor {
 		if (moverCustomPlayer == null)
 			return;
 		
-		moverCustomPlayer.setAfk(false);
-		
 		if (moverCustomPlayer.isAfk())
 			moverCustomPlayer.setAfk(false);
+		
+		if (!moverCustomPlayer.isBuilding())
+		if (passedWorldBorder(player.getLocation())) {
+			player.sendMessage(Permissions.getWorldBorderMessage());
+			player.teleport(Main.spawnLocation);
+		}
 		
 		if (player.isFlying())
 			return;
@@ -41,6 +48,26 @@ public class PlayerMove implements EventExecutor {
 			double add = 0.000015;
 			RankSystem.addPendingPoints(player, add);
 		}
+	}
+	
+	private boolean passedWorldBorder(Location playerLocation) {
+		if (Main.BorderPosition1.getX() < 0) {
+			if (playerLocation.getX() < Main.BorderPosition1.getX()) return true;
+		} else if (playerLocation.getX() > Main.BorderPosition1.getX()) return true;
+		
+		if (Main.BorderPosition1.getZ() < 0) {
+			if (playerLocation.getZ() < Main.BorderPosition1.getZ()) return true;
+		} else if (playerLocation.getZ() > Main.BorderPosition1.getZ()) return true;
+		
+		if (Main.BorderPosition2.getX() < 0) {
+			if (playerLocation.getX() < Main.BorderPosition2.getX()) return true;
+		} else if (playerLocation.getX() > Main.BorderPosition2.getX()) return true;
+			
+		if (Main.BorderPosition2.getZ() < 0) {
+			if (playerLocation.getZ() < Main.BorderPosition2.getZ()) return true;
+		} else if (playerLocation.getZ() > Main.BorderPosition2.getZ()) return true;
+			
+		return false;
 	}
 
 }

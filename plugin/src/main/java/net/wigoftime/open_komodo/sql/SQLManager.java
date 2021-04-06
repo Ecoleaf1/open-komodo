@@ -489,11 +489,11 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.SET_RANKID, SQLCardType.SET, Arrays.asList(rankID, uuid.toString().replaceAll("-", ""))).execute();
 	}
 	
-	public static int getTip(UUID uuid) {
-		return (int) (long) new SQLCard(SQLCodeType.GET_TIP, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0);
+	public static float getTip(UUID uuid) {
+		return ((BigDecimal) new SQLCard(SQLCodeType.GET_TIP, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0)).floatValue();
 	}
 	
-	public static void setTip(UUID uuid, int amount) {
+	public static void setTip(UUID uuid, float amount) {
 		new SQLCard(SQLCodeType.SET_TIP, SQLCardType.SET, Arrays.asList(amount , uuid.toString().replaceAll("-", ""))).execute();
 	}
 	

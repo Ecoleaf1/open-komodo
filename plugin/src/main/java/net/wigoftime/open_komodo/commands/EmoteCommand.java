@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
 
 public class EmoteCommand extends Command
 {
@@ -35,6 +36,9 @@ public class EmoteCommand extends Command
 		CustomPlayer playerCustom = CustomPlayer.get(player.getUniqueId());
 		if (playerCustom == null) return false;
 		
+		if (playerCustom.isInTutorial())
+		if (!playerCustom.getTutorial().validState(Emote.class)) return true;
+		
 		// If player didnt enter in emote
 		if (args.length < 1)
 		{	
@@ -42,7 +46,6 @@ public class EmoteCommand extends Command
 			
 			StringBuilder sb = new StringBuilder();
 			sb.append(String.format("%s» %sEmotes%s: ", ChatColor.GOLD, ChatColor.AQUA, ChatColor.DARK_AQUA));
-			//sb.append(ChatColor.AQUA + "" + ChatColor.BOLD + "Emotes" + ChatColor.DARK_AQUA + ": ");
 			
 			while (iterator.hasNext())
 			{

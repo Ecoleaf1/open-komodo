@@ -186,7 +186,7 @@ public class SQLCode {
 					"SET `Rank ID` = %d " +
 					"WHERE `UUID` = UNHEX('%s');";
 		case SET_TIP:
-			return "UPDATE `OpenKomodo.Main` SET `TIP (USD)` = %d WHERE `UUID` = UNHEX('%s');";
+			return "UPDATE `OpenKomodo.Main` SET `TIP (USD)` = %.1f WHERE `UUID` = UNHEX('%s');";
 		case SET_WORLD_PERMISSIONS:
 			return "UPDATE `OpenKomodo.Worlds.%s` " +
 					"SET `Permissions` = \"%s\" " +

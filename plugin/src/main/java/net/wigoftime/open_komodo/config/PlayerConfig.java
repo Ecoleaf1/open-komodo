@@ -196,18 +196,18 @@ public abstract class PlayerConfig
 	
 	// Tip Functions
 	
-	public static int getTip(UUID uuid) {
+	public static float getTip(UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
 		ConfigurationSection generalSection;
 		generalSection = playerYamlConfig.getConfigurationSection("General");
 		
-		int tip = generalSection.getInt("Tip");
+		float tip = (float) generalSection.getDouble("Tip");
 		return tip;
 	}
 	
-	public static void setTip(UUID uuid, int tip) {
+	public static void setTip(UUID uuid, float tip) {
 		
 		Runnable task = new Runnable() {
 			public void run() {

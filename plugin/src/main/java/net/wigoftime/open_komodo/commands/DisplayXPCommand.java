@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
+import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
 
 public class DisplayXPCommand extends Command {
 
@@ -24,11 +25,18 @@ public class DisplayXPCommand extends Command {
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		Rank nextRank;
 		
+		if (player == null) return true;
+		
+		if (player.isInTutorial())
+		if (!player.getTutorial().validState(DisplayXPCommand.class)) return true;
+		
 		if (player.getRank() == null) {
 			Rank rank = Rank.getRank(1);
 			
 			if (rank == null) {
 				soloDisplay(player);
+				
+				if (player.isInTutorial()) player.getTutorial().trigger(DisplayXPCommand.class);
 				return true;
 			}
 			
@@ -38,17 +46,23 @@ public class DisplayXPCommand extends Command {
 		
 		if (nextRank == null) {
 			soloDisplay(player);
+			
+			if (player.isInTutorial()) player.getTutorial().trigger(DisplayXPCommand.class);
 			return true;
 		}
 		
 		if (nextRank.getXPPrice() <= -1) {
 			soloDisplay(player);
+			
+			if (player.isInTutorial()) player.getTutorial().trigger(DisplayXPCommand.class);
 			return true;
 		}
 		
 		double currentXP = player.getXP();
 		
 		nextRankDisplay(player, currentXP, nextRank);
+		
+		if (player.isInTutorial()) player.getTutorial().trigger(DisplayXPCommand.class);
 		return true;
 	}
 	

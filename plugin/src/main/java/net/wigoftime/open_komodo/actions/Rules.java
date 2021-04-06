@@ -2,12 +2,15 @@ package net.wigoftime.open_komodo.actions;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 abstract public class Rules 
 {
 	private static final String[] rules = {"No 18+ stuff", "No swearing (no discrimination and words behind anything inappropriate).","No bypassing the word filter to use forbidden words.", "Have fun!", "No harassment", "Please use common sense"};
 	
-	public static void display(CommandSender player)
+	public static void display(CommandSender sender)
 	{
 		// Get stringbuilder to display rules
 		StringBuilder sb = new StringBuilder();
@@ -19,6 +22,13 @@ abstract public class Rules
 		
 		
 		// Display rules to player
-		player.sendMessage(sb.toString());
+		sender.sendMessage(sb.toString());
+		
+		if (!(sender instanceof Player)) return;
+		
+		CustomPlayer playerCustom = CustomPlayer.get(((Player)sender).getUniqueId());
+		if (playerCustom == null) return;
+		
+		if (playerCustom.isInTutorial()) playerCustom.getTutorial().trigger(Rules.class);
 	}
 }

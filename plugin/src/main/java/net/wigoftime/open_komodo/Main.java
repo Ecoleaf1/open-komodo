@@ -64,6 +64,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
 import com.comphenix.protocol.ProtocolLibrary;
@@ -124,6 +125,7 @@ import net.wigoftime.open_komodo.commands.TpaCommand;
 import net.wigoftime.open_komodo.commands.TpaDenycommand;
 import net.wigoftime.open_komodo.commands.TpaHereCommand;
 import net.wigoftime.open_komodo.commands.TpaToggleCommand;
+import net.wigoftime.open_komodo.commands.TutorialCommand;
 import net.wigoftime.open_komodo.commands.VoteCommand;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.custommobs.CustomPetMob;
@@ -194,12 +196,16 @@ public class Main extends JavaPlugin implements Listener
 	
 	public static World world;
 	public static Location spawnLocation;
+	public static Location tutorialLocation;
 	
 	public static final String phoneName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	public static final String cardName = ChatColor.translateAlternateColorCodes('&', "&6&lBank");
 	
 	public static final int defaultPoints = 720;
 	public static final int defaultCoins = 0;
+	
+	public static Vector BorderPosition1;
+	public static Vector BorderPosition2;
 	
 	public static String resourcePackLink;
 	
@@ -332,6 +338,9 @@ public class Main extends JavaPlugin implements Listener
 		// Assign the default world to spawn world
 		world = spawnWorld;
 		
+		// Get the Spawn location including the world
+		tutorialLocation = Config.getTutorialLocation();
+		
 		// Set World spawnpoint
 		world.setSpawnLocation(spawnLocation);
 		
@@ -353,6 +362,9 @@ public class Main extends JavaPlugin implements Listener
 		iceMelts = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Ice Melts");
 		damageAllowed = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Allow Damage");
 		fallDamage = yamlConfig.getConfigurationSection("Global Settings").getBoolean("Fall Damage");
+		
+		BorderPosition1 = Config.getBorderPosition1();
+		BorderPosition2 = Config.getBorderPosition2();
 		
 		try {
 			discordSRV = DiscordSRV.getPlugin();
@@ -459,6 +471,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new RulesCommand("rules", "Display rules & terms", "/rules", new ArrayList<String>(0)));
 		map.register("openkomodo", new CreditsCommand("credits", "Display credits", "/credits", new ArrayList<String>(0)));
 		map.register("openkomodo", new VoteCommand("vote", "Displays voting websites", "/vote", new ArrayList<String>(0)));
+		map.register("openkomodo", new TutorialCommand("tutorial", "How to play Open Komodo!", "/tutorial", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>(0)));

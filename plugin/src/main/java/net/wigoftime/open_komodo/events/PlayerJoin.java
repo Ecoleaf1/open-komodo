@@ -103,6 +103,7 @@ public class PlayerJoin implements EventExecutor {
 						playerCustomPlayer.refreshXPBar();
 						playerCustomPlayer.getPlayer().sendTitle(ChatColor.YELLOW + "Finished loading", ChatColor.DARK_AQUA + "Welcome to "+Main.nameColoured+ ChatColor.DARK_AQUA + "!", 10, 140, 10);
 						
+						if (playerCustomPlayer.isNew) playerCustomPlayer.setTutorial(true);
 					}
 				};
 				

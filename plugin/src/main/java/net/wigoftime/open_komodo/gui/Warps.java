@@ -94,7 +94,7 @@ public class Warps extends CustomGUI
 	public static void teleport(Player player, warps place) {
 		switch(place) {
 		case HIGH_SCHOOL:
-			player.teleport(new Location(Main.world, 302, 68, -160,(float)137, (float) -1.1));
+			player.teleport(new Location(Main.world, 377, 68, -220,(float)-22, (float) 0.6));
 			return;
 		case TOWN_HALL: 
 			player.teleport(new Location(Main.world, -257, 62, -237,(float)123.5, (float) 4.1));

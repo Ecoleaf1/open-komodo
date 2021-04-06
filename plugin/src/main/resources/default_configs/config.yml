@@ -42,6 +42,36 @@ Global Settings:
   Ice Melts: false
   Allow Damage: false
   Fall Damage: false
+  
+  Tutorial Location:
+    ==: org.bukkit.Location
+    world: komodo_island
+    x: 313.5
+    y: 69.0
+    z: -248.5
+    pitch: 0.0
+    yaw: 0.0
+  Join Message: ''
+  Leave Message: ''
+  Allow Item Drops: false
+  Explosion Enabled: false
+  Leaves Decay: false
+  Ice Melts: false
+  Allow Damage: false
+  Fall Damage: false
+  
+  
+  # World Border
+  Border Position 1:
+    ==: Vector
+    x: -1480.0
+    y: 120.0
+    z: -542.0
+  Border Position 2: 
+    ==: Vector
+    x: 611.0
+    y: 120.0
+    z: 612.0
 
 # Store player information in MySQL databases instead of files
 SQL:

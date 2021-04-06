@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import github.scarsz.discordsrv.DiscordSRV;
@@ -20,19 +19,15 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-public class NormalMessage 
-{
-	
-	// Distance Range by blocks set in Config.
-	private static final int distanceR = Main.getDistanceRange();
-	
-	public static void sendMessage(CustomPlayer senderCustomPlayer, String message) {	
-		if (senderCustomPlayer.isInTutorial())
-		if (!senderCustomPlayer.getTutorial().validState(NormalMessage.class)) return;
+public class ShoutMessage {
+	public static void shout(CustomPlayer sender, String message) {	
+		if (sender.isInTutorial())
+		if (!sender.getTutorial().validState(ShoutMessage.class)) return;
 		
-		Location senderLocation = senderCustomPlayer.getPlayer().getLocation();
+		CustomPlayer senderCustomPlayer = CustomPlayer.get(sender.getUniqueId());
 		
-		// Convert custom component
+		// Get message in JSON template
+		
 		List<BaseComponent> componentList = new LinkedList<BaseComponent>();
 		
 		if (!senderCustomPlayer.getTagDisplay().equals("")) {
@@ -43,15 +38,13 @@ public class NormalMessage
 		if (senderCustomPlayer.getRank() != null) {
 			TextComponent componentRank = new TextComponent(String.format("%s", ChatColor.translateAlternateColorCodes('&', senderCustomPlayer.getRank().getPrefix())));
 			componentList.add(componentRank);
-		}
-		else
-		{
+		} else {
 			TextComponent componentRank = new TextComponent(String.format(ChatColor.DARK_GRAY + ""));
 			componentList.add(componentRank);
 		}
 		
-		{
-		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", senderCustomPlayer.getPlayer().getDisplayName()));
+		BaseComponent[] name = senderCustomPlayer.getCustomName(); {
+		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", sender.getPlayer().getDisplayName()));
 		
 		Date joinDate = senderCustomPlayer.getJoinDate();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -61,7 +54,7 @@ public class NormalMessage
 		componentHoverDescBuilder.append(String.format("\nTipped: $%.1f", senderCustomPlayer.getDonated()));
 		
 		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
-		BaseComponent[] name = senderCustomPlayer.getCustomName();
+		
 		if (name == null) {
 			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
 			name[0].setColor(ChatColor.DARK_GRAY);
@@ -85,48 +78,22 @@ public class NormalMessage
 		}
 		}
 		
-		TextComponent messageComponent = new TextComponent(String.format("%s: ", ChatColor.WHITE));
-		messageComponent.setColor(ChatColor.WHITE);
+		if (message.contains("! ")) message = message.replaceFirst("! ", "");
+		else message = message.replaceFirst("!", "");
+		TextComponent messageComponent = new TextComponent(": "+ChatColor.GOLD + ChatColor.BOLD + "! " + ChatColor.GRAY + message);
 		componentList.add(messageComponent);
-		TextComponent message2Component = new TextComponent(String.format("%s", message));
-		message2Component.setColor(ChatColor.GRAY);
-		componentList.add(message2Component);
-		
-		BaseComponent[] componentBaseMessage = componentList.toArray(new BaseComponent[componentList.size()]);
 		
 		if (senderCustomPlayer.isInTutorial()) {
-			senderCustomPlayer.getPlayer().spigot().sendMessage(componentBaseMessage);
-			senderCustomPlayer.getTutorial().trigger(NormalMessage.class);
+			senderCustomPlayer.getPlayer().spigot().sendMessage(componentList.toArray(new BaseComponent[componentList.size()]));
+			senderCustomPlayer.getTutorial().trigger(ShoutMessage.class);
 			return;
 		}
 		
-		// If DistanceChat is on (If the number is higher than 0)
-		if (distanceR > 0)
-			for(CustomPlayer pl: CustomPlayer.getOnlinePlayers()) {
-				
-				if (pl.isMonitoring() && senderCustomPlayer != pl) {
-					sendMonitorMessage(senderCustomPlayer, message, pl);
-					continue;
-				}
-				
-				// If player isnt in same world, skip player
-				if (pl.getPlayer().getWorld() != senderCustomPlayer.getPlayer().getWorld())
-					continue;
-				
-				
-				// If Distance between the player and the sender is bigger than Distance Radius, skip the player.
-				if (pl.getPlayer().getLocation().distance(senderLocation) > distanceR)
-					continue;
-				
-				pl.getPlayer().spigot().sendMessage(componentBaseMessage);
-			}
-		// If Disabled
-		else 
-			for(Player pl: Bukkit.getOnlinePlayers()) 
-				pl.spigot().sendMessage(componentBaseMessage);
+		for (Player p : Bukkit.getOnlinePlayers())
+			p.spigot().sendMessage(componentList.toArray(new BaseComponent[componentList.size()]));
 		
 		// Messages the server terminal/console as well.
-		Bukkit.getLogger().info(String.format("%s: %s", senderCustomPlayer.getPlayer().getName(), message));
+		Bukkit.getLogger().info(String.format("[shout] %s: %s", sender.getPlayer(), message));
 		
 		// Send message to discord (If enabled)
 		sendToDiscord(senderCustomPlayer, message);
@@ -141,13 +108,5 @@ public class NormalMessage
 		
 		// Send message to Discord
 		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(playerCustomPlayer.getPlayer(), message, null, false);
-	}
-	
-	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {
-		monitorPlayer.getPlayer().sendMessage(String.format("%s[Public] %s%s%s: %s%s", 
-				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), 
-				ChatColor.RESET, ChatColor.GRAY, message));
-		
-		return;
 	}
 }
