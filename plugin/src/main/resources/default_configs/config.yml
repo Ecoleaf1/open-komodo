@@ -46,9 +46,9 @@ Global Settings:
   Tutorial Location:
     ==: org.bukkit.Location
     world: komodo_island
-    x: 313.5
-    y: 69.0
-    z: -248.5
+    x: 1158
+    y: 65
+    z: -410
     pitch: 0.0
     yaw: 0.0
   Join Message: ''

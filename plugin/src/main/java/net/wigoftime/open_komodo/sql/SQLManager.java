@@ -72,7 +72,7 @@ abstract public class SQLManager {
 	}
 	
 	private static void createWorldTable(String worldName) {
-		new SQLCard(SQLCodeType.CREATE_WORLD_TABLE, SQLCardType.SET, Arrays.asList(worldName));
+		new SQLCard(SQLCodeType.CREATE_WORLD_TABLE, SQLCardType.SET, Arrays.asList(worldName)).execute();
 	}
 	
 	public static List<CustomItem> getItems(UUID uuid) {

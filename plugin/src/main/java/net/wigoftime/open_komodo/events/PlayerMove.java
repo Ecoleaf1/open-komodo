@@ -32,6 +32,7 @@ public class PlayerMove implements EventExecutor {
 			moverCustomPlayer.setAfk(false);
 		
 		if (!moverCustomPlayer.isBuilding())
+		if (!moverCustomPlayer.isInTutorial())
 		if (passedWorldBorder(player.getLocation())) {
 			player.sendMessage(Permissions.getWorldBorderMessage());
 			player.teleport(Main.spawnLocation);

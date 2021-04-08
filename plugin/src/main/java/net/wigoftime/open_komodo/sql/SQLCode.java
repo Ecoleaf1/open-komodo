@@ -35,7 +35,7 @@ public class SQLCode {
 					+ "`Rank ID` TINYINT UNSIGNED DEFAULT 0 , "
 					+ "`XP` DECIMAL(10,6) UNSIGNED NOT NULL DEFAULT '0.0' , "
 					+ "`Permissions` LONGTEXT NOT NULL , "
-					+ "`TIP (USD)` INT UNSIGNED DEFAULT 0 , "
+					+ "`TIP (USD)` decimal(5,1) UNSIGNED DEFAULT 0.0 , "
 					+ "`Points` INT UNSIGNED DEFAULT 720 , "
 					+ "`Coins` INT UNSIGNED DEFAULT 0 , "
 					+ "`Items` LONGTEXT NOT NULL, "

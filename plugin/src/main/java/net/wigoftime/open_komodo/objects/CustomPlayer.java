@@ -588,11 +588,11 @@ public class CustomPlayer
 			return;
 		
 		if (donater != null) {
-			for (Player player : Bukkit.getOnlinePlayers())
-				if (player != donater.getPlayer())
-				player.sendMessage(String.format("%s%s has donated %d$ to the server! Thanks!", ChatColor.YELLOW, donater.getPlayer().getCustomName(), amount));
-			
-			donater.getPlayer().sendMessage(String.format("%sOh dear grand user, we kindly thank you for your generous donation", ChatColor.YELLOW));
+			for (Player player : Bukkit.getOnlinePlayers()) {
+				player.sendMessage(String.format("%s%s%s has donated %.1f$ to the server! Thanks!", ChatColor.GOLD, donater.getPlayer().getDisplayName(), ChatColor.YELLOW, amount));
+				player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
+			}
+			donater.getPlayer().sendMessage(String.format("%s» %sOh dear grand user, we kindly thank you for your generous donation & support!", ChatColor.GOLD, ChatColor.YELLOW));
 		}
 	}
 	
