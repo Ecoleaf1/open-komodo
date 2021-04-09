@@ -28,8 +28,7 @@ public class PlayerMove implements EventExecutor {
 		if (moverCustomPlayer == null)
 			return;
 		
-		if (moverCustomPlayer.isAfk())
-			moverCustomPlayer.setAfk(false);
+		moverCustomPlayer.setAfk(false);
 		
 		if (!moverCustomPlayer.isBuilding())
 		if (!moverCustomPlayer.isInTutorial())

@@ -21,7 +21,8 @@ public class CreditsCommand extends Command {
 		sender.sendMessage("");
 		sender.sendMessage(String.format("%s» %sProps: Jadesweetgamer (Discord: Jade/Yui#1428), Jazzycow11 (Discord: Aramis#2706)", ChatColor.GOLD, ChatColor.GRAY));
 		sender.sendMessage("");
-		sender.sendMessage(String.format("%s» %sMap creator: Eivisxp", ChatColor.GOLD, ChatColor.GRAY));
+		sender.sendMessage(String.format("%s» %sOriginal map creator: Eivisxp", ChatColor.GOLD, ChatColor.GRAY));
+		sender.sendMessage(String.format("%s» %sBuilders: Jadesweetgamer (Discord: Jade/Yui#1428), KrispyKrunch (Discord: KRiSPY#2019), JustAluri (Discord: YeetusAFetus#2533)", ChatColor.GOLD, ChatColor.GRAY));
 		sender.sendMessage("");
 		sender.sendMessage(String.format("%s» %sProgrammer: Ecoleaf (Discord: Ecoleaf#9713)", ChatColor.GOLD, ChatColor.GRAY));
 		sender.sendMessage(String.format("%s» %sAnd you, The community even just checking by helps! Thank you!", ChatColor.GOLD, ChatColor.GRAY));
