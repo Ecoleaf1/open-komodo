@@ -35,10 +35,11 @@
        <id>placeholderapi</id>
        <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
-    <repository>
-        <id>bintray-repo</id>
-        <url>https://dl.bintray.com/ichbinjoe/public/</url>
-    </repository>
+
+	  <repository>
+		  <id>jitpack</id>
+		  <url>https://jitpack.io</url>
+	  </repository>
   </repositories>
   
   <dependencies>
@@ -81,18 +82,25 @@
        <version>7.13</version>
        <scope>provided</scope>
    </dependency>
-   <dependency>
-       <groupId>com.vexsoftware</groupId>
-       <artifactId>nuvotifier-universal</artifactId>
-       <version>2.6.0</version>
-       <scope>provided</scope>
-   </dependency>
+	  <dependency>
+		  <groupId>com.github.NuVotifier</groupId>
+		  <artifactId>NuVotifier</artifactId>
+		  <version>2.6.0</version>
+		  <scope>provided</scope>
+	  </dependency>
       <dependency>
        <groupId>org.apache.tomcat</groupId>
        <artifactId>tomcat-dbcp</artifactId>
        <version>10.0.0</version>
        <scope>compile</scope>
    </dependency>
+	  
+	  <dependency>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-install-plugin</artifactId>
+		  <version>2.4</version>
+		  <type>maven-plugin</type>
+	  </dependency>
   </dependencies>
   
   <build>
