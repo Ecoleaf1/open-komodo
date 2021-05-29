@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Sound;
-import org.bukkit.World;
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.etc.*;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -36,13 +35,6 @@ import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.HomeSystem;
-import net.wigoftime.open_komodo.etc.Moderation;
-import net.wigoftime.open_komodo.etc.NickName;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.homesystem.AddHome;
 import net.wigoftime.open_komodo.etc.homesystem.TeleportHome;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -77,6 +69,8 @@ public class CustomPlayer
 	
 	private Rank rank;
 	private double xp;
+
+	private final MailSystem personalMailSystem;
 	
 	private int homeLimit = 1;
 	private List<Home> tutorialHomes;
@@ -105,6 +99,7 @@ public class CustomPlayer
 	public CustomPlayer(Player player) {
 		this.player = player;
 		uuid = player.getUniqueId();
+		personalMailSystem = new MailSystem(this);
 		
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsPlayer(uuid)) {
@@ -250,7 +245,12 @@ public class CustomPlayer
 		
 		if (!player.isOnline())
 			return;
-		
+
+		if (getPersonalMailSystem().hasMail()) {
+			player.sendMessage(String.format("%sYou got mail! Type in /mail to view your inbox!", ChatColor.GREEN));
+			player.playNote(player.getLocation(), Instrument.CHIME, Note.natural(1,Note.Tone.C));
+		}
+
 		mapOfPlayers.put(uuid, this);
 	}
 	
@@ -468,7 +468,10 @@ public class CustomPlayer
 		
 		return;
 	}
-	
+
+	public MailSystem getPersonalMailSystem() {
+		return personalMailSystem;
+	}
 	
 	public void setHomeLimit(int limit) {
 		homeLimit = limit;

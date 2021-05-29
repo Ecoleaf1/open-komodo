@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
+import java.nio.ByteBuffer;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -17,16 +18,13 @@ import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Timer;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.*;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -43,15 +41,6 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.custommobs.CustomPet;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.NickName;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.Home;
-import net.wigoftime.open_komodo.objects.Pet;
-import net.wigoftime.open_komodo.objects.SQLInfo;
 import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
@@ -233,7 +222,40 @@ abstract public class SQLManager {
 		
 		return nickname;
 	}
-	
+
+	public static List<MailWrapper> getMail(UUID receiver) {
+		List<Object> objects = new SQLCard(SQLCodeType.GET_MAIL, SQLCardType.GET, Arrays.asList(receiver.toString().replaceAll("-", ""))).execute();
+
+		int objectIndex = 0;
+		LinkedList<MailWrapper> mail = new LinkedList<MailWrapper>();
+
+		int index = 0;
+		while (objectIndex < objects.size() && index <= MailSystem.mailMax) {
+			ByteBuffer uuidBuffer = ByteBuffer.wrap((byte[]) objects.get(objectIndex+1));
+			long high = uuidBuffer.getLong();
+			long low = uuidBuffer.getLong();
+
+			UUID senderUUID = new UUID(high, low);
+
+			mail.add(new MailWrapper(senderUUID, ((java.sql.Timestamp) objects.get(objectIndex + 2)).toLocalDateTime(), (String) objects.get(objectIndex + 3)));
+			objectIndex = objectIndex + 4;
+			index++;
+		}
+		return mail;
+	}
+
+	public static void clearMail(UUID playerUUID) {
+		new SQLCard(SQLCodeType.CLEAR_MAIL, SQLCardType.SET, Arrays.asList(playerUUID.toString().replaceAll("-", ""))).execute();
+	}
+
+	public static int countMail(UUID playerUUID) {
+		return (int) (long) new SQLCard(SQLCodeType.COUNT_MAIL, SQLCardType.GET, Arrays.asList(playerUUID.toString().replaceAll("-",""))).execute().get(0);
+	}
+
+	public static void sendMail(UUID recipientUUID, UUID senderUUID, String message) {
+		new SQLCard(SQLCodeType.SEND_MAIL, SQLCardType.SET, Arrays.asList(recipientUUID.toString().replaceAll("-",""), senderUUID.toString().replaceAll("-", "") , Timestamp.from(Calendar.getInstance().toInstant()),message)).execute();
+	}
+
 	public static Date getMuteDate(UUID uuid) {
 		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_MUTEDATE, SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""))).execute().get(0)).toInstant());
 	}

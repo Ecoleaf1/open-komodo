@@ -65,8 +65,8 @@
       <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
     </repository>
     <repository>
-      <id>bintray-repo</id>
-      <url>https://dl.bintray.com/ichbinjoe/public/</url>
+      <id>jitpack</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
   <dependencies>
@@ -89,8 +89,8 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
-      <groupId>com.vexsoftware</groupId>
-      <artifactId>nuvotifier-universal</artifactId>
+      <groupId>com.github.NuVotifier</groupId>
+      <artifactId>NuVotifier</artifactId>
       <version>2.6.0</version>
       <scope>provided</scope>
     </dependency>

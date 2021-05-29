@@ -13,6 +13,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.apache.tomcat.dbcp.dbcp2.DataSourceConnectionFactory;
 
@@ -82,10 +83,30 @@ public class SQLCard {
 			
 			if (!result.next())
 				return new ArrayList<Object>(0);
-			
+
 			List<Object> listResult = new LinkedList<Object>();
-			for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
+
+			PrintConsole.test("SQL | Before do while");
+			do {
+				PrintConsole.test("SQL | Do While before For loop");
+				for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++) {
+					listResult.add(result.getObject(index));
+				}
+				PrintConsole.test("SQL | Do While after For Loop");
+				if (!result.next()) break;
+			} while (true);
+
+			PrintConsole.test("SQL | After While Loop");
+			/*for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
 				listResult.add(result.getObject(index));
+
+			while (true) {
+				for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
+					listResult.add(result.getObject(index));
+
+				if (!result.next()) break;
+			}*/
+
 			return listResult;
 		} catch (SQLException exception) {
 			exception.printStackTrace();
