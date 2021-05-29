@@ -41,11 +41,13 @@ abstract public class Promote
 		OfflinePlayer target = Bukkit.getPlayer(targetName);
 		
 		// Check if player is online/exists
-		if (target == null) {
+		if (target == null)
+		{
 			// Get offline player
 			target = Bukkit.getOfflinePlayer(targetName);
 			
-			if (target == null) {
+			if (target == null)
+			{
 				promoter.sendMessage(ChatColor.DARK_RED + "ERROR: Unknown Player!");
 				return;
 			}

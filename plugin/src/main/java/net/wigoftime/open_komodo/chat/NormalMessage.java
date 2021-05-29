@@ -32,7 +32,67 @@ public class NormalMessage
 		
 		Location senderLocation = senderCustomPlayer.getPlayer().getLocation();
 		
-		BaseComponent[] componentBaseMessage = MessageFormat.getChatFormat(false, senderCustomPlayer, message);
+		// Convert custom component
+		List<BaseComponent> componentList = new LinkedList<BaseComponent>();
+		
+		if (!senderCustomPlayer.getTagDisplay().equals("")) {
+			TextComponent componentTag = new TextComponent(String.format("%s%s %s| ", ChatColor.GRAY, senderCustomPlayer.getTagDisplay(), ChatColor.DARK_GRAY));
+			componentList.add(componentTag);
+		}
+		
+		if (senderCustomPlayer.getRank() != null) {
+			TextComponent componentRank = new TextComponent(String.format("%s", ChatColor.translateAlternateColorCodes('&', senderCustomPlayer.getRank().getPrefix())));
+			componentList.add(componentRank);
+		}
+		else
+		{
+			TextComponent componentRank = new TextComponent(String.format(ChatColor.DARK_GRAY + ""));
+			componentList.add(componentRank);
+		}
+		
+		{
+		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", senderCustomPlayer.getPlayer().getDisplayName()));
+		
+		Date joinDate = senderCustomPlayer.getJoinDate();
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
+		componentHoverDescBuilder.append(String.format("Joined Date: %s", joinDate == null ? "??" : simpleDateFormat.format(joinDate)));
+		if (senderCustomPlayer.discordUser != null) componentHoverDescBuilder.append(String.format("\nDiscord: %s", senderCustomPlayer.discordUser.getAsTag()));
+		if (senderCustomPlayer.getSettings().isDisplayTipEnabled())
+		componentHoverDescBuilder.append(String.format("\nTipped: $%.1f", senderCustomPlayer.getDonated()));
+		
+		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
+		BaseComponent[] name = senderCustomPlayer.getCustomName();
+		if (name == null) {
+			name = new BaseComponent[] {new TextComponent(senderCustomPlayer.getPlayer().getDisplayName())};
+			name[0].setColor(ChatColor.DARK_GRAY);
+			name[0].setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			name[0].setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			componentList.add(name[0]);
+		} else {
+			ComponentBuilder nameBuilder = new ComponentBuilder();
+			TextComponent defaultColor = new TextComponent();
+			defaultColor.setColor(ChatColor.DARK_GRAY);
+			nameBuilder.append(defaultColor);
+			
+			for (BaseComponent componentIndex : name) {
+			componentIndex.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, hoverDescription));
+			componentIndex.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, String.format("/msg %s ", senderCustomPlayer.getPlayer().getDisplayName())));
+			
+			nameBuilder.append(componentIndex);
+			}
+			
+			componentList.addAll(Arrays.asList(nameBuilder.create()));
+		}
+		}
+		
+		TextComponent messageComponent = new TextComponent(String.format("%s: ", ChatColor.WHITE));
+		messageComponent.setColor(ChatColor.WHITE);
+		componentList.add(messageComponent);
+		TextComponent message2Component = new TextComponent(String.format("%s", message));
+		message2Component.setColor(ChatColor.GRAY);
+		componentList.add(message2Component);
+		
+		BaseComponent[] componentBaseMessage = componentList.toArray(new BaseComponent[componentList.size()]);
 		
 		if (senderCustomPlayer.isInTutorial()) {
 			senderCustomPlayer.getPlayer().spigot().sendMessage(componentBaseMessage);
