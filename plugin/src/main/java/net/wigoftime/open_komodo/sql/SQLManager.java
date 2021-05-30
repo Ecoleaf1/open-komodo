@@ -39,6 +39,7 @@ abstract public class SQLManager {
 		createMainTable();
 		setUpWorlds(Bukkit.getWorlds());
 		createModerationTable();
+		createMailTable();
 	}
 	
 	public static void setUpWorlds(List<World> worlds) {
@@ -49,6 +50,10 @@ abstract public class SQLManager {
 	
 	private static void createWorldTable(String worldName) {
 		new SQLCard(SQLCodeType.CREATE_WORLD_TABLE, SQLCardType.SET, Arrays.asList(worldName)).execute();
+	}
+
+	private static void createMailTable() {
+		new SQLCard(SQLCodeType.CREATE_MAIL_TABLE, SQLCardType.SET, Arrays.asList()).execute();
 	}
 	
 	public static List<CustomItem> getItems(UUID uuid) {
@@ -573,8 +578,3 @@ abstract public class SQLManager {
 		SQLCard.disconnect();
 	}
 }
-
-class Items{
-	 public List<Integer> list;
-	 //getter and setter
-	}

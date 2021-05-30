@@ -97,15 +97,6 @@ public class SQLCard {
 			} while (true);
 
 			PrintConsole.test("SQL | After While Loop");
-			/*for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
-				listResult.add(result.getObject(index));
-
-			while (true) {
-				for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++)
-					listResult.add(result.getObject(index));
-
-				if (!result.next()) break;
-			}*/
 
 			return listResult;
 		} catch (SQLException exception) {
