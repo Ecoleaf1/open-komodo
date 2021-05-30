@@ -20,12 +20,11 @@ import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PlayerList;
 import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.etc.RankSystem;
+import net.wigoftime.open_komodo.etc.systems.RankSystem;
 import net.wigoftime.open_komodo.etc.ServerScoreBoard;
 import net.wigoftime.open_komodo.etc.Status_Bar;
 import net.wigoftime.open_komodo.etc.UpdateLog;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.Rank;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class PlayerJoin implements EventExecutor {
@@ -61,8 +60,8 @@ public class PlayerJoin implements EventExecutor {
 				
 				// Setup player's permissions
 				Permissions.setUp(playerCustomPlayer);
-				
-				playerCustomPlayer.setupCustomName();
+
+				playerCustomPlayer.getNicknameSystem().setupCustomName();
 				
 				Runnable mainThreadSetup = new Runnable() {
 					

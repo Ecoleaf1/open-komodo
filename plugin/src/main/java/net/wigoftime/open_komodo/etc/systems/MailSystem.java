@@ -1,9 +1,11 @@
-package net.wigoftime.open_komodo.etc;
+package net.wigoftime.open_komodo.etc.systems;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.MailWrapper;
 import net.wigoftime.open_komodo.sql.SQLManager;

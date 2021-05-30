@@ -1,6 +1,5 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
@@ -11,15 +10,12 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.etc.Moderation;
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class MuteCommand extends Command {
@@ -65,7 +61,7 @@ public class MuteCommand extends Command {
 		if (SQLManager.isEnabled()) permsissions = SQLManager.getGlobalPermissions(targetPlayer.getUniqueId());
 		else permsissions = PlayerConfig.getGlobalPermissions(targetPlayer.getUniqueId());
 		
-		if (Moderation.isAffectingMod(sender, permsissions, targetPlayer))
+		if (ModerationSystem.isAffectingMod(sender, permsissions, targetPlayer))
 			return false;
 		
 		return true;
@@ -82,7 +78,7 @@ public class MuteCommand extends Command {
 			reasonStringBuilder = null;
 		
 		// Convert input time string from user to Time
-		Instant instant = Moderation.calculateTime(commandArguments[1]);
+		Instant instant = ModerationSystem.calculateTime(commandArguments[1]);
 		
 		// Create reference variables to referense on potentially different threads
 		final UUID refUUID = playerTarget.getUniqueId();
@@ -90,8 +86,8 @@ public class MuteCommand extends Command {
 		
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
-				if (reasonStringBuilder == null) Moderation.mute(playerTarget, Date.from(refInstant), null);
-				else Moderation.mute(playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) ModerationSystem.mute(playerTarget, Date.from(refInstant), null);
+				else ModerationSystem.mute(playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 	}

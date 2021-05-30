@@ -2,7 +2,6 @@ package net.wigoftime.open_komodo.objects;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,80 +12,55 @@ import java.util.UUID;
 
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.etc.*;
+import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
+import net.wigoftime.open_komodo.etc.systems.*;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import com.mojang.authlib.yggdrasil.response.User;
 
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.util.DiscordUtil;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
-import net.md_5.bungee.api.chat.TextComponent;
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
-import net.wigoftime.open_komodo.etc.homesystem.AddHome;
-import net.wigoftime.open_komodo.etc.homesystem.TeleportHome;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
-import net.wigoftime.open_komodo.sql.SQLCard;
-import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
-import net.wigoftime.open_komodo.sql.SQLCode;
-import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 import net.wigoftime.open_komodo.tutorial.Tutorial;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
-public class CustomPlayer
-{
+public class CustomPlayer {
 	private final Player player;
 	private final UUID uuid;
 	private final Date joinDate;
 	
-	private BaseComponent[] customName;
-	
 	private Instant lastActiveTime;
 	private boolean isAfk;
-	
-	private Date muteDate;
-	private String muteReason;
 	
 	private CustomGUI activeGui;
 	private Settings settings;
 	
 	private int pointsBalance;
 	private int coinsBalance;
-	private float usdDonated;
-	
-	private Rank rank;
-	private double xp;
 
 	private final MailSystem personalMailSystem;
-	
-	private int homeLimit = 1;
-	private List<Home> tutorialHomes;
-	private List<Home> homes;
-	
-	private List<CustomItem> ownedHats;
-	private List<CustomItem> ownedTags;
-	private List<CustomItem> ownedPhones;
+	private final TeleportSystem teleportSystem;
+	private final NicknameSystem nicknameSystem;
+	private final ModerationSystem moderationSystem;
+	private final RankSystem rankSystem;
+	private final HomeSystem homeSystem;
+	private final DonationSystem donationSystem;
+	private final ItemSystem itemSystem;
+
 	private List<Pet> ownedPets;
 	
 	private static List<CustomPlayer> buildingPlayers = new LinkedList<CustomPlayer>();
 	private boolean buildMode;
 	private boolean isInvisible;
 	private boolean isMonitoring;
-	
-	private TpRequest tpRequest;
 	
 	private Tutorial tutorial = null;
 	
@@ -99,138 +73,39 @@ public class CustomPlayer
 	public CustomPlayer(Player player) {
 		this.player = player;
 		uuid = player.getUniqueId();
+
+		if (!PlayerSettingsConfig.contains(uuid))
+			PlayerSettingsConfig.create(uuid);
+
+		this.settings = PlayerSettingsConfig.getSettings(uuid);
+
 		personalMailSystem = new MailSystem(this);
-		
+		teleportSystem = new TeleportSystem(this);
+		nicknameSystem = new NicknameSystem(this);
+		moderationSystem = new ModerationSystem(this);
+
 		if (SQLManager.isEnabled()) {
-			if (!SQLManager.containsPlayer(uuid)) {
-				SQLManager.createPlayer(uuid);
-				isNew = true;
-			}
-			
-			PrintConsole.test(2+"");
-			if (!PlayerSettingsConfig.contains(uuid))
-				PlayerSettingsConfig.create(uuid);
-			
-			PrintConsole.test(3+"");
-			this.settings = PlayerSettingsConfig.getSettings(uuid);
-			
-			PrintConsole.test(4+"");
 			this.joinDate = SQLManager.getJoinDate(uuid);
-			
-			PrintConsole.test(5+"");
-			this.muteDate = SQLManager.getMuteDate(uuid);
-			
-			PrintConsole.test(6+"");
-			this.muteReason = SQLManager.getMuteReason(uuid);
-			
-			PrintConsole.test(7+"");
-			this.rank = Rank.getRank(SQLManager.getRankID(uuid));
-			
-			PrintConsole.test(8+"");
-			this.xp = SQLManager.getXP(uuid);
-			
-			PrintConsole.test(9+"");
-			usdDonated = SQLManager.getTip(uuid);
-			
-			PrintConsole.test(10+"");
+			moderationSystem.muteDate = SQLManager.getMuteDate(uuid);
+			moderationSystem.muteReason = SQLManager.getMuteReason(uuid);
+			rankSystem = new RankSystem(this, Rank.getRank(SQLManager.getRankID(uuid)), SQLManager.getXP(uuid));
+			donationSystem = new DonationSystem(this,SQLManager.getTip(uuid));
 			pointsBalance = SQLManager.getCurrency(uuid, Currency.POINTS);
-			
-			PrintConsole.test(11+"");
 			coinsBalance = SQLManager.getCurrency(uuid, Currency.COINS);
-			
-			PrintConsole.test(12+"");
-			List<CustomItem> ownedItems = SQLManager.getItems(uuid);
-			
-			List<CustomItem> listOwnedHats = new LinkedList<CustomItem>();
-			List<CustomItem> listOwnedTags = new LinkedList<CustomItem>();
-			List<CustomItem> listOwnedPhones = new LinkedList<CustomItem>();
-			
-			for (CustomItem item : ownedItems) {
-				if (item == null) continue;
-				
-				switch (item.getType()) {
-					case HAT:
-						listOwnedHats.add(item);
-						break;
-					case TAG:
-						listOwnedTags.add(item);
-						break;
-					case PHONE:
-						listOwnedPhones.add(item);
-						break;
-					default:
-						break;
-				}
-			}
-			
-			ownedHats = new ArrayList<CustomItem>(listOwnedHats.size());
-			ownedHats.addAll(listOwnedHats);
-			ownedTags = new ArrayList<CustomItem>(listOwnedTags.size());
-			ownedTags.addAll(listOwnedTags);
-			ownedPhones = new ArrayList<CustomItem>(listOwnedPhones.size());
-			ownedPhones.addAll(listOwnedPhones);
-			
-			PrintConsole.test(13+"");
 			this.ownedPets = SQLManager.getPets(uuid);
-			
-			PrintConsole.test(14+"");
-			homes = SQLManager.getHomes(uuid);
-		}
-		else {
-			if (!PlayerConfig.contains(uuid)) {
-				PlayerConfig.createPlayerConfig(uuid);
-				isNew = true;
-			}
-			
-			if (!PlayerSettingsConfig.contains(uuid)) {
-				PlayerSettingsConfig.create(uuid);
-			}
-			
-			this.settings = PlayerSettingsConfig.getSettings(uuid);
+			homeSystem = new HomeSystem(this, SQLManager.getHomes(uuid));
+			itemSystem = new ItemSystem(this,SQLManager.getItems(uuid));
+		} else {
 			this.joinDate = PlayerConfig.getJoinDate(uuid);
-			this.muteDate = PlayerConfig.getMuteDate(uuid);
-			this.muteReason = PlayerConfig.getMuteReason(uuid);
-			
-			this.rank = Rank.getRank(PlayerConfig.getRankID(uuid));
-			this.xp = PlayerConfig.getXP(uuid);
-			
-			usdDonated = PlayerConfig.getTip(uuid);
-			
+			moderationSystem.muteDate = PlayerConfig.getMuteDate(uuid);
+			moderationSystem.muteReason = PlayerConfig.getMuteReason(uuid);
+			rankSystem = new RankSystem(this, Rank.getRank(PlayerConfig.getRankID(uuid)), PlayerConfig.getXP(uuid));
+			donationSystem = new DonationSystem(this,PlayerConfig.getTip(uuid));
 			pointsBalance = PlayerConfig.getCurrency(uuid, Currency.POINTS);
 			coinsBalance = PlayerConfig.getCurrency(uuid, Currency.COINS);
-			
-			List<CustomItem> ownedItems = PlayerConfig.getItems(uuid);
-			
-			List<CustomItem> listOwnedHats = new LinkedList<CustomItem>();
-			List<CustomItem> listOwnedTags = new LinkedList<CustomItem>();
-			List<CustomItem> listOwnedPhones = new LinkedList<CustomItem>();
-			
-			for (CustomItem item : ownedItems) {
-				switch (item.getType()) {
-					case HAT:
-						listOwnedHats.add(item);
-						break;
-					case TAG:
-						listOwnedTags.add(item);
-						break;
-					case PHONE:
-						listOwnedPhones.add(item);
-						break;
-					default:
-						break;
-				}
-			}
-			
-			ownedHats = new ArrayList<CustomItem>(listOwnedHats.size());
-			ownedHats.addAll(listOwnedHats);
-			ownedTags = new ArrayList<CustomItem>(listOwnedTags.size());
-			ownedTags.addAll(listOwnedTags);
-			ownedPhones = new ArrayList<CustomItem>(listOwnedPhones.size());
-			ownedPhones.addAll(listOwnedPhones);
-			
 			this.ownedPets = PlayerConfig.getPets(uuid);
-			
-			homes = PlayerConfig.getHomes(uuid);
+			homeSystem = new HomeSystem(this, PlayerConfig.getHomes(uuid));
+			itemSystem = new ItemSystem(this,PlayerConfig.getItems(uuid));
 		}
 		
 		buildMode = false;
@@ -264,35 +139,17 @@ public class CustomPlayer
 	public Player getPlayer() {
 		return player;
 	}
-	
-	public BaseComponent[] getCustomName() {
-		if (customName == null) return null;
-		
-		BaseComponent[] nameClone = new BaseComponent[customName.length];
-		for (int index = 0; index < customName.length; index++) {
-			nameClone[index] = customName[index].duplicate();
-		}
-		
-		return nameClone;
+
+	public NicknameSystem getNicknameSystem() {
+		return nicknameSystem;
 	}
-	
-	public void setupCustomName() {
-		customName = SQLManager.getNickName(player);
+
+	public BaseComponent[] getCustomName() {
+		return nicknameSystem.getCustomName();
 	}
 	
 	public void setCustomName(BaseComponent[] name, String rawFormatName) {
-		if (name == null) {
-			customName = null;
-			return;
-		}
-		
-		BaseComponent[] nameClone = new BaseComponent[name.length];
-		for (int index = 0; index < name.length; index++) {
-			nameClone[index] = name[index].duplicate();
-		}
-		
-		customName = nameClone;
-		SQLManager.setNickName(uuid, rawFormatName);
+		nicknameSystem.setCustomName(name, rawFormatName);
 	}
 	
 	public void setActivePhone(CustomItem phone) {
@@ -344,24 +201,23 @@ public class CustomPlayer
 	}
 	
 	public Date getMuteDate() {
-		return muteDate;
+		return moderationSystem.muteDate;
 	}
-	
+
 	public void setMuteDate(Date date) {
-		if (date == null) {
-			muteDate = new Date(0);
-		}
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled())
-					SQLManager.setMuteDate(uuid, date);
-				else
-					PlayerConfig.setMuteDate(uuid, date);
-			}
-		});
-		
-		muteDate = date;
+		moderationSystem.setMuteDate(date);
+	}
+
+	public String getMuteReason() {
+		return moderationSystem.muteReason;
+	}
+
+	public void setMuteReason(String reason) {
+		moderationSystem.setMuteReason(reason);
+	}
+
+	public boolean isMuted() {
+		return moderationSystem.isMuted();
 	}
 	
 	public void setHat(ItemStack hat) {
@@ -376,161 +232,34 @@ public class CustomPlayer
 		
 		player.getEquipment().setHelmet(hat);
 	}
-	
-	public void ban(Date date, String reason) {
-		Moderation.ban(uuid, date, reason);
+
+	public void tpaRequest(CustomPlayer player, tpType type) {
+		teleportSystem.tpaRequest(player, type);
 	}
-	
-	
-	
-	public String getMuteReason() {
-		return muteReason;
+
+	public void tpaDeny() {
+		teleportSystem.tpaDeny();
 	}
-	
-	public void setMuteReason(String reason) {
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled())
-					SQLManager.setMuteReason(uuid, reason);
-				else
-					PlayerConfig.setMuteReason(uuid, reason);
-			}
-		});
-		
-		muteReason = reason;
+
+	public void tpaAccept() {
+		teleportSystem.tpaAccept();
 	}
-	
+
 	public String getTagDisplay() {
 		return settings.getTagDisplay();
 	}
 	
 	public void setPermission(Permission permission, World world, boolean addMode) {
-		if (world == null)
-			if (addMode)
-				Permissions.addPermission(this , permission);
-			else
-				Permissions.removePermission(this , permission);
-		else if (world.getName().equals(player.getWorld().getName()))
-			if (addMode)
-				Permissions.addPermission(this , permission);
-			else
-				Permissions.removePermission(this , permission);
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (world == null) {
-					List<Permission> permissions;
-					if (SQLManager.isEnabled())
-						permissions = SQLManager.getGlobalPermissions(uuid);
-					else
-						permissions = PlayerConfig.getGlobalPermissions(uuid);
-					
-					if (addMode) permissions.add(permission);
-					else if (!addMode) {
-						PrintConsole.test("Addmode: false");
-						for (Permission p : permissions)
-							if (p.getName().equalsIgnoreCase(permission.getName())) {
-								permissions.remove(p);
-								PrintConsole.test("found: "+ permission.getName());
-								break;
-							}
-					}
-					if (SQLManager.isEnabled())
-						SQLManager.setGlobalPermissions(uuid, permissions);
-					else
-						PlayerConfig.setGlobalPermissions(uuid, permissions);
-				}
-				else {
-					List<Permission> permissions;
-					if (SQLManager.isEnabled())
-						permissions = SQLManager.getWorldPermission(uuid, world.getName());
-					else
-						permissions = PlayerConfig.getWorldPermissions(uuid, world.getName());
-					
-					if (addMode) permissions.add(permission);
-					else for (Permission permissionForLoop : permissions)
-						if (permissionForLoop.getName().equals(permission.getName())) {
-							permissions.remove(permissionForLoop);
-							PrintConsole.test("Removed: " + permissionForLoop.getName());
-							break;
-						}
-					
-					if (SQLManager.isEnabled()) SQLManager.setWorldPermission(uuid, permissions, world.getName());
-					else PlayerConfig.setWorldPermissions(uuid, world.getName(), permissions);
-				}
-			}
-		});
+		if (addMode) Permissions.addPermission(uuid, permission, world);
+		else Permissions.removePermission(uuid, permission, world);
 	}
 	
 	public void setTagDisplay(String tagDisplay) {
 		settings.setTagDisplay(tagDisplay);
-		
-		return;
 	}
 
 	public MailSystem getPersonalMailSystem() {
 		return personalMailSystem;
-	}
-	
-	public void setHomeLimit(int limit) {
-		homeLimit = limit;
-	}
-	
-	public int getHomeLimit()
-	{
-		return homeLimit;
-	}
-	
-	public void addHome(Home home) {
-		AddHome.execute(this, home);
-	}
-	
-	public Home getHome(String homeName) {
-		if (isInTutorial()) {
-			for (Home home : tutorialHomes)
-				if (home.name.equalsIgnoreCase(homeName))
-					return home;
-		} 
-		else for (Home home : homes) {
-			if (home.name.equalsIgnoreCase(homeName))
-				return home;
-		}
-		
-		return null;
-	}
-	
-	public List<Home> getHomes() {
-		return isInTutorial() ? tutorialHomes :  homes;
-	}
-	
-	public void teleportHome(String homeName) {
-		TeleportHome.teleport(this, homeName);
-	}
-	
-	public void deleteHome(String homeName) {
-		
-		for (Home home : homes) {
-			if (home.name.equalsIgnoreCase(homeName)) {
-				homes.remove(home);
-				
-				Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-					public void run() {
-						if (SQLManager.isEnabled())
-						SQLManager.setHomes(uuid, homes);
-						else
-						PlayerConfig.setHomes(uuid, homes);
-					}
-				});
-				
-				player.sendMessage(ChatColor.GRAY + "Home deleted!");
-				return;
-			}
-		}
-		
-		getPlayer().sendMessage(HomeSystem.invaildHouse);
-		return;
-		
 	}
 	
 	public UUID getUniqueId()
@@ -539,150 +268,36 @@ public class CustomPlayer
 	}
 	
 	public float getDonated() {
-		return usdDonated;
+		return donationSystem.getDonated();
+	}
+
+	public void addDonated(float amount) {
+		donationSystem.addTip(amount);
+		donationSystem.announceDonation(amount);
+	}
+
+	public static void addDonated(UUID uuid,float amount) {
+		DonationSystem.addTip(uuid,amount);
+
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+		if (player == null) return;
+		DonationSystem.announceDonation(player.getName(),amount);
 	}
 	
-	public static float getDonated(UUID uuid) {
-		if (SQLManager.isEnabled()) {
-			if (!SQLManager.containsPlayer(uuid))
-				return 0;
-			
-			return SQLManager.getTip(uuid);
-		}
-		
-		if (!PlayerConfig.contains(uuid))
-			return 0;
-		
-		return PlayerConfig.getTip(uuid);
+	public Rank getRank() {
+		return rankSystem.getRank();
 	}
-	
-	public static void setDonated(UUID uuid, float amount) {
-		CustomPlayer donater = CustomPlayer.get(uuid);
-		
-		if (SQLManager.isEnabled()) {
-			float balance;
-			if (donater != null)
-			balance = donater.getDonated();
-			else {
-			if (!SQLManager.containsPlayer(uuid))
-				SQLManager.createPlayer(uuid);
-			balance = SQLManager.getTip(uuid);
-			}
-			
-			float total = balance + amount;
-			SQLManager.setTip(uuid, total);
-			donater.usdDonated = total;
-		} else {
-			float balance;
-			if (donater != null)
-			balance = donater.getDonated();
-			else {
-			if (!PlayerConfig.contains(uuid))
-				PlayerConfig.createPlayerConfig(uuid);
-			balance = PlayerConfig.getTip(uuid);
-			}
-			
-			float total = balance + amount;
-			PlayerConfig.setTip(uuid, total);
-			donater.usdDonated = total;
-		}
-		
-		if (amount < 0)
-			return;
-		
-		if (donater != null) {
-			for (Player player : Bukkit.getOnlinePlayers()) {
-				player.sendMessage(String.format("%s%s%s has donated %.1f$ to the server! Thanks!", ChatColor.GOLD, donater.getPlayer().getDisplayName(), ChatColor.YELLOW, amount));
-				player.getPlayer().playSound(player.getPlayer().getLocation(), Sound.UI_TOAST_CHALLENGE_COMPLETE, 1, 1);
-			}
-			donater.getPlayer().sendMessage(String.format("%s» %sOh dear grand user, we kindly thank you for your generous donation & support!", ChatColor.GOLD, ChatColor.YELLOW));
-		}
-	}
-	
-	public Rank getRank()
-	{
-		return rank;
+
+	public RankSystem getRankSystem() {
+		return rankSystem;
 	}
 	
 	public double getXP() {
-		return xp;
+		return rankSystem.getXP();
 	}
 	
 	public void setXP(double xp) {
-		
-		this.xp = xp;
-		
-		// Set XP in SQL Database or Player Config file in another task asynchronously to reduce the server pausing
-		// from latency the server to the SQL
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled())
-					SQLManager.setXP(uuid, xp);
-				else
-					PlayerConfig.setXP(uuid, xp);
-			}
-		});
-		
-		refreshXPBar();
-	}
-	
-	public List<CustomItem> getItems(ItemType type) {
-		switch (type) {
-			case HAT:
-				return ownedHats;
-			case TAG:
-				return ownedTags;
-			case PHONE:
-				return ownedPhones;
-			default:
-				PrintConsole.print(String.format("%sWARNING: getItems is none of the slection and will return empty.", ChatColor.YELLOW));
-				player.sendMessage(String.format("%s» %sError, you might want to report this message: default case in switch in getItems()", ChatColor.RED, ChatColor.DARK_RED));
-				return new ArrayList<CustomItem>(0);
-		}
-	}
-	
-	public List<CustomItem> getItems() {
-		List<CustomItem> items = new ArrayList<CustomItem>(ownedHats.size() + ownedTags.size() + ownedPhones.size());
-		items.addAll(ownedTags);
-		for (CustomItem hat : ownedHats)
-			items.add(hat);
-		for (CustomItem phone : ownedPhones)
-			items.add(phone);
-		
-		return items;
-	}
-	
-	public void addItem(CustomItem boughtItemCustomItem) {
-		switch (boughtItemCustomItem.getType()) {
-		case HAT:
-			ownedHats.add(boughtItemCustomItem);
-			break;
-		case TAG:
-			ownedTags.add(boughtItemCustomItem);
-			break;
-		case PHONE:
-			ownedPhones.add(boughtItemCustomItem);
-			break;
-		default:
-			break;
-		}
-		
-		PrintConsole.test("Adding.. "+ boughtItemCustomItem.getID());
-		
-		// Create a reference variable to self
-		// to reference in another thread
-		final CustomPlayer selfCustomPlayer = this;
-		
-		// Add items in SQL Database or Player Config file in another task asynchronously to reduce the server pausing
-		// from latency the server to the SQL
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled())
-				SQLManager.setItems(selfCustomPlayer);
-				else
-				PlayerConfig.setItems(uuid, getItems());
-			}
-		});
+		rankSystem.setXP(xp);
 	}
 	
 	public void refreshXPBar() {
@@ -691,14 +306,14 @@ public class CustomPlayer
 				float leftoverRemaining;
 				
 				if (getRank() == null)
-					leftoverRemaining = (float) (xp / Rank.getRank(1).getXPPrice());
+					leftoverRemaining = (float) (rankSystem.getXP() / Rank.getRank(1).getXPPrice());
 				else {
 					Rank rank = Rank.getRank(getRank().getID() + 1);
 					
 					if (rank == null)
 						leftoverRemaining = 0;
 					else
-						leftoverRemaining = (float) (xp / rank.getXPPrice());
+						leftoverRemaining = (float) (rankSystem.getXP() / rank.getXPPrice());
 				}
 				
 				if (leftoverRemaining > 1)
@@ -712,8 +327,7 @@ public class CustomPlayer
 		});
 	}
 	
-	public void addPet(Pet pet)
-	{
+	public void addPet(Pet pet) {
 		ownedPets.add(pet);
 		
 		// Create a reference variable to self
@@ -731,6 +345,22 @@ public class CustomPlayer
 			}
 		});
 	}
+
+	public List<CustomItem> getItems(ItemType type) {
+		return itemSystem.getItems(type);
+	}
+
+	public List<CustomItem> getItems() {
+		return itemSystem.getItems();
+	}
+
+	public void addItem(CustomItem addedItem) {
+		itemSystem.addItem(addedItem);
+	}
+
+	public boolean hasItem(int id, ItemType type) {
+		return itemSystem.hasItem(id, type);
+	}
 	
 	public List<Pet> getPets() {
 		return ownedPets;
@@ -742,57 +372,6 @@ public class CustomPlayer
 				return true;
 		
 		return false;
-	}
-	
-	
-	public boolean hasItem(int id, ItemType type) {
-		for (CustomItem item : getItems(type))
-			if (id == item.getID())
-				return true;
-		
-		return false;
-	}
-	
-	public void setRank(Rank rank)
-	{
-		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
-		// from latency the server to the SQL
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (SQLManager.isEnabled()) {
-				SQLManager.setRankID(uuid, rank == null ? 0 : rank.getID());
-				} else
-				PlayerConfig.setRankID(uuid, rank == null ? 0 : rank.getID());
-			}
-		});
-		
-		setXP(0.0);
-		
-		this.rank = rank == null ? null : rank;
-		
-		CustomPlayer thisPlayer = this;
-		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
-			public void run() {
-				Permissions.setUp(thisPlayer); 
-				ServerScoreBoard.add(thisPlayer);
-			}
-		}, 1);
-	}
-	
-	public static void setRankOffline(UUID uuid, int rankID) {
-			// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
-			// from latency the server to the SQL
-			Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-				public void run() {
-					if (SQLManager.isEnabled()) {
-					SQLManager.setRankID(uuid, rankID);
-					SQLManager.setXP(uuid, 0.0);
-					} else {
-					PlayerConfig.setRankID(uuid, rankID);
-					PlayerConfig.setXP(uuid, 0.0);
-					}
-				}
-			});
 	}
 	
 	public void setCurrency(int amount, Currency type) {
@@ -829,34 +408,29 @@ public class CustomPlayer
 	}
 	
 	public static final String buildingError = ChatColor.DARK_RED + "Sorry, but you must disable build mode in order to open this.";
-	public boolean isBuilding()
-	{
+	public boolean isBuilding() {
 		return buildMode;
 	}
 	
 	public static List<CustomPlayer> getBuildingPlayers() {
-		synchronized (acceptedRequester) {
+		synchronized (buildingPlayers) {
 			return buildingPlayers;
 		}
 	}
 	
-	public boolean isInvisible()
-	{
+	public boolean isInvisible() {
 		return isInvisible;
 	}
 	
-	public boolean isMonitoring()
-	{
+	public boolean isMonitoring() {
 		return isMonitoring;
 	}
-	
-	public void setBuilding(boolean isBuilding)
-	{
+
+	public void setBuilding(boolean isBuilding) {
 		setBuilding(isBuilding, false);
 	}
 	
-	public void setBuilding(boolean isBuilding, boolean isSilent)
-	{
+	public void setBuilding(boolean isBuilding, boolean isSilent) {
 		buildMode = isBuilding;
 		
 		if (buildMode) {
@@ -879,13 +453,11 @@ public class CustomPlayer
 		}
 	}
 	
-	public void setInvisible(boolean isInvisible) 
-	{
+	public void setInvisible(boolean isInvisible) {
 		setInvisible(isInvisible, false);
 	}
 	
-	public void setInvisible(boolean isInvisible, boolean isSilent)
-	{
+	public void setInvisible(boolean isInvisible, boolean isSilent) {
 		if (isInvisible) { 
 			for (Player playerIndex: Bukkit.getOnlinePlayers()) {
 			if (playerIndex.hasPermission(Permissions.seeOtherInvis))
@@ -909,134 +481,60 @@ public class CustomPlayer
 		this.isInvisible = isInvisible;
 	}
 	
-	public void setMonitoring (boolean isMonitoring)
-	{
+	public void setMonitoring (boolean isMonitoring) {
 		this.isMonitoring = isMonitoring;
 		
 		player.sendMessage(String.format(isMonitoring == true ? "%s» %sYou are now monitoring" : "%s» %sMonitoring stopped", ChatColor.GOLD, ChatColor.GRAY));
 	}
-	
-	public void reload()
-	{
-		int rankID = SQLManager.getRankID(getUniqueId());
-		
-		rank = Rank.getRank(rankID);
-	}
-	
-	public static CustomPlayer get(UUID uuid)
-	{
-		return mapOfPlayers.get(uuid);
-	}
-	
-	public static List<CustomPlayer> getOnlinePlayers()
-	{
-		List<CustomPlayer> list = new ArrayList<CustomPlayer>(mapOfPlayers.size());
-		for (Entry<UUID, CustomPlayer> e : mapOfPlayers.entrySet())
-		{
-			list.add(e.getValue());
-		}
-		
-		return list;
-	}
-	
-	private static final String noRequests = String.format("%s» %sYou don't have any tpa requests", ChatColor.YELLOW, ChatColor.GRAY);
-	private static final String sentRequest = String.format("%s» %sTpa request sent to $D", ChatColor.YELLOW, ChatColor.GRAY);
-	private static final String acceptedRequester = String.format("%s» %s$N accepted your teleport request", ChatColor.YELLOW, ChatColor.GRAY);
-	private static final String acceptedTarget = String.format("%s» %sYou accepted $D's teleport request", ChatColor.YELLOW, ChatColor.GRAY);
-	private static final String deniedRequest = String.format("%s» %sYou denied $D's request", ChatColor.YELLOW, ChatColor.GRAY);
-	public static final String errorCantFindPerson = String.format("%s» %sCan't find $D", ChatColor.YELLOW, ChatColor.GRAY);
-	public static final String tpaOff = String.format("%s» %sThey have disabled tpa requests", ChatColor.YELLOW, ChatColor.GRAY);
-	
-	public void tpaRequest(CustomPlayer requester, tpType type)
-	{
-		if (!settings.isTpaEnabled()) {
-			requester.getPlayer().sendMessage(tpaOff);
-			return;
-		}
-		
-		tpRequest = new TpRequest(this.getPlayer(), requester.getPlayer(), type);
-		
-		String requesterMessage = MessageFormat.format(sentRequest, requester.getPlayer(), this.getPlayer(), null);
-		requester.getPlayer().sendMessage(requesterMessage);
-		BaseComponent[] requestedTpaMsg = new BaseComponent[3];
-		
-		if (type == tpType.TPA)
-			requestedTpaMsg[0] = new TextComponent(String.format("%s» %s%s%s Would like to teleport to you\n    ", ChatColor.YELLOW, ChatColor.GRAY, requester.getPlayer().getDisplayName(), ChatColor.GRAY)); 
-		else
-			requestedTpaMsg[0] = new TextComponent(String.format("%s» %s%s%s Would like to teleport to them\n    ", ChatColor.YELLOW, ChatColor.GRAY, requester.getPlayer().getDisplayName(), ChatColor.GRAY)); 
-		
-		requestedTpaMsg[1] = new TextComponent(String.format("%s» Accept", ChatColor.DARK_GREEN));
-		requestedTpaMsg[1].setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/tpaccept"));
-		
-		BaseComponent[] showTextAccept = {new TextComponent("Accept teleportation request")};
-		requestedTpaMsg[1].setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, showTextAccept));
-		
-		BaseComponent[] showTextDeny = {new TextComponent("Deny teleportation request")};
-		requestedTpaMsg[2] = new TextComponent(String.format("\n    %s» Deny", ChatColor.DARK_RED));
-		requestedTpaMsg[2].setClickEvent(new ClickEvent(Action.RUN_COMMAND, "/tpadeny"));
-		requestedTpaMsg[2].setHoverEvent(new HoverEvent(net.md_5.bungee.api.chat.HoverEvent.Action.SHOW_TEXT, showTextDeny));
-		
-		this.getPlayer().spigot().sendMessage(requestedTpaMsg);
-		this.getPlayer().playSound(this.getPlayer().getLocation(), Sound.ENTITY_ENDER_EYE_DEATH, 1f, 1f);
-	}
-	
-	public void tpaAccept()
-	{
-		if (tpRequest == null) {
-			this.getPlayer().sendMessage(noRequests);
-			return;
-		}
-		
-		if (tpRequest.getType() == tpType.TPA)
-			tpRequest.getRequester().teleport(tpRequest.getTarget());
-		else if (tpRequest.getType() == tpType.TPAHERE)
-			tpRequest.getTarget().teleport(tpRequest.getRequester());
-		
-		String requesterMessage = MessageFormat.format(acceptedRequester, this.getPlayer(), tpRequest.getRequester(), null);
-		String targetMessage = MessageFormat.format(acceptedTarget, this.getPlayer(), tpRequest.getRequester(), null);
-		
-		tpRequest.getRequester().sendMessage(requesterMessage);
-		tpRequest.getTarget().sendMessage(targetMessage);
-		tpRequest.getTarget().playSound(tpRequest.getTarget().getLocation(), Sound.ENTITY_ENDER_EYE_LAUNCH, 1f, 1f);
-		
-		tpRequest = null;
-	}
-	
-	public void tpaDeny()
-	{
-		if (tpRequest == null) {
-			this.getPlayer().sendMessage(noRequests);
-			return;
-		}
-		
-		tpRequest = null;
-		this.getPlayer().sendMessage(deniedRequest);
-		return;
-	}
-	
-	public void prepareDestroy()
-	{
+
+	public void prepareDestroy() {
 		mapOfPlayers.remove(this.getUniqueId());
 	}
 	
-	public boolean isTpaRequestAllowed()
-	{
+	public boolean isTpaRequestAllowed() {
 		return settings.isTpaEnabled();
 	}
 	
-	public void setTpaRequestAllowed(boolean isAllowed)
-	{
+	public void setTpaRequestAllowed(boolean isAllowed) {
 		settings.setTpa(isAllowed);
 	}
-	
+
+	public void setHomeLimit(int limit) {
+		homeSystem.setHomeLimit(limit);
+	}
+
+	public int getHomeLimit() {
+		return homeSystem.getHomeLimit();
+	}
+
+	public void addHome(Home home) {
+		homeSystem.addHome(home);
+	}
+
+	public Home getHome(String homeName) {
+		return homeSystem.getHome(homeName);
+	}
+
+	public List<Home> getHomes() {
+		return homeSystem.getHomes();
+	}
+
+	public void teleportHome(String homeName) {
+		homeSystem.teleportHome(homeName);
+	}
+
+	public void deleteHome(String homeName) {
+		homeSystem.deleteHome(homeName);
+	}
+
 	public void setTutorial(boolean isInTutorial) {
 		if (isInTutorial == true) {
 			tutorial = new Tutorial(this);
-			tutorialHomes = new LinkedList<Home>();
+			homeSystem.setupTutorialHomes();
 			tutorial.begin();
 		} else {
 			tutorial = null;
-			tutorialHomes = null;
+			homeSystem.clearTutorialHomes();
 			player.teleport(Main.spawnLocation);
 		}
 	}
@@ -1054,5 +552,19 @@ public class CustomPlayer
 		return Rank.getRank(SQLManager.getRankID(uuid));
 		else
 		return Rank.getRank(PlayerConfig.getRankID(uuid));
+	}
+
+
+	public static CustomPlayer get(UUID uuid) {
+		return mapOfPlayers.get(uuid);
+	}
+
+	public static List<CustomPlayer> getOnlinePlayers() {
+		List<CustomPlayer> list = new ArrayList<CustomPlayer>(mapOfPlayers.size());
+		for (Entry<UUID, CustomPlayer> e : mapOfPlayers.entrySet()) {
+			list.add(e.getValue());
+		}
+
+		return list;
 	}
 }

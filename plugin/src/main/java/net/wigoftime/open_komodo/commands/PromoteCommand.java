@@ -10,10 +10,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.Permission;
 
-import net.wigoftime.open_komodo.actions.Promote;
-import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class PromoteCommand extends Command {
 	public PromoteCommand(String name, String description, String usageMessage,
@@ -28,128 +25,91 @@ public class PromoteCommand extends Command {
 
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] args) {
-		// If player doesn't have promote permission, return
 		if (!sender.hasPermission(Permissions.promotePerm)) {
 			sender.sendMessage(Permissions.promotePermError);
 			return false;
 		}
-		
-		// Skip if no sub-commands
+
 		if (args.length < 1) {
 			sender.sendMessage(usage);
 			return false;
 		}
-		
-		// First sub-command will be selector, example "rank"
-		String selector = args[0];
-		
-		// If player wants to promote player's rank
-		if (selector.equalsIgnoreCase("rank")) {
-			// skip if less than 3 sub-commands
-			if (args.length < 3) {
-				sender.sendMessage(usageRankMsg);
-				return false;
-			}
-			
-			String targetName = args[1];
-			String rankName = args[2];
-			
-			Promote.commandPromoteRank(sender, targetName, rankName);
-			return true;
+
+		if (args[0].equalsIgnoreCase("player")) playerSelector(sender, args);
+		else if (args[0].equalsIgnoreCase("rank")) rankSelector(sender, args);
+		else if (args[0].equalsIgnoreCase("list-perms") || args[0].equalsIgnoreCase("listperm")) listpermsSelector(sender, args);
+		return true;
+	}
+
+	private void playerSelector(CommandSender sender, String[] args) {
+		if (args.length < 4) {
+			sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
+			return;
 		}
-		
-		// If Managing Player Local Permissions
-		if (selector.equalsIgnoreCase("player")) {
-			// If has less than 4 sub commands
-			if (args.length < 4) {
-				sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
-				return false;
+
+		boolean isAdding;
+		if (args[1].equalsIgnoreCase("true")) isAdding = true;
+		else isAdding = false;
+
+		OfflinePlayer targetPlayer = Bukkit.getPlayer(args[2]);
+
+		if (args.length > 4) {
+			World targetWorld = Bukkit.getWorld(args[3]);
+			if (targetWorld == null) {
+				sender.sendMessage(String.format("%s» %sCould not find world", ChatColor.GOLD, ChatColor.DARK_RED));
+				return;
 			}
-			
-			// Sub-command to put either "add" or "remove
-			String modifer = args[1];
-			
-			String targetName = args[2];
-			
-			Permission permission;
-			World world;
-			
-			if (args.length > 4)
-			{
-				world = Bukkit.getWorld(args[3]);
-				
-				if (world == null)
-				{
-					sender.sendMessage(String.format("%s» %sCould not find world", ChatColor.GOLD, ChatColor.DARK_RED));
-					return false;
-				}
-				
-				permission = new Permission(args[4]);
-			}
+
+			boolean addedResult;
+
+			if (isAdding)
+				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[4]), targetWorld);
 			else
-			{
-				permission = new Permission(args[3]);
-				world = null;
-			}
-			
-			// If player is adding permission
-			boolean addMode;
-			
-			if (modifer.equalsIgnoreCase("add"))
-				addMode = true;
-			else if (modifer.equalsIgnoreCase("remove"))
-				addMode = false;
-			else {
-				sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
-				return false;
-			}
-			
-			Promote.commandPromotePermission(sender, targetName, world, permission, addMode);
-			return false;
+				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[4]), targetWorld);
+
+		} else {
+			boolean addedResult;
+			if (isAdding)
+				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[4]), null);
+			else
+				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[4]), null);
 		}
-		
-		if (selector.equalsIgnoreCase("list-perms")) {
-			if (args.length < 2) {
-				sender.sendMessage(String.format("%s» %sUsage: /promote list-perms {Player} [World Name]", ChatColor.GOLD, ChatColor.GRAY));
-				return  false;
-			}
-			
-			OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
-			if (player == null) {
-				sender.sendMessage(String.format("%sError: Player not found", ChatColor.DARK_RED));
-				return false;
-			}
-			
-			List<Permission> permissions;
-			
-			if (args.length < 3) {
-				
-				if (SQLManager.isEnabled()) permissions = SQLManager.getGlobalPermissions(player.getUniqueId());
-				else permissions = PlayerConfig.getGlobalPermissions(player.getUniqueId());
-				
-				if (permissions == null)
-					return false;
-				
-				sender.sendMessage(String.format("%s» %s%s's%s Global Permissions:", ChatColor.GOLD, ChatColor.GOLD, player.getName(), ChatColor.GRAY));
-			} else {
-				if (SQLManager.isEnabled())
-					permissions = SQLManager.getWorldPermission(player.getUniqueId(), args[2]);
-				else permissions = PlayerConfig.getWorldPermissions(player.getUniqueId(), args[2]);
-				
-				if (permissions == null) {
-					sender.sendMessage(String.format("%sError: Permissions not found, does the world exist?", ChatColor.DARK_RED));
-					return false;
-				}
-				
-				sender.sendMessage(String.format("%s» %s%s's%s world (%s%s%s) Permissions:", 
-						ChatColor.GOLD, ChatColor.GOLD, player.getName(), ChatColor.GRAY,
-						ChatColor.GOLD, ChatColor.GRAY ,args[2]));
-			}
-			
-			for (Permission permissionIndex: permissions)
-				sender.sendMessage(String.format("%s- %s", ChatColor.GRAY , permissionIndex.getName()));
+	}
+
+	private void rankSelector(CommandSender sender, String[] args) {
+		if (args.length < 3) {
+			sender.sendMessage(usageRankMsg);
+			return;
 		}
-		return false;
+
+
+		return;
+	}
+
+	private void listpermsSelector(CommandSender sender, String[] args) {
+		if (args.length < 2) {
+			sender.sendMessage(String.format("%s» %sUsage: /promote list-perms {Player} [World Name]", ChatColor.GOLD, ChatColor.GRAY));
+			return;
+		}
+
+		OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[1]);
+		if (targetPlayer == null) {
+			sender.sendMessage(String.format("%sError: Player not found", ChatColor.DARK_RED));
+			return;
+		}
+
+		List<Permission> permissions;
+		if (args.length < 3) permissions = Permissions.getPermissions(targetPlayer.getUniqueId(), null);
+		else permissions = Permissions.getPermissions(targetPlayer.getUniqueId(), Bukkit.getWorld(args[2]));
+
+		if (args.length < 3) sender.sendMessage(String.format("%s» %s%s's%s Global Permissions:",
+			ChatColor.GOLD, ChatColor.GOLD, targetPlayer.getName(), ChatColor.GRAY));
+		else sender.sendMessage(String.format("%s» %s%s's%s world (%s%s%s) Permissions:",
+			ChatColor.GOLD, ChatColor.GOLD, targetPlayer.getName(), ChatColor.GRAY,
+			ChatColor.GOLD, ChatColor.GRAY ,args[2]));
+
+		for (Permission permissionIndex: permissions)
+		sender.sendMessage(String.format("%s- %s", ChatColor.GRAY , permissionIndex.getName()));
 	}
 
 }

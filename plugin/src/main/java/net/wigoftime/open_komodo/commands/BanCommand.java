@@ -1,9 +1,6 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -18,10 +15,8 @@ import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.etc.Moderation;
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ModerationResults;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
@@ -73,7 +68,7 @@ public class BanCommand extends Command
 		if (SQLManager.isEnabled()) permsissions = SQLManager.getGlobalPermissions(targetPlayer.getUniqueId());
 		else permsissions = PlayerConfig.getGlobalPermissions(targetPlayer.getUniqueId());
 		
-		if (Moderation.isAffectingMod(sender, permsissions, targetPlayer))
+		if (ModerationSystem.isAffectingMod(sender, permsissions, targetPlayer))
 			return false;
 		
 		return true;
@@ -90,7 +85,7 @@ public class BanCommand extends Command
 			reasonStringBuilder = null;
 		
 		// Convert input time string from user to Time
-		Instant instant = Moderation.calculateTime(commandArguments[1]);
+		Instant instant = ModerationSystem.calculateTime(commandArguments[1]);
 		
 		// Create reference variables to referense on potentially different threads
 		final UUID refUUID = playerTarget.getUniqueId();
@@ -100,8 +95,8 @@ public class BanCommand extends Command
 			public void run() {
 				ModerationResults banResult;
 				
-				if (reasonStringBuilder == null) banResult = Moderation.ban(refUUID, Date.from(refInstant), null);
-				else banResult = Moderation.ban(refUUID, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) banResult = ModerationSystem.ban(refUUID, Date.from(refInstant), null);
+				else banResult = ModerationSystem.ban(refUUID, Date.from(refInstant), reasonStringBuilder.toString());
 				
 				banResult.affectedPlayer = playerTarget;
 				if (banner instanceof Player) sendBanResultMessage((Player)banner, banResult);

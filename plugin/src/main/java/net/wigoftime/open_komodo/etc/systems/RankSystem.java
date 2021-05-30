@@ -1,4 +1,4 @@
-package net.wigoftime.open_komodo.etc;
+package net.wigoftime.open_komodo.etc.systems;
 
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -6,17 +6,21 @@ import java.util.LinkedList;
 import java.util.Map.Entry;
 
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 
 import java.util.UUID;
 
+import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
-abstract public class RankSystem 
+public class RankSystem
 {
 	private static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
 	
@@ -98,7 +102,7 @@ abstract public class RankSystem
 						if (r.getXPPrice() > totalXP)
 							break;
 						
-						customPlayer.setRank(r);
+						customPlayer.getRankSystem().setRank(r);
 						
 						customPlayer.getPlayer().sendMessage(String.format(rankedUp, r.getPrefix()));
 						customPlayer.getPlayer().playSound(customPlayer.getPlayer().getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1f, 1f);
@@ -200,5 +204,84 @@ abstract public class RankSystem
 		synchronized (pendingXP) {
 			pendingXP.put(player.getUniqueId(), 0.0);
 		}
+	}
+
+	public static void setRankOffline(UUID uuid, Rank rank) {
+		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
+		// from latency the server to the SQL
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (SQLManager.isEnabled()) {
+					SQLManager.setRankID(uuid, rank == null ? 0 : rank.getID());
+					SQLManager.setXP(uuid, 0);
+				} else {
+					PlayerConfig.setRankID(uuid, rank == null ? 0 : rank.getID());
+					PlayerConfig.setXP(uuid, 0);
+				}
+			}
+		});
+	}
+
+	// Non-static
+
+
+	private final CustomPlayer playerCustom;
+	private Rank rank;
+	private double xp;
+
+	public RankSystem(CustomPlayer playerCustom, Rank rank, double xp) {
+		this.playerCustom = playerCustom;
+		this.rank = rank;
+		this.xp = xp;
+	}
+
+	public void setRank(Rank rank) {
+		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
+		// from latency the server to the SQL
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (SQLManager.isEnabled()) {
+					SQLManager.setRankID(playerCustom.getUniqueId(),rank == null ? 0 : rank.getID());
+					SQLManager.setXP(playerCustom.getUniqueId(), 0);
+				} else {
+					PlayerConfig.setRankID(playerCustom.getUniqueId(), rank == null ? 0 : rank.getID());
+					PlayerConfig.setXP(playerCustom.getUniqueId(), 0);
+				}
+			}
+		});
+
+		this.rank = rank;
+		this.xp = xp;
+
+		Bukkit.getScheduler().scheduleSyncDelayedTask(Main.getPlugin(), new Runnable() {
+			public void run() {
+				Permissions.setUp(playerCustom);
+				ServerScoreBoard.add(playerCustom);
+			}
+		}, 1);
+	}
+
+	public void setXP(double xp) {
+		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
+		// from latency the server to the SQL
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (SQLManager.isEnabled()) {
+					SQLManager.setXP(playerCustom.getUniqueId(),xp);
+				} else {
+					PlayerConfig.setXP(playerCustom.getUniqueId(),xp);
+				}
+			}
+		});
+
+		this.xp = xp;
+	}
+
+	public Rank getRank() {
+		return rank;
+	}
+
+	public double getXP() {
+		return xp;
 	}
 }

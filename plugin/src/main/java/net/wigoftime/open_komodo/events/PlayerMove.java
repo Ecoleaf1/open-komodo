@@ -7,11 +7,10 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
-import org.bukkit.util.Vector;
 
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.RankSystem;
+import net.wigoftime.open_komodo.etc.systems.RankSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PlayerMove implements EventExecutor {

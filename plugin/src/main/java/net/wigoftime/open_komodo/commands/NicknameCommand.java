@@ -6,7 +6,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.etc.NickName;
+import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class NicknameCommand extends Command
@@ -28,9 +28,9 @@ public class NicknameCommand extends Command
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
 		
 		if (args.length < 1)
-			NickName.changeNick(player, null);
+			NicknameSystem.changeNick(player, null);
 		else
-			NickName.changeNick(player, args[0]);
+			NicknameSystem.changeNick(player, args[0]);
 		
 		return true;
 	}

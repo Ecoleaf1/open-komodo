@@ -1,8 +1,5 @@
 package net.wigoftime.open_komodo.etc.homesystem;
 
-import java.util.List;
-
-import net.wigoftime.open_komodo.etc.HomeSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Home;
 

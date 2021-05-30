@@ -5,8 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import net.wigoftime.open_komodo.chat.MessageFormat;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionAttachment;
 
@@ -15,6 +20,8 @@ import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 abstract public class Permissions 
 {
@@ -61,7 +68,10 @@ abstract public class Permissions
 	public static final Permission genTipPerm = new Permission("openkomodo.console.gentip");
 	public static final Permission emoteReloadPerm = new Permission("openkomodo.admin.emote.reload");
 	public static final Permission rankReloadPerm = new Permission("openkomodo.admin.rank.reload");
-	
+
+	// Mod detection to detect someone who is a mod
+	public static final Permission modDetect = new Permission("openkomodo.mod.mod");
+
 	public static final Permission modteleport = new Permission("openkomodo.mod.teleport");
 	public static final Permission mutePerm = new Permission("openkomodo.mod.mute");
 	public static final Permission banPerm = new Permission("openkomodo.mod.ban");
@@ -78,7 +88,7 @@ abstract public class Permissions
 	public static final Permission visibleFullErrors = new Permission("openkomodo.admin.visiblefullerrors");
 
 	public static final Permission accessFurnitureMenu = new Permission("openkomodo.builder.furnituremenu");
-	
+
 	public static String getPlaceError() 
 	{
 		return placePermError;
@@ -107,61 +117,90 @@ abstract public class Permissions
 	public static String getWorldBorderMessage() {
 		return String.format("%s» %sHey! I am afraid you cannot travel that far... Teleporting you back to spawn.", ChatColor.GOLD, ChatColor.DARK_RED);
 	}
-	
-	public static void addPermission(CustomPlayer customPlayer, Permission permission)
-	{
-		PermissionAttachment attachment = permMap.get(customPlayer.getUniqueId());
-		attachment.setPermission(permission, true);
-		
-		permMap.replace(customPlayer.getUniqueId(), attachment);
-		customPlayer.getPlayer().recalculatePermissions();
+
+	public static boolean addPermission(UUID playerUUID, Permission permission, World world) {
+		List<Permission> permissionList;
+
+		if (world == null) permissionList = getPermissions(playerUUID,null);
+		else permissionList = getPermissions(playerUUID,world);
+
+		permissionList.add(permission);
+		setPermissions(playerUUID, permissionList, world);
+
+		return true;
 	}
 	
-	public static void removePermission(CustomPlayer customPlayer, Permission permission)
-	{
-		PermissionAttachment attachment = permMap.get(customPlayer.getUniqueId());
-		attachment.unsetPermission(permission);
-		
-		permMap.replace(customPlayer.getUniqueId(), attachment);
-		customPlayer.getPlayer().recalculatePermissions();
+	public static boolean removePermission(UUID playerUUID, Permission permission, World world) {
+		List<Permission> permissionList;
+
+		if (world == null) permissionList = getPermissions(playerUUID, null);
+		else permissionList = getPermissions(playerUUID,world);
+
+		for (Permission permissionIndex: permissionList)
+			if (permissionIndex.getName().equalsIgnoreCase(permission.getName())) {
+				permissionList.remove(permissionIndex);
+				setPermissions(playerUUID, permissionList, world);
+				return true;
+			}
+
+		return false;
+	}
+
+	public static void setPermissions(UUID uuid, List<Permission> permissions, World world) {
+
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+				if (SQLManager.isEnabled())
+					if (world == null) SQLManager.setGlobalPermissions(uuid, permissions);
+					else SQLManager.setWorldPermission(uuid, permissions, world.getName());
+				else
+				if (world == null) PlayerConfig.setGlobalPermissions(uuid, permissions);
+				else PlayerConfig.setWorldPermissions(uuid, world.getName(), permissions);
+			}
+		});
+
+		CustomPlayer playerCustom = CustomPlayer.get(uuid);
+		if (playerCustom != null) setUp(playerCustom);
+	}
+
+	public static List<Permission> getPermissions(UUID uuid, World world) {
+		if (world == null)
+			if (SQLManager.isEnabled()) return SQLManager.getGlobalPermissions(uuid);
+			else return PlayerConfig.getGlobalPermissions(uuid);
+		else
+			if (SQLManager.isEnabled()) return SQLManager.getWorldPermission(uuid, world.getName());
+			else return PlayerConfig.getWorldPermissions(uuid, world.getName());
+	}
+
+	public static boolean isMod(UUID uuid) {
+		List<Permission> permissionList = getPermissions(uuid, null);
+
+		for (Permission permissionIndex : permissionList)
+		if (permissionIndex.getName().startsWith("openkomodo.mod")) return true;
+
+		return false;
 	}
 	
-	public static void setUp(CustomPlayer customPlayer) 
-	{
+	public static void setUp(CustomPlayer customPlayer) {
 		PrintConsole.test("Setup Permissions");
-		// Get and load Player's configuration
-		//File file = PlayerConfig.getPlayerConfig(customPlayer.getPlayer());
-		//YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
-		
-		// Get Player's Rank
 		Rank rank = customPlayer.getRank();
-		
-		// Get list of permissions inherited by Player's Rank
+
 		List<Permission> rankPermissions;
 		if (rank == null) {
 			rankPermissions = new ArrayList<Permission>();
 		} else
 			rankPermissions = rank.getPermissions();
-		
-		// Permissions inherited by Player
+
 		List<Permission> playerPermissions;
-		// World permissions inherited by Player
 		List<Permission> worldPermissions;
 		
 		if (SQLManager.isEnabled())
 		{
-			// Get player's global permissions
 			playerPermissions = SQLManager.getGlobalPermissions(customPlayer.getUniqueId());
-			
-			// Get player's world permissions
 			worldPermissions = SQLManager.getWorldPermission(customPlayer.getUniqueId(), customPlayer.getPlayer().getWorld().getName());
 		}
-		else
-		{
-			// Get player's global permissions
+		else {
 			playerPermissions = PlayerConfig.getGlobalPermissions(customPlayer.getUniqueId());
-			
-			// Get player's world permissions
 			worldPermissions = PlayerConfig.getWorldPermissions(customPlayer.getUniqueId(), customPlayer.getPlayer().getWorld().getName());
 		}
 		
@@ -199,16 +238,14 @@ abstract public class Permissions
 							customPlayer.getPlayer().setOp(true);
 						}
 					});
-				else if (p.getName().startsWith("openkomodo.home.limit"))
-				{
+				else if (p.getName().startsWith("openkomodo.home.limit")) {
 					String string = p.getName();
 					
 					char[] chars = new char[string.length() - 22];
 					 string.getChars(22, string.length(), chars, 0);
 					
 					 StringBuilder sb = new StringBuilder();
-					 for (char c : chars)
-					 {
+					 for (char c : chars) {
 						 sb.append(c);
 					 }
 					 

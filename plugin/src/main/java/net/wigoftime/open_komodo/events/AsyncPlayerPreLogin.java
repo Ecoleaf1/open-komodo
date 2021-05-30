@@ -19,7 +19,7 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.plugin.EventExecutor;
 
-import net.wigoftime.open_komodo.etc.Moderation;
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class AsyncPlayerPreLogin implements EventExecutor {
@@ -34,11 +34,11 @@ public class AsyncPlayerPreLogin implements EventExecutor {
 		if (!SQLManager.containsModerationPlayer(preLoginEvent.getUniqueId()))
 			SQLManager.createModerationPlayer(preLoginEvent.getUniqueId());
 		
-		boolean isBanned = Moderation.isBanned(uuid);
+		boolean isBanned = ModerationSystem.isBanned(uuid);
 		if (!isBanned) return;
 		
-		String reason = Moderation.getBanReason(uuid);
-		Date date = Moderation.getBanDate(uuid);
+		String reason = ModerationSystem.getBanReason(uuid);
+		Date date = ModerationSystem.getBanDate(uuid);
 		
 		if (reason == null)
 			preLoginEvent.disallow(Result.KICK_BANNED, String.format("%s> %sYou have been banned\n  Due Date: %s", ChatColor.GOLD, ChatColor.DARK_RED, date.toString()));

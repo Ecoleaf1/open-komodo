@@ -7,7 +7,7 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import net.wigoftime.open_komodo.etc.HomeSystem;
+import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class SetHomeCommand extends Command

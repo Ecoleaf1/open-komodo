@@ -40,7 +40,7 @@ public class TpaHereCommand extends Command
 		
 		if (target == null)
 		{
-			String message = MessageFormat.format(CustomPlayer.errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
+			String message = MessageFormat.format(TpaCommand.errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
 			player.getPlayer().sendMessage(message);
 			return false;
 		}

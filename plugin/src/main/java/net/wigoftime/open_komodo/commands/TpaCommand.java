@@ -14,7 +14,9 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 
 public class TpaCommand extends Command
-{	
+{
+	public static final String errorCantFindPerson = String.format("%s» %sCan't find $D", net.md_5.bungee.api.ChatColor.YELLOW, net.md_5.bungee.api.ChatColor.GRAY);
+
 	public TpaCommand(String name, String description, String usageMessage,
 			List<String> aliases) 
 	{
@@ -44,7 +46,7 @@ public class TpaCommand extends Command
 				
 			} else 
 			{
-				String message = MessageFormat.format(CustomPlayer.errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
+				String message = MessageFormat.format(errorCantFindPerson, player.getPlayer().getDisplayName(), args[0], null);
 				player.getPlayer().sendMessage(message);
 			}
 				

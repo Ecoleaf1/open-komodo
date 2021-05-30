@@ -1,10 +1,7 @@
 package net.wigoftime.open_komodo.chat;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -21,12 +18,9 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import net.wigoftime.open_komodo.config.EmoteConfig;
-import net.wigoftime.open_komodo.etc.NickName;
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
 
 public class Emote {
 	
@@ -109,7 +103,7 @@ public class Emote {
 		String previousChatColor = "";
 		String[] splitMessageString = unformattedText.split(" ");
 		
-		BaseComponent[] colorFormatted = NickName.translateRGBColorCodes('#', '&', unformattedText);
+		BaseComponent[] colorFormatted = NicknameSystem.translateRGBColorCodes('#', '&', unformattedText);
 		
 		if (isOtherMsg)
 			for (BaseComponent index : colorFormatted) {

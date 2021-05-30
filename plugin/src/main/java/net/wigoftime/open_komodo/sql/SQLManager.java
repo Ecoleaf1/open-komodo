@@ -3,27 +3,15 @@ package net.wigoftime.open_komodo.sql;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.sql.Time;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.systems.MailSystem;
+import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
 import net.wigoftime.open_komodo.objects.*;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -40,7 +28,6 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.wigoftime.open_komodo.config.Config;
-import net.wigoftime.open_komodo.custommobs.CustomPet;
 import net.wigoftime.open_komodo.sql.SQLCard.SQLCardType;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
@@ -218,7 +205,7 @@ abstract public class SQLManager {
 		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCardType.GET, Arrays.asList(player.getUniqueId().toString().replaceAll("-", ""))).execute().get(0);
 		if (nicknameRaw.length() == 0) return null;
 		BaseComponent[] nickname;
-		nickname = NickName.translateRGBColorCodes('#', '&', nicknameRaw);
+		nickname = NicknameSystem.translateRGBColorCodes('#', '&', nicknameRaw);
 		
 		return nickname;
 	}
