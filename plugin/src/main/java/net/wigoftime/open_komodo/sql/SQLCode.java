@@ -14,18 +14,15 @@ public class SQLCode {
 		case CONTAINS_MODERATION_PLAYER:
 			return "SELECT `UUID` FROM `OpenKomodo.Moderation` WHERE `UUID` = UNHEX('%s');";
 		case CONTAINS_WORLD_PLAYER:
-			return "SELECT `UUID` FROM `OpenKomodo.Worlds.%s` WHERE `UUID` = UNHEX('%s');";
+			return "SELECT `UUID` FROM `OpenKomodo.Worlds.%s` WHERE `UUID` = UNHEX(?);";
 		case CREATE_BAG_INVENTORY:
-			return "INSERT INTO `OpenKomodo.Bag_Inventory.%s` ( "
+			return "INSERT INTO `OpenKomodo.Bag_Inventory` ( "
 					+ "`UUID` , "
 					+ "`Inventory` , "
 					+ "`ID`) VALUES (" 
-					+ "UNHEX('%s'), '', %d);";
+					+ "UNHEX(?), '', ?);";
 		case CREATE_BAG_INVENTORY_TABLE:
-			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Bag_Inventory.%s` ( "
-					+ "`UUID` BINARY(16) NOT NULL, "
-					+ "`ID` INT UNSIGNED, "
-					+ "`Inventory` TEXT, UNIQUE (`ID`));";
+			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Bag_Inventory` ( `UUID` BINARY(16) NOT NULL, `ID` INT UNSIGNED NOT NULL, `Inventory` BLOB NOT NULL, UNIQUE (`ID`));";
 			case CREATE_MAIL_TABLE:
 			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Mail` ( `Receiver` BINARY(16) NOT NULL , `Sender` BINARY(16) NOT NULL , `Date` DATETIME NOT NULL , `Message` VARCHAR(256) NOT NULL , PRIMARY KEY (`Receiver`))";
 		case CREATE_MAIN_TABLE:
@@ -83,9 +80,9 @@ public class SQLCode {
 		case GET_ACTIVE_TAG:
 			return "SELECT `Active Tag` FROM `OpenKomodo.Main` WHERE UUID = UNHEX('%s')";
 		case GET_BAG_INVENTORY:
-			return "SELECT `Inventory` FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
+			return "SELECT `Inventory` FROM `OpenKomodo.Bag_Inventory` WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
 		case GET_LATEST_BAGID:
-			return "SELECT `ID` FROM `OpenKomodo.Bag_Inventory.%s` WHERE `UUID` = UNHEX('%s') ORDER BY `ID` DESC LIMIT 1";
+			return "SELECT COUNT('ID') FROM `OpenKomodo.Bag_Inventory` WHERE `UUID` = UNHEX('%s')";
 		case GET_BANDATE:
 			return "SELECT `Ban Date` FROM `OpenKomodo.Moderation` " +
 			"WHERE `UUID` = UNHEX('%s');";
@@ -148,7 +145,7 @@ public class SQLCode {
 		case SET_ACTIVE_TAG:
 			return "UPDATE `OpenKomodo.Main.%s` SET `Ban Reason` = \"%s\" WHERE `UUID` = UNHEX('%s')";
 		case SET_BAG_INVENTORY:
-			return "UPDATE `OpenKomodo.Bag_Inventory.%s` SET `Inventory` = \"%s\" WHERE `UUID` = UNHEX('%s') AND `ID` = %d";
+			return "UPDATE `OpenKomodo.Bag_Inventory` SET `Inventory` = ? WHERE `UUID` = UNHEX(?) AND `ID` = ?";
 		case SET_BANDATE:
 			return "UPDATE `OpenKomodo.Moderation` SET `Ban Date` = \"%s\" WHERE `UUID` = UNHEX(\"%s\");";
 		case SET_BANREASON:

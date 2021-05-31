@@ -58,12 +58,12 @@ public class BagGui extends CustomGUI {
 	}
 	
 	private void save() {
-		if (SQLManager.isEnabled()) SQLManager.setBagInventory(opener.getUniqueId(), opener.getPlayer().getWorld().getName(), bagID, Arrays.asList(items));
+		if (SQLManager.isEnabled()) SQLManager.setBagInventory(opener.getUniqueId(), bagID, Arrays.asList(items));
 		else WorldInventoryConfig.setInventory(opener.getPlayer(), opener.getPlayer().getWorld(), items);
 	}
 	
 	private List<ItemStack> getItems() {
-		if (SQLManager.isEnabled()) return SQLManager.getBagInventory(opener.getUniqueId(), opener.getPlayer().getWorld().getName(), bagID);
+		if (SQLManager.isEnabled()) return SQLManager.getBagInventory(opener.getUniqueId(), bagID);
 		else return Arrays.asList(WorldInventoryConfig.getInventory(opener.getPlayer(), bagID));
 	}
 }

@@ -23,17 +23,15 @@ abstract public class InventoryManagement
 {
 	public static Map<UUID, Integer> currentOpen = new HashMap<UUID, Integer>();
 	
-	public static void saveBagInventory(Player player, String worldName, List<ItemStack> inventory)
-	{
+	public static void saveBagInventory(Player player, String worldName, List<ItemStack> inventory) {
 		
 		if (SQLManager.isEnabled())
-		SQLManager.setBagInventory(player.getUniqueId(), worldName, currentOpen.get(player.getUniqueId()), inventory);
+		SQLManager.setBagInventory(player.getUniqueId(), currentOpen.get(player.getUniqueId()), inventory);
 		else
 		WorldInventoryConfig.setInventory(player, currentOpen.get(player.getUniqueId()), inventory.toArray(new ItemStack[inventory.size()]));
 	}
 	// Save inventory under a world uuid.
-	public static void saveInventory(CustomPlayer player,  World world)
-	{
+	public static void saveInventory(CustomPlayer player,  World world) {
 		PrintConsole.test("Saving inventory..");
 		
 		if (player.isBuilding())
@@ -55,8 +53,7 @@ abstract public class InventoryManagement
 	}
 	
 	// Load a world inventory
-	public static void loadInventory(CustomPlayer player, World world)
-	{
+	public static void loadInventory(CustomPlayer player, World world) {
 		if (player.isBuilding())
 			return;
 		
@@ -84,7 +81,7 @@ abstract public class InventoryManagement
 				// Get all items
 				List<ItemStack> items;
 				if (SQLManager.isEnabled())
-					items = SQLManager.getBagInventory(player.getUniqueId(), player.getPlayer().getWorld().getName(), bagID);
+					items = SQLManager.getBagInventory(player.getUniqueId(), bagID);
 				else
 					items = Arrays.asList(WorldInventoryConfig.getInventory(player.getPlayer(), bagID));
 				

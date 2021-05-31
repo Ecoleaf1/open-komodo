@@ -40,7 +40,7 @@ public abstract class CurrencyClass
 			if (boughtItem.getType() == Material.STICK) {
 				int bagID;
 				if (SQLManager.isEnabled())
-				bagID = SQLManager.createBagInventory(playerCustomPlayer.getUniqueId(), playerCustomPlayer.getPlayer().getWorld().getName());
+				bagID = SQLManager.createBagInventory(playerCustomPlayer.getUniqueId());
 				else bagID = WorldInventoryConfig.createBagInventory(playerCustomPlayer.getPlayer());
 				meta.setCustomModelData(bagID);
 				boughtItem.setItemMeta(meta);

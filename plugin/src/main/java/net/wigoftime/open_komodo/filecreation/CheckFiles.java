@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.filecreation;
 
 import java.io.File;
 
+import net.wigoftime.open_komodo.sql.SQLCard;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -25,7 +26,6 @@ import net.wigoftime.open_komodo.gui.Warps;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomParticle;
 import net.wigoftime.open_komodo.objects.ItemType;
-import net.wigoftime.open_komodo.sql.SQLCard;
 import net.wigoftime.open_komodo.sql.SQLManager;
 
 abstract public class CheckFiles 
