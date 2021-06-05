@@ -1,7 +1,9 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.gui.PlayerMenu;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
@@ -32,6 +34,17 @@ public class PlayerInteractEntityEvent implements EventExecutor {
 		if (PetsManager.isPet(player.getUniqueId(), entity.getUniqueId())) {
 			playerInteractEvent.setCancelled(true);
 			PetControl gui = new PetControl(player);
+			gui.open();
+			return;
+		}
+
+		if (entity instanceof Player) {
+			Player clickedPlayer = (Player) entity;
+			CustomPlayer clickedPlayerCustom = CustomPlayer.get(clickedPlayer.getUniqueId());
+
+			if (clickedPlayerCustom == null) return;
+
+			PlayerMenu gui = new PlayerMenu(player, clickedPlayerCustom);
 			gui.open();
 			return;
 		}
