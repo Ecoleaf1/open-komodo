@@ -109,13 +109,14 @@ public class PlayerInteract implements EventExecutor {
 				break;
 			}
 			} else {
+				if (itemStack == null) break;
+
 				if (!FurnitureMangement.isValid(itemStack)) break;
+
 				FurnitureMangement.createFurniture(itemStack, event);
 				event.setCancelled(true);
 				break;
 			}
-			
-			if (itemStack == null) break; 
 			
 			if (specialItem(itemStack, playerCustom, event)) {
 				event.setCancelled(true);
