@@ -25,29 +25,6 @@ public class BuyConfirm extends CustomGUI
 	private final ItemStack cancelButton;
 	private final ItemStack confirmButton;
 	
-	/*
-	// Open with CustomItem
-	public void open() {
-		
-		if (pendingItem instanceof CustomItem) {
-		if (!canAccess(opener, (CustomItem) pendingItem))
-			return;
-		} else if (!canAccess(opener, (Pet) pendingItem))
-			return;
-		
-		opener.setActiveGui(this);
-		opener.getPlayer().openInventory(gui);
-	}
-	
-	// Open with pets
-	public void open(CustomPlayer customPlayer, Pet pet, Currency currencyType)
-	{
-		if (!canAccess(customPlayer, pet))
-			return;
-		
-		customPlayer.getPlayer().openInventory(gui);
-	}*/
-	
 	// Create inventory for CustomItem
 	public BuyConfirm(CustomPlayer customPlayer,CustomItem pendingCustomItem, Currency currencyType, Permission requiredPermissoin) 
 	{
@@ -115,29 +92,6 @@ public class BuyConfirm extends CustomGUI
 		
 		return;
 	}
-	
-	/*
-	// Can player access CustomItem
-	private boolean canAccess(CustomPlayer player, CustomItem item)
-	{
-		if (!canAccess()) return false;
-		if (item.getPermission() == null) return true;
-		if (player.getPlayer().hasPermission(item.getPermission())) return true;
-		
-		sendErrorMessage(player.getPlayer(), ErrorType.NOT_PERMITTED);
-		return false;
-	}
-	
-	// Can player access Pet
-	private boolean canAccess(CustomPlayer player, Pet pet)
-	{
-		if (!canAccess(player)) return false;
-		if (pet.getPermission() == null) return true;
-		if (player.getPlayer().hasPermission(pet.getPermission())) return true;
-		
-		sendErrorMessage(player.getPlayer(), ErrorType.NOT_PERMITTED);
-		return false;
-	}*/
 	
 	public void clickedBuy() {
 		// Find the player that is using this gui
