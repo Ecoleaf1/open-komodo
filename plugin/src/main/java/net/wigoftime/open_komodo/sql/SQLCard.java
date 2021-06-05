@@ -1,5 +1,6 @@
 package net.wigoftime.open_komodo.sql;
 
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
@@ -14,7 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SQLCard {
-    private static BasicDataSource dataSource = new BasicDataSource();
+    public static BasicDataSource dataSource = new BasicDataSource();
     private static SQLInfo info;
 
 
@@ -22,7 +23,10 @@ public class SQLCard {
         info = Config.getSQLInfo();
 
 
-        if (!info.enabled) return;
+        if (!info.enabled) {
+            dataSource.setUrl("jdbc:sqlite:"+ Main.dataFolderPath+"/database.sqlite");
+            return;
+        }
 
         dataSource.setUsername(info.user);
         dataSource.setPassword(info.password);
@@ -92,7 +96,6 @@ public class SQLCard {
                 PrintConsole.test("SQL | Do While before For loop");
                 for (byte index = 1; index <= result.getMetaData().getColumnCount(); index++) {
                     listResult.add(result.getObject(index));
-                    result.getObject(index).getClass();
                 }
                 PrintConsole.test("SQL | Do While after For Loop");
                 if (!result.next()) break;

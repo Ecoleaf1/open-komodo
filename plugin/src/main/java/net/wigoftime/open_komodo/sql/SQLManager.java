@@ -3,12 +3,15 @@ package net.wigoftime.open_komodo.sql;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import net.wigoftime.open_komodo.etc.Currency;
@@ -62,13 +65,15 @@ abstract public class SQLManager {
 	}
 	
 	public static List<CustomItem> getItems(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
 		JSONArray array;
+		//Blob uuidBlob = uuidTo
 		
 		JSONParser parser = new JSONParser();
 		try {
 			array = (JSONArray) parser.parse((String) new SQLCard(SQLCodeType.GET_ITEMS, SQLCard.SQLCardType.GET,
-					Arrays.asList(uuid.toString().replaceAll("-", "")),
-					Arrays.asList()).execute().get(0));
+					Arrays.asList(),
+					Arrays.asList(playerBlob)).execute().get(0));
 		} catch (ParseException e) {
 			e.printStackTrace();
 			return new ArrayList<CustomItem>(0);
@@ -81,12 +86,12 @@ abstract public class SQLManager {
 	}
 	
 	public static void setItems(CustomPlayer player) {
+		Blob playerBlob = uuidToBlob(player.getUniqueId());
 		List<CustomItem> items = player.getItems();
 		JSONArray array = new JSONArray();
 		for (CustomItem item : items) array.add(item.getID());
-		new SQLCard(SQLCodeType.SET_ITEMS, SQLCard.SQLCardType.SET, Arrays.asList(array.toJSONString(),
-				player.getUniqueId().toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+		new SQLCard(SQLCodeType.SET_ITEMS, SQLCard.SQLCardType.SET, Arrays.asList(),
+				Arrays.asList(array.toJSONString(), playerBlob)).execute();
 	}
 	
 	private static void createMainTable() {
@@ -105,15 +110,19 @@ abstract public class SQLManager {
 	}
 	
 	public static boolean containsPlayer(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		return new SQLCard(SQLCodeType.CONTAINS_PLAYER, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-","")),
-				Arrays.asList()).execute().size() < 1 ? false : true;
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().size() < 1 ? false : true;
 	}
 	
 	public static boolean containsModerationPlayer(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_MODERATION_PLAYER, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-","")),
-				Arrays.asList());
+				Arrays.asList(),
+				Arrays.asList(playerBlob));
 		
 		// If Player can't be found in world database
 		if (card.execute().isEmpty())
@@ -123,8 +132,10 @@ abstract public class SQLManager {
 	}
 	
 	public static boolean containsWorldPlayer(UUID uuid, String worldName) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_WORLD_PLAYER, SQLCard.SQLCardType.GET, Arrays.asList(worldName),
-				Arrays.asList(uuid.toString().replaceAll("-","")));
+				Arrays.asList(playerBlob));
 		
 		// If Player can't be found in world database
 		if (card.execute().isEmpty())
@@ -134,17 +145,23 @@ abstract public class SQLManager {
 	}
 	
 	public static int createBagInventory(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		List<Object> sqlElements = new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")), Arrays.asList()).execute();
+				Arrays.asList(), Arrays.asList(playerBlob)).execute();
 		int id = (int) (long) sqlElements.get(0);
 
-		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(uuid.toString().replaceAll("-", ""), id)).execute();
+		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY, SQLCard.SQLCardType.SET, Arrays.asList(),
+				Arrays.asList(playerBlob, id)).execute();
 		return id;
 	}
 	
 	public static List<ItemStack> getBagInventory(UUID uuid, int id) {
-		byte[] serializedBlob = (byte[]) new SQLCard(SQLCodeType.GET_BAG_INVENTORY, SQLCard.SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", ""), id),
-				Arrays.asList()).execute().get(0);
+		Blob playerBlob = uuidToBlob(uuid);
+
+		byte[] serializedBlob = (byte[]) new SQLCard(SQLCodeType.GET_BAG_INVENTORY, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(playerBlob, id)).execute().get(0);
 
 		if (serializedBlob.length < 1) return new ArrayList<ItemStack>(27);
 
@@ -174,8 +191,10 @@ abstract public class SQLManager {
 			objectInputStream = new BukkitObjectOutputStream(byteInputStream);
 			objectInputStream.writeObject(inventory);
 
+			Blob playerBlob = uuidToBlob(uuid);
 			Blob inventoryBlob = new SerialBlob(byteInputStream.toByteArray());
-			new SQLCard(SQLCodeType.SET_BAG_INVENTORY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList((inventoryBlob), uuid.toString().replaceAll("-", ""), id)).execute();
+			new SQLCard(SQLCodeType.SET_BAG_INVENTORY, SQLCard.SQLCardType.SET, Arrays.asList(),
+					Arrays.asList((inventoryBlob), playerBlob, id)).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (SerialException throwables) {
@@ -189,55 +208,112 @@ abstract public class SQLManager {
 	}
 	
 	public static void createPlayer(UUID uuid) {
-		LocalDate date = LocalDate.now();
+		Blob playerBlob = uuidToBlob(uuid);
+		Blob permissionsBlob, petsBlob, homeBlob;
+
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		ObjectOutputStream objectOutputStream = null ;
+		try {
+			{
+				byteArrayOutputStream = new ByteArrayOutputStream();
+				objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+				objectOutputStream.writeObject(new LinkedList<String>());
+
+				permissionsBlob = new SerialBlob(byteArrayOutputStream.toByteArray());
+			}
+			{
+				byteArrayOutputStream = new ByteArrayOutputStream();
+				objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+				objectOutputStream.writeObject(new LinkedList<Integer>());
+
+				petsBlob = new SerialBlob(byteArrayOutputStream.toByteArray());
+			}
+			{
+				byteArrayOutputStream = new ByteArrayOutputStream();
+				objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+
+				objectOutputStream.writeObject(new LinkedList<Home>());
+
+				homeBlob = new SerialBlob(byteArrayOutputStream.toByteArray());
+			}
+		} catch (Exception exception) {
+			exception.printStackTrace();
+			return;
+		} finally {
+			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException exception) { exception.printStackTrace(); };
+			if (byteArrayOutputStream != null) try { byteArrayOutputStream.close(); } catch (IOException exception) { exception.printStackTrace(); };
+		}
+
+
+		LocalDateTime date = LocalDateTime.now();
 		new SQLCard(SQLCodeType.CREATE_PLAYER, SQLCard.SQLCardType.SET,
-				Arrays.asList(uuid.toString().replaceAll("-", ""), String.format("%04d/%02d/%02d", date.getYear(), date.getMonth().getValue(), date.getDayOfMonth())),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(playerBlob, permissionsBlob, petsBlob, homeBlob, date)).execute();
+
 	}
 	
 	public static void createModerationPlayer(UUID uuid) {
-		new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCard.SQLCardType.SET, Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+		Blob playerBlob = uuidToBlob(uuid);
+		new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCard.SQLCardType.SET, Arrays.asList(),
+				Arrays.asList(playerBlob)).execute();
 	}
 	
 	public static void createWorldPlayer(UUID uuid, String worldName) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.CREATE_WORLD_PLAYER, SQLCard.SQLCardType.SET,
-				Arrays.asList(worldName, uuid.toString().replaceAll("-", "")), Arrays.asList()).execute();
+				Arrays.asList(worldName),
+				Arrays.asList(playerBlob, playerBlob)).execute();
 	}
 	
 	public static Date getBanDate(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_BANDATE, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0)).toInstant());
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().get(0)).toInstant());
+
 	}
 	
 	public static void setBanDate(UUID uuid, Date date) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_BANDATE, SQLCard.SQLCardType.SET,
-				Arrays.asList(Timestamp.from(date.toInstant()).toString() ,uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(Timestamp.from(date.toInstant()).toString(), playerBlob)).execute();
 	}
 	
 	public static String getBanReason(UUID uuid) {
-		return (String) new SQLCard(SQLCodeType.GET_BANREASON, SQLCard.SQLCardType.GET, Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+		Blob playerBlob = uuidToBlob(uuid);
+
+		return (String) new SQLCard(SQLCodeType.GET_BANREASON, SQLCard.SQLCardType.GET, Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().get(0);
 	}
 	
 	public static void setBanReason(UUID uuid, String reason) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_BANREASON, SQLCard.SQLCardType.SET,
-				Arrays.asList(reason, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(reason, playerBlob)).execute();
 	}
 	
 	public static void setNickName(UUID uuid, String nickname) {
+		Blob playerBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_NICKNAME, SQLCard.SQLCardType.SET,
-				Arrays.asList(nickname, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(nickname, playerBlob)).execute();
 	}
 	
 	public static BaseComponent[] getNickName(Player player) {
+		Blob playerBlob = uuidToBlob(player.getUniqueId());
+
 		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCard.SQLCardType.GET,
-				Arrays.asList(player.getUniqueId().toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().get(0);
 		if (nicknameRaw.length() == 0) return null;
 		BaseComponent[] nickname;
 		nickname = NicknameSystem.translateRGBColorCodes('#', '&', nicknameRaw);
@@ -246,122 +322,116 @@ abstract public class SQLManager {
 	}
 
 	public static List<MailWrapper> getMail(UUID receiver) {
+		Blob receiverBlob = uuidToBlob(receiver);
+
 		List<Object> objects = new SQLCard(SQLCodeType.GET_MAIL, SQLCard.SQLCardType.GET,
-				Arrays.asList(receiver.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(receiverBlob)).execute();
 
 		int objectIndex = 0;
 		LinkedList<MailWrapper> mail = new LinkedList<MailWrapper>();
 
 		int index = 0;
 		while (objectIndex < objects.size() && index <= MailSystem.mailMax) {
-			ByteBuffer uuidBuffer = ByteBuffer.wrap((byte[]) objects.get(objectIndex+1));
-			long high = uuidBuffer.getLong();
-			long low = uuidBuffer.getLong();
+			UUID senderUUID = bytesToUUID((byte[]) objects.get(objectIndex+1));
 
-			UUID senderUUID = new UUID(high, low);
-
-			mail.add(new MailWrapper(senderUUID, ((java.sql.Timestamp) objects.get(objectIndex + 2)).toLocalDateTime(), (String) objects.get(objectIndex + 3)));
-			objectIndex = objectIndex + 4;
+			mail.add(new MailWrapper(senderUUID, ((java.sql.Timestamp) objects.get(objectIndex + 2)).toLocalDateTime(), (String) objects.get(objectIndex)));
+			objectIndex = objectIndex + 3;
 			index++;
 		}
 		return mail;
 	}
 
 	public static void clearMail(UUID playerUUID) {
+		Blob playerBlob = uuidToBlob(playerUUID);
 		new SQLCard(SQLCodeType.CLEAR_MAIL, SQLCard.SQLCardType.SET,
-				Arrays.asList(playerUUID.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute();
 	}
 
 	public static int countMail(UUID playerUUID) {
+		Blob playerBlob = uuidToBlob(playerUUID);
+
 		return (int) (long) new SQLCard(SQLCodeType.COUNT_MAIL, SQLCard.SQLCardType.GET,
-				Arrays.asList(playerUUID.toString().replaceAll("-","")),
-				Arrays.asList()).execute().get(0);
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().get(0);
 	}
 
 	public static void sendMail(UUID recipientUUID, UUID senderUUID, String message) {
+		Blob recipientBlob = uuidToBlob(recipientUUID);
+		Blob senderBlob = uuidToBlob(senderUUID);
+
 		new SQLCard(SQLCodeType.SEND_MAIL, SQLCard.SQLCardType.SET,
-				Arrays.asList(recipientUUID.toString().replaceAll("-",""), senderUUID.toString().replaceAll("-", "") , Timestamp.from(Calendar.getInstance().toInstant()),message),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(recipientBlob, senderBlob, Timestamp.from(Instant.now()),message)).execute();
 	}
 
 	public static Date getMuteDate(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_MUTEDATE, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0)).toInstant());
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0)).toInstant());
 	}
 	
 	public static void setMuteDate(UUID uuid, Date date) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_MUTEDATE, SQLCard.SQLCardType.SET,
-				Arrays.asList(Timestamp.from(date.toInstant()).toString(),uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(Timestamp.from(date.toInstant()), uuidBlob)).execute();
 	}
 	
 	public static String getMuteReason(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
 		return (String) new SQLCard(SQLCodeType.GET_MUTEREASON, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
 	public static void setMuteReason(UUID uuid, String reason) {
+		Blob uuidBlob = uuidToBlob(uuid);
 		new SQLCard(SQLCodeType.SET_MUTEREASON, SQLCard.SQLCardType.SET,
-				Arrays.asList(reason, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(reason, uuidBlob)).execute();
 	}
 	
 	public static Date getJoinDate(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
 		return ((Date) new SQLCard(SQLCodeType.GET_JOINDATE, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0));
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0));
 	}
 	
 	public static int getCurrency(UUID uuid, Currency currency) {
-		if (currency == Currency.POINTS)
-		return (int) (long) new SQLCard(SQLCodeType.GET_POINTS, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
-		else if (currency == Currency.COINS)
-		return (int) (long) new SQLCard(SQLCodeType.GET_COINS, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
-		else
-			return 0;
+		Blob uuidBlob = uuidToBlob(uuid);
+
+		return (int) (long) new SQLCard(currency == Currency.POINTS ? SQLCodeType.GET_POINTS : SQLCodeType.GET_COINS, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
 	public static void setCurrency(UUID uuid, int amount, Currency currency) {
-		if (currency == Currency.POINTS)
-		new SQLCard(SQLCodeType.SET_POINTS, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
-		else if (currency == Currency.COINS)
-		new SQLCard(SQLCodeType.SET_COINS, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
-	}
-	
-	public static void setCurrency(UUID uuid, Currency currency, int amount) {
-		if (currency == Currency.POINTS)
-		new SQLCard(SQLCodeType.SET_POINTS, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
-		else if (currency == Currency.COINS)
-		new SQLCard(SQLCodeType.GET_COINS, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+		Blob uuidBlob = uuidToBlob(uuid);
+
+		new SQLCard(currency == Currency.POINTS ? SQLCodeType.SET_POINTS : SQLCodeType.SET_COINS, SQLCard.SQLCardType.SET,
+				Arrays.asList(),
+				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
 	public static List<Permission> getGlobalPermissions(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		SQLCard card = new SQLCard(SQLCodeType.GET_GLOBAL_PERMISSIONS, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList());
+				Arrays.asList(),
+				Arrays.asList(uuidBlob));
 		if (card.execute().size() < 1)
 			return new ArrayList<Permission>(0);
 		
-		String serialized = (String) card.execute().get(0);
+		byte[] serialized = (byte[]) card.execute().get(0);
 
 		// Deserialize permissions to a list of permissions
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		
 		try {
@@ -400,11 +470,14 @@ abstract public class SQLManager {
 		try {
 			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
 			objectOutputStream.writeObject(permissionNodes);
+
+			Blob uuidBlob = uuidToBlob(uuid);
+			Blob permissionsBlob = objectToBlob(byteOutputStream.toByteArray());
 			
 			// Save serialized list of permissions in Database
 			new SQLCard(SQLCodeType.SET_GLOBAL_PERMISSIONS, SQLCard.SQLCardType.SET,
-					Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")),
-					Arrays.asList()).execute();
+					Arrays.asList(),
+					Arrays.asList(permissionsBlob, uuidBlob)).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -414,19 +487,21 @@ abstract public class SQLManager {
 	}	
 	
 	public static List<Permission> getWorldPermission(UUID uuid, String worldName) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Get world permissions from database
 		SQLCard card = new SQLCard(SQLCodeType.GET_WORLD_PERMISSIONS, SQLCard.SQLCardType.GET,
-				Arrays.asList(worldName, uuid.toString().replaceAll("-", "")),
-				Arrays.asList());
+				Arrays.asList(worldName),
+				Arrays.asList(uuidBlob));
 		
 		// Return new empty permissions if database entry doesn't exist
 		if (card.execute().size() < 1)
 			return new ArrayList<Permission>(0);
 		
-		String serialized = (String) card.execute().get(0);
+		byte[] serialized = (byte[]) card.execute().get(0);
 		
 		// Deserialize to a list of permissions
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
@@ -453,24 +528,28 @@ abstract public class SQLManager {
 	}	
 	
 	public static void setWorldPermission(UUID uuid, List<Permission> permissions, String worldName) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Convert list of permissions to a list of string
 		List<String> permissionNodes = new ArrayList<String>(permissions.size());
 		
 		Iterator<Permission> iterator = permissions.iterator();
 		while (iterator.hasNext())
 			permissionNodes.add(iterator.next().getName());
-		
+
 		// Serialized world permissions
 		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream objectOutputStream = null;
 		try {
 			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
 			objectOutputStream.writeObject(permissionNodes);
-			
+
+			Blob permissionsBlob = objectToBlob(byteOutputStream.toByteArray());
+
 			// Save serialized list to database
 			new SQLCard(SQLCodeType.SET_WORLD_PERMISSIONS, SQLCard.SQLCardType.SET,
-					Arrays.asList(worldName, Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")),
-					Arrays.asList()).execute();
+					Arrays.asList(worldName),
+					Arrays.asList(permissionsBlob, uuidBlob)).execute();
 			return;
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -482,13 +561,15 @@ abstract public class SQLManager {
 	}	
 	
 	public static List<Home> getHomes(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Get serialized list from database
-		String serialized = (String) new SQLCard(SQLCodeType.GET_HOMES, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+		byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_HOMES, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0);
 		
 		// Deserialize list
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
@@ -505,17 +586,21 @@ abstract public class SQLManager {
 	}
 	
 	public static void setHomes(UUID uuid, List<Home> homes) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Serialized home list
 		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream objectOutputStream = null;
 		try {
 			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
 			objectOutputStream.writeObject(homes);
-			
+
+			Blob homesBlob = objectToBlob(byteOutputStream.toByteArray());
+
 			// Save Serialized home list to database
 			new SQLCard(SQLCodeType.SET_HOMES, SQLCard.SQLCardType.SET,
-					Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")),
-					Arrays.asList()).execute();
+					Arrays.asList(),
+					Arrays.asList(homesBlob, uuidBlob)).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -525,12 +610,14 @@ abstract public class SQLManager {
 	}
 	
 	public static ItemStack[] getInventory(UUID uuid, String worldName) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Get Seralized Inventory from Database
-		String serialized = (String) new SQLCard(SQLCodeType.GET_INVENTORY, SQLCard.SQLCardType.GET,
+		byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_INVENTORY, SQLCard.SQLCardType.GET,
 				Arrays.asList(worldName, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+				Arrays.asList(uuidBlob)).execute().get(0);
 		
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		
 		// Deseralize inventory
@@ -558,11 +645,14 @@ abstract public class SQLManager {
 			// Serialize inventory
 			outputStream = new BukkitObjectOutputStream(byteOutputStream);
 			outputStream.writeObject(inventory);
+
+			Blob uuidBlob = uuidToBlob(uuid);
+			Blob inventoryBlob = objectToBlob(byteOutputStream.toByteArray());
 			
 			// Save inventory in the SQL database
 			new SQLCard(SQLCodeType.SET_INVENTORY, SQLCard.SQLCardType.SET,
-					Arrays.asList(worldName, Base64Coder.encodeLines(byteOutputStream.toByteArray()), uuid.toString().replaceAll("-", "")),
-					Arrays.asList()).execute();
+					Arrays.asList(worldName),
+					Arrays.asList(inventoryBlob, uuidBlob)).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -572,47 +662,61 @@ abstract public class SQLManager {
 	}
 	
 	public static int getRankID(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		return (int) new SQLCard(SQLCodeType.GET_RANKID, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
 	public static void setRankID(UUID uuid, int rankID) {
-		new SQLCard(SQLCodeType.SET_RANKID, SQLCard.SQLCardType.SET, Arrays.asList(rankID, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+		Blob uuidBlob = uuidToBlob(uuid);
+
+		new SQLCard(SQLCodeType.SET_RANKID, SQLCard.SQLCardType.SET, Arrays.asList(),
+				Arrays.asList(rankID, uuidBlob)).execute();
 	}
 	
 	public static float getTip(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		return ((BigDecimal) new SQLCard(SQLCodeType.GET_TIP, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0)).floatValue();
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0)).floatValue();
 	}
 	
 	public static void setTip(UUID uuid, float amount) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_TIP, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount , uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
 	public static double getXP(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		return ((BigDecimal) new SQLCard(SQLCodeType.GET_XP, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")), Arrays.asList()).execute().get(0)).doubleValue();
+				Arrays.asList(), Arrays.asList(uuidBlob)).execute().get(0)).doubleValue();
 	}
 	
 	public static void setXP(UUID uuid, double amount) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		new SQLCard(SQLCodeType.SET_XP, SQLCard.SQLCardType.SET,
-				Arrays.asList(amount, uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute();
+				Arrays.asList(),
+				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
 	public static List<Pet> getPets(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
 		// Get serialized list of pet IDs
-		String serialized = (String) new SQLCard(SQLCodeType.GET_PETS, SQLCard.SQLCardType.GET,
-				Arrays.asList(uuid.toString().replaceAll("-", "")),
-				Arrays.asList()).execute().get(0);
+		byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_PETS, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(uuidBlob)).execute().get(0);
 		
 		// Deserialized list of pet IDs
-		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(Base64Coder.decodeLines(serialized));
+		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
@@ -647,11 +751,13 @@ abstract public class SQLManager {
 		try {
 			objectOutputStream = new BukkitObjectOutputStream(byteOutputStream);
 			objectOutputStream.writeObject(idList);
-			
+
+			Blob petsBlob = objectToBlob(byteOutputStream.toByteArray());
+
 			// Save list of pet IDs (serialized) to database
 			new SQLCard(SQLCodeType.SET_PETS, SQLCard.SQLCardType.SET,
-					Arrays.asList(Base64Coder.encodeLines(byteOutputStream.toByteArray()), player.getUniqueId().toString().replaceAll("-", "")),
-					Arrays.asList()).execute();
+					Arrays.asList(),
+					Arrays.asList(petsBlob, uuidToBlob(player.getUniqueId()))).execute();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
@@ -659,7 +765,37 @@ abstract public class SQLManager {
 			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
 		}
 	}
-	
+
+	private static Blob uuidToBlob(UUID uuid) {
+		try {
+			return new SerialBlob(uuidToBytes(uuid));
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+			return null;
+		}
+	}
+
+	private static byte[] uuidToBytes(UUID uuid) {
+		ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
+		buffer.putLong(uuid.getMostSignificantBits());
+		buffer.putLong(uuid.getLeastSignificantBits());
+		return buffer.array();
+	}
+
+	private  static UUID bytesToUUID(byte[] uuidBytes) {
+		ByteBuffer buffer = ByteBuffer.wrap(uuidBytes);
+		return new UUID(buffer.getLong(), buffer.getLong());
+	}
+
+	private static Blob objectToBlob(byte[] bytes) {
+		try {
+			return new SerialBlob(bytes);
+		} catch (SQLException exception) {
+			exception.printStackTrace();
+			return null;
+		}
+	}
+
 	public static boolean isEnabled() {
 		return sqlInfo.enabled;
 	}

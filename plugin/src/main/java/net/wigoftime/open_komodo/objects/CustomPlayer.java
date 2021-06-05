@@ -85,6 +85,9 @@ public class CustomPlayer {
 		moderationSystem = new ModerationSystem(this);
 
 		if (SQLManager.isEnabled()) {
+			if (!SQLManager.containsPlayer(uuid)) SQLManager.createPlayer(uuid);
+			if (!SQLManager.containsModerationPlayer(uuid)) SQLManager.createModerationPlayer(uuid);
+
 			this.joinDate = SQLManager.getJoinDate(uuid);
 			moderationSystem.muteDate = SQLManager.getMuteDate(uuid);
 			moderationSystem.muteReason = SQLManager.getMuteReason(uuid);
