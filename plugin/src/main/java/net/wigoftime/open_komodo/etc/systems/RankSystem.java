@@ -257,6 +257,8 @@ public class RankSystem
 			public void run() {
 				Permissions.setUp(playerCustom);
 				ServerScoreBoard.add(playerCustom);
+
+				playerCustom.getPlayer().sendMessage(String.format("%s» %sYou have been promoted to %s!", ChatColor.GOLD, ChatColor.GRAY, rank.getName()));
 			}
 		}, 1);
 	}

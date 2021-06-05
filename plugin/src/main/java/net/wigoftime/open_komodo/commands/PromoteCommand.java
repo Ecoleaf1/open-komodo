@@ -2,12 +2,16 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.List;
 
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Rank;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 
 import net.wigoftime.open_komodo.etc.Permissions;
@@ -48,7 +52,7 @@ public class PromoteCommand extends Command {
 		}
 
 		boolean isAdding;
-		if (args[1].equalsIgnoreCase("true")) isAdding = true;
+		if (args[1].equalsIgnoreCase("add")) isAdding = true;
 		else isAdding = false;
 
 		OfflinePlayer targetPlayer = Bukkit.getPlayer(args[2]);
@@ -70,9 +74,9 @@ public class PromoteCommand extends Command {
 		} else {
 			boolean addedResult;
 			if (isAdding)
-				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[4]), null);
+				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[3]), null);
 			else
-				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[4]), null);
+				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[3]), null);
 		}
 	}
 
@@ -82,8 +86,13 @@ public class PromoteCommand extends Command {
 			return;
 		}
 
+		OfflinePlayer player = Bukkit.getOfflinePlayer(args[1]);
+		CustomPlayer playerCustom = CustomPlayer.get(player.getUniqueId());
 
-		return;
+		Rank rank = Rank.getRank(args[2]);
+
+		if (playerCustom == null) SQLManager.setRankID(player.getUniqueId(),rank.getID());
+		else playerCustom.getRankSystem().setRank(rank);
 	}
 
 	private void listpermsSelector(CommandSender sender, String[] args) {
