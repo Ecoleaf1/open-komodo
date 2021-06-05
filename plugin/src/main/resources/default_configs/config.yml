@@ -1,14 +1,4 @@
 Normal Message:
-  Format: '["",{"text":"$G","color":"gray"},{"text":"$S","color":"dark_gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Username:
-    $N"}]}}},{"text":": ","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "}},{"text":"$M","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "}}]'
-  Tag Format: '["",{"text":"$W","color":"gray"},{"text":" | ","color":"dark_gray"},{"text":"$G","color":"gray"},{"text":"$S","color":"dark_gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "},"hoverEvent":{"action":"show_text","value":{"text":"","extra":[{"text":"Username:
-    $N"}]}}},{"text":": ","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "}},{"text":"$M","color":"gray","clickEvent":{"action":"suggest_command","value":"/msg
-    $N "}}]'
   Chat Distance: 50
 Private Message:
   Format (Sent): '&7you &e-> &7$D &7:&f $M'
@@ -76,7 +66,9 @@ Global Settings:
 # Store player information in MySQL databases instead of files
 SQL:
   Enabled: false
-  URL: ""
+  Type: "MySQL"
+  Host: ""
+  Database: ""
   User: ""
   Password: ""
   EnableSSL: false

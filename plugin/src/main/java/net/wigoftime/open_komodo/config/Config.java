@@ -163,12 +163,14 @@ abstract public class Config
 		ConfigurationSection section = yamlConfiguration.getConfigurationSection("SQL");
 		
 		boolean enabled = section.getBoolean("Enabled");
-		String url = section.getString("URL");
+		String type = section.getString("Type");
+		String host = section.getString("Host");
+		String database = section.getString("Database");
 		String user = section.getString("User");
 		String password = section.getString("Password");
 		boolean sslEnabled = section.getBoolean("EnableSSL");
 		
-		return new SQLInfo(enabled, url, user, password, sslEnabled);
+		return new SQLInfo(enabled, type, database, host, user, password, sslEnabled);
 	}
 	
 	public static File getConfigFile() {

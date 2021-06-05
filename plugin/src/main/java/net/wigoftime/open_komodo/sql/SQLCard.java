@@ -5,6 +5,8 @@ import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
 import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -24,15 +26,34 @@ public class SQLCard {
 
 
         if (!info.enabled) {
-            dataSource.setUrl("jdbc:sqlite:"+ Main.dataFolderPath+"/database.sqlite");
+            PrintConsole.print(ChatColor.DARK_RED+"OPEN KOMODO NO LONGER SUPPORTS NON-MYSQL DATABASE SETUP. " +
+                    "PLEASE SETUP MYSQL SERVER TO CONTINUE.");
+            Bukkit.getServer().shutdown();
             return;
         }
 
+        String typeExtention;
+        if (info.type.equalsIgnoreCase("mysql")) typeExtention = "mysql";
+        else if (info.type.equalsIgnoreCase("MariaDB")) typeExtention = "mariadb";
+        else typeExtention = "";
+
         dataSource.setUsername(info.user);
         dataSource.setPassword(info.password);
-        dataSource.setUrl("jdbc:"+info.url);
+        dataSource.setUrl("jdbc:"+typeExtention+"://"+info.host+"/"+info.database);
         dataSource.setMinIdle(5);
         dataSource.setMaxIdle(10);
+
+        Connection connection = null;
+        try {
+            connection = dataSource.getConnection();
+        } catch (SQLException exception) {
+            PrintConsole.print(ChatColor.DARK_RED+"MYSQL SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
+            exception.printStackTrace();
+            PrintConsole.print(ChatColor.DARK_RED+"MYSQL SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
+            Bukkit.getServer().shutdown();
+        } finally {
+            if (connection == null) try { connection.close();} catch (SQLException exception) {};
+        }
     }
 
     public static enum SQLCardType {GET, SET};
