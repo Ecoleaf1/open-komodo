@@ -5,11 +5,10 @@ public class SQLCode {
 		SAVE_ITEMS, GET_ITEMS, GET_ACTIVE_TAG, SET_ACTIVE_TAG, GET_JOINDATE, CONTAINS_PLAYER, SET_XP, GET_XP, CREATE_PLAYER, CREATE_MODERATION_PLAYER, CONTAINS_MODERATION_PLAYER, CONTAINS_WORLD_PLAYER, CREATE_WORLD_PLAYER,
 		SET_GLOBAL_PERMISSIONS, GET_GLOBAL_PERMISSIONS, SET_NICKNAME, GET_NICKNAME, SET_WORLD_PERMISSIONS, GET_WORLD_PERMISSIONS, SET_INVENTORY, GET_INVENTORY, SET_TIP, GET_TIP, GET_RANKID, SET_RANKID,
 		GET_MAIL, COUNT_MAIL, SEND_MAIL, CLEAR_MAIL,GET_MUTEDATE, SET_MUTEDATE, GET_BANDATE, SET_BANDATE, GET_MUTEREASON, SET_MUTEREASON, GET_BANREASON, SET_BANREASON, SET_HOMES, GET_HOMES, GET_POINTS, GET_COINS, SET_POINTS, SET_COINS,
-		SET_ITEMS, GET_PETS, SET_PETS}
+		SET_ITEMS, GET_PETS, SET_PETS, CREATE_MARRY_TABLE, ADD_MARRY, REMOVE_MARRY, GET_MARRY_PARTNERS};
 
-	public static void setup(boolean isMySQLEnabled) {
-		if (isMySQLEnabled) return;
-		//String s =
+	public static void setup() {
+
 	}
 
 	public static final String getSQLCode(SQLCodeType type) {
@@ -207,6 +206,17 @@ public class SQLCode {
 			return "UPDATE `OpenKomodo.Main` " +
 					"SET `XP` = ? " +
 					"WHERE `UUID` = ?;";
+		case CREATE_MARRY_TABLE:
+			return  "CREATE TABLE IF NOT EXISTS `OpenKomodo.Marriage` ( "
+					+ "`Player` BINARY(16) NOT NULL, "
+					+ "`Married` BINARY(16) NOT NULL)";
+		case ADD_MARRY:
+			return "INSERT INTO `OpenKomodo.Marriage` ( `Player`, `Married`) VALUES (?, ?); ";
+		case REMOVE_MARRY:
+			return "DELETE FROM `OpenKomodo.Marriage` WHERE `Player` = ? AND `Married` = ?";
+		case GET_MARRY_PARTNERS:
+			return "SELECT `Married` FROM `OpenKomodo.Marriage` WHERE `Player` = ?";
+
 		default:
 			return null;
 		

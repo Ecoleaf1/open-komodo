@@ -1,6 +1,7 @@
 package net.wigoftime.open_komodo.gui;
 
 import net.wigoftime.open_komodo.etc.connectfour.ConnectFourSession;
+import net.wigoftime.open_komodo.etc.systems.MarriageSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -12,7 +13,18 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.permissions.Permission;
 
 public class PlayerMenu extends CustomGUI {
-    private ItemStack head, mount, connect4, marry;
+    private static ItemStack head, mount, connect4;
+    private static ItemStack marry = new ItemStack(Material.GOLD_NUGGET); {
+        ItemMeta meta = marry.getItemMeta();
+        meta.setDisplayName("Marry");
+        marry.setItemMeta(meta);
+    }
+
+    private static ItemStack marriageMenu = new ItemStack(Material.ROSE_BUSH); {
+        ItemMeta meta = marriageMenu.getItemMeta();
+        meta.setDisplayName("Marriage Menu");
+        marriageMenu.setItemMeta(meta);
+    }
 
     private final CustomPlayer openerCustom, selectedPlayerCustom;
 
@@ -44,17 +56,14 @@ public class PlayerMenu extends CustomGUI {
             connect4.setItemMeta(meta);
         }
 
-        marry = new ItemStack(Material.GOLD_NUGGET);
-        {
-            ItemMeta meta = marry.getItemMeta();
-            meta.setDisplayName("Marry [Coming Soon]");
-            marry.setItemMeta(meta);
-        }
-
         gui.setItem(10, head);
         gui.setItem(13, mount);
         gui.setItem(14, connect4);
-        gui.setItem(15, marry);
+
+        if (!openerCustom.isMarried(selectedPlayerCustom))
+            gui.setItem(15, marry);
+        else
+            gui.setItem(15, marriageMenu);
     }
 
     @Override
@@ -63,6 +72,8 @@ public class PlayerMenu extends CustomGUI {
 
         if (clickEvent.getCurrentItem().equals(mount)) mountClicked();
         else if (clickEvent.getCurrentItem().equals(connect4)) connect4Clicked();
+        else if (clickEvent.getCurrentItem().equals(marry)) marryClicked();
+        else if (clickEvent.getCurrentItem().equals(marriageMenu)) marriageMenuClicked();
     }
 
     private void mountClicked() {
@@ -73,5 +84,16 @@ public class PlayerMenu extends CustomGUI {
     private void connect4Clicked() {
         opener.getPlayer().closeInventory();
         ConnectFourSession.requestToPlay(opener, selectedPlayerCustom);
+    }
+
+    private void marryClicked() {
+        opener.getPlayer().closeInventory();
+        opener.requestMarry(selectedPlayerCustom);
+    }
+
+    private void marriageMenuClicked() {
+        opener.getPlayer().closeInventory();
+        CustomGUI marriageMenu = new MarriageGUI(opener, selectedPlayerCustom.getPlayer());
+        marriageMenu.open();
     }
 }

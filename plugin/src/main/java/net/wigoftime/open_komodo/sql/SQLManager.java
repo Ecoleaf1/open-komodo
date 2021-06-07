@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.systems.MailSystem;
 import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
 import net.wigoftime.open_komodo.objects.*;
@@ -48,6 +49,7 @@ abstract public class SQLManager {
 		createModerationTable();
 		createMailTable();
 		createBagInventoryTable();
+		createMarriageTable();
 	}
 	
 	public static void setUpWorlds(List<World> worlds) {
@@ -764,6 +766,42 @@ abstract public class SQLManager {
 			if (objectOutputStream != null) try { objectOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
 			if (byteOutputStream != null) try { byteOutputStream.close(); } catch (IOException e) { e.printStackTrace(); }
 		}
+	}
+
+	public static void createMarriageTable() {
+		new SQLCard(SQLCodeType.CREATE_MARRY_TABLE, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
+	}
+
+	public static void removeMarry(UUID causer, UUID receiver) {
+		Blob causerBlob = uuidToBlob(causer);
+		Blob receiverBlob = uuidToBlob(receiver);
+
+		new SQLCard(SQLCodeType.REMOVE_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(causerBlob, receiverBlob)).execute();
+		new SQLCard(SQLCodeType.REMOVE_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(receiverBlob, causerBlob)).execute();
+	}
+
+	public static void addMarry(UUID causer, UUID receiver) {
+		Blob causerBlob = uuidToBlob(causer);
+		Blob receiverBlob = uuidToBlob(receiver);
+
+		new SQLCard(SQLCodeType.ADD_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(causerBlob, receiverBlob)).execute();
+		new SQLCard(SQLCodeType.ADD_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(receiverBlob, causerBlob)).execute();
+	}
+
+	public static List<UUID> getMarry(UUID uuid) {
+		Blob uuidBlob = uuidToBlob(uuid);
+
+		List<Object> results = new SQLCard(SQLCodeType.GET_MARRY_PARTNERS, SQLCard.SQLCardType.GET, Arrays.asList(), Arrays.asList(uuidBlob)).execute();
+		List<UUID> uuids = new LinkedList<UUID>();
+
+		for (Object object : results) {
+			UUID uuidIndex = bytesToUUID((byte[]) object);
+			PrintConsole.test(uuidIndex.toString());
+
+			uuids.add(uuidIndex);
+		}
+
+		return uuids;
 	}
 
 	private static Blob uuidToBlob(UUID uuid) {

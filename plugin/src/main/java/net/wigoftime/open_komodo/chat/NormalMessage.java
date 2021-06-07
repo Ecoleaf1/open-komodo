@@ -1,13 +1,12 @@
 package net.wigoftime.open_komodo.chat;
 
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import github.scarsz.discordsrv.DiscordSRV;
@@ -51,15 +50,33 @@ public class NormalMessage
 		}
 		
 		{
-		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s\n", senderCustomPlayer.getPlayer().getDisplayName()));
-		
+		ComponentBuilder componentHoverDescBuilder = new ComponentBuilder(String.format("Username: %s", senderCustomPlayer.getPlayer().getDisplayName()));
+
+		synchronized (senderCustomPlayer.getPartners()) {
+			if (senderCustomPlayer.getPartners().size() > 0) {
+				if (senderCustomPlayer.getPartners().size() > 1) {
+					componentHoverDescBuilder.append("\nMarried: ");
+
+					Iterator<OfflinePlayer> partnerIterator = senderCustomPlayer.getPartners().iterator();
+					while (partnerIterator.hasNext()) {
+						componentHoverDescBuilder.append(String.format("%s%s", partnerIterator.next().getName(), partnerIterator.hasNext() ? ", " : ""));
+					}
+				} else {
+					componentHoverDescBuilder.append(
+							String.format("\nMarried: %s", senderCustomPlayer.getMarriageSystem().getPartners().get(0).getName()));
+				}
+			}
+
+		}
+
 		Date joinDate = senderCustomPlayer.getJoinDate();
 		SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM/dd/yyyy");
-		componentHoverDescBuilder.append(String.format("Joined Date: %s", joinDate == null ? "??" : simpleDateFormat.format(joinDate)));
-		if (senderCustomPlayer.discordUser != null) componentHoverDescBuilder.append(String.format("\nDiscord: %s", senderCustomPlayer.discordUser.getAsTag()));
+		componentHoverDescBuilder.append(String.format("\nJoined Date: %s", joinDate == null ? "??" : simpleDateFormat.format(joinDate)));
+
+		if (senderCustomPlayer.discordUser != null)
+			componentHoverDescBuilder.append(String.format("\nDiscord: %s", senderCustomPlayer.discordUser.getAsTag()));
 		if (senderCustomPlayer.getSettings().isDisplayTipEnabled())
-		componentHoverDescBuilder.append(String.format("\nTipped: $%.1f", senderCustomPlayer.getDonated()));
-		
+			componentHoverDescBuilder.append(String.format("\nTipped: $%.1f", senderCustomPlayer.getDonated()));
 		BaseComponent[] hoverDescription = componentHoverDescBuilder.create();
 		BaseComponent[] name = senderCustomPlayer.getCustomName();
 		if (name == null) {

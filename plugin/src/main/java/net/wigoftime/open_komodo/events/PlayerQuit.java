@@ -58,7 +58,9 @@ public class PlayerQuit implements EventExecutor {
 			player.getPlayer().setOp(false);
 		
 		PrivateMessage.playerLeft(player.getUniqueId());
-		
+
+
+		player.getMarriageSystem().quiting();
 		player.prepareDestroy();
 	}
 

@@ -19,6 +19,8 @@ public class InventoryClick implements EventExecutor {
 		
 		InventoryClickEvent clickEvent = (InventoryClickEvent) event;
 		GUIManager.invItemClicked(clickEvent);
+
+
 	}
 	
 

@@ -345,7 +345,9 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new TeleportToBuildWorldCommand("buildworld", "Teleport to builder's world", "/buildworld", new ArrayList<String>(0)));
 		map.register("openkomodo", new TpaCommand("tpa", "Request to teleport", "/tpa (Player)", Arrays.asList("teleport", "tp")));
 		map.register("openkomodo", new TpaAcceptCommand("tpaccept", "Request to teleport", "/tpaccept", new ArrayList<String>(0)));
-		
+
+		map.register("openkomodo", new MarriageCommand("marriage", "Essential marriage command", "/marriage {marry, divorce, accept, reject}", Arrays.asList()));
+
 		map.register("openkomodo", new TpaHereCommand("tpahere", "Request a player to teleport to you.", "/tpahere (Player)", new ArrayList<String>(0)));
 		map.register("openkomodo", new TpaToggleCommand("tptoggle", "Toggle tpa requests", "/tpatoggle", new ArrayList<String>(0)));
 		map.register("openkomodo", new TagsCommand("tags", "Open the tags menu", "/tags", new ArrayList<String>(0)));

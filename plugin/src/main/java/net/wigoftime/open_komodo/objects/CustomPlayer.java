@@ -31,6 +31,7 @@ import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 import net.wigoftime.open_komodo.tutorial.Tutorial;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.jetbrains.annotations.Nullable;
 
 public class CustomPlayer {
 	private final Player player;
@@ -54,6 +55,7 @@ public class CustomPlayer {
 	private final HomeSystem homeSystem;
 	private final DonationSystem donationSystem;
 	private final ItemSystem itemSystem;
+	private final MarriageSystem marriageSystem;
 
 	private List<Pet> ownedPets;
 	
@@ -98,6 +100,7 @@ public class CustomPlayer {
 			this.ownedPets = SQLManager.getPets(uuid);
 			homeSystem = new HomeSystem(this, SQLManager.getHomes(uuid));
 			itemSystem = new ItemSystem(this,SQLManager.getItems(uuid));
+			marriageSystem = new MarriageSystem(this, SQLManager.getMarry(uuid));
 		} else {
 			this.joinDate = PlayerConfig.getJoinDate(uuid);
 			moderationSystem.muteDate = PlayerConfig.getMuteDate(uuid);
@@ -109,6 +112,7 @@ public class CustomPlayer {
 			this.ownedPets = PlayerConfig.getPets(uuid);
 			homeSystem = new HomeSystem(this, PlayerConfig.getHomes(uuid));
 			itemSystem = new ItemSystem(this,PlayerConfig.getItems(uuid));
+			marriageSystem = new MarriageSystem(this, SQLManager.getMarry(uuid));
 		}
 		
 		buildMode = false;
@@ -130,6 +134,7 @@ public class CustomPlayer {
 		}
 
 		mapOfPlayers.put(uuid, this);
+		marriageSystem.joined();
 	}
 	
 	public static boolean containsPlayer(UUID uuid) {
@@ -541,7 +546,27 @@ public class CustomPlayer {
 			player.teleport(Main.spawnLocation);
 		}
 	}
-	
+
+	public void requestMarry(CustomPlayer player) {
+		marriageSystem.requestMarry(player);
+	}
+
+	public void divorce(String username) {
+		marriageSystem.divorce(username);
+	}
+
+	public void setPurposer(CustomPlayer player) {
+		marriageSystem.setPurposer(player);
+	}
+
+	public MarriageSystem getMarriageSystem() {
+		return marriageSystem;
+	}
+
+	public List<OfflinePlayer> getPartners() {return marriageSystem.getPartners();}
+
+	public boolean isMarried(CustomPlayer targetPlayer) { return marriageSystem.isMarriedTo(targetPlayer); }
+
 	public boolean isInTutorial() {
 		return tutorial == null ? false : true;
 	}
@@ -560,6 +585,15 @@ public class CustomPlayer {
 
 	public static CustomPlayer get(UUID uuid) {
 		return mapOfPlayers.get(uuid);
+	}
+
+	public static @Nullable CustomPlayer get(String username) {
+
+		for (CustomPlayer playerIndex : mapOfPlayers.values()) {
+			if (!playerIndex.getPlayer().getDisplayName().equalsIgnoreCase(username)) continue;
+			return playerIndex;
+		}
+		return null;
 	}
 
 	public static List<CustomPlayer> getOnlinePlayers() {
