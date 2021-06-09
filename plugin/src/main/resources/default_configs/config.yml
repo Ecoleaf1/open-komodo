@@ -44,7 +44,7 @@ Global Settings:
   Ice Melts: false
   Allow Damage: false
   Fall Damage: false
-  
+
   Tutorial Location:
     ==: org.bukkit.Location
     world: komodo_island
@@ -53,15 +53,6 @@ Global Settings:
     z: -410
     pitch: 0.0
     yaw: 0.0
-  Join Message: ''
-  Leave Message: ''
-  Allow Item Drops: false
-  Explosion Enabled: false
-  Leaves Decay: false
-  Ice Melts: false
-  Allow Damage: false
-  Fall Damage: false
-  
   
   # World Border
   Border Position 1:
