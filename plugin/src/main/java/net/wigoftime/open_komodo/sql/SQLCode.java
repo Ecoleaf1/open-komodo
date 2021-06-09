@@ -84,7 +84,7 @@ public class SQLCode {
 		case GET_BAG_INVENTORY:
 			return "SELECT `Inventory` FROM `OpenKomodo.Bag_Inventory` WHERE `UUID` = ? AND `ID` = ?";
 		case GET_LATEST_BAGID:
-			return "SELECT COUNT('ID') FROM `OpenKomodo.Bag_Inventory` WHERE `UUID` = ?;";
+			return "SELECT COUNT('ID') FROM `OpenKomodo.Bag_Inventory`;";
 		case GET_BANDATE:
 			return "SELECT `Ban Date` FROM `OpenKomodo.Moderation` " +
 			"WHERE `UUID` = ?;";
@@ -132,10 +132,10 @@ public class SQLCode {
 			return "SELECT `Pets` FROM `OpenKomodo.Main` " +
 			"WHERE `UUID` = ?;";
 		case GET_RANKID:
-			return "SELECT `Rank ID` FROM `OpenKomodo.Main` " + 
+			return "SELECT `Rank ID` FROM `OpenKomodo.Main` " +
 					"WHERE UUID= ?;";
 		case GET_TIP:
-			return "SELECT `TIP (USD)` FROM `OpenKomodo.Main` " + 
+			return "SELECT `TIP (USD)` FROM `OpenKomodo.Main` " +
 			"WHERE UUID = ?;";
 		case GET_WORLD_PERMISSIONS:
 			return "SELECT `Permissions` FROM `OpenKomodo.Worlds.%s` " +
@@ -193,7 +193,7 @@ public class SQLCode {
 			"SET `Points` = ? " +
 			"WHERE `UUID` = ?;";
 		case SET_RANKID:
-			return "UPDATE `OpenKomodo.Main` " + 
+			return "UPDATE `OpenKomodo.Main` " +
 					"SET `Rank ID` = ? " +
 					"WHERE `UUID` = ?;";
 		case SET_TIP:

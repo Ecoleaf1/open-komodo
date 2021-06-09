@@ -150,8 +150,8 @@ abstract public class SQLManager {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		List<Object> sqlElements = new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCard.SQLCardType.GET,
-				Arrays.asList(), Arrays.asList(playerBlob)).execute();
-		int id = (int) (long) sqlElements.get(0);
+				Arrays.asList(), Arrays.asList()).execute();
+		int id = (int) (long) sqlElements.get(0) +1;
 
 		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY, SQLCard.SQLCardType.SET, Arrays.asList(),
 				Arrays.asList(playerBlob, id)).execute();
