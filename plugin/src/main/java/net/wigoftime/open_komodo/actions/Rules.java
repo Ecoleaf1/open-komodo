@@ -1,27 +1,24 @@
 package net.wigoftime.open_komodo.actions;
 
+import net.wigoftime.open_komodo.config.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 
-abstract public class Rules 
-{
-	private static final String[] rules = {"No 18+ stuff", "No swearing (no discrimination and words behind anything inappropriate).","No bypassing the word filter to use forbidden words.", "Have fun!", "No harassment", "Please use common sense"};
-	
-	public static void display(CommandSender sender)
-	{
-		// Get stringbuilder to display rules
+import java.util.ArrayList;
+import java.util.List;
+
+abstract public class Rules {
+	private static final List<String> rules = Config.getRules();
+	public static void display(CommandSender sender) {
 		StringBuilder sb = new StringBuilder();
 		sb.append(String.format("%s» %sRules%s:\n", ChatColor.GOLD, ChatColor.GRAY, ChatColor.DARK_GRAY));
-		
-		// Look through each rules on server
-		for (int i = 0; i < rules.length; i++)
-			sb.append(String.format("    %s» %s%s\n", ChatColor.GOLD, ChatColor.GRAY, rules[i]));
-		
-		
-		// Display rules to player
+
+		for (String ruleIndex : rules)
+			sb.append(String.format("    %s» %s%s\n", ChatColor.GOLD, ChatColor.GRAY, ruleIndex));
+
 		sender.sendMessage(sb.toString());
 		
 		if (!(sender instanceof Player)) return;

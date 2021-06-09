@@ -15,15 +15,27 @@ Global Settings:
   Enable Warps: true
   Website: "&bWebsite link: https://www.wigoftime.net"
   Discord: "&7Discord link: https://discord.gg/nUJM7dT"
+  Voting: ""
+  Store: ""
+
+  Rules:
+    - "No 18+ content"
+    - "No swearing (no discrimination and words behind anything inappropriate)."
+    - "No bypassing the word filter to use forbidden words."
+    - "Have fun!"
+    - "No harassment"
+    - "Use common sense!"
+    - "By playing on this server, moderators or any staff who moderate has the right to kick, mute, or ban for valid suspicion if you are not asked to stop."
 
   Spawn Location:
     ==: org.bukkit.Location
     world: komodo_island
-    x: 313.5
-    y: 69.0
-    z: -248.5
+    x: 392.0
+    y: 68.0
+    z: -255.0
     pitch: 0.0
     yaw: 0.0
+
   Join Message: ''
   Leave Message: ''
   Allow Item Drops: false

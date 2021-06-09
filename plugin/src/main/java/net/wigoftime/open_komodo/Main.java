@@ -358,7 +358,14 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new RankCommand("rank", "Info about ranks", "/rank help", new ArrayList<String>(0)));
 		map.register("openkomodo", new RulesCommand("rules", "Display rules & terms", "/rules", new ArrayList<String>(0)));
 		map.register("openkomodo", new CreditsCommand("credits", "Display credits", "/credits", new ArrayList<String>(0)));
-		map.register("openkomodo", new VoteCommand("vote", "Displays voting websites", "/vote", new ArrayList<String>(0)));
+
+		if (!Config.getVotingDescription().equals(""))
+			map.register("openkomodo", new VoteCommand("vote", "Displays voting websites", "/vote", new ArrayList<String>(0)));
+
+		if (!Config.getStoreDescription().equals(""))
+			map.register("openkomodo", new StoreCommand());
+
+
 		map.register("openkomodo", new TutorialCommand("tutorial", "How to play Open Komodo!", "/tutorial", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));

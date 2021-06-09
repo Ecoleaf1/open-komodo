@@ -1,6 +1,8 @@
 package net.wigoftime.open_komodo.config;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -156,6 +158,33 @@ abstract public class Config
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Discord"));
+	}
+
+	public static String getVotingDescription() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+
+		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Voting"));
+	}
+
+	public static String getStoreDescription() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+
+		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Store"));
+	}
+
+	public static List<String> getRules() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
+
+		List<String> unformattedRules = normalMessageSection.getStringList("Rules");
+		List<String> formattedRules = new ArrayList<String>(unformattedRules.size());
+
+		for (String ruleIndex : unformattedRules)
+			formattedRules.add(ChatColor.translateAlternateColorCodes('&', ruleIndex));
+
+		return formattedRules;
 	}
 	
 	public static SQLInfo getSQLInfo() {
