@@ -86,6 +86,11 @@ When making a package, add the /gentip command, as it adds tipping to a player. 
 `/msg {username} {message}` - Send someone a message
 `/r` - Reply back to a message
 
+`/emote` - displays emotes
+`/emote {Emote Name}` - use an solo emote
+`/emote {Emote Name} {Username}` - use a target emote
+`/emote reload` - reloads emote
+
 `/tpa {Username}` - Request to teleport to a player
 `/tp {Username}` - Request to teleport to a player
 `/tpahere {Username}` - Request to have a player teleport to you

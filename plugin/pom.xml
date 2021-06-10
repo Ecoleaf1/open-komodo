@@ -6,6 +6,7 @@
   <name>OpenKomodo</name>
   
   <repositories>
+
 	 <repository>
 	       <id>spigot-repo</id>
 	       <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
@@ -99,6 +100,18 @@
 		  <groupId>org.apache.maven.plugins</groupId>
 		  <artifactId>maven-install-plugin</artifactId>
 		  <version>2.4</version>
+		  <type>maven-plugin</type>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-deploy-plugin</artifactId>
+		  <version>2.7</version>
+		  <type>maven-plugin</type>
+	  </dependency>
+	  <dependency>
+		  <groupId>org.apache.maven.plugins</groupId>
+		  <artifactId>maven-site-plugin</artifactId>
+		  <version>3.3</version>
 		  <type>maven-plugin</type>
 	  </dependency>
   </dependencies>
