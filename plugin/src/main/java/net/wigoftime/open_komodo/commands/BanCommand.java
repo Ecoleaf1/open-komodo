@@ -25,10 +25,8 @@ public class BanCommand extends Command
 	private final String playerNotFound = ChatColor.translateAlternateColorCodes('&', "Player not found");
 
 	public BanCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
-	{
+			List<String> aliases) {
 		super(name, description, usageMessage, aliases);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -44,7 +42,7 @@ public class BanCommand extends Command
 		if (!isCommandValid(sender, targetPlayer, commandArguments))
 			return false;
 		
-		processCommand(commandArguments, sender, targetPlayer);
+		processCommand(sender, commandArguments, sender, targetPlayer);
 		return true;
 	}
 	
@@ -74,7 +72,7 @@ public class BanCommand extends Command
 		return true;
 	}
 	
-	private void processCommand(String[] commandArguments, CommandSender banner, OfflinePlayer playerTarget) {
+	private void processCommand(CommandSender sender, String[] commandArguments, CommandSender banner, OfflinePlayer playerTarget) {
 		StringBuilder reasonStringBuilder;
 		if (commandArguments.length > 2) {
 			reasonStringBuilder = new StringBuilder();
@@ -88,25 +86,21 @@ public class BanCommand extends Command
 		Instant instant = ModerationSystem.calculateTime(commandArguments[1]);
 		
 		// Create reference variables to referense on potentially different threads
-		final UUID refUUID = playerTarget.getUniqueId();
 		final Instant refInstant = instant;
 		
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 				ModerationResults banResult;
 				
-				if (reasonStringBuilder == null) banResult = ModerationSystem.ban(refUUID, Date.from(refInstant), null);
-				else banResult = ModerationSystem.ban(refUUID, Date.from(refInstant), reasonStringBuilder.toString());
-				
-				banResult.affectedPlayer = playerTarget;
-				if (banner instanceof Player) sendBanResultMessage((Player)banner, banResult);
+				if (reasonStringBuilder == null) ModerationSystem.ban(sender, playerTarget, Date.from(refInstant), null);
+				else ModerationSystem.ban(sender, playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 	}
 	
-	private static void sendBanResultMessage(Player banner, ModerationResults result) {
+	private static void sendBanResultMessage(CommandSender banner, ModerationResults result) {
 
-		banner.getPlayer().sendMessage(String.format("%s» %s%s has been banned for reason %s. Ban date %s", 
+		banner.sendMessage(String.format("%s» %s%s has been banned for reason %s. Ban date %s",
 				ChatColor.GOLD, ChatColor.DARK_RED,
 				result.affectedPlayer.getName(), result.reason == null ? "[No Reason Specified]" : result.reason,  result.date.toString()));
 	}

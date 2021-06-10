@@ -30,14 +30,41 @@ public class MuteCommand extends Command {
 	@Override
 	public boolean execute(CommandSender sender, String command, String[] commandArguments) {
 		OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(commandArguments[0]);
-		
+
+		if (targetPlayer == null) {
+			sender.sendMessage(String.format("%s» ERROR: Could not find %s.", ChatColor.DARK_RED, commandArguments[0]));
+			return true;
+		}
+
 		if (commandArguments.length < 1)
 			return false;
 		
 		if (!isCommandValid(sender, targetPlayer, commandArguments))
 			return false;
-		
-		processCommand(commandArguments, targetPlayer);
+
+		StringBuilder reasonStringBuilder;
+		if (commandArguments.length > 2) {
+			reasonStringBuilder = new StringBuilder();
+			for (int i = 2; i < commandArguments.length; i++) {
+				reasonStringBuilder.append(commandArguments[i]+" ");
+			}
+		} else
+			reasonStringBuilder = null;
+
+		// Convert input time string from user to Time
+		Instant instant = ModerationSystem.calculateTime(commandArguments[1]);
+
+		// Create reference variables to referense on potentially different threads
+		final UUID refUUID = targetPlayer.getUniqueId();
+		final Instant refInstant = instant;
+
+		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
+			public void run() {
+
+				if (reasonStringBuilder == null) ModerationSystem.mute(sender,targetPlayer, Date.from(refInstant), null);
+				else ModerationSystem.mute(sender, targetPlayer, Date.from(refInstant), reasonStringBuilder.toString());
+			}
+		});
 		return true;
 	}
 	
@@ -65,30 +92,5 @@ public class MuteCommand extends Command {
 			return false;
 		
 		return true;
-	}
-	
-	private void processCommand(String[] commandArguments, OfflinePlayer playerTarget) {
-		StringBuilder reasonStringBuilder;
-		if (commandArguments.length > 2) {
-			reasonStringBuilder = new StringBuilder();
-			for (int i = 2; i < commandArguments.length; i++) {
-				reasonStringBuilder.append(commandArguments[i]+" ");
-			}
-		} else
-			reasonStringBuilder = null;
-		
-		// Convert input time string from user to Time
-		Instant instant = ModerationSystem.calculateTime(commandArguments[1]);
-		
-		// Create reference variables to referense on potentially different threads
-		final UUID refUUID = playerTarget.getUniqueId();
-		final Instant refInstant = instant;
-		
-		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
-			public void run() {
-				if (reasonStringBuilder == null) ModerationSystem.mute(playerTarget, Date.from(refInstant), null);
-				else ModerationSystem.mute(playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
-			}
-		});
 	}
 }

@@ -2,6 +2,7 @@ package net.wigoftime.open_komodo.commands;
 
 import java.util.List;
 
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,7 +13,6 @@ import net.wigoftime.open_komodo.etc.Permissions;
 
 public class KickCommand extends Command 
 {
-
 	public KickCommand(String name, String description, String usageMessage,
 		 List<String> aliases) {
 		super(name, description, usageMessage, aliases);
@@ -36,28 +36,28 @@ public class KickCommand extends Command
 		
 		Player target = Bukkit.getPlayer(args[0]);
 		
-		if (target == null)
-		{
+		if (target == null) {
 			sender.sendMessage(ChatColor.DARK_RED+"Player not found");
 			return false;
 		}
 		
-		if (args.length > 1)
-		{
+		if (args.length > 1) {
 			StringBuilder sb = new StringBuilder();
 			
-			for (int i = 0; i < args.length; i++)
-			{
+			for (int i = 0; i < args.length; i++) {
 				if (i == 0)
 					continue;
 				
 				sb.append(args[i] + " ");
 			}
 			
-			target.kickPlayer(sb.toString());
+			target.kickPlayer(ChatColor.DARK_RED + "You have been kicked for: "+ sb.toString());
+			ModerationSystem.sendCauserResultsKick(target, sender, sb.toString());
 		}
-		else
+		else {
 			target.kickPlayer("You have been kicked.");
+			ModerationSystem.sendCauserResultsKick(target, sender, null);
+		}
 		
 		return true;
 	}

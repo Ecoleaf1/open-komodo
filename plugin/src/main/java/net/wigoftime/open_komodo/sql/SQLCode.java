@@ -149,7 +149,7 @@ public class SQLCode {
 		case SET_BAG_INVENTORY:
 			return "UPDATE `OpenKomodo.Bag_Inventory` SET `Inventory` = ? WHERE `UUID` = ? AND `ID` = ?";
 		case SET_BANDATE:
-			return "UPDATE `OpenKomodo.Moderation` SET `Ban Date` = ? WHERE `UUID` = ?);";
+			return "UPDATE `OpenKomodo.Moderation` SET `Ban Date` = ? WHERE `UUID` = ?;";
 		case SET_BANREASON:
 			return "UPDATE `OpenKomodo.Moderation` SET `Ban Reason` = ? WHERE `UUID` = ?";
 		case SET_COINS:

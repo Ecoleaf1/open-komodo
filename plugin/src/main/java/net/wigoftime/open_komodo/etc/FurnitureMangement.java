@@ -12,8 +12,11 @@ import org.bukkit.inventory.ItemStack;
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.objects.CustomItem;
 
-public class FurnitureMangement {
+abstract public class FurnitureMangement {
 	public static void createFurniture(ItemStack furnitureItem, PlayerInteractEvent interactEvent) {
+		// Disabled it due to armorstand editor plugin having issues
+		if (true) return;
+
 		Location placementLocation = interactEvent.getClickedBlock().getLocation().add(0, 1, 0);
 		
 		ArmorStand stand = interactEvent.getPlayer().getWorld().spawn(placementLocation, ArmorStand.class);
@@ -26,6 +29,9 @@ public class FurnitureMangement {
 	}
 	
 	public static void rotateFurniture(PlayerInteractEntityEvent interactEvent) {
+		// Disabled it due to armorstand editor plugin having issues
+		if (true) return;
+
 		Entity armorStand = interactEvent.getRightClicked();
 		
 		armorStand.setRotation(armorStand.getLocation().getYaw() + 90, armorStand.getLocation().getPitch() + 90);
@@ -33,11 +39,17 @@ public class FurnitureMangement {
 	}
 	
 	public static void deleteFurniture(EntityDamageByEntityEvent damageEvent) {
+		// Disabled it due to armorstand editor plugin having issues
+		if (true) return;
+
 		damageEvent.getEntity().remove();
 		damageEvent.getDamager().sendMessage(String.format("%s» %sFurniture deleted", ChatColor.GOLD, ChatColor.DARK_RED));
 	}
 	
 	public static boolean isValid (ItemStack item) {
+		// Disabled it due to armorstand editor plugin having issues
+		if (true) return false;
+
 		if (item.getType() != Material.INK_SAC) return false;
 		if (!item.getItemMeta().hasCustomModelData()) return false;
 		
@@ -45,6 +57,9 @@ public class FurnitureMangement {
 	}
 	
 	public static boolean isValid (Entity entity) {
+		// Disabled it due to armorstand editor plugin having issues
+		if (true) return false;
+
 		if (!(entity instanceof ArmorStand)) return false;
 		
 		ItemStack itemInHand = ((ArmorStand)entity).getEquipment().getItemInMainHand();
