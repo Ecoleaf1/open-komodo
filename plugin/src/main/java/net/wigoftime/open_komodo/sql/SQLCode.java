@@ -48,9 +48,9 @@ public class SQLCode {
 		case CREATE_MODERATION_TABLE:
 			return "CREATE TABLE IF NOT EXISTS `OpenKomodo.Moderation` ( "
 					+ "`UUID` BINARY(16) NOT NULL, "
-					+ "`Mute Date` DATETIME NULL DEFAULT '1970-01-01 00:00:01' , "
+					+ "`Mute Date` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:01' , "
 					+ "`Mute Reason` VARCHAR(150) NOT NULL DEFAULT '' , "
-					+ "`Ban Date` DATETIME NULL DEFAULT '1970-01-01 00:00:01' , "
+					+ "`Ban Date` DATETIME NOT NULL DEFAULT '1970-01-01 00:00:01' , "
 					+ "`Ban Reason` VARCHAR(100) NOT NULL DEFAULT '');";
 		case CREATE_PLAYER:
 			return "INSERT INTO `OpenKomodo.Main` ("

@@ -83,7 +83,7 @@ public class MarriageSystem {
 
         purposer.getPlayer().sendMessage(ChatColor.GOLD+"» " + ChatColor.DARK_RED +playerCustom.getPlayer().getDisplayName()+" has rejected your marriage proposal");
 
-        playerCustom.getPlayer().sendMessage(ChatColor.GOLD+"» " + ChatColor.DARK_RED +"You rejected " +playerCustom.getPlayer().getDisplayName()+" marriage's proposal");;
+        playerCustom.getPlayer().sendMessage(ChatColor.GOLD+"» " + ChatColor.DARK_RED +"You rejected " +purposer.getPlayer().getDisplayName()+" marriage's proposal");;
         purposer = null;
     }
 
@@ -147,7 +147,7 @@ public class MarriageSystem {
                     offlinePartners.remove(partner);
                     SQLManager.removeMarry(playerCustom.getUniqueId(), partner.getUniqueId());
                     syncTotalPartners();
-                    playerCustom.getPlayer().sendMessage(ChatColor.GOLD + "» " + ChatColor.GRAY + "You have divorced " + playerCustom.getPlayer().getDisplayName() + "!");
+                    playerCustom.getPlayer().sendMessage(ChatColor.GOLD + "» " + ChatColor.GRAY + "You have divorced " + partner.getName() + "!");
                     return;
                 }
             }

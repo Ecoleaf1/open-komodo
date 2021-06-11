@@ -367,7 +367,10 @@ public class Main extends JavaPlugin implements Listener
 
 
 		map.register("openkomodo", new TutorialCommand("tutorial", "How to play Open Komodo!", "/tutorial", new ArrayList<String>(0)));
-		
+		map.register("openkomodo", new ColoursCommand());
+		map.register("openkomodo", new MarryCommand());
+		map.register("openkomodo", new DivorceCommand());
+
 		map.register("openkomodo_mod", new MuteCommand("mute", "mute a player", "/mute (Player) (Amount)", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new KickCommand("adminkick", "kick a player", "/adminkick (Player) (Reason)", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new BanCommand("ban", "ban a player", "/ban (Player) (Amount)", new ArrayList<String>(0)));

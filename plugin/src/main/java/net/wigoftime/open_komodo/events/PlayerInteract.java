@@ -22,6 +22,7 @@ import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerInteract implements EventExecutor {
 	
@@ -50,9 +51,7 @@ public class PlayerInteract implements EventExecutor {
 		actionManage(playerInteractEvent, player, item);
 	}
 	
-	private static boolean specialItem(ItemStack itemStack, CustomPlayer playerCustom, PlayerInteractEvent event) {
-		if (!(itemStack.getItemMeta().hasCustomModelData())) return false;
-		
+	private static boolean specialItem(@NotNull ItemStack itemStack, @NotNull CustomPlayer playerCustom, @NotNull PlayerInteractEvent event) {
 		switch(itemStack.getType()) {
 		case INK_SAC:
 			if (playerCustom.hasActiveGui()) return false;
@@ -117,6 +116,10 @@ public class PlayerInteract implements EventExecutor {
 				event.setCancelled(true);
 				break;
 			}
+
+			if (itemStack == null) return;
+			if (itemStack.hasItemMeta()) return;
+			if (!(itemStack.getItemMeta().hasCustomModelData())) return;
 			
 			if (specialItem(itemStack, playerCustom, event)) {
 				event.setCancelled(true);
