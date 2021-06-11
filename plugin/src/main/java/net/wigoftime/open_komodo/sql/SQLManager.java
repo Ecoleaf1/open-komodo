@@ -317,7 +317,7 @@ abstract public class SQLManager {
 	public static List<Object> getFullMainPlayer(UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
-		return new SQLCard(SQLCodeType.GET_FULL_PLAYER, (byte) 13, SQLCard.SQLCardType.GET,
+		return new SQLCard(SQLCodeType.GET_FULL_PLAYER, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(playerBlob)).execute();
 	}

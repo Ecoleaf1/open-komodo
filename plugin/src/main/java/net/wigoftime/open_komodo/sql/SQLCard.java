@@ -1,10 +1,11 @@
 package net.wigoftime.open_komodo.sql;
 
+import dev.esophose.playerparticles.libs.hikaricp.HikariConfig;
+import dev.esophose.playerparticles.libs.hikaricp.HikariDataSource;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 
@@ -17,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SQLCard {
-    public static BasicDataSource dataSource = new BasicDataSource();
+    public static HikariDataSource dataSource = new HikariDataSource();
     private static SQLInfo info;
 
 
@@ -39,17 +40,15 @@ public class SQLCard {
 
         dataSource.setUsername(info.user);
         dataSource.setPassword(info.password);
-        dataSource.setUrl("jdbc:"+typeExtention+"://"+info.host+"/"+info.database);
-        dataSource.setMinIdle(5);
-        dataSource.setMaxIdle(10);
+        dataSource.setJdbcUrl("jdbc:"+typeExtention+"://"+info.host+"/"+info.database);
 
         Connection connection = null;
         try {
             connection = dataSource.getConnection();
         } catch (SQLException exception) {
-            PrintConsole.print(ChatColor.DARK_RED+"MYSQL SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
+            PrintConsole.print(ChatColor.DARK_RED+"MYSQL/MARIADB SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
             exception.printStackTrace();
-            PrintConsole.print(ChatColor.DARK_RED+"MYSQL SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
+            PrintConsole.print(ChatColor.DARK_RED+"MYSQL/MARIADB SERVER IS NOT SETUP CORRECTLY, SHUTTING OFF SERVER.");
             Bukkit.getServer().shutdown();
         } finally {
             if (connection == null) try { connection.close();} catch (SQLException exception) {};
@@ -136,8 +135,6 @@ public class SQLCard {
     }
 
     static protected void disconnect() {
-        try {
-            dataSource.close();
-        } catch (SQLException e) {e.printStackTrace();}
+        dataSource.close();
     }
 }

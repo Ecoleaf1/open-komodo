@@ -89,12 +89,12 @@
 		  <version>2.6.0</version>
 		  <scope>provided</scope>
 	  </dependency>
-      <dependency>
-       <groupId>org.apache.tomcat</groupId>
-       <artifactId>tomcat-dbcp</artifactId>
-       <version>10.0.0</version>
-       <scope>compile</scope>
-   </dependency>
+	  <dependency>
+		  <groupId>com.zaxxer</groupId>
+		  <artifactId>HikariCP</artifactId>
+		  <version>4.0.3</version>
+		  <scope>compile</scope>
+	  </dependency>
 	  
 	  <dependency>
 		  <groupId>org.apache.maven.plugins</groupId>
