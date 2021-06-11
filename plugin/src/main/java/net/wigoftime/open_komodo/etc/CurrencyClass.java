@@ -1,27 +1,26 @@
 package net.wigoftime.open_komodo.etc;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.objects.Pet;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class CurrencyClass 
 {
 	private static String notEnoughPoints = String.format("%s%sSorry%s, but you do not have enough points", ChatColor.RED, ChatColor.BOLD, ChatColor.GRAY);
 	private static String notEnoughCoins = String.format("%s%sSorry%s, but you do not have enough coins", ChatColor.RED, ChatColor.BOLD, ChatColor.GRAY);
-	private static String balanceMessage = "&6»&7 Your account balance:\n    - &6$C&7 coins\n    - &6$T&7 points";
+	private static @NotNull String balanceMessage = "&6»&7 Your account balance:\n    - &6$C&7 coins\n    - &6$T&7 points";
 	
-	public static boolean buy(CustomPlayer playerCustomPlayer, int amount, Currency currency, Pet pet) {
+	public static boolean buy(@NotNull CustomPlayer playerCustomPlayer, int amount, @NotNull Currency currency, Pet pet) {
 		if (!takeOutFromBalance(playerCustomPlayer, amount, currency))
 		return false;
 		
@@ -29,7 +28,7 @@ public abstract class CurrencyClass
 		return true;
 	}
 	
-	public static boolean buy(CustomPlayer playerCustomPlayer, int amount, Currency currency, CustomItem customItem) {
+	public static boolean buy(@NotNull CustomPlayer playerCustomPlayer, int amount, @NotNull Currency currency, @NotNull CustomItem customItem) {
 		if (!takeOutFromBalance(playerCustomPlayer, amount, currency)) return false;
 		
 		switch (customItem.getType()) {
@@ -68,7 +67,7 @@ public abstract class CurrencyClass
 		return true;
 	}
 	
-	public static boolean takeOutFromBalance(CustomPlayer playerCustomPlayer, int amount, Currency currency) {
+	public static boolean takeOutFromBalance(@NotNull CustomPlayer playerCustomPlayer, int amount, @NotNull Currency currency) {
 		int balance = playerCustomPlayer.getCurrency(currency);
 		int cost = amount;
 		
@@ -88,7 +87,7 @@ public abstract class CurrencyClass
 		return true;
 	}
 	
-	public static void genPay(CustomPlayer playerCustomPlayer, int amount ,Currency currency) {
+	public static void genPay(@NotNull CustomPlayer playerCustomPlayer, int amount , @NotNull Currency currency) {
 		int remaining = playerCustomPlayer.getCurrency(currency);
 		
 		playerCustomPlayer.setCurrency(amount + remaining, currency);
@@ -100,7 +99,7 @@ public abstract class CurrencyClass
 		});
 	}
 	
-	public static void pay(CustomPlayer givercustomPlayer, CustomPlayer receiverCustomPlayer, int amount, Currency currency) {
+	public static void pay(@NotNull CustomPlayer givercustomPlayer, @NotNull CustomPlayer receiverCustomPlayer, int amount, @NotNull Currency currency) {
 		if (amount < 1) {
 			givercustomPlayer.getPlayer().sendMessage(String.format("%s» %sSorry, but please choose a higher number", ChatColor.GOLD, ChatColor.GRAY));
 			return;
@@ -134,7 +133,7 @@ public abstract class CurrencyClass
 		});
 	}
 	
-	public static void displayBalance(CustomPlayer customPlayer) {
+	public static void displayBalance(@NotNull CustomPlayer customPlayer) {
 		String message = balanceMessage;
 		
 		message = ChatColor.translateAlternateColorCodes('&', message);

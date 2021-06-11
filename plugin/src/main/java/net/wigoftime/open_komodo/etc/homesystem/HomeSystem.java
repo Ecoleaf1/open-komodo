@@ -1,17 +1,18 @@
 package net.wigoftime.open_komodo.etc.homesystem;
 
-import java.io.File;
-import java.util.LinkedList;
-import java.util.List;
-
+import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Home;
 import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.Home;
+import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 
 public class HomeSystem {
 	private static final File playerConfigFolder = new File(Main.dataFolderPath+"/Players/");
@@ -26,7 +27,7 @@ public class HomeSystem {
 	private final CustomPlayer playerCustom;
 
 	private int homeLimit = 1;
-	private List<Home> tutorialHomes;
+	private @Nullable List<Home> tutorialHomes;
 	private List<Home> homes;
 
 	public HomeSystem(CustomPlayer playerCustom, List<Home> homes) {
@@ -34,7 +35,7 @@ public class HomeSystem {
 		this.homes = homes;
 	}
 
-	public static void createHome(CustomPlayer playerCustom, String name) {
+	public static void createHome(@NotNull CustomPlayer playerCustom, String name) {
 		Home home = new Home(name, playerCustom.getPlayer().getLocation());
 
 		AddHome.execute(playerCustom, home);
@@ -54,7 +55,7 @@ public class HomeSystem {
 		AddHome.execute(playerCustom, home);
 	}
 
-	public Home getHome(String homeName) {
+	public @Nullable Home getHome(String homeName) {
 		if (playerCustom.isInTutorial()) {
 			for (Home home : tutorialHomes)
 				if (home.name.equalsIgnoreCase(homeName))
@@ -68,7 +69,7 @@ public class HomeSystem {
 		return null;
 	}
 
-	public List<Home> getHomes() {
+	public @Nullable List<Home> getHomes() {
 		return playerCustom.isInTutorial() ? tutorialHomes :  homes;
 	}
 

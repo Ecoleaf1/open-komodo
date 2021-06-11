@@ -1,5 +1,7 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -8,9 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class Warps extends CustomGUI
 {
@@ -33,7 +33,7 @@ public class Warps extends CustomGUI
 		return;
 	}
 	
-	private static ItemStack[] getIcons(int size) {
+	private static ItemStack @NotNull [] getIcons(int size) {
 		ItemStack[] itemStacks = new ItemStack[size];
 		
 		itemStacks[10] = highschoolItemStackIcon;
@@ -45,7 +45,7 @@ public class Warps extends CustomGUI
 		return itemStacks;
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		final ItemStack clickedItemStack = clickEvent.getCurrentItem();
 		
@@ -91,7 +91,7 @@ public class Warps extends CustomGUI
 		
 	}
 	
-	public static void teleport(Player player, warps place) {
+	public static void teleport(@NotNull Player player, @NotNull warps place) {
 		switch(place) {
 		case HIGH_SCHOOL:
 			player.teleport(new Location(Main.world, 377, 68, -220,(float)-22, (float) 0.6));

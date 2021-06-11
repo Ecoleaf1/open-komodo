@@ -1,15 +1,15 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.File;
-import java.util.List;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.Permission;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.ItemType;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.List;
 
 public abstract class ItemConfig 
 {
@@ -254,7 +254,7 @@ public abstract class ItemConfig
 	}
 		
 	
-	public static File getFile()
+	public static @NotNull File getFile()
 	{
 		return config;
 	}

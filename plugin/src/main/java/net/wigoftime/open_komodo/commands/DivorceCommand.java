@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class DivorceCommand extends Command {
     public DivorceCommand() {
@@ -16,7 +15,7 @@ public class DivorceCommand extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String[] arguments) {
+    public boolean execute(@NotNull CommandSender commandSender, @NotNull String s, @NotNull String @NotNull [] arguments) {
         if (!(commandSender instanceof Player)) return true;
         CustomPlayer playerCustom = CustomPlayer.get(((Player)commandSender).getUniqueId());
         if (playerCustom == null) return true;

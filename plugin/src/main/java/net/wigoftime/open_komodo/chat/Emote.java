@@ -1,9 +1,12 @@
 package net.wigoftime.open_komodo.chat;
 
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map.Entry;
-
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.wigoftime.open_komodo.config.EmoteConfig;
+import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -13,30 +16,28 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.wigoftime.open_komodo.config.EmoteConfig;
-import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 public class Emote {
 	
 	private static final String errorOnlySolo = "&cSorry, but this is a solo only emote.";
 	private static final String errorOnlyDirect = "&cSorry, but you have to target others for this emote.";
 	
-	private final String name;
-	private final String command;
+	private final @Nullable String name;
+	private final @Nullable String command;
 	
 	private final String msgSolo;
 	private final String msgOthers;
 	
-	public static HashMap<String, Emote> nameSortMap = new HashMap<String, Emote>();
-	private static HashMap<String, Emote> commandSortMap = new HashMap<String, Emote>();
+	public static @NotNull HashMap<String, Emote> nameSortMap = new HashMap<String, Emote>();
+	private static @NotNull HashMap<String, Emote> commandSortMap = new HashMap<String, Emote>();
 	
-	public Emote(String name,String command,String msgSolo, String msgOthers)  {
+	public Emote(@Nullable String name, @Nullable String command, String msgSolo, String msgOthers)  {
 		this.name = name;
 		this.command = command;
 		
@@ -52,7 +53,7 @@ public class Emote {
 	
 	// Static functions
 	
-	public static void send(String emote, CustomPlayer sender, CustomPlayer directPlayer)  {
+	public static void send(@NotNull String emote, @NotNull CustomPlayer sender, @Nullable CustomPlayer directPlayer)  {
 		Emote emoteObj;
 		
 		if (emote.startsWith("/"))
@@ -98,7 +99,7 @@ public class Emote {
 		directPlayer.getPlayer().playSound(directPlayer.getPlayer().getLocation(), Sound.ENTITY_VILLAGER_YES, SoundCategory.VOICE, 1, 1);
 	}
 	
-	private static BaseComponent[] getFormattedMessage(String unformattedText, boolean isOtherMsg, CustomPlayer sender, CustomPlayer directPlayer) {
+	private static BaseComponent[] getFormattedMessage(@NotNull String unformattedText, boolean isOtherMsg, @NotNull CustomPlayer sender, @NotNull CustomPlayer directPlayer) {
 		ComponentBuilder messageBuilder = new ComponentBuilder();
 		String previousChatColor = "";
 		String[] splitMessageString = unformattedText.split(" ");
@@ -140,11 +141,11 @@ public class Emote {
 		return messageBuilder.create();
 	}
 	
-	public static Emote getByName(String name) {
+	public static Emote getByName(@NotNull String name) {
 		return nameSortMap.get(name.toLowerCase());
 	}
 	
-	public static Emote getByCommand(String command) {
+	public static Emote getByCommand(@NotNull String command) {
 		return commandSortMap.get(command.toLowerCase());
 	}
 	
@@ -173,7 +174,7 @@ public class Emote {
 			commandMapField.setAccessible(true);
 			map = (CommandMap) commandMapField.get(Bukkit.getServer());
 		} 
-		catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) 
+		catch (@NotNull NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e)
 		{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -188,7 +189,7 @@ public class Emote {
 			// Register new command
 			map.register("emote", new Command(emote.command) 
 			{
-				public boolean execute(CommandSender commandSender, String command, String[] args) 
+				public boolean execute(CommandSender commandSender, String command, String @NotNull [] args)
 				{
 					if (!(commandSender instanceof Player))
 					{

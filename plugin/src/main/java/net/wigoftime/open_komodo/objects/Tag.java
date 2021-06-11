@@ -1,18 +1,19 @@
 package net.wigoftime.open_komodo.objects;
 
+import net.wigoftime.open_komodo.config.TagConfig;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import net.wigoftime.open_komodo.config.TagConfig;
-
 public class Tag {
 
 	//private static HashMap<String, Tag> tags = new HashMap<String, Tag>();
-	private static List<Tag> tags = new LinkedList<Tag>();
+	private static @NotNull List<Tag> tags = new LinkedList<Tag>();
 	
 	private final String name;
 	private final String display;
@@ -45,11 +46,11 @@ public class Tag {
 		return coinsPrice;
 	}
 	
-	public static List<Tag> getList() {
+	public static @NotNull List<Tag> getList() {
 		return tags;
 	}
 	
-	public static Tag findByDisplay(String display) {
+	public static @Nullable Tag findByDisplay(String display) {
 		for (Tag t : tags) {
 			
 			if (t.getDisplay().equals(display))

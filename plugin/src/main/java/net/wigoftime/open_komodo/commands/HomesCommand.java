@@ -1,22 +1,22 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-import java.util.ListIterator;
-
+import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Home;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.Home;
+import java.util.List;
+import java.util.ListIterator;
 
 public class HomesCommand extends Command 
 {
 
-	public HomesCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public HomesCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                        @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 		

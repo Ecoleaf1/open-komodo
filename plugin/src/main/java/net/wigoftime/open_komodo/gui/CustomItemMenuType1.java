@@ -1,21 +1,16 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class CustomItemMenuType1 extends CustomGUI {
 
@@ -25,7 +20,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 	
 	private final List<ItemStack> displayableItems;
 	
-	public CustomItemMenuType1(CustomPlayer customPlayer, Permission requiredPermission, List<ItemStack> listOfItems, String title, int guiSize) {
+	public CustomItemMenuType1(CustomPlayer customPlayer, Permission requiredPermission, List<ItemStack> listOfItems, @NotNull String title, int guiSize) {
 		super(customPlayer, requiredPermission, Bukkit.createInventory(null, guiSize, title)); //36
 		displayableItems = listOfItems;
 		pageCap = guiSize - 9;
@@ -35,7 +30,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		return;
 	}
 	
-	public CustomItemMenuType1(CustomPlayer customPlayer, Permission requiredPermission, List<ItemStack> listOfItems, String title, int guiSize, byte roleplayModeOnly) {
+	public CustomItemMenuType1(CustomPlayer customPlayer, Permission requiredPermission, List<ItemStack> listOfItems, @NotNull String title, int guiSize, byte roleplayModeOnly) {
 		super(customPlayer, requiredPermission, Bukkit.createInventory(null, guiSize, title), roleplayModeOnly); //36
 		displayableItems = listOfItems;
 		pageCap = guiSize - 9;
@@ -60,7 +55,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		
 	}
 	
-	private ItemStack[] createButtons(byte page, byte sizeOfGui)
+	private ItemStack @NotNull [] createButtons(byte page, byte sizeOfGui)
 	{
 		ItemStack[] contents = new ItemStack[sizeOfGui];
 		contents[pageCap + 3] = getPreviousPageButton();
@@ -69,7 +64,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		return contents;
 	}
 	
-	private static ItemStack getPreviousPageButton()
+	private static @NotNull ItemStack getPreviousPageButton()
 	{
 		// Create Back Button
 		ItemStack previousPageItemStack = new ItemStack(Material.ARROW);
@@ -84,7 +79,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		return previousPageItemStack;
 	}
 	
-	private static ItemStack getNextPageButton()
+	private static @NotNull ItemStack getNextPageButton()
 	{
 		// Create Next Button
 		ItemStack nextPageItemStack = new ItemStack(Material.ARROW);
@@ -99,7 +94,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		return nextPageItemStack;
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		
 		if (clickEvent.getCurrentItem().getType() == Material.ARROW) {
@@ -120,7 +115,7 @@ public abstract class CustomItemMenuType1 extends CustomGUI {
 		}
 	}
 	
-	public List<ItemStack> getPageItems() {
+	public @NotNull List<ItemStack> getPageItems() {
 		List<ItemStack> itemsForDisplay = new ArrayList<ItemStack>(pageCap);
 		
 		// Index of hatList

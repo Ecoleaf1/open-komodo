@@ -1,42 +1,15 @@
 package net.wigoftime.open_komodo;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import net.wigoftime.open_komodo.commands.*;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Difficulty;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.command.CommandMap;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
-
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
-
 import dev.esophose.playerparticles.api.PlayerParticlesAPI;
 import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.wigoftime.open_komodo.commands.*;
 import net.wigoftime.open_komodo.config.Config;
-import net.wigoftime.open_komodo.etc.ActionBar;
-import net.wigoftime.open_komodo.etc.ChatAnnouncements;
-import net.wigoftime.open_komodo.etc.CoinSalary;
-import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PetsManager;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
-import net.wigoftime.open_komodo.etc.Status_Bar;
+import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.events.EventListener;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.FurnitureMenu;
@@ -44,25 +17,39 @@ import net.wigoftime.open_komodo.objects.AFKChecker;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.sql.SQLManager;
 import net.wigoftime.open_komodo.world.BuilderWorld;
+import org.bukkit.*;
+import org.bukkit.command.CommandMap;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Main extends JavaPlugin implements Listener 
 {
 	public static final String name = "Open Komodo";
-	private static Object discordSRV;
+	private static @Nullable Object discordSRV;
 	public static ProtocolManager protocolManager;
 	
-	private static EventListener eventListener = null;
+	private static @Nullable EventListener eventListener = null;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
 	
-	private static String normalMessageFormat;
-	private static String normalTagMessageFormat;
+	private static @Nullable String normalMessageFormat;
+	private static @Nullable String normalTagMessageFormat;
 	
 	private static int distanceRange;
 	
-	private static String PMSentFormat;
-	private static String PMReceivedFormat;
+	private static @Nullable String PMSentFormat;
+	private static @Nullable String PMReceivedFormat;
 	
 	public static boolean explosionEnabled;
 	public static boolean leavesDecayEnabled;
@@ -71,17 +58,17 @@ public class Main extends JavaPlugin implements Listener
 	public static boolean damageAllowed;
 	
 	public static boolean iceMelts;
-	public static String joinMessage;
-	public static String leaveMessage;
+	public static @Nullable String joinMessage;
+	public static @Nullable String leaveMessage;
 	
 	public static boolean allowDrop;
 	
 	public static String dataFolderPath;
 	public static File config;
 	
-	public static World world;
-	public static Location spawnLocation;
-	public static Location tutorialLocation;
+	public static @Nullable World world;
+	public static @Nullable Location spawnLocation;
+	public static @Nullable Location tutorialLocation;
 	
 	public static final String phoneName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	public static final String cardName = ChatColor.translateAlternateColorCodes('&', "&6&lBank");
@@ -89,10 +76,10 @@ public class Main extends JavaPlugin implements Listener
 	public static final int defaultPoints = 720;
 	public static final int defaultCoins = 0;
 	
-	public static Vector BorderPosition1;
-	public static Vector BorderPosition2;
+	public static @Nullable Vector BorderPosition1;
+	public static @Nullable Vector BorderPosition2;
 	
-	public static String resourcePackLink;
+	public static @Nullable String resourcePackLink;
 	
 	private static JavaPlugin plugin;
 	public static PlayerParticlesAPI particlesApi;
@@ -153,15 +140,15 @@ public class Main extends JavaPlugin implements Listener
 	
 	/* Variable Functions */
 	
-	public static Object getDiscordSRV() {
+	public static @Nullable Object getDiscordSRV() {
 		return discordSRV;
 	}
 	
-	public static String getNormalMessageFormat() {
+	public static @Nullable String getNormalMessageFormat() {
 		return normalMessageFormat;
 	}
 	
-	public static String getTagNormalMessageFormat() {
+	public static @Nullable String getTagNormalMessageFormat() {
 		return normalTagMessageFormat;
 	}
 	
@@ -169,19 +156,19 @@ public class Main extends JavaPlugin implements Listener
 		return distanceRange;
 	}
 	
-	public static String getPMSentFormat() {
+	public static @Nullable String getPMSentFormat() {
 		return PMSentFormat;
 	}
 	
-	public static String getPMReceivedFormat() {
+	public static @Nullable String getPMReceivedFormat() {
 		return PMReceivedFormat;
 	}
 	
-	public String getPluginsFolder()  {
+	public @NotNull String getPluginsFolder()  {
 		return getConfig().getCurrentPath();
 	}
 	
-	public static Location getSpawnLocation() {
+	public static @Nullable Location getSpawnLocation() {
 		return spawnLocation;
 	}
 	
@@ -258,7 +245,7 @@ public class Main extends JavaPlugin implements Listener
 		}
 	}
 	
-	public static void displayWelcomeMessage(Player player) {
+	public static void displayWelcomeMessage(@NotNull Player player) {
 		String welcomeHeader = String.format("%s%s━━━━━━━━━━━━━━━━━━━━ %s%s Welcome back! %s%s━━━━━━━━━━━━━━", 
 				ChatColor.YELLOW, ChatColor.STRIKETHROUGH, ChatColor.AQUA, ChatColor.BOLD, ChatColor.YELLOW, ChatColor.STRIKETHROUGH);
 		
@@ -298,7 +285,7 @@ public class Main extends JavaPlugin implements Listener
 		try {
 			mapField = this.getServer().getClass().getDeclaredField("commandMap");
 		} 
-		catch (NoSuchFieldException | SecurityException e) {
+		catch (@NotNull NoSuchFieldException | SecurityException e) {
 			e.printStackTrace();
 			return;
 		}
@@ -310,7 +297,7 @@ public class Main extends JavaPlugin implements Listener
 		{
 			map = (CommandMap) mapField.get(Bukkit.getServer());
 		} 
-		catch (IllegalArgumentException | IllegalAccessException e) 
+		catch (@NotNull IllegalArgumentException | IllegalAccessException e)
 		{
 			e.printStackTrace();
 			return;

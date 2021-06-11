@@ -1,19 +1,19 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.CurrencyClass;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.List;
 
 public class CheckBalanceCommand extends Command
 {
 
-	public CheckBalanceCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public CheckBalanceCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                               @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}

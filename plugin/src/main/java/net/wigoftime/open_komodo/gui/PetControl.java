@@ -1,14 +1,14 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.etc.PetsManager;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.wigoftime.open_komodo.etc.PetsManager;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class PetControl extends CustomGUI {
 	public static final String title = "Pet Control";
@@ -23,7 +23,7 @@ public class PetControl extends CustomGUI {
 		gui.setContents(setButtons(gui.getSize()));
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		
@@ -42,7 +42,7 @@ public class PetControl extends CustomGUI {
 		opener.getPlayer().closeInventory();
 	}
 	
-	private static ItemStack[] setButtons(int size) {
+	private static ItemStack @NotNull [] setButtons(int size) {
 		ItemStack[] content = new ItemStack[size];
 		
 		content[0] = removeButton;
@@ -52,7 +52,7 @@ public class PetControl extends CustomGUI {
 		return content;
 	}
 	
-	private static ItemStack createRemoveButton() {
+	private static @NotNull ItemStack createRemoveButton() {
 		ItemStack removeButtonItemStack = new ItemStack(Material.BARRIER);
 		ItemMeta removeButtonItemMeta = removeButtonItemStack.getItemMeta();
 		
@@ -66,7 +66,7 @@ public class PetControl extends CustomGUI {
 		return removeButtonItemStack;
 	}
 	
-	private static ItemStack createChangeNameButton() {
+	private static @NotNull ItemStack createChangeNameButton() {
 		ItemStack changeNameButtonItemStack = new ItemStack(Material.NAME_TAG);
 		ItemMeta changeNameButtonItemMeta = changeNameButtonItemStack.getItemMeta();
 		
@@ -80,7 +80,7 @@ public class PetControl extends CustomGUI {
 		return changeNameButtonItemStack;
 	}
 	
-	private static ItemStack createMountButton() {
+	private static @NotNull ItemStack createMountButton() {
 		ItemStack mountButtonItemStack = new ItemStack(Material.SADDLE);
 		ItemMeta mountButtonItemMeta = mountButtonItemStack.getItemMeta();
 		

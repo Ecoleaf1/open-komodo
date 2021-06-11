@@ -1,13 +1,13 @@
 package net.wigoftime.open_komodo.sql;
 
-import dev.esophose.playerparticles.libs.hikaricp.HikariConfig;
 import dev.esophose.playerparticles.libs.hikaricp.HikariDataSource;
-import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class SQLCard {
-    public static HikariDataSource dataSource = new HikariDataSource();
+    public static @NotNull HikariDataSource dataSource = new HikariDataSource();
     private static SQLInfo info;
 
 
@@ -61,13 +61,13 @@ public class SQLCard {
     public final SQLCard.SQLCardType type;
     public final List<Object> sqlValues;
 
-    public SQLCard(SQLCode.SQLCodeType sql, SQLCard.SQLCardType type, List<Object> formatString, List<Object> sqlValues) {
+    public SQLCard(SQLCode.@NotNull SQLCodeType sql, SQLCard.SQLCardType type, @NotNull List<Object> formatString, @NotNull List<Object> sqlValues) {
         this.sql = String.format(SQLCode.getSQLCode(sql).toString(), formatString.toArray());
         this.type = type;
         this.sqlValues = sqlValues;
     }
 
-    public List<Object> execute() {
+    public @Nullable List<Object> execute() {
         if (type == SQLCard.SQLCardType.SET) { executeSet(); return null;}
         return executeQuery();
     }
@@ -93,7 +93,7 @@ public class SQLCard {
         }
     }
 
-    private List<Object> executeQuery() {
+    private @Nullable List<Object> executeQuery() {
         Connection connection = null;
         PreparedStatement statement = null;
         ResultSet result = null;

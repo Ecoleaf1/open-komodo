@@ -1,27 +1,16 @@
 package net.wigoftime.open_komodo.custommobs;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Set;
-import java.util.UUID;
-
+import net.minecraft.server.v1_16_R1.EntityCreature;
+import net.minecraft.server.v1_16_R1.EntityTypes;
+import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
-//import org.bukkit.craftbukkit.v1_16_R1.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
+import org.jetbrains.annotations.NotNull;
 
-//import net.minecraft.server.v1_16_R1.EntityCreature;
-import net.minecraft.server.v1_16_R1.EntityHuman;
-import net.minecraft.server.v1_16_R1.EntityTypes;
-import net.minecraft.server.v1_16_R1.EnumHand;
-import net.minecraft.server.v1_16_R1.EnumInteractionResult;
-import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
-import net.minecraft.server.v1_16_R1.EntityCreature;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.gui.PetControl;
-import net.wigoftime.open_komodo.gui.PetsGui;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.lang.reflect.Field;
+import java.util.Set;
 
 public class CustomPetMob extends EntityCreature
 {
@@ -29,7 +18,7 @@ public class CustomPetMob extends EntityCreature
 	private static Player owner;
 	
 	// CustomZombie for pets
-	public CustomPetMob(EntityTypes<? extends EntityCreature> type, Location loc, Player player) 
+	public CustomPetMob(@NotNull EntityTypes<? extends EntityCreature> type, @NotNull Location loc, @NotNull Player player)
 	{
 		super(type, ((CraftWorld) loc.getWorld()).getHandle());
 		//super(type, ((CraftWorld) loc.getWorld()).getHandle());
@@ -67,7 +56,7 @@ public class CustomPetMob extends EntityCreature
 	        targetD.clear();
 	        goalD.clear();
 	        
-		} catch (NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
+		} catch (@NotNull NoSuchFieldException | SecurityException | IllegalArgumentException | IllegalAccessException e) {
 			e.printStackTrace();
 			return;
 		}

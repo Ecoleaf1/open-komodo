@@ -1,21 +1,21 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomParticle;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomParticle;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
 
 public class ParticlesGUI extends CustomGUI {
 	
@@ -53,7 +53,7 @@ public class ParticlesGUI extends CustomGUI {
 	}
 
 	@Override
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		
@@ -87,7 +87,7 @@ public class ParticlesGUI extends CustomGUI {
 			Main.particlesApi.openParticlesGui(opener.getPlayer());
 	}
 	
-	private List<CustomParticle> getShuffledUnownedParticles(List<CustomParticle> unfilteredParticles) {
+	private @NotNull List<CustomParticle> getShuffledUnownedParticles(@NotNull List<CustomParticle> unfilteredParticles) {
 		List<CustomParticle> particles = new ArrayList<CustomParticle>(9);
 		
 		byte count = 0;

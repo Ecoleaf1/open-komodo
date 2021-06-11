@@ -1,21 +1,21 @@
 package net.wigoftime.open_komodo.actions;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.List;
-
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
 
 public class BugReporter 
 {
@@ -27,7 +27,7 @@ public class BugReporter
 	private static final File folder = new File(Main.dataFolderPath+"/reports");
 	
 	// Give player the report book to report things on
-	public static void open(Player player)
+	public static void open(@NotNull Player player)
 	{
 		PlayerInventory inventory = player.getInventory();
 		
@@ -53,7 +53,7 @@ public class BugReporter
 			player.sendMessage(errorMsg);
 	}
 	
-	public static void complete(Player player, BookMeta meta)
+	public static void complete(@NotNull Player player, @NotNull BookMeta meta)
 	{
 		if (!folder.exists())
 			folder.mkdir();

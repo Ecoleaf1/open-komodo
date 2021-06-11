@@ -1,12 +1,11 @@
 package net.wigoftime.open_komodo.etc;
 
-import org.bukkit.Bukkit;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.Bukkit;
 
 public abstract class ActionBar 
 {

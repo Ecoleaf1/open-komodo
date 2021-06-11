@@ -1,32 +1,31 @@
 package net.wigoftime.open_komodo.gui;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permission;
-
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
-
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 public class BuyConfirm extends CustomGUI
 {
 	public static final String title = ChatColor.translateAlternateColorCodes('&', "Confirmation");
 	
-	private final Object pendingItem;
-	private final ItemStack cancelButton;
-	private final ItemStack confirmButton;
+	private final @NotNull Object pendingItem;
+	private final @NotNull ItemStack cancelButton;
+	private final @NotNull ItemStack confirmButton;
 	
 	// Create inventory for CustomItem
-	public BuyConfirm(CustomPlayer customPlayer,CustomItem pendingCustomItem, Currency currencyType, Permission requiredPermissoin) 
+	public BuyConfirm(CustomPlayer customPlayer, @NotNull CustomItem pendingCustomItem, Currency currencyType, Permission requiredPermissoin)
 	{
 		super(customPlayer, requiredPermissoin, Bukkit.getServer().createInventory(null, 27, title));
 		pendingItem = pendingCustomItem;
@@ -60,7 +59,7 @@ public class BuyConfirm extends CustomGUI
 	}
 	
 	// Create inventory for Pets
-	public BuyConfirm(CustomPlayer customPlayer,Pet pendingPet, Currency currencyType) 
+	public BuyConfirm(CustomPlayer customPlayer, @NotNull Pet pendingPet, Currency currencyType)
 	{
 		super(customPlayer, pendingPet.getPermission(), Bukkit.getServer().createInventory(null, 27, title));
 		pendingItem = pendingPet;
@@ -117,7 +116,7 @@ public class BuyConfirm extends CustomGUI
 		customPlayer.getPlayer().closeInventory();
 	}
 	
-	private static void buyPet(CustomPlayer playerCustomPlayer, ItemStack pendingItem)
+	private static void buyPet(@NotNull CustomPlayer playerCustomPlayer, @NotNull ItemStack pendingItem)
 	{
 			// Get info about item
 			ItemMeta pendingItemMeta = pendingItem.getItemMeta();
@@ -145,7 +144,7 @@ public class BuyConfirm extends CustomGUI
 			return;
 	}
 	
-	private static void buyCustomItem(CustomPlayer customPlayer, CustomItem pendingCustomItem)
+	private static void buyCustomItem(@NotNull CustomPlayer customPlayer, @NotNull CustomItem pendingCustomItem)
 	{		
 			// Currency that is being used
 			Currency currencyType;
@@ -162,7 +161,7 @@ public class BuyConfirm extends CustomGUI
 	}
 	
 	// Create currency icon for CustomItems
-	private static ItemStack createCurrencyIcon(CustomItem customItem, Currency currencyType)
+	private static ItemStack createCurrencyIcon(@NotNull CustomItem customItem, Currency currencyType)
 	{
 		ItemStack currencyIcon;
 		
@@ -190,7 +189,7 @@ public class BuyConfirm extends CustomGUI
 	}
 	
 	// Create currency icon for Pets
-	private static ItemStack createCurrencyIcon(Pet pet, Currency currencyType)
+	private static ItemStack createCurrencyIcon(@NotNull Pet pet, Currency currencyType)
 	{
 		ItemStack currencyIcon;
 		
@@ -217,7 +216,7 @@ public class BuyConfirm extends CustomGUI
 		return currencyIcon;
 	}
 	
-	private ItemStack[] createButtons(byte size)
+	private ItemStack @NotNull [] createButtons(byte size)
 	{
 		
 		ItemStack[] contents = new ItemStack[size];
@@ -242,7 +241,7 @@ public class BuyConfirm extends CustomGUI
 		return contents;
 	}
 
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedIcon = clickEvent.getCurrentItem();
 		

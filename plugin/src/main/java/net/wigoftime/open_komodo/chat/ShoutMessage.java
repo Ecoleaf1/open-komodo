@@ -1,24 +1,20 @@
 package net.wigoftime.open_komodo.chat;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-
+import github.scarsz.discordsrv.DiscordSRV;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.*;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import github.scarsz.discordsrv.DiscordSRV;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class ShoutMessage {
-	public static void shout(CustomPlayer sender, String message) {	
+	public static void shout(@NotNull CustomPlayer sender, @NotNull String message) {
 		if (sender.isInTutorial())
 		if (!sender.getTutorial().validState(ShoutMessage.class)) return;
 		
@@ -114,7 +110,7 @@ public class ShoutMessage {
 		sendToDiscord(senderCustomPlayer, message);
 	}
 	
-	public static void sendToDiscord(CustomPlayer playerCustomPlayer, String message) {
+	public static void sendToDiscord(@NotNull CustomPlayer playerCustomPlayer, String message) {
 		if (Main.getDiscordSRV() == null)
 			return;
 		

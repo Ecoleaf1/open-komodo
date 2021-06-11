@@ -1,5 +1,7 @@
 package net.wigoftime.open_komodo.etc;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.boss.BarColor;
@@ -7,9 +9,7 @@ import org.bukkit.boss.BarFlag;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
 import org.bukkit.entity.Player;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class Status_Bar 
 {
@@ -46,7 +46,7 @@ public abstract class Status_Bar
 		return bar;
 	}
 	
-	public static void addPlayer(CustomPlayer customPlayer)
+	public static void addPlayer(@NotNull CustomPlayer customPlayer)
 	{
 		for (Player pl : bar.getPlayers())
 			if (pl == customPlayer.getPlayer())

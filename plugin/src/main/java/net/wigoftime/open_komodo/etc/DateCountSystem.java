@@ -1,10 +1,12 @@
 package net.wigoftime.open_komodo.etc;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Calendar;
 
 abstract public class DateCountSystem {
 
-	public static Calendar addToCalendar(String timeAdded) {
+	public static Calendar addToCalendar(@NotNull String timeAdded) {
 		String[] args = timeAdded.split(" ");
 		
 		Calendar cal = Calendar.getInstance();

@@ -1,23 +1,24 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ItemType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.ItemType;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class PhoneSwitcher {
-	public static Inventory phoneSwitcherGui = null;
+	public static @Nullable Inventory phoneSwitcherGui = null;
 	
 	private static void create() {
 		List<CustomItem> phones = CustomItem.getCustomItem(ItemType.PHONE);
@@ -48,14 +49,14 @@ public class PhoneSwitcher {
 			break;
 	}
 	
-	public static void open(CustomPlayer playerCustomPlayer) {
+	public static void open(@NotNull CustomPlayer playerCustomPlayer) {
 		if (phoneSwitcherGui == null)
 			create();
 		
 		playerCustomPlayer.getPlayer().openInventory(phoneSwitcherGui);
 	}
 	
-	public static void clicked(CustomPlayer playerCustomPlayer, ItemStack clickedItem) {
+	public static void clicked(@NotNull CustomPlayer playerCustomPlayer, @NotNull ItemStack clickedItem) {
 		
 		if (clickedItem.getType() != Material.INK_SAC)
 			return;

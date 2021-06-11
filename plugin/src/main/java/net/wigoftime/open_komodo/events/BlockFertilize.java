@@ -6,15 +6,14 @@
 
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFertilizeEvent;
 import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
-
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class BlockFertilize implements EventExecutor {
 
@@ -34,7 +33,7 @@ public class BlockFertilize implements EventExecutor {
 		hasPermission(causerCustomPlayer, fertilizeEvent);
 	}
 	
-	private void hasPermission(CustomPlayer causerCustomPlayer, BlockFertilizeEvent fertilizeEvent) {
+	private void hasPermission(@NotNull CustomPlayer causerCustomPlayer, @NotNull BlockFertilizeEvent fertilizeEvent) {
 		if (!causerCustomPlayer.getPlayer().hasPermission(Permissions.breakPerm)) {
 			fertilizeEvent.setCancelled(true);
 			causerCustomPlayer.getPlayer().sendMessage(Permissions.getBreakError());

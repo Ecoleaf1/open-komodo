@@ -1,19 +1,19 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
-import org.bukkit.Bukkit;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
+import org.bukkit.Bukkit;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class PetsGui extends CustomGUI {
 	public static final String title = "Pet Menu";
@@ -32,7 +32,7 @@ public class PetsGui extends CustomGUI {
 		return;
 	}
 	
-	private static ItemStack[] getListofPetIcons() {
+	private static ItemStack @NotNull [] getListofPetIcons() {
 		Set<Pet> petsSet = Pet.getPets();
 		ItemStack[] guiContent = new ItemStack[petsSet.size()];
 		
@@ -77,7 +77,7 @@ public class PetsGui extends CustomGUI {
 	}
 
 	@Override
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		

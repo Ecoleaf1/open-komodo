@@ -1,21 +1,21 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.InventoryManagement;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.List;
 
 public class BuildModeCommand extends Command
 {
-	public BuildModeCommand(String name, String description, String usageMessage,
-			List<String> aliases) {
+	public BuildModeCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                            @NotNull List<String> aliases) {
 		
 		super(name, description, usageMessage, aliases);
 	}
@@ -41,7 +41,7 @@ public class BuildModeCommand extends Command
 		return true;
 	}
 	
-	public static void toggleBuild(CustomPlayer player)
+	public static void toggleBuild(@NotNull CustomPlayer player)
 	{
 		if (player.isBuilding())
 		{

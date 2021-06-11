@@ -1,6 +1,5 @@
 package net.wigoftime.open_komodo.commands;
 
-import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,7 +18,7 @@ public class MailCommand extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender commandSender, @NotNull String string, @NotNull String[] arguments) {
+    public boolean execute(@NotNull CommandSender commandSender, @NotNull String string, @NotNull String @NotNull [] arguments) {
         if (!(commandSender instanceof Player)) return true;
 
         CustomPlayer playerCustom = CustomPlayer.get(((Player) commandSender).getPlayer().getUniqueId());

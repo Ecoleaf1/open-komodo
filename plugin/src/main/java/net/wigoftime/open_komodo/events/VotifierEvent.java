@@ -1,5 +1,11 @@
 package net.wigoftime.open_komodo.events;
 
+import com.vexsoftware.votifier.model.Vote;
+import github.scarsz.discordsrv.DiscordSRV;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -7,15 +13,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.EventExecutor;
-
-import com.vexsoftware.votifier.model.Vote;
-
-import github.scarsz.discordsrv.DiscordSRV;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.chat.NormalMessage;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.CurrencyClass;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class VotifierEvent implements EventExecutor {
 	public void execute(Listener listener, Event event) throws EventException {

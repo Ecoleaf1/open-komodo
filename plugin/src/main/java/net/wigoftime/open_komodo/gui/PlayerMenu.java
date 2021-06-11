@@ -1,34 +1,32 @@
 package net.wigoftime.open_komodo.gui;
 
 import net.wigoftime.open_komodo.etc.connectfour.ConnectFourSession;
-import net.wigoftime.open_komodo.etc.systems.MarriageSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerMenu extends CustomGUI {
     private static ItemStack head, mount, connect4;
-    private static ItemStack marry = new ItemStack(Material.GOLD_NUGGET); {
+    private static @NotNull ItemStack marry = new ItemStack(Material.GOLD_NUGGET); {
         ItemMeta meta = marry.getItemMeta();
         meta.setDisplayName("Marry");
         marry.setItemMeta(meta);
     }
 
-    private static ItemStack marriageMenu = new ItemStack(Material.ROSE_BUSH); {
+    private static @NotNull ItemStack marriageMenu = new ItemStack(Material.ROSE_BUSH); {
         ItemMeta meta = marriageMenu.getItemMeta();
         meta.setDisplayName("Marriage Menu");
         marriageMenu.setItemMeta(meta);
     }
 
-    private final CustomPlayer openerCustom, selectedPlayerCustom;
+    private final @NotNull CustomPlayer openerCustom, selectedPlayerCustom;
 
-    public PlayerMenu(CustomPlayer openerCustom, CustomPlayer selectedPlayerCustom) {
+    public PlayerMenu(@NotNull CustomPlayer openerCustom, @NotNull CustomPlayer selectedPlayerCustom) {
         super(openerCustom, null, Bukkit.createInventory(null, 27, "Player Menu"));
 
         this.openerCustom = openerCustom;
@@ -67,7 +65,7 @@ public class PlayerMenu extends CustomGUI {
     }
 
     @Override
-    public void clicked(InventoryClickEvent clickEvent) {
+    public void clicked(@NotNull InventoryClickEvent clickEvent) {
         clickEvent.setCancelled(true);
 
         if (clickEvent.getCurrentItem().equals(mount)) mountClicked();

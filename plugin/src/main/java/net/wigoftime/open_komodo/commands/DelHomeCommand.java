@@ -1,26 +1,26 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.List;
 
 public class DelHomeCommand extends Command
 {
 	private static final String nameMsg = ChatColor.translateAlternateColorCodes('&', "&6» &7Enter your home name that you wish to delete.");
 
-	public DelHomeCommand(String name, String description, String usageMessage,
-			List<String> aliases) {
+	public DelHomeCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                          @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String command, String @NotNull [] args)
 	{
 		if (!(sender instanceof Player))
 			return false;

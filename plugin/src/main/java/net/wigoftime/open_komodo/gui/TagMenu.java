@@ -1,17 +1,17 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.List;
-
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ItemType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.ItemType;
+import java.util.List;
 
 public class TagMenu extends CustomGUI {
 	private static final String tagFormat = "Tag: $W";
@@ -78,7 +78,7 @@ public class TagMenu extends CustomGUI {
 		}
 	}
 	
-	public TagMenu(CustomPlayer player) {
+	public TagMenu(@NotNull CustomPlayer player) {
 		super(player, null, Bukkit.createInventory(null, 54, title));
 		
 		// Add reset button
@@ -160,7 +160,7 @@ public class TagMenu extends CustomGUI {
 	}
 	
 	@Override
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		
 		clickEvent.setCancelled(true);
@@ -268,7 +268,7 @@ public class TagMenu extends CustomGUI {
 					gui.setItem(53, new ItemStack(Material.AIR));
 	}
 	
-	public static String getTagShopButtonDisplayName() {
+	public static @NotNull String getTagShopButtonDisplayName() {
 		return ChatColor.WHITE + "" + ChatColor.BOLD + "Tag Shop";
 	}
 	

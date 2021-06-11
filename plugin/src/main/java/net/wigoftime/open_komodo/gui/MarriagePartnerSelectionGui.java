@@ -5,24 +5,20 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.Skull;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
 public class MarriagePartnerSelectionGui extends CustomGUI {
     private final CustomPlayer opener;
-    private static ItemStack nextPageIcon = new ItemStack(Material.ARROW); {
+    private static @NotNull ItemStack nextPageIcon = new ItemStack(Material.ARROW); {
         ItemMeta meta = nextPageIcon.getItemMeta();
         meta.setDisplayName("Next Page");
         nextPageIcon.setItemMeta(meta);
@@ -36,7 +32,7 @@ public class MarriagePartnerSelectionGui extends CustomGUI {
     }
 
     @Override
-    public void clicked(InventoryClickEvent clickEvent) {
+    public void clicked(@NotNull InventoryClickEvent clickEvent) {
         clickEvent.setCancelled(true);
 
         if (clickEvent.getCurrentItem() == null) return;

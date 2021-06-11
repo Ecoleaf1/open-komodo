@@ -1,10 +1,9 @@
 package net.wigoftime.open_komodo.etc;
 
-import org.bukkit.Bukkit;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
+import org.bukkit.Bukkit;
 
 abstract public class CoinSalary {
 	public static void coinpayPlayersTimer() {

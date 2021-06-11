@@ -1,18 +1,5 @@
 package net.wigoftime.open_komodo.events;
 
-import java.util.Set;
-
-import org.bukkit.Material;
-import org.bukkit.block.Block;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.EventExecutor;
-
 import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
@@ -22,7 +9,19 @@ import net.wigoftime.open_komodo.gui.PhoneGui;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.EventExecutor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Set;
 
 public class PlayerInteract implements EventExecutor {
 	
@@ -79,7 +78,7 @@ public class PlayerInteract implements EventExecutor {
 		}
 	}
 	
-	private void actionManage(PlayerInteractEvent event, CustomPlayer playerCustom, ItemStack itemStack) {
+	private void actionManage(@NotNull PlayerInteractEvent event, @NotNull CustomPlayer playerCustom, @Nullable ItemStack itemStack) {
 		switch(event.getAction()) {
 		case PHYSICAL:
 			if (event.getClickedBlock().getType() == Material.FARMLAND) event.setCancelled(true);
@@ -135,7 +134,7 @@ public class PlayerInteract implements EventExecutor {
 	}
 	
 	
-	private static boolean isItemEquipable(ItemStack itemStack) {
+	private static boolean isItemEquipable(@NotNull ItemStack itemStack) {
 		if (itemStack.getType() != Material.INK_SAC) return false;
 		
 		ItemMeta meta = itemStack.getItemMeta();

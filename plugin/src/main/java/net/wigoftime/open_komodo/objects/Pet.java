@@ -1,22 +1,23 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import net.minecraft.server.v1_16_R1.EntityTypes;
+import net.wigoftime.open_komodo.etc.Currency;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.minecraft.server.v1_16_R1.EntityTypes;
-import net.wigoftime.open_komodo.etc.Currency;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class Pet
 {
 	// Keep track of sets of pets
-	private static Set<Pet> pets = new HashSet<Pet>();
+	private static @NotNull Set<Pet> pets = new HashSet<Pet>();
 	
 	private final String displayName;
 	private final List<String> description;
@@ -31,7 +32,7 @@ public class Pet
 	
 	private final int id;
 	
-	public Pet(String displayName, List<String> description, Permission permission, EntityTypes<?> type,int id, int pPrice, int cPrice)
+	public Pet(@NotNull String displayName, List<String> description, Permission permission, @NotNull  EntityTypes<?> type,int id, int pPrice, int cPrice)
 	{
 		this.displayName = displayName;
 		this.description = description;
@@ -45,7 +46,7 @@ public class Pet
 		pets.add(this);
 	}
 	
-	public ItemStack getItem()
+	public @NotNull ItemStack getItem()
 	{
 		ItemStack petDisplayItemStack = new ItemStack(material);
 		ItemMeta petDisplayItemMeta = petDisplayItemStack.getItemMeta();
@@ -87,7 +88,7 @@ public class Pet
 		return id;
 	}
 	
-	public static Pet getPet(int id)
+	public static @Nullable Pet getPet(int id)
 	{
 		for (Pet p : pets)
 		{
@@ -98,7 +99,7 @@ public class Pet
 		return null;
 	}
 	
-	public static Set<Pet> getPets()
+	public static @NotNull Set<Pet> getPets()
 	{
 		return pets;
 	}

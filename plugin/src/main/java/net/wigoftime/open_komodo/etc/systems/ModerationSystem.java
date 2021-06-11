@@ -1,28 +1,26 @@
 package net.wigoftime.open_komodo.etc.systems;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.ModerationResults;
-import net.wigoftime.open_komodo.sql.SQLManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
 public class ModerationSystem
 {
@@ -32,7 +30,7 @@ public class ModerationSystem
 	public static final String mutedNoReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted until: $~");
 	public static final String mutedReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted for: $1~\nYou will be unmuted at: $~");
 	
-	public static void ban(CommandSender causer, OfflinePlayer target, Date date, String reason) {
+	public static void ban(@NotNull CommandSender causer, @NotNull OfflinePlayer target, @NotNull Date date, @Nullable String reason) {
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(target.getUniqueId())) {
 				SQLManager.createModerationPlayer(target.getUniqueId());
@@ -55,7 +53,7 @@ public class ModerationSystem
 		});
 	}
 	
-	public static void mute(CommandSender causer, OfflinePlayer targetPlayer, Date date, String reason)
+	public static void mute(@NotNull CommandSender causer, @NotNull OfflinePlayer targetPlayer, @NotNull Date date, @Nullable String reason)
 	{
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(targetPlayer.getUniqueId())) {
@@ -86,7 +84,7 @@ public class ModerationSystem
 		sendCauserResultsMute(targetPlayer, causer, reason, date);
 	}
 	
-	private static void setMuteDate(UUID uuid, Date date) {
+	private static void setMuteDate(UUID uuid, @NotNull Date date) {
 		if (SQLManager.isEnabled())
 		SQLManager.setMuteDate(uuid, date);
 		else PlayerConfig.setMuteDate(uuid, date);
@@ -98,7 +96,7 @@ public class ModerationSystem
 		else PlayerConfig.setMuteReason(uuid, reason);
 	}
 	
-	private static void setBanDate(UUID uuid, Date date) {
+	private static void setBanDate(UUID uuid, @NotNull Date date) {
 		if (SQLManager.isEnabled())
 		SQLManager.setBanDate(uuid, date);
 		else PlayerConfig.setBanDate(uuid, date);
@@ -116,7 +114,7 @@ public class ModerationSystem
 		else PlayerConfig.setBanReason(uuid, reason);
 	}
 	
-	public static String getBanReason(UUID uuid) {
+	public static @Nullable String getBanReason(UUID uuid) {
 		String reason;
 		if (SQLManager.isEnabled()) reason = SQLManager.getBanReason(uuid);
 		else reason = PlayerConfig.getBanReason(uuid);
@@ -126,7 +124,7 @@ public class ModerationSystem
 		return reason;
 	}
 	
-	private static void sendMuteMessage(CustomPlayer playerCustomPlayer) {
+	private static void sendMuteMessage(@NotNull CustomPlayer playerCustomPlayer) {
 		// Get reason and the replied back message
 		String reason = playerCustomPlayer.getMuteReason();
 		String message;
@@ -178,7 +176,7 @@ public class ModerationSystem
 	}
 	
 	private static enum TimeType {NONE, MINUTES, HOURS, DAYS, WEEKS, MONTHS, YEARS};
-	public static Instant calculateTime(String timeString) {
+	public static Instant calculateTime(@NotNull String timeString) {
 		Instant instant = Instant.now();
 		TimeType timeType = TimeType.NONE;
 		
@@ -236,7 +234,7 @@ public class ModerationSystem
 		return instant;
 	}
 	
-	public static boolean isAffectingMod(CommandSender sender, List<Permission> permsissions, OfflinePlayer targetPlayer) {
+	public static boolean isAffectingMod(@NotNull CommandSender sender, List<Permission> permsissions, @NotNull OfflinePlayer targetPlayer) {
 		Permissions.getPermissions(targetPlayer.getUniqueId(), null);
 		if (!Permissions.isMod(targetPlayer.getUniqueId())) return false;
 
@@ -249,7 +247,7 @@ public class ModerationSystem
 
 	// Non-static
 	private final CustomPlayer playerCustom;
-	public Date muteDate;
+	public @Nullable Date muteDate;
 	public String muteReason;
 
 	public ModerationSystem(CustomPlayer playerCustom) {
@@ -260,7 +258,7 @@ public class ModerationSystem
 		return muteReason;
 	}
 
-	public void setMuteDate(Date date) {
+	public void setMuteDate(@Nullable Date date) {
 		if (date == null) {
 			muteDate = new Date(0);
 		}

@@ -1,5 +1,9 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.systems.RankSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -7,11 +11,7 @@ import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.systems.RankSystem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerMove implements EventExecutor {
 	@Override
@@ -49,7 +49,7 @@ public class PlayerMove implements EventExecutor {
 		}
 	}
 	
-	private boolean passedWorldBorder(Location playerLocation) {
+	private boolean passedWorldBorder(@NotNull Location playerLocation) {
 		if (Main.BorderPosition1.getX() < 0) {
 			if (playerLocation.getX() < Main.BorderPosition1.getX()) return true;
 		} else if (playerLocation.getX() > Main.BorderPosition1.getX()) return true;

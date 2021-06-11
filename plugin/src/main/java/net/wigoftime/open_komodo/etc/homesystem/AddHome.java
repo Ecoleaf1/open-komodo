@@ -1,18 +1,18 @@
 package net.wigoftime.open_komodo.etc.homesystem;
 
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Home;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class AddHome {
-	public static void execute(CustomPlayer player, Home home) {
+	public static void execute(@NotNull CustomPlayer player, Home home) {
 		if (player.isInTutorial())
 		if (!player.getTutorial().validState(AddHome.class)) return;
 		

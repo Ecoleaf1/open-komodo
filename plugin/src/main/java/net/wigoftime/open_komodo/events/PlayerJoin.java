@@ -1,5 +1,10 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.chat.MessageFormat;
+import net.wigoftime.open_komodo.etc.*;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -12,20 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.EventExecutor;
 import org.bukkit.potion.PotionEffectType;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.etc.CollisionSystem;
-import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PlayerList;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.etc.systems.RankSystem;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
-import net.wigoftime.open_komodo.etc.Status_Bar;
-import net.wigoftime.open_komodo.etc.UpdateLog;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.sql.SQLManager;
+import org.jetbrains.annotations.NotNull;
 
 public class PlayerJoin implements EventExecutor {
 	public void execute(Listener listener, Event event) {
@@ -102,7 +94,7 @@ public class PlayerJoin implements EventExecutor {
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), runnable);
 	}
 	
-	private void firstJoined(Player player) {
+	private void firstJoined(@NotNull Player player) {
 		// Check if player exists in the SQL database or has it's own player config file
 		if (!CustomPlayer.containsPlayer(player.getUniqueId())) {	
 			for (Player p : Bukkit.getServer().getOnlinePlayers())
@@ -110,7 +102,7 @@ public class PlayerJoin implements EventExecutor {
 		}
 	}
 	
-	private ItemStack getCard() {
+	private @NotNull ItemStack getCard() {
 		// Create FPBank Card
 		ItemStack cardItemStack = new ItemStack(Material.INK_SAC);
 		
@@ -125,7 +117,7 @@ public class PlayerJoin implements EventExecutor {
 		return cardItemStack;
 	}
 	
-	private void joinMessage(CustomPlayer customPlayer, PlayerJoinEvent joinEvent) {
+	private void joinMessage(@NotNull CustomPlayer customPlayer, @NotNull PlayerJoinEvent joinEvent) {
 		// Get Message
 		String message = Main.joinMessage;
 		

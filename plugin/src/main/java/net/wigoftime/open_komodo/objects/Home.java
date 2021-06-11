@@ -1,12 +1,13 @@
 package net.wigoftime.open_komodo.objects;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.jetbrains.annotations.NotNull;
+import org.json.simple.JSONObject;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.json.simple.JSONObject;
 
 public class Home implements Serializable {
 	private static final long serialVersionUID = -7576933483734767273L;
@@ -14,40 +15,12 @@ public class Home implements Serializable {
 	public Location location;
 	public String name;
 	
-	public Home(String name, Location location) {
+	public Home(@NotNull String name, @NotNull Location location) {
 		this.name = name;
 		this.location = location;
 	}
 	
-	/*
-	public static void main(String args[]) {
-		JSONObject json = new JSONObject();
-		
-		List<JSONObject> listHomesJSON = new ArrayList<JSONObject>(3);
-		
-		JSONObject homeJson = new JSONObject();
-		homeJson.put("Name", "Home Name");
-		
-		JSONObject locationJson = new JSONObject();
-		locationJson.put("World Name", "Name");
-		locationJson.put("x", 0);
-		locationJson.put("x", 0);
-		locationJson.put("x", 0);
-		locationJson.put("yaw", 0);
-		locationJson.put("pitch", 0);
-		
-		homeJson.put("Name", "Home Name");
-		homeJson.put("Location", locationJson);
-		
-		listHomesJSON.add(homeJson);
-		
-		json.put("Homes", listHomesJSON);
-		System.out.println(json.toJSONString());
-		
-		jsonToHome(json);
-	}*/
-	
-	public static List<Home> jsonToHomes(JSONObject json) {
+	public static @NotNull List<Home> jsonToHomes(@NotNull JSONObject json) {
 		ArrayList<Home> homeList = new ArrayList<Home>(json.size());
 		
 		if (!json.containsKey("Homes"))

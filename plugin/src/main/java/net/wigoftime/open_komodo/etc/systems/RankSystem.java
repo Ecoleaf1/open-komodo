@@ -1,28 +1,27 @@
 package net.wigoftime.open_komodo.etc.systems;
 
-import java.util.ConcurrentModificationException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map.Entry;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
-
-import java.util.UUID;
-
 import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.Map.Entry;
+import java.util.UUID;
 
 public class RankSystem
 {
-	private static HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
+	private static @NotNull HashMap<UUID, Double> pendingXP = new HashMap<UUID, Double>();
 	
 	private static final String rankedUp = String.format(" \n                      %s%s| %sOpen Komodo %s|%s\n       You have ranked up to the next %%s!\n       %sCongraz!!\n ",
 			ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.YELLOW, ChatColor.MAGIC, ChatColor.DARK_AQUA, ChatColor.DARK_AQUA);
@@ -114,7 +113,7 @@ public class RankSystem
 		}
 	}
 	
-	public static void lettersToXP(Player player, String text)
+	public static void lettersToXP(@NotNull Player player, @NotNull String text)
 	{
 		double xp = 0;
 		char[] chars = text.toCharArray();
@@ -170,7 +169,7 @@ public class RankSystem
 	}
 	
 	
-	public static void addPendingPoints(Player player, double xp)
+	public static void addPendingPoints(@NotNull Player player, double xp)
 	{
 		synchronized (pendingXP) {
 			UUID uuid = player.getUniqueId();
@@ -195,7 +194,7 @@ public class RankSystem
 		}
 	}
 	
-	public static void putPlayer(Player player)
+	public static void putPlayer(@NotNull Player player)
 	{
 		if (pendingXP.containsKey(player.getUniqueId()))
 			return;
@@ -206,7 +205,7 @@ public class RankSystem
 		}
 	}
 
-	public static void setRankOffline(UUID uuid, Rank rank) {
+	public static void setRankOffline(UUID uuid, @Nullable Rank rank) {
 		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
 		// from latency the server to the SQL
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
@@ -226,7 +225,7 @@ public class RankSystem
 
 
 	private final CustomPlayer playerCustom;
-	private Rank rank;
+	private @Nullable Rank rank;
 	private double xp;
 
 	public RankSystem(CustomPlayer playerCustom, Rank rank, double xp) {
@@ -235,7 +234,7 @@ public class RankSystem
 		this.xp = xp;
 	}
 
-	public void setRank(Rank rank) {
+	public void setRank(@Nullable Rank rank) {
 		// Set rank in SQL Database or in player's config file in another task asynchronously to reduce the server pausing
 		// from latency the server to the SQL
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
@@ -279,7 +278,7 @@ public class RankSystem
 		this.xp = xp;
 	}
 
-	public Rank getRank() {
+	public @Nullable Rank getRank() {
 		return rank;
 	}
 

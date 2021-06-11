@@ -1,17 +1,17 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.Arrays;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class BagGui extends CustomGUI {
 	private final int bagID;
@@ -62,7 +62,7 @@ public class BagGui extends CustomGUI {
 		else WorldInventoryConfig.setInventory(opener.getPlayer(), opener.getPlayer().getWorld(), items);
 	}
 	
-	private List<ItemStack> getItems() {
+	private @Nullable List<ItemStack> getItems() {
 		if (SQLManager.isEnabled()) return SQLManager.getBagInventory(opener.getUniqueId(), bagID);
 		else return Arrays.asList(WorldInventoryConfig.getInventory(opener.getPlayer(), bagID));
 	}

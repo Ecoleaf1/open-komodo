@@ -1,30 +1,26 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ItemType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.ItemType;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 public class HatMenu extends CustomItemMenuType1 {
 	private final String fileName;
 	
-	public HatMenu(CustomPlayer customPlayer, String fileName) {
+	public HatMenu(@NotNull CustomPlayer customPlayer, String fileName) {
 		super(customPlayer, null, getItems(customPlayer, fileName), "Hat-Menu", 36);
 		this.fileName = fileName;
 		
@@ -32,7 +28,7 @@ public class HatMenu extends CustomItemMenuType1 {
 	}
 
 	@Override
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		super.clicked(clickEvent);
 		
 		switch (clickEvent.getCurrentItem().getType()) {
@@ -50,7 +46,7 @@ public class HatMenu extends CustomItemMenuType1 {
 		}
 	}
 	
-	private static List<ItemStack> getItems(CustomPlayer opener, String fileName) {
+	private static @NotNull List<ItemStack> getItems(@NotNull CustomPlayer opener, String fileName) {
 		File shopPage = new File(String.format("%s/gui/hatshop/%s.yml",Main.dataFolderPath,fileName));
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(shopPage);
@@ -64,7 +60,7 @@ public class HatMenu extends CustomItemMenuType1 {
 	}
 	
 	
-	private static ItemStack getHatItemStack(CustomPlayer customPlayer, CustomItem customItem){
+	private static @NotNull ItemStack getHatItemStack(@NotNull CustomPlayer customPlayer, @NotNull CustomItem customItem){
 		ItemStack itemStack = new ItemStack(customItem.getItem());
 		
 		// Get info about item
@@ -122,7 +118,7 @@ public class HatMenu extends CustomItemMenuType1 {
 		return shopPage.exists();
 	}
 	
-	private static void clickedHat(CustomPlayer clicker, ItemStack clickedItem) {
+	private static void clickedHat(@NotNull CustomPlayer clicker, @NotNull ItemStack clickedItem) {
 		// Get information about item
 		ItemMeta clickedItemMeta = clickedItem.getItemMeta();
 		

@@ -1,13 +1,5 @@
 package net.wigoftime.open_komodo.tutorial;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.EntityEffect;
-import org.bukkit.Sound;
-import org.bukkit.scheduler.BukkitTask;
-
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.actions.Rules;
@@ -15,15 +7,20 @@ import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.chat.NormalMessage;
 import net.wigoftime.open_komodo.chat.ShoutMessage;
 import net.wigoftime.open_komodo.commands.DisplayXPCommand;
-import net.wigoftime.open_komodo.commands.HomeCommand;
-import net.wigoftime.open_komodo.commands.SetHomeCommand;
 import net.wigoftime.open_komodo.etc.homesystem.AddHome;
 import net.wigoftime.open_komodo.etc.homesystem.TeleportHome;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Sound;
+import org.bukkit.scheduler.BukkitTask;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.LinkedList;
+import java.util.List;
 
 public class Tutorial {
 	public enum TutorialState {TALKING, SHOUTING, EMOTES, XP, SETHOME, TELEPORTHOME, RULES};
-	private TutorialState currentState = TutorialState.TALKING;
+	private @NotNull TutorialState currentState = TutorialState.TALKING;
 	
 	final CustomPlayer player;
 	
@@ -76,9 +73,9 @@ public class Tutorial {
 	}
 	
 	
-	List<BukkitTask> listOfTasks = new LinkedList<BukkitTask>();
+	@NotNull List<BukkitTask> listOfTasks = new LinkedList<BukkitTask>();
 	private int ticksIndex = 0;
-	public void sendMessage(String message, int ticks, Object... messageFormats) {
+	public void sendMessage(@NotNull String message, int ticks, Object... messageFormats) {
 		
 		synchronized (listOfTasks) {
 			ticksIndex += ticks;

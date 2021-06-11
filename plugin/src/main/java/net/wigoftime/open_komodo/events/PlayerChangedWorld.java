@@ -1,16 +1,15 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.etc.InventoryManagement;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.World;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.sql.SQLManager;
 
 public class PlayerChangedWorld implements EventExecutor {
 

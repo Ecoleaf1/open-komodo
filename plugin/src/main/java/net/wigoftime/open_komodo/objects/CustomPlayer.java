@@ -1,43 +1,39 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.math.BigDecimal;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.UUID;
-
+import github.scarsz.discordsrv.DiscordSRV;
+import github.scarsz.discordsrv.util.DiscordUtil;
 import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.etc.*;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.config.PlayerConfig;
+import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.InventoryManagement;
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
 import net.wigoftime.open_komodo.etc.systems.*;
+import net.wigoftime.open_komodo.gui.CustomGUI;
+import net.wigoftime.open_komodo.objects.TpRequest.tpType;
+import net.wigoftime.open_komodo.sql.SQLManager;
+import net.wigoftime.open_komodo.tutorial.Tutorial;
 import org.bukkit.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import github.scarsz.discordsrv.DiscordSRV;
-import github.scarsz.discordsrv.util.DiscordUtil;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
-import net.wigoftime.open_komodo.gui.CustomGUI;
-import net.wigoftime.open_komodo.objects.TpRequest.tpType;
-import net.wigoftime.open_komodo.tutorial.Tutorial;
-import net.wigoftime.open_komodo.sql.SQLManager;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.math.BigDecimal;
+import java.time.Instant;
+import java.util.*;
+import java.util.Map.Entry;
+
 public class CustomPlayer {
-	private final Player player;
-	private final UUID uuid;
-	private final Date joinDate;
+	private final @NotNull Player player;
+	private final @NotNull UUID uuid;
+	private final @Nullable Date joinDate;
 	
 	private Instant lastActiveTime;
 	private boolean isAfk;
@@ -48,32 +44,32 @@ public class CustomPlayer {
 	private int pointsBalance;
 	private int coinsBalance;
 
-	private final MailSystem personalMailSystem;
-	private final TeleportSystem teleportSystem;
-	private final NicknameSystem nicknameSystem;
-	private final ModerationSystem moderationSystem;
-	private final RankSystem rankSystem;
-	private final HomeSystem homeSystem;
-	private final DonationSystem donationSystem;
-	private final ItemSystem itemSystem;
-	private final MarriageSystem marriageSystem;
+	private final @NotNull MailSystem personalMailSystem;
+	private final @NotNull TeleportSystem teleportSystem;
+	private final @NotNull NicknameSystem nicknameSystem;
+	private final @NotNull ModerationSystem moderationSystem;
+	private final @NotNull RankSystem rankSystem;
+	private final @NotNull HomeSystem homeSystem;
+	private final @NotNull DonationSystem donationSystem;
+	private final @NotNull ItemSystem itemSystem;
+	private final @NotNull MarriageSystem marriageSystem;
 
 	private List<Pet> ownedPets;
 	
-	private static List<CustomPlayer> buildingPlayers = new LinkedList<CustomPlayer>();
+	private static @NotNull List<CustomPlayer> buildingPlayers = new LinkedList<CustomPlayer>();
 	private boolean buildMode;
 	private boolean isInvisible;
 	private boolean isMonitoring;
 	
-	private Tutorial tutorial = null;
+	private @Nullable Tutorial tutorial = null;
 	
 	public boolean isNew = false;
 	
-	public final github.scarsz.discordsrv.dependencies.jda.api.entities.User discordUser;
+	public final github.scarsz.discordsrv.dependencies.jda.api.entities.@Nullable User discordUser;
 	
-	private static Map<UUID, CustomPlayer> mapOfPlayers = new HashMap<UUID, CustomPlayer>();
+	private static @NotNull Map<UUID, CustomPlayer> mapOfPlayers = new HashMap<UUID, CustomPlayer>();
 	
-	public CustomPlayer(Player player) {
+	public CustomPlayer(@NotNull Player player) {
 		this.player = player;
 		uuid = player.getUniqueId();
 
@@ -152,22 +148,22 @@ public class CustomPlayer {
 		marriageSystem.joined();
 	}
 	
-	public static boolean containsPlayer(UUID uuid) {
+	public static boolean containsPlayer(@NotNull UUID uuid) {
 		if (SQLManager.isEnabled())
 			return SQLManager.containsPlayer(uuid);
 		else
 			return PlayerConfig.contains(uuid);
 	}
 	
-	public Player getPlayer() {
+	public @NotNull Player getPlayer() {
 		return player;
 	}
 
-	public NicknameSystem getNicknameSystem() {
+	public @NotNull NicknameSystem getNicknameSystem() {
 		return nicknameSystem;
 	}
 
-	public BaseComponent[] getCustomName() {
+	public BaseComponent @Nullable [] getCustomName() {
 		return nicknameSystem.getCustomName();
 	}
 	
@@ -175,7 +171,7 @@ public class CustomPlayer {
 		nicknameSystem.setCustomName(name, rawFormatName);
 	}
 	
-	public void setActivePhone(CustomItem phone) {
+	public void setActivePhone(@NotNull CustomItem phone) {
 		player.getInventory().setItem(8, phone.getItem());
 		getSettings().setPhone(phone);
 		
@@ -218,12 +214,12 @@ public class CustomPlayer {
 		return lastActiveTime;
 	}
 	
-	public Date getJoinDate()
+	public @Nullable Date getJoinDate()
 	{
 		return joinDate;
 	}
 	
-	public Date getMuteDate() {
+	public @Nullable Date getMuteDate() {
 		return moderationSystem.muteDate;
 	}
 
@@ -256,7 +252,7 @@ public class CustomPlayer {
 		player.getEquipment().setHelmet(hat);
 	}
 
-	public void tpaRequest(CustomPlayer player, tpType type) {
+	public void tpaRequest(@NotNull CustomPlayer player, tpType type) {
 		teleportSystem.tpaRequest(player, type);
 	}
 
@@ -272,7 +268,7 @@ public class CustomPlayer {
 		return settings.getTagDisplay();
 	}
 	
-	public void setPermission(Permission permission, World world, boolean addMode) {
+	public void setPermission(@NotNull Permission permission, World world, boolean addMode) {
 		if (addMode) Permissions.addPermission(uuid, permission, world);
 		else Permissions.removePermission(uuid, permission, world);
 	}
@@ -281,11 +277,11 @@ public class CustomPlayer {
 		settings.setTagDisplay(tagDisplay);
 	}
 
-	public MailSystem getPersonalMailSystem() {
+	public @NotNull MailSystem getPersonalMailSystem() {
 		return personalMailSystem;
 	}
 	
-	public UUID getUniqueId()
+	public @NotNull UUID getUniqueId()
 	{
 		return uuid;
 	}
@@ -299,7 +295,7 @@ public class CustomPlayer {
 		donationSystem.announceDonation(amount);
 	}
 
-	public static void addDonated(UUID uuid,float amount) {
+	public static void addDonated(@NotNull UUID uuid, float amount) {
 		DonationSystem.addTip(uuid,amount);
 
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
@@ -307,11 +303,11 @@ public class CustomPlayer {
 		DonationSystem.announceDonation(player.getName(),amount);
 	}
 	
-	public Rank getRank() {
+	public @Nullable Rank getRank() {
 		return rankSystem.getRank();
 	}
 
-	public RankSystem getRankSystem() {
+	public @NotNull RankSystem getRankSystem() {
 		return rankSystem;
 	}
 	
@@ -369,19 +365,19 @@ public class CustomPlayer {
 		});
 	}
 
-	public List<CustomItem> getItems(ItemType type) {
+	public @NotNull List<CustomItem> getItems(@NotNull ItemType type) {
 		return itemSystem.getItems(type);
 	}
 
-	public List<CustomItem> getItems() {
+	public @NotNull List<CustomItem> getItems() {
 		return itemSystem.getItems();
 	}
 
-	public void addItem(CustomItem addedItem) {
+	public void addItem(@NotNull CustomItem addedItem) {
 		itemSystem.addItem(addedItem);
 	}
 
-	public boolean hasItem(int id, ItemType type) {
+	public boolean hasItem(int id, @NotNull ItemType type) {
 		return itemSystem.hasItem(id, type);
 	}
 	
@@ -397,7 +393,7 @@ public class CustomPlayer {
 		return false;
 	}
 	
-	public void setCurrency(int amount, Currency type) {
+	public void setCurrency(int amount, @NotNull Currency type) {
 		switch (type) {
 			case POINTS:
 				pointsBalance = amount;
@@ -419,7 +415,7 @@ public class CustomPlayer {
 		});
 	}
 	
-	public int getCurrency(Currency type) {
+	public int getCurrency(@NotNull Currency type) {
 		switch (type) {
 		case POINTS:
 			return pointsBalance;
@@ -435,7 +431,7 @@ public class CustomPlayer {
 		return buildMode;
 	}
 	
-	public static List<CustomPlayer> getBuildingPlayers() {
+	public static @NotNull List<CustomPlayer> getBuildingPlayers() {
 		synchronized (buildingPlayers) {
 			return buildingPlayers;
 		}
@@ -534,11 +530,11 @@ public class CustomPlayer {
 		homeSystem.addHome(home);
 	}
 
-	public Home getHome(String homeName) {
+	public @Nullable Home getHome(String homeName) {
 		return homeSystem.getHome(homeName);
 	}
 
-	public List<Home> getHomes() {
+	public @Nullable List<Home> getHomes() {
 		return homeSystem.getHomes();
 	}
 
@@ -562,11 +558,11 @@ public class CustomPlayer {
 		}
 	}
 
-	public void requestMarry(CustomPlayer player) {
+	public void requestMarry(@NotNull CustomPlayer player) {
 		marriageSystem.requestMarry(player);
 	}
 
-	public void divorce(String username) {
+	public void divorce(@NotNull String username) {
 		marriageSystem.divorce(username);
 	}
 
@@ -574,11 +570,11 @@ public class CustomPlayer {
 		marriageSystem.setPurposer(player);
 	}
 
-	public MarriageSystem getMarriageSystem() {
+	public @NotNull MarriageSystem getMarriageSystem() {
 		return marriageSystem;
 	}
 
-	public List<OfflinePlayer> getPartners() {return marriageSystem.getPartners();}
+	public @NotNull List<OfflinePlayer> getPartners() {return marriageSystem.getPartners();}
 
 	public boolean isMarried(CustomPlayer targetPlayer) { return marriageSystem.isMarriedTo(targetPlayer); }
 
@@ -586,11 +582,11 @@ public class CustomPlayer {
 		return tutorial == null ? false : true;
 	}
 	
-	public Tutorial getTutorial() {
+	public @Nullable Tutorial getTutorial() {
 		return tutorial;
 	}
 	
-	public static Rank getRankOffline(UUID uuid) {
+	public static @Nullable Rank getRankOffline(@NotNull UUID uuid) {
 		if (SQLManager.isEnabled())
 		return Rank.getRank(SQLManager.getRankID(uuid));
 		else
@@ -611,7 +607,7 @@ public class CustomPlayer {
 		return null;
 	}
 
-	public static List<CustomPlayer> getOnlinePlayers() {
+	public static @NotNull List<CustomPlayer> getOnlinePlayers() {
 		List<CustomPlayer> list = new ArrayList<CustomPlayer>(mapOfPlayers.size());
 		for (Entry<UUID, CustomPlayer> e : mapOfPlayers.entrySet()) {
 			list.add(e.getValue());

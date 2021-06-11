@@ -1,18 +1,16 @@
 package net.wigoftime.open_komodo.etc.systems;
 
-import java.awt.Color;
-
-import net.wigoftime.open_komodo.etc.Filter;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.sql.SQLManager;
-import org.bukkit.entity.Player;
-
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.sql.SQLManager;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class NicknameSystem
 {
@@ -20,7 +18,7 @@ public class NicknameSystem
 	private static final String errorNotPermittedColor = ChatColor.DARK_RED + "Only VIP and up can color their nicknames.";
 	private static final String errorNotPermittedHexColor = ChatColor.DARK_RED + "Only MVP+ and up can have hex colors on their nicknames.";
 	
-	public static void changeNick(CustomPlayer playerCustom, String name) 
+	public static void changeNick(@NotNull CustomPlayer playerCustom, @Nullable String name)
 	{
 		
 		if (name == null) 
@@ -67,7 +65,7 @@ public class NicknameSystem
 		playerCustom.getPlayer().spigot().sendMessage(builder.create());
 	}
 	
-	public static BaseComponent[] translateRGBColorCodes(char colorChar, char bukkitColorChar, String textToTranslate) {
+	public static BaseComponent @Nullable [] translateRGBColorCodes(char colorChar, char bukkitColorChar, @NotNull String textToTranslate) {
 			
 		StringBuilder hexStringBuilder = new StringBuilder();
 		boolean awaitingBukkitColorFormat = false;
@@ -176,13 +174,13 @@ public class NicknameSystem
 
 	// Non-static
 	public final CustomPlayer playerCustom;
-	private BaseComponent[] customName;
+	private BaseComponent @Nullable [] customName;
 
 	public NicknameSystem(CustomPlayer playerCustom) {
 		this.playerCustom = playerCustom;
 	}
 
-	public BaseComponent[] getCustomName() {
+	public BaseComponent @Nullable [] getCustomName() {
 		if (customName == null) return null;
 
 		BaseComponent[] nameClone = new BaseComponent[customName.length];
@@ -197,7 +195,7 @@ public class NicknameSystem
 		this.customName = customName;
 	}
 
-	public void setCustomName(BaseComponent[] name, String rawFormatName) {
+	public void setCustomName(BaseComponent @Nullable [] name, String rawFormatName) {
 		if (name == null) {
 			customName = null;
 			return;

@@ -1,16 +1,5 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.Sound;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.CurrencyClass;
@@ -18,6 +7,17 @@ import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomParticle;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.Random;
 
 public class BasicCrate extends CustomGUI {
 	private boolean isPaid = false;
@@ -27,7 +27,7 @@ public class BasicCrate extends CustomGUI {
 	private Runnable runnable;
 	public static final short cost = 18;
 	
-	public BasicCrate(CustomPlayer player, List<CustomParticle> items) {
+	public BasicCrate(@NotNull CustomPlayer player, @NotNull List<CustomParticle> items) {
 		super(player, Permissions.particleAccess, Bukkit.getServer().createInventory(null, 27, "Particles Loot Box"));
 		
 		if (!CurrencyClass.takeOutFromBalance(opener, cost, Currency.COINS)) {
@@ -153,7 +153,7 @@ public class BasicCrate extends CustomGUI {
 		Bukkit.getScheduler().cancelTask(taskID);
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 	}
 }

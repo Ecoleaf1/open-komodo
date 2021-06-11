@@ -1,31 +1,26 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
-import net.wigoftime.open_komodo.chat.MessageFormat;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionAttachment;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.World;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionAttachment;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 abstract public class Permissions 
 {
-	private static HashMap<UUID, PermissionAttachment> permMap = new HashMap<UUID, PermissionAttachment>();
+	private static @NotNull HashMap<UUID, PermissionAttachment> permMap = new HashMap<UUID, PermissionAttachment>();
 	
 	public static final Permission flyPermission = new Permission("openkomodo.abilities.flight");
 	public static final String notPermFlyingError = ChatColor.DARK_RED + "Flying is permitted to MVP and above";
@@ -89,27 +84,27 @@ abstract public class Permissions
 
 	public static final Permission accessFurnitureMenu = new Permission("openkomodo.builder.furnituremenu");
 
-	public static String getPlaceError() 
+	public static @NotNull String getPlaceError()
 	{
 		return placePermError;
 	}
 	
-	public static String getBreakError() 
+	public static @NotNull String getBreakError()
 	{
 		return breakPermError;
 	}
 	
-	public static String getChangeError() 
+	public static @NotNull String getChangeError()
 	{
 		return changeError;
 	}
 	
-	public static String getHurtError() 
+	public static @NotNull String getHurtError()
 	{
 		return hurtError;
 	}
 	
-	public static String getDropError() 
+	public static @NotNull String getDropError()
 	{
 		return dropError;
 	}
@@ -118,7 +113,7 @@ abstract public class Permissions
 		return String.format("%s» %sHey! I am afraid you cannot travel that far... Teleporting you back to spawn.", ChatColor.GOLD, ChatColor.DARK_RED);
 	}
 
-	public static boolean addPermission(UUID playerUUID, Permission permission, World world) {
+	public static boolean addPermission(UUID playerUUID, Permission permission, @Nullable World world) {
 		List<Permission> permissionList;
 
 		if (world == null) permissionList = getPermissions(playerUUID,null);
@@ -130,7 +125,7 @@ abstract public class Permissions
 		return true;
 	}
 	
-	public static boolean removePermission(UUID playerUUID, Permission permission, World world) {
+	public static boolean removePermission(UUID playerUUID, @NotNull Permission permission, @Nullable World world) {
 		List<Permission> permissionList;
 
 		if (world == null) permissionList = getPermissions(playerUUID, null);
@@ -146,7 +141,7 @@ abstract public class Permissions
 		return false;
 	}
 
-	public static void setPermissions(UUID uuid, List<Permission> permissions, World world) {
+	public static void setPermissions(UUID uuid, @NotNull List<Permission> permissions, @Nullable World world) {
 
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
@@ -163,7 +158,7 @@ abstract public class Permissions
 		if (playerCustom != null) setUp(playerCustom);
 	}
 
-	public static List<Permission> getPermissions(UUID uuid, World world) {
+	public static @Nullable List<Permission> getPermissions(UUID uuid, @Nullable World world) {
 		if (world == null)
 			if (SQLManager.isEnabled()) return SQLManager.getGlobalPermissions(uuid);
 			else return PlayerConfig.getGlobalPermissions(uuid);
@@ -181,7 +176,7 @@ abstract public class Permissions
 		return false;
 	}
 	
-	public static void setUp(CustomPlayer customPlayer) {
+	public static void setUp(@NotNull CustomPlayer customPlayer) {
 		PrintConsole.test("Setup Permissions");
 		Rank rank = customPlayer.getRank();
 

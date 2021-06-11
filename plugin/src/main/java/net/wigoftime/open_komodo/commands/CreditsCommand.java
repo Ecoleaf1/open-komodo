@@ -1,11 +1,11 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class CreditsCommand extends Command {
 
@@ -16,7 +16,7 @@ public class CreditsCommand extends Command {
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, String commandLabel, String[] args) {
 		sender.sendMessage(String.format("%s» %sServer icon: SleepyLoser (Discord: SleepyLoser#6078)", ChatColor.GOLD, ChatColor.GRAY));
 		sender.sendMessage("");
 		sender.sendMessage(String.format("%s» %sProps: Jadesweetgamer (Discord: Jade/Yui#1428), Jazzycow11 (Discord: Aramis#2706)", ChatColor.GOLD, ChatColor.GRAY));

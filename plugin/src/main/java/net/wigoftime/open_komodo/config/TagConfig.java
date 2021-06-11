@@ -1,11 +1,12 @@
 package net.wigoftime.open_komodo.config;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 
 public abstract class TagConfig 
 {
@@ -87,7 +88,7 @@ public abstract class TagConfig
 		
 	}
 	
-	public static File get() 
+	public static @NotNull File get()
 	{
 		return config;
 	}

@@ -9,6 +9,8 @@ import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.TpRequest;
 import org.bukkit.Sound;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class TeleportSystem {
     private static final String noRequests = String.format("%s» %sYou don't have any tpa requests", ChatColor.YELLOW, ChatColor.GRAY);
@@ -18,7 +20,7 @@ public class TeleportSystem {
     private static final String deniedRequest = String.format("%s» %sYou denied $D's request", ChatColor.YELLOW, ChatColor.GRAY);
     public static final String tpaOff = String.format("%s» %sThey have disabled tpa requests", ChatColor.YELLOW, ChatColor.GRAY);
 
-    private TpRequest tpRequest;
+    private @Nullable TpRequest tpRequest;
 
     final CustomPlayer playerCustom;
 
@@ -26,7 +28,7 @@ public class TeleportSystem {
         this.playerCustom = playerCustom;
     }
 
-    public void tpaRequest(CustomPlayer requester, TpRequest.tpType type)
+    public void tpaRequest(@NotNull CustomPlayer requester, TpRequest.tpType type)
     {
         if (!playerCustom.getSettings().isTpaEnabled()) {
             requester.getPlayer().sendMessage(tpaOff);

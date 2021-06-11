@@ -1,20 +1,16 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
-import org.bukkit.ChatColor;
-
 import net.wigoftime.open_komodo.gui.BasicCrate;
 import net.wigoftime.open_komodo.objects.CustomParticle;
 import net.wigoftime.open_komodo.objects.CustomParticle.ParticleType;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.ChatColor;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 abstract public class ParticlesSystem {
-	public static void openParticleBoxGui(CustomPlayer player, ParticleType type) {
+	public static void openParticleBoxGui(@NotNull CustomPlayer player, ParticleType type) {
 		List<CustomParticle> randomIcons;
 		if (type == ParticleType.PARTICLE) {
 		randomIcons = new ArrayList<CustomParticle>(CustomParticle.particleList.size());

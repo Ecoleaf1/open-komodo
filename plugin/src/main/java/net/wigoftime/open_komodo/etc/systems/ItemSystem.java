@@ -9,6 +9,7 @@ import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -17,11 +18,11 @@ import java.util.List;
 public class ItemSystem {
     private final CustomPlayer playerCustom;
 
-    private List<CustomItem> ownedHats = new LinkedList<CustomItem>();
-    private List<CustomItem> ownedTags = new LinkedList<CustomItem>();;
-    private List<CustomItem> ownedPhones = new LinkedList<CustomItem>();;
+    private @NotNull List<CustomItem> ownedHats = new LinkedList<CustomItem>();
+    private @NotNull List<CustomItem> ownedTags = new LinkedList<CustomItem>();;
+    private @NotNull List<CustomItem> ownedPhones = new LinkedList<CustomItem>();;
 
-    public ItemSystem(CustomPlayer playerCustom, List<CustomItem> items) {
+    public ItemSystem(CustomPlayer playerCustom, @NotNull List<CustomItem> items) {
         this.playerCustom = playerCustom;
 
         for (CustomItem item : items) {
@@ -43,7 +44,7 @@ public class ItemSystem {
         }
     }
 
-    public List<CustomItem> getItems(ItemType type) {
+    public @NotNull List<CustomItem> getItems(@NotNull ItemType type) {
         switch (type) {
             case HAT:
                 return ownedHats;
@@ -58,7 +59,7 @@ public class ItemSystem {
         }
     }
 
-    public List<CustomItem> getItems() {
+    public @NotNull List<CustomItem> getItems() {
         List<CustomItem> items = new ArrayList<CustomItem>(ownedHats.size() + ownedTags.size() + ownedPhones.size());
         items.addAll(ownedTags);
         for (CustomItem hat : ownedHats)
@@ -69,7 +70,7 @@ public class ItemSystem {
         return items;
     }
 
-    public void addItem(CustomItem addedItem) {
+    public void addItem(@NotNull CustomItem addedItem) {
         switch (addedItem.getType()) {
             case HAT:
                 ownedHats.add(addedItem);
@@ -98,7 +99,7 @@ public class ItemSystem {
         });
     }
 
-    public boolean hasItem(int id, ItemType type) {
+    public boolean hasItem(int id, @NotNull ItemType type) {
         for (CustomItem item : getItems(type))
             if (id == item.getID())
                 return true;

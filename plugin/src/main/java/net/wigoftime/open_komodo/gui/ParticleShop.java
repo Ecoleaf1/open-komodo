@@ -1,9 +1,6 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -11,8 +8,11 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class ParticleShop extends CustomGUI {
 	private static final ItemStack ambientEntityEffect = new ItemStack(Material.BEACON);
@@ -214,7 +214,7 @@ public class ParticleShop extends CustomGUI {
 		}
 	}
 	
-	public ParticleShop(CustomPlayer player) {
+	public ParticleShop(@NotNull CustomPlayer player) {
 		super(player, null, Bukkit.createInventory(null, 54, "Particle Store"));
 		List<ItemStack> icons = new ArrayList<ItemStack>(27);
 		icons.add(ambientEntityEffect);

@@ -1,5 +1,7 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.ItemType;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -9,9 +11,6 @@ import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.ItemType;
 
 public class PlayerSwapHandItems implements EventExecutor {
 

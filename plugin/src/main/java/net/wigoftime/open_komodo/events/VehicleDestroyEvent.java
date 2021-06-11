@@ -1,14 +1,12 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class VehicleDestroyEvent implements EventExecutor {
 

@@ -1,31 +1,30 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.Iterator;
-import java.util.List;
-
+import net.wigoftime.open_komodo.chat.Emote;
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.chat.Emote;
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
+import java.util.Iterator;
+import java.util.List;
 
 public class EmoteCommand extends Command
 {
 
-	public EmoteCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public EmoteCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                        @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String command, String @NotNull [] args)
 	{
 		if (!(sender instanceof Player))
 			return false;

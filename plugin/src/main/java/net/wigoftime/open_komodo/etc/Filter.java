@@ -1,21 +1,16 @@
 package net.wigoftime.open_komodo.etc;
 
+import net.wigoftime.open_komodo.Main;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.regex.Pattern;
-
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
-import net.wigoftime.open_komodo.Main;
 
 public abstract class Filter 
 {
@@ -25,8 +20,8 @@ public abstract class Filter
 	
 	public static final File fileDict = new File(Main.dataFolderPath+"/Whitelist-Dict.txt");
 	
-	private static Map<UUID, Long> delay = new HashMap<UUID, Long>();
-	private static Set<String> whitelistWords = new HashSet<String>();
+	private static @NotNull Map<UUID, Long> delay = new HashMap<UUID, Long>();
+	private static @NotNull Set<String> whitelistWords = new HashSet<String>();
 	
 	public static void setup() {	
 		FileReader reader;
@@ -70,12 +65,12 @@ public abstract class Filter
 		}
 	}
 	
-	private static String[] bannedWords = {"fuck" ,"f@ck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast", "boner", "rape", "r*pe", "stripper", "slut"};
+	private static String @NotNull [] bannedWords = {"fuck" ,"f@ck", "f*ck", "cunt", "pussy", "pu$$y", "dick", "d!ck", "bastard", "tit", "shit", "piss", "bitch", "b!tch", "asshole", "arsehole", "penis", "vagina", "sex", "S@x", "s*x", "wh*re", "whore", "nigger", "nigga", "fag", "cum", "circumcise", "circumcision", "cock", "boob", "breast", "boner", "rape", "r*pe", "stripper", "slut"};
 	
-	private static Set<String> prefixes = new HashSet<String>();
-	private static Set<String> suffixes = new HashSet<String>();
+	private static @NotNull Set<String> prefixes = new HashSet<String>();
+	private static @NotNull Set<String> suffixes = new HashSet<String>();
 	
-	public static boolean checkMessage(Player player, String text) {
+	public static boolean checkMessage(@NotNull Player player, String text) {
 		if (!player.hasPermission(Permissions.ignoreSpamPerm))
 			if (isSpamming(player, text))
 				return false;
@@ -90,7 +85,7 @@ public abstract class Filter
 		return true;
 	}
 	
-	public static boolean isSpamming(Player player, String text)
+	public static boolean isSpamming(@NotNull Player player, String text)
 	{
 		Calendar cal = Calendar.getInstance();
 		UUID uuid = player.getUniqueId();
@@ -196,7 +191,7 @@ public abstract class Filter
 		return false;
 	}
 	
-	private static boolean isWhitelistWord(String word) {
+	private static boolean isWhitelistWord(@NotNull String word) {
 		if (whitelistWords.contains(word.toLowerCase()))
 			return true;
 		
@@ -206,7 +201,7 @@ public abstract class Filter
 		return false;
 	}
 	
-	private static boolean isWhitelistWordWithAffix(String word) {
+	private static boolean isWhitelistWordWithAffix(@NotNull String word) {
 		for (String suffix : suffixes) {
 			if (!word.endsWith(suffix))
 				continue;

@@ -1,17 +1,17 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.File;
-import java.util.List;
-
-import org.bukkit.ChatColor;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.Permission;
-
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.TypeToEnum;
 import net.wigoftime.open_komodo.objects.Pet;
+import org.bukkit.ChatColor;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.util.List;
 
 public abstract class PetConfig 
 {
@@ -70,7 +70,7 @@ public abstract class PetConfig
 		}
 	}
 	
-	public static File getConfig()
+	public static @NotNull File getConfig()
 	{
 		return file;
 	}

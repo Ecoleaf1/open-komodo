@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.etc;
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 abstract public class PlayerList 
 {
@@ -11,7 +12,7 @@ abstract public class PlayerList
 			ChatColor.YELLOW, Main.nameColoured, ChatColor.GOLD, ChatColor.STRIKETHROUGH);
 	private static final String footer = String.format("%s%sOffical Website:\n%shttps://www.wigoftime.net", ChatColor.AQUA, ChatColor.BOLD, ChatColor.YELLOW);
 	
-	public static void add(CustomPlayer player)
+	public static void add(@NotNull CustomPlayer player)
 	{
 		//String header = ChatColor.translateAlternateColorCodes('&', "&e&l+———&8&6———— &b&lOpen &a&lKomodo &8&6———————+");
 		player.getPlayer().setPlayerListHeader(header);

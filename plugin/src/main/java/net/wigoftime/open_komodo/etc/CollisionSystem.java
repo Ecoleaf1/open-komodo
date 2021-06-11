@@ -5,9 +5,11 @@ import org.bukkit.scoreboard.Scoreboard;
 import org.bukkit.scoreboard.Team;
 import org.bukkit.scoreboard.Team.Option;
 import org.bukkit.scoreboard.Team.OptionStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public class CollisionSystem {
-	private static Team getDefaultTeam(Scoreboard scoreboard) {
+	private static @Nullable Team getDefaultTeam(@NotNull Scoreboard scoreboard) {
 		Team team = scoreboard.getTeam("Default");
 		if (team == null) {
 			team = scoreboard.registerNewTeam("Default");
@@ -17,7 +19,7 @@ public class CollisionSystem {
 		return team;
 	}
 	
-	public static void playerJoins(Player player) {
+	public static void playerJoins(@NotNull Player player) {
 		Scoreboard scoreboard = player.getScoreboard();
 		getDefaultTeam(scoreboard).addEntry(player.getDisplayName());
 	}

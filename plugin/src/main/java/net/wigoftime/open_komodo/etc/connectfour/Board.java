@@ -1,17 +1,16 @@
 package net.wigoftime.open_komodo.etc.connectfour;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.inventory.ItemStack;
-
-import net.wigoftime.open_komodo.etc.PrintConsole;
-
 public class Board {
-	public PLAYER_PIECE[][] board = new PLAYER_PIECE[9][5];
+	public PLAYER_PIECE[] @NotNull [] board = new PLAYER_PIECE[9][5];
 	
 	public enum PLAYER_PIECE {PIECE_PLAYER1, PIECE_PLAYER2};
-	public DropTokenReturnObject dropToken(byte x, PLAYER_PIECE tokenMaterial) {
+	public @Nullable DropTokenReturnObject dropToken(byte x, PLAYER_PIECE tokenMaterial) {
 		byte top = 0;
 		
 		for (byte index = 0; index < 5 && board[x][index] != null; index++) {
@@ -28,8 +27,8 @@ public class Board {
 		return new DropTokenReturnObject(CheckStatus.NEXT_TURN, top, null);
 	}
 	
-	private List<Integer> slotPositions = new ArrayList<Integer>(0);
-	private PlayerWonResults getWonResults(byte x, byte y, PLAYER_PIECE tokenItem) {
+	private @NotNull List<Integer> slotPositions = new ArrayList<Integer>(0);
+	private @Nullable PlayerWonResults getWonResults(byte x, byte y, PLAYER_PIECE tokenItem) {
 		if (checkTop(x, y, tokenItem)) return new PlayerWonResults(true, slotPositions);
 		if (checkRight(x, y, tokenItem)) return new PlayerWonResults(true, slotPositions);
 		if (checkVerticalLeft(x, y, tokenItem)) return new PlayerWonResults(true, slotPositions);

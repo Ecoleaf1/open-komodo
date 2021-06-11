@@ -10,18 +10,17 @@
 
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.chat.NormalMessage;
+import net.wigoftime.open_komodo.chat.ShoutMessage;
+import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.PetsManager;
+import net.wigoftime.open_komodo.etc.systems.RankSystem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.chat.NormalMessage;
-import net.wigoftime.open_komodo.chat.ShoutMessage;
-import net.wigoftime.open_komodo.etc.PetsManager;
-import net.wigoftime.open_komodo.etc.systems.RankSystem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.etc.Filter;
 
 public class AsyncPlayerChat implements EventExecutor {
 	@Override

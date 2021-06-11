@@ -1,9 +1,5 @@
 package net.wigoftime.open_komodo.etc.connectfour;
 
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import org.bukkit.scheduler.BukkitRunnable;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ClickEvent.Action;
@@ -14,21 +10,28 @@ import net.wigoftime.open_komodo.etc.CurrencyClass;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.connectfour.ConnectFourGUI.PlayerType;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.scheduler.BukkitRunnable;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ConnectFourSession {
-	public static Map<CustomPlayer, ConnectFourSession> activeSessions = new LinkedHashMap<CustomPlayer, ConnectFourSession>();
-	private static Map<CustomPlayer, CustomPlayer> requests = new HashMap<CustomPlayer, CustomPlayer>();
+	public static @NotNull Map<CustomPlayer, ConnectFourSession> activeSessions = new LinkedHashMap<CustomPlayer, ConnectFourSession>();
+	private static @NotNull Map<CustomPlayer, CustomPlayer> requests = new HashMap<CustomPlayer, CustomPlayer>();
 	
 	public enum boardPlayerEnum {PLAYER1, PLAYER2};
-	private CustomPlayer[] playingPlayers = new CustomPlayer[2];
-	private ConnectFourGUI[] activeGUIs = new ConnectFourGUI[2];
+	private CustomPlayer @NotNull [] playingPlayers = new CustomPlayer[2];
+	private ConnectFourGUI @NotNull [] activeGUIs = new ConnectFourGUI[2];
 	
-	public CustomPlayer currentPlayer;
+	public @Nullable CustomPlayer currentPlayer;
 	
-	private final Board board;
+	private final @NotNull Board board;
 	boolean isWaitingForAnimation = false;
 	
-	public ConnectFourSession(CustomPlayer player, CustomPlayer player2) {
+	public ConnectFourSession(@NotNull CustomPlayer player, @NotNull CustomPlayer player2) {
 		board = new Board();
 		
 		activeSessions.put(player, this);
@@ -60,7 +63,7 @@ public class ConnectFourSession {
 		return;
 	}
 	
-	private void win(DropTokenReturnObject results) {
+	private void win(@NotNull DropTokenReturnObject results) {
 		if (currentPlayer == playingPlayers[0]) {
 			activeGUIs[0].displayWinPath(results.slotPositions);
 			activeGUIs[1].displayWinPath(results.slotPositions);
@@ -97,7 +100,7 @@ public class ConnectFourSession {
 		currentPlayer = null;
 	}
 	
-	public void cancelMatch(CustomPlayer causer) {
+	public void cancelMatch(@NotNull CustomPlayer causer) {
 		for (CustomPlayer playerIndex: playingPlayers) {
 			if (causer == playerIndex) causer.getPlayer().sendMessage(String.format("%s» %sMatch cancelled", ChatColor.GOLD, ChatColor.GRAY));
 			else if (causer != null) playerIndex.getPlayer().sendMessage(String.format("%s» %s%s cancelled match", ChatColor.GOLD, ChatColor.GRAY, causer.getPlayer().getDisplayName()));
@@ -114,7 +117,7 @@ public class ConnectFourSession {
 		activeGUIs[1].onlyClose();
 	}
 	
-	public static void requestToPlay(CustomPlayer requester, CustomPlayer recipient) {
+	public static void requestToPlay(@NotNull CustomPlayer requester, @NotNull CustomPlayer recipient) {
 		if (activeSessions.containsKey(recipient)) {
 			requester.getPlayer().sendMessage(String.format("%sPlayer is already in a match", ChatColor.DARK_RED));
 			return;
@@ -128,7 +131,7 @@ public class ConnectFourSession {
 		requests.put(recipient, requester);
 	}
 	
-	public static void acceptRequest(CustomPlayer player) {
+	public static void acceptRequest(@NotNull CustomPlayer player) {
 		CustomPlayer player2 = requests.get(player);
 		
 		if (player2 == null) {
@@ -150,7 +153,7 @@ public class ConnectFourSession {
 		else return (byte) (54 - (9 * y - x) - 9);
 	}
 	
-	private BukkitRunnable getAnimationRunnable(byte tokenX, DropTokenReturnObject results, CustomPlayer player) {
+	private @NotNull BukkitRunnable getAnimationRunnable(byte tokenX, @NotNull DropTokenReturnObject results, CustomPlayer player) {
 		return new BukkitRunnable() {
 			byte positionY = (byte) board.board[0].length;
 			

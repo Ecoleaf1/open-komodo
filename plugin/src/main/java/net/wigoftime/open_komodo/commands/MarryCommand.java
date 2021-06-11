@@ -8,7 +8,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MarryCommand extends Command {
     public MarryCommand() {
@@ -16,7 +15,7 @@ public class MarryCommand extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender commandSender, @NotNull String string, @NotNull String[] arguments) {
+    public boolean execute(@NotNull CommandSender commandSender, @NotNull String string, @NotNull String @NotNull [] arguments) {
         if (!(commandSender instanceof Player)) {
             commandSender.sendMessage(ChatColor.DARK_RED+ "Only players can use this command");
             return true;

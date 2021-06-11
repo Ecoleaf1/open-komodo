@@ -1,23 +1,12 @@
 package net.wigoftime.open_komodo.filecreation;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.config.Config;
-import net.wigoftime.open_komodo.config.ConfigType;
-import net.wigoftime.open_komodo.config.EmoteConfig;
-import net.wigoftime.open_komodo.config.ItemConfig;
-import net.wigoftime.open_komodo.config.PetConfig;
-import net.wigoftime.open_komodo.config.RankConfig;
+import net.wigoftime.open_komodo.config.*;
 import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.etc.PrintConsole;
-import net.wigoftime.open_komodo.gui.PropShop;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
 
 abstract public class FileCreation 
 {
@@ -28,7 +17,7 @@ abstract public class FileCreation
 	public static final File petConfig = PetConfig.getConfig();
 	public static final File whitelistDict = Filter.fileDict;
 
-	public static void create(ConfigType type)
+	public static void create(@NotNull ConfigType type)
 	{
 		
 		// Create File Variable

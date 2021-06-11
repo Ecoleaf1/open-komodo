@@ -1,16 +1,16 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PhoneGui extends CustomGUI {
 	
@@ -55,7 +55,7 @@ public class PhoneGui extends CustomGUI {
 	// Sky background
 	private static ItemStack sky;
 	
-	private static ArrayList<ItemStack> icons = new ArrayList<ItemStack>(5);
+	private static @NotNull ArrayList<ItemStack> icons = new ArrayList<ItemStack>(5);
 	
 	
 //	Functions
@@ -190,7 +190,7 @@ public class PhoneGui extends CustomGUI {
 		icons.add(settings);
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		
@@ -291,7 +291,7 @@ public class PhoneGui extends CustomGUI {
 		return;
 	}
 	
-	private static ItemStack[] getIcons(int size) {
+	private static ItemStack @NotNull [] getIcons(int size) {
 		ItemStack[] content = new ItemStack[size];
 		
 		int slotIndex = 11;
@@ -321,7 +321,7 @@ public class PhoneGui extends CustomGUI {
 		return content;
 	}
 	
-	private static ItemStack[] getBackground(int size) {
+	private static ItemStack @NotNull [] getBackground(int size) {
 		ItemStack[] contents = new ItemStack[size];
 		// Setup the border and the backgroundPannels
 		

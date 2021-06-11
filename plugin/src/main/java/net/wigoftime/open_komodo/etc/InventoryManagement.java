@@ -1,29 +1,24 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.WorldInventoryConfig;
 import net.wigoftime.open_komodo.gui.BagGui;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.sql.SQLManager;
+import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.*;
 
 abstract public class InventoryManagement 
 {
-	public static Map<UUID, Integer> currentOpen = new HashMap<UUID, Integer>();
+	public static @NotNull Map<UUID, Integer> currentOpen = new HashMap<UUID, Integer>();
 	
-	public static void saveBagInventory(Player player, String worldName, List<ItemStack> inventory) {
+	public static void saveBagInventory(@NotNull Player player, String worldName, @NotNull List<ItemStack> inventory) {
 		
 		if (SQLManager.isEnabled())
 		SQLManager.setBagInventory(player.getUniqueId(), currentOpen.get(player.getUniqueId()), inventory);
@@ -31,7 +26,7 @@ abstract public class InventoryManagement
 		WorldInventoryConfig.setInventory(player, currentOpen.get(player.getUniqueId()), inventory.toArray(new ItemStack[inventory.size()]));
 	}
 	// Save inventory under a world uuid.
-	public static void saveInventory(CustomPlayer player,  World world) {
+	public static void saveInventory(@NotNull CustomPlayer player, @NotNull World world) {
 		PrintConsole.test("Saving inventory..");
 		
 		if (player.isBuilding())
@@ -53,7 +48,7 @@ abstract public class InventoryManagement
 	}
 	
 	// Load a world inventory
-	public static void loadInventory(CustomPlayer player, World world) {
+	public static void loadInventory(@NotNull CustomPlayer player, @NotNull World world) {
 		if (player.isBuilding())
 			return;
 		
@@ -75,7 +70,7 @@ abstract public class InventoryManagement
 			inventory.setContents(items);
 	}
 	
-	public static void openBagInventory(CustomPlayer player, int bagID) {	
+	public static void openBagInventory(@NotNull CustomPlayer player, int bagID) {
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 				// Get all items

@@ -1,13 +1,13 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.Permissions;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.Permissions;
+import java.util.List;
 
 public class FlyCommand extends Command
 {
@@ -15,8 +15,8 @@ public class FlyCommand extends Command
 	private static final String flyingOff = String.format("%s» %sFlying disabled", ChatColor.GOLD, ChatColor.GRAY);
 	private static final String flyingOn = String.format("%s» %sFlying enabled", ChatColor.GOLD, ChatColor.GRAY);
 	
-	public FlyCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public FlyCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                      @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}

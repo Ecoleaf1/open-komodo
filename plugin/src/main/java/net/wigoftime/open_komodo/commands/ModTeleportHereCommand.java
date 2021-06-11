@@ -1,23 +1,23 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.etc.Permissions;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.etc.Permissions;
+import java.util.List;
 
 public class ModTeleportHereCommand extends Command {
 
-	public ModTeleportHereCommand(String name, String description, String usageMessage, List<String> aliases) {
+	public ModTeleportHereCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage, @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 
 	@Override
-	public boolean execute(CommandSender sender, String commandLabel, String[] commandArguments) {
+	public boolean execute(CommandSender sender, String commandLabel, String @NotNull [] commandArguments) {
 		if (!(sender instanceof Player))
 			return false;
 	

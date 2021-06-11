@@ -1,24 +1,23 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.etc.Permissions;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.Permissions;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.List;
+import java.util.UUID;
 
 public class GenTip extends Command {
 	
-	public GenTip(String name, String description, String usageMessage,
-			List<String> aliases) {
+	public GenTip(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                  @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 	
-	public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
+	public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String @NotNull [] args) {
 		if (!sender.hasPermission(Permissions.genTipPerm))
 			return false;
 		

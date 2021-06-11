@@ -1,8 +1,8 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.util.Date;
-
 import org.bukkit.OfflinePlayer;
+
+import java.util.Date;
 
 public class ModerationResults {
 	public OfflinePlayer affectedPlayer;

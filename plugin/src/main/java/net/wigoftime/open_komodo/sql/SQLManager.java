@@ -1,26 +1,14 @@
 package net.wigoftime.open_komodo.sql;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
-import java.math.BigDecimal;
-import java.nio.ByteBuffer;
-import java.sql.Blob;
-import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.*;
-
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.wigoftime.open_komodo.custommobs.CustomPet;
+import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.systems.MailSystem;
 import net.wigoftime.open_komodo.etc.systems.NicknameSystem;
 import net.wigoftime.open_komodo.objects.*;
+import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -34,18 +22,25 @@ import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.wigoftime.open_komodo.config.Config;
-import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.math.BigDecimal;
+import java.nio.ByteBuffer;
+import java.sql.Blob;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.*;
 
 abstract public class SQLManager {
 	private static final int delayAmount = 5000;
-	private static SQLInfo sqlInfo = Config.getSQLInfo();
+	private static @NotNull SQLInfo sqlInfo = Config.getSQLInfo();
 	
 	public static void setup() {
 		createMainTable();
@@ -56,7 +51,7 @@ abstract public class SQLManager {
 		createMarriageTable();
 	}
 	
-	public static void setUpWorlds(List<World> worlds) {
+	public static void setUpWorlds(@NotNull List<World> worlds) {
 		for (World world : worlds) {
 			createWorldTable(world.getName());
 		}
@@ -70,7 +65,7 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.CREATE_MAIL_TABLE, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
 	}
 	
-	public static List<CustomItem> getItems(UUID uuid) {
+	public static @NotNull List<CustomItem> getItems(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		List<CustomItem> itemList = formatToItems((String) new SQLCard(SQLCodeType.GET_ITEMS, SQLCard.SQLCardType.GET,
@@ -80,7 +75,7 @@ abstract public class SQLManager {
 		return itemList;
 	}
 
-	public static List<CustomItem> formatToItems(String json, @Nullable Player player) {
+	public static @NotNull List<CustomItem> formatToItems(String json, @Nullable Player player) {
 		JSONArray array;
 		JSONParser parser = new JSONParser();
 
@@ -99,7 +94,7 @@ abstract public class SQLManager {
 		return list;
 	}
 	
-	public static void setItems(CustomPlayer player) {
+	public static void setItems(@NotNull CustomPlayer player) {
 		Blob playerBlob = uuidToBlob(player.getUniqueId());
 		List<CustomItem> items = player.getItems();
 		JSONArray array = new JSONArray();
@@ -123,7 +118,7 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.CREATE_BAG_INVENTORY_TABLE, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
 	}
 	
-	public static boolean containsPlayer(UUID uuid) {
+	public static boolean containsPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		return new SQLCard(SQLCodeType.CONTAINS_PLAYER, SQLCard.SQLCardType.GET,
@@ -131,7 +126,7 @@ abstract public class SQLManager {
 				Arrays.asList(playerBlob)).execute().size() < 1 ? false : true;
 	}
 	
-	public static boolean containsModerationPlayer(UUID uuid) {
+	public static boolean containsModerationPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_MODERATION_PLAYER, SQLCard.SQLCardType.GET,
@@ -145,7 +140,7 @@ abstract public class SQLManager {
 		return true;
 	}
 	
-	public static boolean containsWorldPlayer(UUID uuid, String worldName) {
+	public static boolean containsWorldPlayer(@NotNull UUID uuid, String worldName) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		SQLCard card = new SQLCard(SQLCodeType.CONTAINS_WORLD_PLAYER, SQLCard.SQLCardType.GET, Arrays.asList(worldName),
@@ -158,7 +153,7 @@ abstract public class SQLManager {
 		return true;
 	}
 	
-	public static int createBagInventory(UUID uuid) {
+	public static int createBagInventory(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		List<Object> sqlElements = new SQLCard(SQLCodeType.GET_LATEST_BAGID, SQLCard.SQLCardType.GET,
@@ -170,7 +165,7 @@ abstract public class SQLManager {
 		return id;
 	}
 	
-	public static List<ItemStack> getBagInventory(UUID uuid, int id) {
+	public static @Nullable List<ItemStack> getBagInventory(@NotNull UUID uuid, int id) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		byte[] serializedBlob = (byte[]) new SQLCard(SQLCodeType.GET_BAG_INVENTORY, SQLCard.SQLCardType.GET,
@@ -198,7 +193,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void setBagInventory(UUID uuid, int id, List<ItemStack> inventory) {
+	public static void setBagInventory(@NotNull UUID uuid, int id, List<ItemStack> inventory) {
 		ByteArrayOutputStream byteInputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream objectInputStream = null;
 		try {
@@ -221,7 +216,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void createPlayer(UUID uuid) {
+	public static void createPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 		Blob permissionsBlob, petsBlob, homeBlob;
 
@@ -268,13 +263,13 @@ abstract public class SQLManager {
 
 	}
 	
-	public static void createModerationPlayer(UUID uuid) {
+	public static void createModerationPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 		new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCard.SQLCardType.SET, Arrays.asList(),
 				Arrays.asList(playerBlob)).execute();
 	}
 	
-	public static void createWorldPlayer(UUID uuid, String worldName) {
+	public static void createWorldPlayer(@NotNull UUID uuid, String worldName) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.CREATE_WORLD_PLAYER, SQLCard.SQLCardType.SET,
@@ -282,7 +277,7 @@ abstract public class SQLManager {
 				Arrays.asList(playerBlob, playerBlob)).execute();
 	}
 	
-	public static Date getBanDate(UUID uuid) {
+	public static @NotNull Date getBanDate(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_BANDATE, SQLCard.SQLCardType.GET,
@@ -291,7 +286,7 @@ abstract public class SQLManager {
 
 	}
 	
-	public static void setBanDate(UUID uuid, Date date) {
+	public static void setBanDate(@NotNull UUID uuid, @NotNull Date date) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_BANDATE, SQLCard.SQLCardType.SET,
@@ -299,14 +294,14 @@ abstract public class SQLManager {
 				Arrays.asList(Timestamp.from(date.toInstant()).toString(), playerBlob)).execute();
 	}
 	
-	public static String getBanReason(UUID uuid) {
+	public static @NotNull String getBanReason(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		return (String) new SQLCard(SQLCodeType.GET_BANREASON, SQLCard.SQLCardType.GET, Arrays.asList(),
 				Arrays.asList(playerBlob)).execute().get(0);
 	}
 	
-	public static void setBanReason(UUID uuid, String reason) {
+	public static void setBanReason(@NotNull UUID uuid, String reason) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_BANREASON, SQLCard.SQLCardType.SET,
@@ -314,7 +309,7 @@ abstract public class SQLManager {
 				Arrays.asList(reason, playerBlob)).execute();
 	}
 
-	public static List<Object> getFullMainPlayer(UUID uuid) {
+	public static @Nullable List<Object> getFullMainPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		return new SQLCard(SQLCodeType.GET_FULL_PLAYER, SQLCard.SQLCardType.GET,
@@ -322,7 +317,7 @@ abstract public class SQLManager {
 				Arrays.asList(playerBlob)).execute();
 	}
 	
-	public static void setNickName(UUID uuid, String nickname) {
+	public static void setNickName(@NotNull UUID uuid, String nickname) {
 		Blob playerBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_NICKNAME, SQLCard.SQLCardType.SET,
@@ -330,7 +325,7 @@ abstract public class SQLManager {
 				Arrays.asList(nickname, playerBlob)).execute();
 	}
 	
-	public static BaseComponent[] getNickName(Player player) {
+	public static BaseComponent @Nullable [] getNickName(@NotNull Player player) {
 		Blob playerBlob = uuidToBlob(player.getUniqueId());
 
 		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCard.SQLCardType.GET,
@@ -341,7 +336,7 @@ abstract public class SQLManager {
 		return formatToNickname(nicknameRaw, player);
 	}
 
-	public static @Nullable BaseComponent[] formatToNickname(@NotNull String nicknameRaw) {
+	public static @Nullable BaseComponent @Nullable [] formatToNickname(@NotNull String nicknameRaw) {
 		BaseComponent[] nickname;
 		if (nicknameRaw.length() == 0) {
 			return null;
@@ -350,7 +345,7 @@ abstract public class SQLManager {
 		return NicknameSystem.translateRGBColorCodes('#', '&', nicknameRaw);
 	}
 
-	public static @NotNull BaseComponent[] formatToNickname(@NotNull String nicknameRaw, @NotNull Player player) {
+	public static BaseComponent @Nullable [] formatToNickname(@NotNull String nicknameRaw, @NotNull Player player) {
 		BaseComponent[] nickname = formatToNickname(nicknameRaw);
 		if (nickname == null) {
 			ComponentBuilder builder = new ComponentBuilder();
@@ -361,7 +356,7 @@ abstract public class SQLManager {
 		return nickname;
 	}
 
-	public static List<MailWrapper> getMail(UUID receiver) {
+	public static @NotNull List<MailWrapper> getMail(@NotNull UUID receiver) {
 		Blob receiverBlob = uuidToBlob(receiver);
 
 		List<Object> objects = new SQLCard(SQLCodeType.GET_MAIL, SQLCard.SQLCardType.GET,
@@ -382,14 +377,14 @@ abstract public class SQLManager {
 		return mail;
 	}
 
-	public static void clearMail(UUID playerUUID) {
+	public static void clearMail(@NotNull UUID playerUUID) {
 		Blob playerBlob = uuidToBlob(playerUUID);
 		new SQLCard(SQLCodeType.CLEAR_MAIL, SQLCard.SQLCardType.SET,
 				Arrays.asList(),
 				Arrays.asList(playerBlob)).execute();
 	}
 
-	public static int countMail(UUID playerUUID) {
+	public static int countMail(@NotNull UUID playerUUID) {
 		Blob playerBlob = uuidToBlob(playerUUID);
 
 		return (int) (long) new SQLCard(SQLCodeType.COUNT_MAIL, SQLCard.SQLCardType.GET,
@@ -397,7 +392,7 @@ abstract public class SQLManager {
 				Arrays.asList(playerBlob)).execute().get(0);
 	}
 
-	public static void sendMail(UUID recipientUUID, UUID senderUUID, String message) {
+	public static void sendMail(@NotNull UUID recipientUUID, @NotNull UUID senderUUID, String message) {
 		Blob recipientBlob = uuidToBlob(recipientUUID);
 		Blob senderBlob = uuidToBlob(senderUUID);
 
@@ -406,7 +401,7 @@ abstract public class SQLManager {
 				Arrays.asList(recipientBlob, senderBlob, Timestamp.from(Instant.now()),message)).execute();
 	}
 
-	public static Date getMuteDate(UUID uuid) {
+	public static @NotNull Date getMuteDate(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		return Date.from(((Timestamp) new SQLCard(SQLCodeType.GET_MUTEDATE, SQLCard.SQLCardType.GET,
@@ -414,7 +409,7 @@ abstract public class SQLManager {
 				Arrays.asList(uuidBlob)).execute().get(0)).toInstant());
 	}
 	
-	public static void setMuteDate(UUID uuid, Date date) {
+	public static void setMuteDate(@NotNull UUID uuid, @NotNull Date date) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_MUTEDATE, SQLCard.SQLCardType.SET,
@@ -422,28 +417,28 @@ abstract public class SQLManager {
 				Arrays.asList(Timestamp.from(date.toInstant()), uuidBlob)).execute();
 	}
 	
-	public static String getMuteReason(UUID uuid) {
+	public static @NotNull String getMuteReason(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 		return (String) new SQLCard(SQLCodeType.GET_MUTEREASON, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
-	public static void setMuteReason(UUID uuid, String reason) {
+	public static void setMuteReason(@NotNull UUID uuid, String reason) {
 		Blob uuidBlob = uuidToBlob(uuid);
 		new SQLCard(SQLCodeType.SET_MUTEREASON, SQLCard.SQLCardType.SET,
 				Arrays.asList(),
 				Arrays.asList(reason, uuidBlob)).execute();
 	}
 	
-	public static Date getJoinDate(UUID uuid) {
+	public static @NotNull Date getJoinDate(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 		return ((Date) new SQLCard(SQLCodeType.GET_JOINDATE, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(uuidBlob)).execute().get(0));
 	}
 	
-	public static int getCurrency(UUID uuid, Currency currency) {
+	public static int getCurrency(@NotNull UUID uuid, Currency currency) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		return (int) (long) new SQLCard(currency == Currency.POINTS ? SQLCodeType.GET_POINTS : SQLCodeType.GET_COINS, SQLCard.SQLCardType.GET,
@@ -451,7 +446,7 @@ abstract public class SQLManager {
 				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
-	public static void setCurrency(UUID uuid, int amount, Currency currency) {
+	public static void setCurrency(@NotNull UUID uuid, int amount, Currency currency) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		new SQLCard(currency == Currency.POINTS ? SQLCodeType.SET_POINTS : SQLCodeType.SET_COINS, SQLCard.SQLCardType.SET,
@@ -459,7 +454,7 @@ abstract public class SQLManager {
 				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
-	public static List<Permission> getGlobalPermissions(UUID uuid) {
+	public static @NotNull List<Permission> getGlobalPermissions(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		SQLCard card = new SQLCard(SQLCodeType.GET_GLOBAL_PERMISSIONS, SQLCard.SQLCardType.GET,
@@ -484,7 +479,7 @@ abstract public class SQLManager {
 				permissions.add(new Permission(iterator.next()));
 			
 			return permissions;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (@NotNull IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			setGlobalPermissions(uuid, new LinkedList<Permission>());
 			return new LinkedList<Permission>();
@@ -494,7 +489,7 @@ abstract public class SQLManager {
 		}
 	}	
 	
-	public static void setGlobalPermissions(UUID uuid, List<Permission> permissions) {
+	public static void setGlobalPermissions(@NotNull UUID uuid, @NotNull List<Permission> permissions) {
 		// Serialize permissions to a list of permissions
 		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream objectOutputStream = null;
@@ -526,7 +521,7 @@ abstract public class SQLManager {
 		}
 	}	
 	
-	public static List<Permission> getWorldPermission(UUID uuid, String worldName) {
+	public static @Nullable List<Permission> getWorldPermission(@NotNull UUID uuid, String worldName) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Get world permissions from database
@@ -567,7 +562,7 @@ abstract public class SQLManager {
 		}
 	}	
 	
-	public static void setWorldPermission(UUID uuid, List<Permission> permissions, String worldName) {
+	public static void setWorldPermission(@NotNull UUID uuid, @NotNull List<Permission> permissions, String worldName) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Convert list of permissions to a list of string
@@ -600,7 +595,7 @@ abstract public class SQLManager {
 		}
 	}	
 	
-	public static List<Home> getHomes(UUID uuid) {
+	public static @NotNull List<Home> getHomes(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Get serialized list from database
@@ -611,7 +606,7 @@ abstract public class SQLManager {
 		return formatHomesList(serialized);
 	}
 
-	public static List<Home> formatHomesList(byte[] serialized) {
+	public static @NotNull List<Home> formatHomesList(byte @NotNull [] serialized) {
 		// Deserialize list
 		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
@@ -620,7 +615,7 @@ abstract public class SQLManager {
 			List<Home> homes = (List<Home>) objectInputStream.readObject();
 
 			return homes;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (@NotNull IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			return new ArrayList<Home>(0);
 		} finally {
@@ -629,7 +624,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void setHomes(UUID uuid, List<Home> homes) {
+	public static void setHomes(@NotNull UUID uuid, List<Home> homes) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Serialized home list
@@ -653,7 +648,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static ItemStack[] getInventory(UUID uuid, String worldName) {
+	public static ItemStack @NotNull [] getInventory(@NotNull UUID uuid, String worldName) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Get Seralized Inventory from Database
@@ -672,7 +667,7 @@ abstract public class SQLManager {
 			return inventory;
 		} 
 		// If error, print out error and give player a new, empty inventory
-		catch (IOException | ClassNotFoundException e) {
+		catch (@NotNull IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			return new ItemStack[27];
 		} finally {
@@ -681,7 +676,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void setInventory(UUID uuid, String worldName, ItemStack[] inventory) {
+	public static void setInventory(@NotNull UUID uuid, String worldName, ItemStack[] inventory) {
 		// Seralize inventory
 		ByteArrayOutputStream byteOutputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream outputStream = null;
@@ -705,7 +700,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static int getRankID(UUID uuid) {
+	public static int getRankID(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		return (int) new SQLCard(SQLCodeType.GET_RANKID, SQLCard.SQLCardType.GET,
@@ -713,14 +708,14 @@ abstract public class SQLManager {
 				Arrays.asList(uuidBlob)).execute().get(0);
 	}
 	
-	public static void setRankID(UUID uuid, int rankID) {
+	public static void setRankID(@NotNull UUID uuid, int rankID) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_RANKID, SQLCard.SQLCardType.SET, Arrays.asList(),
 				Arrays.asList(rankID, uuidBlob)).execute();
 	}
 	
-	public static float getTip(UUID uuid) {
+	public static float getTip(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		return ((BigDecimal) new SQLCard(SQLCodeType.GET_TIP, SQLCard.SQLCardType.GET,
@@ -728,7 +723,7 @@ abstract public class SQLManager {
 				Arrays.asList(uuidBlob)).execute().get(0)).floatValue();
 	}
 	
-	public static void setTip(UUID uuid, float amount) {
+	public static void setTip(@NotNull UUID uuid, float amount) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_TIP, SQLCard.SQLCardType.SET,
@@ -736,14 +731,14 @@ abstract public class SQLManager {
 				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
-	public static double getXP(UUID uuid) {
+	public static double getXP(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		return ((BigDecimal) new SQLCard(SQLCodeType.GET_XP, SQLCard.SQLCardType.GET,
 				Arrays.asList(), Arrays.asList(uuidBlob)).execute().get(0)).doubleValue();
 	}
 	
-	public static void setXP(UUID uuid, double amount) {
+	public static void setXP(@NotNull UUID uuid, double amount) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		new SQLCard(SQLCodeType.SET_XP, SQLCard.SQLCardType.SET,
@@ -751,7 +746,7 @@ abstract public class SQLManager {
 				Arrays.asList(amount, uuidBlob)).execute();
 	}
 	
-	public static List<Pet> getPets(UUID uuid) {
+	public static @NotNull List<Pet> getPets(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		// Get serialized list of pet IDs
@@ -761,7 +756,7 @@ abstract public class SQLManager {
 		return formatToPets(serialized);
 	}
 
-	public static List<Pet> formatToPets(byte[] serialized) {
+	public static @NotNull List<Pet> formatToPets(byte @NotNull [] serialized) {
 		// Deserialized list of pet IDs
 		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
@@ -775,7 +770,7 @@ abstract public class SQLManager {
 				pets.add(Pet.getPet(id));
 
 			return pets;
-		} catch (IOException | ClassNotFoundException e) {
+		} catch (@NotNull IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 			return new ArrayList<Pet>(0);
 		} finally {
@@ -784,7 +779,7 @@ abstract public class SQLManager {
 		}
 	}
 	
-	public static void setPets(CustomPlayer player) {
+	public static void setPets(@NotNull CustomPlayer player) {
 		List<Pet> pets = player.getPets();
 		
 		// Convert list of pets to list of pet IDs
@@ -817,7 +812,7 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.CREATE_MARRY_TABLE, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
 	}
 
-	public static void removeMarry(UUID causer, UUID receiver) {
+	public static void removeMarry(@NotNull UUID causer, @NotNull UUID receiver) {
 		Blob causerBlob = uuidToBlob(causer);
 		Blob receiverBlob = uuidToBlob(receiver);
 
@@ -825,7 +820,7 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.REMOVE_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(receiverBlob, causerBlob)).execute();
 	}
 
-	public static void addMarry(UUID causer, UUID receiver) {
+	public static void addMarry(@NotNull UUID causer, @NotNull UUID receiver) {
 		Blob causerBlob = uuidToBlob(causer);
 		Blob receiverBlob = uuidToBlob(receiver);
 
@@ -833,7 +828,7 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.ADD_MARRY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(receiverBlob, causerBlob)).execute();
 	}
 
-	public static List<UUID> getMarry(UUID uuid) {
+	public static @NotNull List<UUID> getMarry(@NotNull UUID uuid) {
 		Blob uuidBlob = uuidToBlob(uuid);
 
 		List<Object> results = new SQLCard(SQLCodeType.GET_MARRY_PARTNERS, SQLCard.SQLCardType.GET, Arrays.asList(), Arrays.asList(uuidBlob)).execute();
@@ -849,7 +844,7 @@ abstract public class SQLManager {
 		return uuids;
 	}
 
-	private static Blob uuidToBlob(UUID uuid) {
+	private static @Nullable Blob uuidToBlob(@NotNull UUID uuid) {
 		try {
 			return new SerialBlob(uuidToBytes(uuid));
 		} catch (SQLException exception) {
@@ -858,19 +853,19 @@ abstract public class SQLManager {
 		}
 	}
 
-	private static byte[] uuidToBytes(UUID uuid) {
+	private static byte @NotNull [] uuidToBytes(@NotNull UUID uuid) {
 		ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
 		buffer.putLong(uuid.getMostSignificantBits());
 		buffer.putLong(uuid.getLeastSignificantBits());
 		return buffer.array();
 	}
 
-	private  static UUID bytesToUUID(byte[] uuidBytes) {
+	private  static @NotNull UUID bytesToUUID(byte @NotNull [] uuidBytes) {
 		ByteBuffer buffer = ByteBuffer.wrap(uuidBytes);
 		return new UUID(buffer.getLong(), buffer.getLong());
 	}
 
-	private static Blob objectToBlob(byte[] bytes) {
+	private static @Nullable Blob objectToBlob(byte @NotNull [] bytes) {
 		try {
 			return new SerialBlob(bytes);
 		} catch (SQLException exception) {

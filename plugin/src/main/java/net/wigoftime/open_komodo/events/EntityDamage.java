@@ -7,6 +7,8 @@
 
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -14,9 +16,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.custommobs.CustomPetMob;
 
 public class EntityDamage implements EventExecutor {
 

@@ -1,38 +1,36 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.*;
+import java.util.Map.Entry;
 
 
 public class CustomItem 
 {
 	
-	private static HashMap<Integer, CustomItem> items = new HashMap<Integer, CustomItem>();
+	private static @NotNull HashMap<Integer, CustomItem> items = new HashMap<Integer, CustomItem>();
 	
 	private final int id;
-	private final List<String> description;
+	private final @Nullable List<String> description;
 	private final boolean equipable;
 	
 	private final int pointPrice;
 	private final int coinPrice;
 	
-	private final ItemStack item;
+	private final @NotNull ItemStack item;
 	private final ItemType type;
 	
 	private final Permission obtainPermission;
 	
-	public CustomItem(ItemStack item, int id, String name, List<String> description, boolean equipable, int pointPrice,Permission permission, ItemType type)
+	public CustomItem(@NotNull ItemStack item, int id, @Nullable String name, @Nullable List<String> description, boolean equipable, int pointPrice, Permission permission, ItemType type)
 	{
 		// Set ID
 		this.id = id;
@@ -65,7 +63,7 @@ public class CustomItem
 		items.put(id, this);
 	}
 	
-	public static void create(ItemStack item, int id, int pointPrice, boolean equipable, Permission permission, ItemType type)
+	public static void create(@NotNull ItemStack item, int id, int pointPrice, boolean equipable, Permission permission, ItemType type)
 	{
 		new CustomItem(item, id, null, null, equipable, pointPrice, permission, type);
 	}
@@ -76,7 +74,7 @@ public class CustomItem
 		new CustomItem(item, id, null, null, false, pointPrice, permission, type);
 	}
 	
-	public static void create(int id, String name, List<String> description, int pointPrice, boolean equipable, Permission permission, ItemType type)
+	public static void create(int id, @Nullable String name, List<String> description, int pointPrice, boolean equipable, Permission permission, ItemType type)
 	{
 		ItemStack item;
 		
@@ -110,7 +108,7 @@ public class CustomItem
 		new CustomItem(item, id, name, description, equipable, pointPrice, permission, type);
 	}
 	
-	public static List<CustomItem> getCustomItem(ItemType type)
+	public static @NotNull List<CustomItem> getCustomItem(ItemType type)
 	{
 		// Create List that matches ItemType
 		LinkedList<CustomItem> list = new LinkedList<CustomItem>();
@@ -139,7 +137,7 @@ public class CustomItem
 		return cs;
 	}
 	
-	public static List<CustomItem> getItems()
+	public static @NotNull List<CustomItem> getItems()
 	{
 		List<CustomItem> itemList = new ArrayList<CustomItem>(items.size());
 		for (Entry<Integer, CustomItem> e : items.entrySet())
@@ -150,7 +148,7 @@ public class CustomItem
 		return itemList;
 	}
 	
-	public static List<CustomItem> getItems(ItemType type)
+	public static @NotNull List<CustomItem> getItems(ItemType type)
 	{
 		List<CustomItem> itemList = new ArrayList<CustomItem>(items.size());
 		for (Entry<Integer, CustomItem> e : items.entrySet())
@@ -166,12 +164,12 @@ public class CustomItem
 		return id;
 	}
 	
-	public List<String> getDescription()
+	public @Nullable List<String> getDescription()
 	{
 		return description;
 	}
 	
-	public ItemStack getItem()
+	public @NotNull ItemStack getItem()
 	{
 		return item;
 	}

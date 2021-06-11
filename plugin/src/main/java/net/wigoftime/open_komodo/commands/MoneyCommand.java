@@ -1,16 +1,17 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class MoneyCommand extends Command 
 {
 
-	public MoneyCommand(String name, String description, String usageMessage,
-		 List<String> aliases) 
+	public MoneyCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                        @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}
@@ -19,7 +20,7 @@ public class MoneyCommand extends Command
 			ChatColor.GOLD, ChatColor.GRAY);
 	
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, String command, String @NotNull [] args) {
 		if (args.length < 1) return false;
 		
 		if (args[0].equalsIgnoreCase("help")) {

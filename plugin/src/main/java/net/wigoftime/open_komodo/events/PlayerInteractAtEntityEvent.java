@@ -1,16 +1,15 @@
 package net.wigoftime.open_komodo.events;
 
-import org.bukkit.entity.EntityType;
-import org.bukkit.event.Event;
-import org.bukkit.event.EventException;
-import org.bukkit.event.Listener;
-import org.bukkit.plugin.EventExecutor;
-
 import net.wigoftime.open_komodo.etc.FurnitureMangement;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PetsManager;
 import net.wigoftime.open_komodo.gui.PetControl;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.entity.EntityType;
+import org.bukkit.event.Event;
+import org.bukkit.event.EventException;
+import org.bukkit.event.Listener;
+import org.bukkit.plugin.EventExecutor;
 
 public class PlayerInteractAtEntityEvent implements EventExecutor {
 

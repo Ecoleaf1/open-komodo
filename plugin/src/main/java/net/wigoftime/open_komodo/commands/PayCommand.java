@@ -1,22 +1,22 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.etc.CurrencyClass;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.CurrencyClass;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.util.List;
 
 public class PayCommand extends Command
 {
-	public PayCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public PayCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                      @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}
@@ -24,7 +24,7 @@ public class PayCommand extends Command
 	private static final String usageCommand = String.format("%s» %sUsage: /pay {Player} {Amount} {Currency}", ChatColor.GOLD, ChatColor.GRAY);
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String command, String @NotNull [] args)
 	{
 		// Don't Continue if isn't player
 		if (!(sender instanceof Player))

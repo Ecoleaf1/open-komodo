@@ -1,13 +1,13 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public class SettingsGui extends CustomGUI {
 	ItemStack onTpaRequests;
@@ -15,7 +15,7 @@ public class SettingsGui extends CustomGUI {
 	ItemStack particleToggle;
 	ItemStack DiscordChatToggle;
 	
-	public SettingsGui(CustomPlayer opener) {
+	public SettingsGui(@NotNull CustomPlayer opener) {
 		super(opener, null, Bukkit.createInventory(null, 9, "Settings"));
 		refresh();
 		opener.getPlayer().openInventory(gui);
@@ -33,7 +33,7 @@ public class SettingsGui extends CustomGUI {
 		gui.setItem(3, DiscordChatToggle);
 	}
 	
-	private static ItemStack createDiscordChatToggle(CustomPlayer player) {
+	private static ItemStack createDiscordChatToggle(@NotNull CustomPlayer player) {
 		ItemStack onTpaRequests;
 		if (player.getSettings().isDiscordChatEnabled()) {
 			onTpaRequests = new ItemStack(Material.BOOK); {
@@ -52,7 +52,7 @@ public class SettingsGui extends CustomGUI {
 		return onTpaRequests;
 	}
 	
-	private static ItemStack createParticleToggle(CustomPlayer player) {
+	private static ItemStack createParticleToggle(@NotNull CustomPlayer player) {
 		ItemStack onTpaRequests;
 		if (player.getSettings().isPlayerParticlesEnabled()) {
 			onTpaRequests = new ItemStack(Material.POTION); {
@@ -71,7 +71,7 @@ public class SettingsGui extends CustomGUI {
 		return onTpaRequests;
 	}
 	
-	private static ItemStack createTpaRequestButton(CustomPlayer player) {
+	private static ItemStack createTpaRequestButton(@NotNull CustomPlayer player) {
 		ItemStack onTpaRequests;
 		if (player.getSettings().isTpaEnabled()) {
 			onTpaRequests = new ItemStack(Material.ENDER_EYE); {
@@ -90,7 +90,7 @@ public class SettingsGui extends CustomGUI {
 		return onTpaRequests;
 	}
 	
-	private static ItemStack createDisplayTips(CustomPlayer player) {
+	private static ItemStack createDisplayTips(@NotNull CustomPlayer player) {
 		ItemStack displayTips;
 		if (player.getSettings().isDisplayTipEnabled()) {
 			displayTips = new ItemStack(Material.GOLD_NUGGET); {
@@ -110,7 +110,7 @@ public class SettingsGui extends CustomGUI {
 	}
 
 	@Override
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
 		

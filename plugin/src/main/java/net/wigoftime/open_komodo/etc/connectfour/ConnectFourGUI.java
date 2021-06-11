@@ -1,30 +1,27 @@
 package net.wigoftime.open_komodo.etc.connectfour;
 
-import java.util.List;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permission;
-import org.jetbrains.annotations.NotNull;
-
 import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.connectfour.ConnectFourSession.boardPlayerEnum;
 import net.wigoftime.open_komodo.gui.CustomGUI;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 public class ConnectFourGUI extends CustomGUI {
-	private final ConnectFourSession activeSession;
+	private final @NotNull ConnectFourSession activeSession;
 	
-	private final ItemStack playerTokenItem;
-	private final ItemStack opponentTokenItem;
+	private final @NotNull ItemStack playerTokenItem;
+	private final @NotNull ItemStack opponentTokenItem;
 	
-	private final ItemStack playerOptionItem;
-	private final ItemStack opponentOptionItem;
+	private final @NotNull ItemStack playerOptionItem;
+	private final @NotNull ItemStack opponentOptionItem;
 	
 	public ConnectFourGUI(@NotNull CustomPlayer openerCustomPlayer, @NotNull CustomPlayer opponent, @NotNull ConnectFourSession activeSession, @NotNull ConnectFourSession.boardPlayerEnum boardPlayerType) {
 		super(openerCustomPlayer, null, Bukkit.createInventory(null, 54, "Connect Four"));
@@ -82,7 +79,7 @@ public class ConnectFourGUI extends CustomGUI {
 		else refreshOptions(PlayerType.OPPONENT, null);
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		if (opener != activeSession.currentPlayer) return;
 		
@@ -92,7 +89,7 @@ public class ConnectFourGUI extends CustomGUI {
 	}
 	
 	public enum PlayerType {PLAYER, OPPONENT};
-	public void dropToken(@NotNull byte slotPosition,  PlayerType playerType) {
+	public void dropToken(@NotNull byte slotPosition, @Nullable PlayerType playerType) {
 		if (playerType == null) {
 			gui.setItem(slotPosition, new ItemStack(Material.AIR));
 			return;
@@ -108,7 +105,7 @@ public class ConnectFourGUI extends CustomGUI {
 		}
 	}
 	
-	public void refreshOptions(@NotNull PlayerType playerType, CustomPlayer winnerCustomPlayer) {
+	public void refreshOptions(@NotNull PlayerType playerType, @Nullable CustomPlayer winnerCustomPlayer) {
 		ItemStack optionButton;
 		
 		if (winnerCustomPlayer != null) {
@@ -132,7 +129,7 @@ public class ConnectFourGUI extends CustomGUI {
 			}
 	}
 	
-	public void displayWinPath(List<Integer> slotPositions) {
+	public void displayWinPath(@NotNull List<Integer> slotPositions) {
 		for (int SlotIndex: slotPositions)
 			gui.setItem(SlotIndex, new ItemStack(Material.WHITE_WOOL));
 	}

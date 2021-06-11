@@ -1,32 +1,22 @@
 package net.wigoftime.open_komodo.filecreation;
 
-import java.io.File;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.chat.Emote;
+import net.wigoftime.open_komodo.config.*;
+import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.systems.RankSystem;
+import net.wigoftime.open_komodo.gui.*;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomParticle;
+import net.wigoftime.open_komodo.objects.ItemType;
 import net.wigoftime.open_komodo.sql.SQLCard;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.chat.Emote;
-import net.wigoftime.open_komodo.config.ConfigType;
-import net.wigoftime.open_komodo.config.ItemConfig;
-import net.wigoftime.open_komodo.config.PetConfig;
-import net.wigoftime.open_komodo.config.PlayerConfig;
-import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
-import net.wigoftime.open_komodo.config.RankConfig;
-import net.wigoftime.open_komodo.etc.Filter;
-import net.wigoftime.open_komodo.etc.systems.RankSystem;
-import net.wigoftime.open_komodo.gui.ParticlesGUI;
-import net.wigoftime.open_komodo.gui.PhoneGui;
-import net.wigoftime.open_komodo.gui.TagMenu;
-import net.wigoftime.open_komodo.gui.TagShop;
-import net.wigoftime.open_komodo.gui.Warps;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomParticle;
-import net.wigoftime.open_komodo.objects.ItemType;
-import net.wigoftime.open_komodo.sql.SQLManager;
+import java.io.File;
 
 abstract public class CheckFiles 
 {

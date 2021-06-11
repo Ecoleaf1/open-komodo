@@ -1,13 +1,14 @@
 package net.wigoftime.open_komodo.etc;
 
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 public class ChatAnnouncements implements Runnable {
 	private final Random random = new Random();
@@ -57,7 +58,7 @@ public class ChatAnnouncements implements Runnable {
 		broadcast(lines);
 	}
 	
-	private List<String> order1() {
+	private @NotNull List<String> order1() {
 		List<String> lines = new ArrayList<String>(5);
 		
 		lines.add(header);
@@ -69,7 +70,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order2() {
+	private @NotNull List<String> order2() {
 		List<String> lines = new ArrayList<String>(5);
 		
 		lines.add(header);
@@ -81,7 +82,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order3() {
+	private @NotNull List<String> order3() {
 		List<String> lines = new ArrayList<String>(6);
 		
 		lines.add(header);
@@ -93,7 +94,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order4() {
+	private @NotNull List<String> order4() {
 		List<String> lines = new ArrayList<String>(6);
 		
 		lines.add(header);
@@ -105,7 +106,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order5() {
+	private @NotNull List<String> order5() {
 		List<String> lines = new ArrayList<String>(6);
 		
 		lines.add(header);
@@ -117,7 +118,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order6() {
+	private @NotNull List<String> order6() {
 		List<String> lines = new ArrayList<String>(6);
 		
 		lines.add(header);
@@ -129,7 +130,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private List<String> order7() {
+	private @NotNull List<String> order7() {
 		List<String> lines = new ArrayList<String>(6);
 		
 		lines.add(header);
@@ -141,7 +142,7 @@ public class ChatAnnouncements implements Runnable {
 		return lines;
 	}
 	
-	private void broadcast(List<String> lines) {
+	private void broadcast(@NotNull List<String> lines) {
 		for (Player player : Bukkit.getOnlinePlayers())
 			for (String line : lines)
 				player.sendMessage(line);

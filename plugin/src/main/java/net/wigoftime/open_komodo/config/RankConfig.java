@@ -1,17 +1,17 @@
 package net.wigoftime.open_komodo.config;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.Rank;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.permissions.Permission;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.Rank;
 
 public abstract class RankConfig 
 {
@@ -86,7 +86,7 @@ public abstract class RankConfig
 		}
 	}
 	
-	public static File getFile()
+	public static @NotNull File getFile()
 	{
 		return rankConfigFile;
 	}

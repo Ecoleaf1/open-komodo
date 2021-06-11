@@ -8,9 +8,8 @@
 
 package net.wigoftime.open_komodo.events;
 
-import java.util.Date;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -19,8 +18,8 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent.Result;
 import org.bukkit.plugin.EventExecutor;
 
-import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
-import net.wigoftime.open_komodo.sql.SQLManager;
+import java.util.Date;
+import java.util.UUID;
 
 public class AsyncPlayerPreLogin implements EventExecutor {
 

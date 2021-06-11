@@ -1,5 +1,6 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.actions.BugReporter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
@@ -10,8 +11,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.actions.BugReporter;
 
 public class PlayerEditBook implements EventExecutor {
 

@@ -1,18 +1,19 @@
 package net.wigoftime.open_komodo.chat;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.etc.Filter;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
 abstract public class PrivateMessage 
 {
@@ -20,7 +21,7 @@ abstract public class PrivateMessage
 	
 	private static final String errorNotFound = String.format("%s» %sPlayer not found",
 			ChatColor.GOLD, ChatColor.GRAY);
-	public static void sendMessage(CommandSender sender, Player receiver, String message) 
+	public static void sendMessage(@NotNull CommandSender sender, @Nullable Player receiver, String message)
 	{
 		
 		// If the player typed in an online correct username
@@ -72,7 +73,7 @@ abstract public class PrivateMessage
 		lastReply.remove(uuid);
 	}
 	
-	public static void reply(Player sender, String message)
+	public static void reply(@NotNull Player sender, String message)
 	{
 		Player target = Bukkit.getPlayer(lastReply.get(sender.getUniqueId()));
 		
@@ -85,14 +86,14 @@ abstract public class PrivateMessage
 		sendMessage(sender, target, message);
 	}
 	
-	private static void sendAllMonitoringPlayers(CustomPlayer messenger, String message, CustomPlayer receiver) {
+	private static void sendAllMonitoringPlayers(@NotNull CustomPlayer messenger, String message, @NotNull CustomPlayer receiver) {
 		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers())
 			if (playerIndex.isMonitoring())
 			if (messenger != playerIndex && receiver != playerIndex)
 				sendMonitorMessage(messenger, receiver, message, receiver);
 	}
 	
-	private static void sendMonitorMessage(CustomPlayer messenger, CustomPlayer receiver, String message, CustomPlayer monitorPlayer) {
+	private static void sendMonitorMessage(@NotNull CustomPlayer messenger, @NotNull CustomPlayer receiver, String message, @NotNull CustomPlayer monitorPlayer) {
 		monitorPlayer.getPlayer().sendMessage(String.format("%s[Private] %s%s (to %s)%s: %s%s", 
 				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), receiver.getPlayer().getDisplayName(),
 				ChatColor.RESET, ChatColor.GRAY, message));

@@ -1,12 +1,12 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
 import net.wigoftime.open_komodo.config.Config;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class VoteCommand extends Command {
 	private final String voteDescription = Config.getVotingDescription();

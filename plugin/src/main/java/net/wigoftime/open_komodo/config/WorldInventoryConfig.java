@@ -1,18 +1,19 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-
-import org.bukkit.World;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
 
 public abstract class WorldInventoryConfig 
 {
@@ -20,7 +21,7 @@ public abstract class WorldInventoryConfig
 	private static final File bagInventoryFolder = new File(Main.dataFolderPath+"/Inventories/Bags");
 	
 	
-	public static ItemStack[] getInventory(Player player, World world)
+	public static ItemStack @NotNull [] getInventory(@NotNull Player player, @NotNull World world)
 	{
 		if (!worldInventoryFolder.exists())
 			worldInventoryFolder.mkdir();
@@ -46,7 +47,7 @@ public abstract class WorldInventoryConfig
 	}
 	
 	
-	public static void setInventory(Player player, World world, ItemStack[] inventory)
+	public static void setInventory(@NotNull Player player, @NotNull World world, ItemStack[] inventory)
 	{
 		if (!worldInventoryFolder.exists())
 			worldInventoryFolder.mkdir();
@@ -75,7 +76,7 @@ public abstract class WorldInventoryConfig
 		return;
 	}
 	
-	public static short getInventoryIndex(Player player)
+	public static short getInventoryIndex(@NotNull Player player)
 	{
 		if (!bagInventoryFolder.exists())
 			bagInventoryFolder.mkdir();
@@ -141,7 +142,7 @@ public abstract class WorldInventoryConfig
 	}
 	
 	
-	public static int createBagInventory(Player player)
+	public static int createBagInventory(@NotNull Player player)
 	{
 		int bagID = getInventoryIndex(player) + 1;
 		
@@ -150,7 +151,7 @@ public abstract class WorldInventoryConfig
 		return bagID;
 	}
 	
-	public static void setInventory(Player player, int bagID, ItemStack[] inventory)
+	public static void setInventory(@NotNull Player player, int bagID, ItemStack[] inventory)
 	{
 		if (!bagInventoryFolder.exists())
 			bagInventoryFolder.mkdir();
@@ -179,7 +180,7 @@ public abstract class WorldInventoryConfig
 		return;
 	}
 	
-	public static ItemStack[] getInventory(Player player, int bagID)
+	public static ItemStack @Nullable [] getInventory(@NotNull Player player, int bagID)
 	{
 		if (!bagInventoryFolder.exists())
 			bagInventoryFolder.mkdir();

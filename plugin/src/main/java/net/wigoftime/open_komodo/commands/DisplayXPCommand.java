@@ -1,19 +1,18 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.Rank;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.Rank;
-import net.wigoftime.open_komodo.tutorial.Tutorial.TutorialState;
+import java.util.List;
 
 public class DisplayXPCommand extends Command {
 
-	public DisplayXPCommand(String name, String description, String usageMessage, List<String> aliases) {
+	public DisplayXPCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage, @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 
@@ -66,12 +65,12 @@ public class DisplayXPCommand extends Command {
 		return true;
 	}
 	
-	private void soloDisplay(CustomPlayer playerCustomPlayer) {
+	private void soloDisplay(@NotNull CustomPlayer playerCustomPlayer) {
 		double currentXP = playerCustomPlayer.getXP();
 		playerCustomPlayer.getPlayer().sendMessage(String.format("%s» %sYou currently have %s%f XP!", ChatColor.GOLD, ChatColor.GRAY, ChatColor.GOLD, currentXP, ChatColor.GRAY));
 	}
 	
-	private void nextRankDisplay (CustomPlayer playerCustomPlayer, double currentXP, Rank nextRank) {
+	private void nextRankDisplay (@NotNull CustomPlayer playerCustomPlayer, double currentXP, @NotNull Rank nextRank) {
 		double nextRankXP = nextRank.getXPPrice();
 		double xpNeeded = nextRank.getXPPrice() / currentXP;
 		

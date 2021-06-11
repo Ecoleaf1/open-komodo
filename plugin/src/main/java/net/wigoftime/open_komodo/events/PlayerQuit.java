@@ -1,17 +1,15 @@
 package net.wigoftime.open_komodo.events;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.chat.MessageFormat;
+import net.wigoftime.open_komodo.chat.PrivateMessage;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventException;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.EventExecutor;
-
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.chat.PrivateMessage;
-import net.wigoftime.open_komodo.etc.ServerScoreBoard;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class PlayerQuit implements EventExecutor {
 

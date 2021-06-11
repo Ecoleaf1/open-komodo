@@ -1,22 +1,22 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import dev.esophose.playerparticles.styles.DefaultStyles;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
-import dev.esophose.playerparticles.styles.DefaultStyles;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomParticle {
 	public static enum ParticleType {
 		PARTICLE, STYLE;
 	}
-	public static List<CustomParticle> particleList = new ArrayList<CustomParticle>(27);
-	public static List<CustomParticle> mvpStyleList = new ArrayList<CustomParticle>(6);
+	public static @NotNull List<CustomParticle> particleList = new ArrayList<CustomParticle>(27);
+	public static @NotNull List<CustomParticle> mvpStyleList = new ArrayList<CustomParticle>(6);
 	
 	public final ParticleType type;
 	public final ItemStack icon;
@@ -268,7 +268,7 @@ public class CustomParticle {
 		this.permission = permission;
 	}
 	
-	public CustomParticle(CustomParticle customParticle) {
+	public CustomParticle(@NotNull CustomParticle customParticle) {
 		this.type = customParticle.type;
 		this.icon = customParticle.icon;
 		this.permission = customParticle.permission;

@@ -1,17 +1,13 @@
 package net.wigoftime.open_komodo.world;
 
-import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
-import org.bukkit.GameRule;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.WorldCreator;
-import org.bukkit.WorldType;
+import org.bukkit.*;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class BuilderWorld 
 {
-	private static World world;
+	private static @Nullable World world;
 	
 	public static void setup()
 	{
@@ -23,7 +19,7 @@ public abstract class BuilderWorld
 		world = Bukkit.getWorld("BuilderWorld");
 	}
 	
-	public static void joinWorld(Player player)
+	public static void joinWorld(@NotNull Player player)
 	{
 		Location location = new Location(world, 359, 68, -225);
 		player.teleport(location);
@@ -43,7 +39,7 @@ public abstract class BuilderWorld
 		world.setGameRule(GameRule.DO_MOB_SPAWNING, false);
 	}
 	
-	public static World getWorld()
+	public static @Nullable World getWorld()
 	{
 		return world;
 	}

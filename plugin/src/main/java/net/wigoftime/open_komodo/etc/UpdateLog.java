@@ -1,18 +1,18 @@
 package net.wigoftime.open_komodo.etc;
 
+import net.md_5.bungee.api.ChatColor;
+import net.wigoftime.open_komodo.Main;
+import org.bukkit.Material;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
+import org.jetbrains.annotations.NotNull;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.Main;
 
 abstract public class UpdateLog 
 {
@@ -20,7 +20,7 @@ abstract public class UpdateLog
 	
 	private static final File folder = new File(Main.dataFolderPath+"/updateLogCheckup");
 
-	public static void open(Player player)
+	public static void open(@NotNull Player player)
 	{	
 		// Add in text to put in book
 		List<String> text = new ArrayList<String>();
@@ -46,7 +46,7 @@ abstract public class UpdateLog
 	}
 	
 	// When player joins
-	public static void onJoin(Player player)
+	public static void onJoin(@NotNull Player player)
 	{
 		// If player check folder doesn't exist, create it
 		if (!folder.exists())

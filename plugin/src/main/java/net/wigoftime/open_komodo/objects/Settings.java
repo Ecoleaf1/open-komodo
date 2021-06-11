@@ -1,8 +1,8 @@
 package net.wigoftime.open_komodo.objects;
 
-import java.util.UUID;
-
 import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
+
+import java.util.UUID;
 
 public class Settings {
 	

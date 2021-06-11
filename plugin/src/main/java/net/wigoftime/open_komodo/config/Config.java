@@ -1,24 +1,25 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.SQLInfo;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.SQLInfo;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 abstract public class Config 
 {
 	private static final String dataFolderPath = Main.dataFolderPath;
 	private static final File configFile = new File(dataFolderPath+"/config.yml");
 	
-	public static String getMessageFormat() {
+	public static @Nullable String getMessageFormat() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -27,7 +28,7 @@ abstract public class Config
 		return normalMessageSection.getString("Format");
 	}
 	
-	public static String getTagMessageFormat() {
+	public static @Nullable String getTagMessageFormat() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -45,7 +46,7 @@ abstract public class Config
 		return normalMessageSection.getInt("Chat Distance");
 	}
 	
-	public static String getPrivateSentMessageFormat() {
+	public static @Nullable String getPrivateSentMessageFormat() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -54,7 +55,7 @@ abstract public class Config
 		return privateMessageSection.getString("Format (Sent)");
 	}
 	
-	public static String getPrivateReceivedMessageFormat() {
+	public static @Nullable String getPrivateReceivedMessageFormat() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -63,7 +64,7 @@ abstract public class Config
 		return privateMessageSection.getString("Format (Received)");
 	}
 	
-	public static String getResourcePackURL() {
+	public static @Nullable String getResourcePackURL() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -72,7 +73,7 @@ abstract public class Config
 		return globalSection.getString("Resource Pack");
 	}
 	
-	public static Location getSpawnLocation() {
+	public static @Nullable Location getSpawnLocation() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -81,7 +82,7 @@ abstract public class Config
 		return (Location) normalMessageSection.get("Spawn Location");
 	}
 	
-	public static Location getTutorialLocation() {
+	public static @Nullable Location getTutorialLocation() {
 		File configFile = getConfigFile();
 		
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
@@ -132,49 +133,49 @@ abstract public class Config
 		return normalMessageSection.getBoolean("Enable Warps");
 	}
 	
-	public static Vector getBorderPosition1() {
+	public static @Nullable Vector getBorderPosition1() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return normalMessageSection.getVector("Border Position 1");
 	}
 	
-	public static Vector getBorderPosition2() {
+	public static @Nullable Vector getBorderPosition2() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return normalMessageSection.getVector("Border Position 2");
 	}
 	
-	public static String getWebsiteDescription() {
+	public static @NotNull String getWebsiteDescription() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Website"));
 	}
 	
-	public static String getDiscordDescription() {
+	public static @NotNull String getDiscordDescription() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Discord"));
 	}
 
-	public static String getVotingDescription() {
+	public static @NotNull String getVotingDescription() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Voting"));
 	}
 
-	public static String getStoreDescription() {
+	public static @NotNull String getStoreDescription() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Store"));
 	}
 
-	public static List<String> getRules() {
+	public static @NotNull List<String> getRules() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 
@@ -187,7 +188,7 @@ abstract public class Config
 		return formattedRules;
 	}
 	
-	public static SQLInfo getSQLInfo() {
+	public static @NotNull SQLInfo getSQLInfo() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
 		ConfigurationSection section = yamlConfiguration.getConfigurationSection("SQL");
 		
@@ -202,7 +203,7 @@ abstract public class Config
 		return new SQLInfo(enabled, type, database, host, user, password, sslEnabled);
 	}
 	
-	public static File getConfigFile() {
+	public static @NotNull File getConfigFile() {
 		return configFile;
 	}
 

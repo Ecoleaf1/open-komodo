@@ -1,7 +1,6 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
 import net.wigoftime.open_komodo.sql.SQLManager;
@@ -11,14 +10,14 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.Permissions;
+import java.util.List;
 
 public class PromoteCommand extends Command {
-	public PromoteCommand(String name, String description, String usageMessage,
-			List<String> aliases) {
+	public PromoteCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                          @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 	
@@ -28,7 +27,7 @@ public class PromoteCommand extends Command {
 			ChatColor.GOLD, ChatColor.GRAY);
 
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) {
+	public boolean execute(@NotNull CommandSender sender, String command, String @NotNull [] args) {
 		if (!sender.hasPermission(Permissions.promotePerm)) {
 			sender.sendMessage(Permissions.promotePermError);
 			return false;
@@ -45,7 +44,7 @@ public class PromoteCommand extends Command {
 		return true;
 	}
 
-	private void playerSelector(CommandSender sender, String[] args) {
+	private void playerSelector(@NotNull CommandSender sender, String @NotNull [] args) {
 		if (args.length < 4) {
 			sender.sendMessage(String.format("%s» %sUsage: /promote player {Add/Remove} {Player} {World Name} {Permission}", ChatColor.GOLD, ChatColor.GRAY));
 			return;
@@ -80,7 +79,7 @@ public class PromoteCommand extends Command {
 		}
 	}
 
-	private void rankSelector(CommandSender sender, String[] args) {
+	private void rankSelector(@NotNull CommandSender sender, String @NotNull [] args) {
 		if (args.length < 3) {
 			sender.sendMessage(usageRankMsg);
 			return;
@@ -95,7 +94,7 @@ public class PromoteCommand extends Command {
 		else playerCustom.getRankSystem().setRank(rank);
 	}
 
-	private void listpermsSelector(CommandSender sender, String[] args) {
+	private void listpermsSelector(@NotNull CommandSender sender, String @NotNull [] args) {
 		if (args.length < 2) {
 			sender.sendMessage(String.format("%s» %sUsage: /promote list-perms {Player} [World Name]", ChatColor.GOLD, ChatColor.GRAY));
 			return;

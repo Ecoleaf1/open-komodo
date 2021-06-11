@@ -1,10 +1,9 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
-import net.wigoftime.open_komodo.objects.CustomPlayer;
 
 public class BinGUI extends CustomGUI{
 	static final String title = String.format("%sBin", ChatColor.GRAY);

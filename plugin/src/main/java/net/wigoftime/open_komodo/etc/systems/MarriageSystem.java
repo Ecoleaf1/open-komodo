@@ -12,15 +12,18 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.UUID;
 
 public class MarriageSystem {
-    final private CustomPlayer playerCustom;
+    final private @NotNull CustomPlayer playerCustom;
     public List<CustomPlayer> onlinePartners;
     public List<OfflinePlayer> offlinePartners;
-    public List<OfflinePlayer> totalPartners = new ArrayList<OfflinePlayer>(0);
+    public @NotNull List<OfflinePlayer> totalPartners = new ArrayList<OfflinePlayer>(0);
 
-    public CustomPlayer purposer = null;
+    public @Nullable CustomPlayer purposer = null;
 
     public MarriageSystem(@NotNull CustomPlayer player, @NotNull List<UUID> partners) {
 
@@ -114,7 +117,7 @@ public class MarriageSystem {
         playerCustom.getPlayer().sendMessage(ChatColor.GOLD+"» " + ChatColor.GRAY +"you are now married to "+player.getPlayer().getDisplayName()+"!");
     }
 
-    public void teleport(Player partner) {
+    public void teleport(@NotNull Player partner) {
         playerCustom.getPlayer().teleport(partner.getPlayer());
         partner.getPlayer().sendMessage(org.bukkit.ChatColor.GOLD+"» "+ org.bukkit.ChatColor.GREEN+ playerCustom.getPlayer().getDisplayName() +" has teleported to you");
     }

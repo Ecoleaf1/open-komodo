@@ -1,18 +1,18 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.actions.BugReporter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.actions.BugReporter;
+import java.util.List;
 
 public class ReportCommand extends Command 
 {
 
-	public ReportCommand(String name, String description, String usageMessage,
-			List<String> aliases) {
+	public ReportCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                         @NotNull List<String> aliases) {
 		super(name, description, usageMessage, aliases);
 	}
 

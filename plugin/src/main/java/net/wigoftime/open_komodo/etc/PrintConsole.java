@@ -1,8 +1,7 @@
 package net.wigoftime.open_komodo.etc;
 
-import org.bukkit.Bukkit;
-
 import net.wigoftime.open_komodo.Main;
+import org.bukkit.Bukkit;
 
 abstract public class PrintConsole 
 {

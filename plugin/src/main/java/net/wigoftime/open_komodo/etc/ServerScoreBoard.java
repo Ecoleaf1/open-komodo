@@ -1,27 +1,13 @@
 package net.wigoftime.open_komodo.etc;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Score;
-import org.bukkit.scoreboard.Scoreboard;
-import org.bukkit.scoreboard.Team;
-import org.bukkit.scoreboard.Team.Option;
-import org.bukkit.scoreboard.Team.OptionStatus;
-
-import alexh.Fluent.LinkedHashMap;
 import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.MessageFormat;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.scoreboard.*;
+import org.bukkit.scoreboard.Team.Option;
+import org.bukkit.scoreboard.Team.OptionStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 abstract public class ServerScoreBoard 
 {
@@ -41,7 +27,7 @@ abstract public class ServerScoreBoard
 		ChatColor.translateAlternateColorCodes('&', "&r&e&m━━━━━━━━━━━━━━━━━━━")
 	};
 	
-	public static void add(CustomPlayer customPlayer)
+	public static void add(@NotNull CustomPlayer customPlayer)
 	{	
 		Scoreboard scoreboard = customPlayer.getPlayer().getScoreboard();
 		
@@ -69,7 +55,7 @@ abstract public class ServerScoreBoard
 		syncToOthers(customPlayer);
 	}
 	
-	private static void syncToOthers(CustomPlayer playerJoined) {
+	private static void syncToOthers(@NotNull CustomPlayer playerJoined) {
 		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers()) {
 			if (playerIndex == playerJoined) continue;
 			
@@ -81,7 +67,7 @@ abstract public class ServerScoreBoard
 		}
 	}
 	
-	public static void sync(CustomPlayer playerJoined) {
+	public static void sync(@NotNull CustomPlayer playerJoined) {
 		Scoreboard currentScoreboard = playerJoined.getPlayer().getScoreboard();
 		
 		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers()) {
@@ -94,7 +80,7 @@ abstract public class ServerScoreBoard
 		playerJoined.getPlayer().setScoreboard(currentScoreboard);
 	}
 	
-	private static Team getTeam(Scoreboard playerScoreBoard, CustomPlayer toSyncPlayer) {
+	private static @Nullable Team getTeam(@NotNull Scoreboard playerScoreBoard, @NotNull CustomPlayer toSyncPlayer) {
 		Team team = playerScoreBoard.getTeam(toSyncPlayer.getRank().getName());
 		
 		if (team == null) team = playerScoreBoard.registerNewTeam(toSyncPlayer.getRank().getName());

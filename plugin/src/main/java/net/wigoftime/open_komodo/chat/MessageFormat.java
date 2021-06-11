@@ -1,13 +1,14 @@
 package net.wigoftime.open_komodo.chat;
 
-import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Rank;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class MessageFormat 
 {
@@ -18,7 +19,7 @@ public abstract class MessageFormat
 	private static final String tagModFormat = "[\"\",{\"text\":\"$W\",\"color\":\"gray\"},{\"text\":\" | \",\"color\":\"dark_gray\"},{\"text\":\"$G\",\"color\":\"gray\"},{\"text\":\"$S\",\"color\":\"dark_gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"},\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"Username: $N\"}]}}},{\"text\":\" : \",\"color\":\"gray\"},{\"text\":\"$M\",\"color\":\"gray\",\"clickEvent\":{\"action\":\"suggest_command\",\"value\":\"/msg $N \"}},{\"text\":\" [¶]\",\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/mod $N\"}}]";
 	
 	// Convert it so the message can be understood by JSON, like /tellraw
-	public static String json(CustomPlayer senderCustomPlayer, String message) 
+	public static String json(@NotNull CustomPlayer senderCustomPlayer, String message)
 	{
 		message = message.replace("\\", "\\\\");
 		message = message.replace("\"", "\\\"");
@@ -29,7 +30,7 @@ public abstract class MessageFormat
 			return MessageFormat.format(tagFormat, senderCustomPlayer,message);
 	}
 	
-	public static String jsonMod(CustomPlayer senderCustomPlayer, String message) 
+	public static String jsonMod(@NotNull CustomPlayer senderCustomPlayer, String message)
 	{
 		message = message.replace("\\", "\\\\");
 		message = message.replace("\"", "\\\"");
@@ -40,7 +41,7 @@ public abstract class MessageFormat
 			return MessageFormat.format(tagModFormat, senderCustomPlayer, message);
 	}
 	
-	public static String format(String messageFormat,CustomPlayer customSender,String message) 
+	public static String format(String messageFormat, @Nullable CustomPlayer customSender, @Nullable String message)
 	{
 		
 		if (customSender != null) 
@@ -72,7 +73,7 @@ public abstract class MessageFormat
 		return messageFormat;
 	}
 	
-	public static String format(CustomPlayer customPlayer, String text)
+	public static String format(@NotNull CustomPlayer customPlayer, String text)
 	{
 		text = text.replace("$N", customPlayer.getPlayer().getDisplayName());
 		
@@ -98,7 +99,7 @@ public abstract class MessageFormat
 		return text;
 	}
 
-	public static String format(String messageFormat,String senderUsername,String recipientUsername,String message) {
+	public static String format(String messageFormat, @Nullable String senderUsername, @Nullable String recipientUsername, @Nullable String message) {
 		if (senderUsername != null) 
 			messageFormat = messageFormat.replace("$N", senderUsername);
 		
@@ -111,7 +112,7 @@ public abstract class MessageFormat
 		return messageFormat;
 	}
 	
-	public static String format(String messageFormat,CustomPlayer customPlayerSender,CustomPlayer customPlayerRecipient,String message) {
+	public static String format(String messageFormat, @Nullable CustomPlayer customPlayerSender, @Nullable CustomPlayer customPlayerRecipient, @Nullable String message) {
 		//  If there is a sender, format sender
 		if (customPlayerSender != null) {
 			messageFormat = messageFormat.replace("$N", customPlayerSender.getPlayer().getDisplayName());
@@ -158,7 +159,7 @@ public abstract class MessageFormat
 	
 	// Copy from above except changing it to Commendsender
 	
-	public static String format(String messageFormat,CommandSender sender,OfflinePlayer recipient,String message) 
+	public static String format(String messageFormat, CommandSender sender, @NotNull OfflinePlayer recipient, String message)
 	{
 		if (sender instanceof Player)
 			if (recipient.isOnline())
@@ -182,7 +183,7 @@ public abstract class MessageFormat
 		}*/
 	}
 	
-	public static String formatOfflineRecipient(String messageFormat,CustomPlayer senderCustomPlayer,OfflinePlayer recipient,String message) 
+	public static String formatOfflineRecipient(String messageFormat, @Nullable CustomPlayer senderCustomPlayer, @Nullable OfflinePlayer recipient, @Nullable String message)
 	{
 		if (senderCustomPlayer != null) 
 		{

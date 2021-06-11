@@ -1,24 +1,24 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.chat.MessageFormat;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.TpRequest.tpType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.chat.MessageFormat;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
-import net.wigoftime.open_komodo.objects.TpRequest.tpType;
+import java.util.List;
+import java.util.UUID;
 
 public class TpaCommand extends Command
 {
 	public static final String errorCantFindPerson = String.format("%s» %sCan't find $D", net.md_5.bungee.api.ChatColor.YELLOW, net.md_5.bungee.api.ChatColor.GRAY);
 
-	public TpaCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public TpaCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                      @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}
@@ -26,7 +26,7 @@ public class TpaCommand extends Command
 	private static final String msgUsage = String.format("%s» %sUsage: /tpa (Player)", ChatColor.GOLD, ChatColor.GRAY);
 	
 	@Override
-	public boolean execute(CommandSender sender, String command, String[] args) 
+	public boolean execute(CommandSender sender, String command, String @NotNull [] args)
 	{
 		if (!(sender instanceof Player))
 			return false;

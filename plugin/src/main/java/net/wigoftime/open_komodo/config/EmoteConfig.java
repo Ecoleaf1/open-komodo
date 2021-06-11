@@ -1,12 +1,13 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 abstract public class EmoteConfig 
 {
@@ -159,7 +160,7 @@ abstract public class EmoteConfig
 		Emote.setup();
 	}
 	
-	public static File getFile() {
+	public static @NotNull File getFile() {
 		return config;
 	}
 	

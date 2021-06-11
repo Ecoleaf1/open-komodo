@@ -1,7 +1,5 @@
 package net.wigoftime.open_komodo.gui;
 
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -9,20 +7,14 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.UUID;
 
 public class MarriageGUI extends CustomGUI {
 
-    final ItemStack partnerIcon;
+    final @NotNull ItemStack partnerIcon;
 
     static final ItemStack divorceIcon = new ItemStack(Material.REDSTONE); {
         ItemMeta meta = divorceIcon.getItemMeta();
@@ -43,7 +35,7 @@ public class MarriageGUI extends CustomGUI {
         loveEmote.setItemMeta(meta);
     }
 
-    final OfflinePlayer partner;
+    final @NotNull OfflinePlayer partner;
 
     public MarriageGUI(@NotNull CustomPlayer openerCustomPlayer, @NotNull OfflinePlayer partner) {
         super(openerCustomPlayer, null, Bukkit.createInventory(null,27, "Marriage Menu"));
@@ -67,7 +59,7 @@ public class MarriageGUI extends CustomGUI {
     }
 
     @Override
-    public void clicked(InventoryClickEvent clickEvent) {
+    public void clicked(@NotNull InventoryClickEvent clickEvent) {
         clickEvent.setCancelled(true);
 
         if (clickEvent.getCurrentItem().equals(divorceIcon)) {

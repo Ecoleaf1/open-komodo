@@ -1,20 +1,19 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.io.File;
+import java.util.Iterator;
+import java.util.List;
 
 public class PropShop extends CustomGUI
 {
@@ -43,7 +42,7 @@ public class PropShop extends CustomGUI
 		return;
 	}
 	
-	public void clicked(InventoryClickEvent clickEvent) {
+	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItemStack = clickEvent.getCurrentItem();
 		

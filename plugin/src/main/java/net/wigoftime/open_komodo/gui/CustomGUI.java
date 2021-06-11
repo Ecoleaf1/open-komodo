@@ -1,13 +1,13 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.enums.ErrorType;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.permissions.Permission;
-
-import net.wigoftime.open_komodo.enums.ErrorType;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class CustomGUI 
 {
@@ -42,7 +42,7 @@ public abstract class CustomGUI
 		opener.setActiveGui(this);
 	}
 	
-	static void sendErrorMessage(Player player, ErrorType type)
+	static void sendErrorMessage(@NotNull Player player, @NotNull ErrorType type)
 	{
 		switch (type) 
 		{

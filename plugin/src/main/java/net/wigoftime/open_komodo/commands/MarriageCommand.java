@@ -18,7 +18,7 @@ public class MarriageCommand extends Command {
     }
 
     @Override
-    public boolean execute(@NotNull CommandSender commandSender, @NotNull String command, @NotNull String[] arguments) {
+    public boolean execute(@NotNull CommandSender commandSender, @NotNull String command, @NotNull String @NotNull [] arguments) {
         if (!(commandSender instanceof Player)) return true;
 
         CustomPlayer commanderCustom = CustomPlayer.get(((Player) commandSender).getUniqueId());
@@ -48,7 +48,7 @@ public class MarriageCommand extends Command {
         return true;
     }
 
-    private void marry(CustomPlayer commanderCustom, String[] arguments) {
+    private void marry(@NotNull CustomPlayer commanderCustom, String[] arguments) {
         for (CustomPlayer index : CustomPlayer.getOnlinePlayers()) {
             if (!index.getPlayer().getDisplayName().equalsIgnoreCase(arguments[1])) continue;
 
@@ -56,7 +56,7 @@ public class MarriageCommand extends Command {
         }
     }
 
-    private void divorce(CustomPlayer commanderCustom, String[] arguments) {
+    private void divorce(@NotNull CustomPlayer commanderCustom, String[] arguments) {
         commanderCustom.divorce(arguments[1]);
     }
 }

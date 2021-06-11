@@ -1,11 +1,12 @@
 package net.wigoftime.open_komodo.etc;
 
 import net.minecraft.server.v1_16_R1.EntityTypes;
+import org.jetbrains.annotations.NotNull;
 
 public abstract class TypeToEnum 
 {
 	// Get Entity Type from a String
-	public static EntityTypes<?> convertToEntityTypes(String type)
+	public static EntityTypes<?> convertToEntityTypes(@NotNull String type)
 	{
 		
 		switch(type)

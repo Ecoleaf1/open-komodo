@@ -1,32 +1,22 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.UUID;
-
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Currency;
+import net.wigoftime.open_komodo.objects.CustomItem;
+import net.wigoftime.open_komodo.objects.Home;
+import net.wigoftime.open_komodo.objects.Pet;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.objects.CustomItem;
-import net.wigoftime.open_komodo.objects.Home;
-import net.wigoftime.open_komodo.objects.Pet;
+import java.io.*;
+import java.time.Instant;
+import java.util.*;
 
 public abstract class PlayerConfig
 {
@@ -34,7 +24,7 @@ public abstract class PlayerConfig
 	
 	private static boolean isBeingWritten = false;
 	
-	private static LinkedList<Runnable> quoteList = new LinkedList<Runnable>();
+	private static @NotNull LinkedList<Runnable> quoteList = new LinkedList<Runnable>();
 	private synchronized static void writeQuote(Runnable runnable) {
 		quoteList.add(runnable);
 			
@@ -70,18 +60,18 @@ public abstract class PlayerConfig
 		folder.mkdir();
 	}
 	
-	private static File getConfigFile(UUID uuid) {
+	private static @NotNull File getConfigFile(@NotNull UUID uuid) {
 		File file = new File(String.format("%s/%s.yml", folderPath, uuid.toString()));
 		
 		return file;
 	}
 	
-	public static boolean contains(UUID uuid) {
+	public static boolean contains(@NotNull UUID uuid) {
 		if (!getConfigFile(uuid).exists()) return false;
 		return true;
 	}
 	
-	public static void createPlayerConfig(UUID uuid) {
+	public static void createPlayerConfig(@NotNull UUID uuid) {
 		// Try write a new config file
 		try {
 			InputStream is = Main.class.getClassLoader().getResourceAsStream("default_configs/PlayerConfig.yml");
@@ -123,7 +113,7 @@ public abstract class PlayerConfig
 	
 	// Active Rank functions
 	
-	public static String getActiveTag(UUID uuid) {
+	public static @Nullable String getActiveTag(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -134,7 +124,7 @@ public abstract class PlayerConfig
 		return activeTag;
 	}
 	
-	public static void setActiveTag(UUID uuid, String activeTag) {
+	public static void setActiveTag(@NotNull UUID uuid, String activeTag) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -159,7 +149,7 @@ public abstract class PlayerConfig
 	
 	// Rank ID functions
 	
-	public static int getRankID(UUID uuid) {
+	public static int getRankID(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -170,7 +160,7 @@ public abstract class PlayerConfig
 		return rankID;
 	}
 	
-	public static void setRankID(UUID uuid, int rankID) {
+	public static void setRankID(@NotNull UUID uuid, int rankID) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -196,7 +186,7 @@ public abstract class PlayerConfig
 	
 	// Tip Functions
 	
-	public static float getTip(UUID uuid) {
+	public static float getTip(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -207,7 +197,7 @@ public abstract class PlayerConfig
 		return tip;
 	}
 	
-	public static void setTip(UUID uuid, float tip) {
+	public static void setTip(@NotNull UUID uuid, float tip) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -238,7 +228,7 @@ public abstract class PlayerConfig
 	
 	// XP Functions
 	
-	public static double getXP(UUID uuid) {
+	public static double getXP(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -249,7 +239,7 @@ public abstract class PlayerConfig
 		return xp;
 	}
 	
-	public static void setXP(UUID uuid, double xp) {
+	public static void setXP(@NotNull UUID uuid, double xp) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -274,7 +264,7 @@ public abstract class PlayerConfig
 	
 	// Join Date Functions
 	
-	public static Date getJoinDate(UUID uuid) {
+	public static @Nullable Date getJoinDate(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -289,7 +279,7 @@ public abstract class PlayerConfig
 		return joinDate;
 	}
 	
-	public static void setJoinDate(UUID uuid, Date date) {
+	public static void setJoinDate(@NotNull UUID uuid, Date date) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -314,7 +304,7 @@ public abstract class PlayerConfig
 	
 	// Currency functions
 	
-	public static int getCurrency(UUID uuid, Currency currencyType) {
+	public static int getCurrency(@NotNull UUID uuid, @NotNull Currency currencyType) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -331,7 +321,7 @@ public abstract class PlayerConfig
 		return 0;
 	}
 	
-	public static void setCurrency(UUID uuid, Currency currencyType, int amount) {
+	public static void setCurrency(@NotNull UUID uuid, @NotNull Currency currencyType, int amount) {
 		
 		Runnable task = new Runnable() {
 			public void run() {
@@ -365,7 +355,7 @@ public abstract class PlayerConfig
 	
 	// Mute Date functions
 	
-	public static Date getMuteDate(UUID uuid) {
+	public static @Nullable Date getMuteDate(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -376,7 +366,7 @@ public abstract class PlayerConfig
 		return muteDate;
 	}
 	
-	public static void setMuteDate(UUID uuid, Date date) {
+	public static void setMuteDate(@NotNull UUID uuid, Date date) {
 		Runnable task = new Runnable() {
 			public void run() {
 				YamlConfiguration playerYamlConfig;
@@ -400,7 +390,7 @@ public abstract class PlayerConfig
 	
 	// Mute Reason functions
 	
-	public static String getMuteReason(UUID uuid) {
+	public static @Nullable String getMuteReason(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -411,7 +401,7 @@ public abstract class PlayerConfig
 		return muteReason;
 	}
 	
-	public static void setMuteReason(UUID uuid, String muteReason) {
+	public static void setMuteReason(@NotNull UUID uuid, String muteReason) {
 		Runnable task = new Runnable() {
 			public void run() {
 				YamlConfiguration playerYamlConfig;
@@ -435,7 +425,7 @@ public abstract class PlayerConfig
 	
 	// Ban Date functions
 	
-	public static Date getBanDate(UUID uuid) {
+	public static @Nullable Date getBanDate(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -446,7 +436,7 @@ public abstract class PlayerConfig
 		return banDate;
 	}
 	
-	public static void setBanDate(UUID uuid, Date date) {
+	public static void setBanDate(@NotNull UUID uuid, Date date) {
 		Runnable task = new Runnable() {
 			public void run() {
 				YamlConfiguration playerYamlConfig;
@@ -470,7 +460,7 @@ public abstract class PlayerConfig
 	
 	// Ban Reason functions
 	
-	public static String getBanReason(UUID uuid) {
+	public static @Nullable String getBanReason(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -481,7 +471,7 @@ public abstract class PlayerConfig
 		return banReason;
 	}
 	
-	public static void setBanReason(UUID uuid, String banReason) {
+	public static void setBanReason(@NotNull UUID uuid, String banReason) {
 		Runnable task = new Runnable() {
 			public void run() {
 				YamlConfiguration playerYamlConfig;
@@ -505,7 +495,7 @@ public abstract class PlayerConfig
 	
 	// Owned item list functions
 	
-	public static List<CustomItem> getItems(UUID uuid) {
+	public static @NotNull List<CustomItem> getItems(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -521,7 +511,7 @@ public abstract class PlayerConfig
 		return itemList;
 	}
 	
-	public static void setItems(UUID uuid, List<CustomItem> items) {
+	public static void setItems(@NotNull UUID uuid, @NotNull List<CustomItem> items) {
 		Runnable task = new Runnable() {
 			public void run() {
 				File file = getConfigFile(uuid);
@@ -551,7 +541,7 @@ public abstract class PlayerConfig
 	
 	// List of owned pets functions
 	
-	public static List<Pet> getPets(UUID uuid) {
+	public static @NotNull List<Pet> getPets(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -567,7 +557,7 @@ public abstract class PlayerConfig
 		return petList;
 	}
 	
-	public static void setPets(UUID uuid, List<Pet> pets) {
+	public static void setPets(@NotNull UUID uuid, @NotNull List<Pet> pets) {
 		Runnable task = new Runnable() {
 			public void run() {
 				List<Integer> idList = new ArrayList<Integer>(pets.size());
@@ -595,7 +585,7 @@ public abstract class PlayerConfig
 	
 	// List of homes functions
 	
-	public static List<Home> getHomes(UUID uuid) {
+	public static @NotNull List<Home> getHomes(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -614,7 +604,7 @@ public abstract class PlayerConfig
 		return homeList;
 	}
 	
-	public static void setHomes(UUID uuid, List<Home> homes) {
+	public static void setHomes(@NotNull UUID uuid, @NotNull List<Home> homes) {
 		Runnable task = new Runnable() {
 			public void run() {
 				YamlConfiguration playerYamlConfig;
@@ -650,7 +640,7 @@ public abstract class PlayerConfig
 	
 	// Permission functions
 	
-	public static List<Permission> getGlobalPermissions(UUID uuid) {
+	public static @NotNull List<Permission> getGlobalPermissions(@NotNull UUID uuid) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -663,7 +653,7 @@ public abstract class PlayerConfig
 		return permissions;
 	}
 	
-	public static void setGlobalPermissions(UUID uuid, List<Permission> permissions) {
+	public static void setGlobalPermissions(@NotNull UUID uuid, @NotNull List<Permission> permissions) {
 		final List<String> permissionNodes = new ArrayList<String>(permissions.size());
 		for (Permission permission : permissions)
 			permissionNodes.add(permission.getName());
@@ -687,7 +677,7 @@ public abstract class PlayerConfig
 		writeQuote(task);
 	}
 	
-	public static List<Permission> getWorldPermissions(UUID uuid, String worldName) {
+	public static @NotNull List<Permission> getWorldPermissions(@NotNull UUID uuid, @NotNull String worldName) {
 		YamlConfiguration playerYamlConfig;
 		playerYamlConfig = YamlConfiguration.loadConfiguration(getConfigFile(uuid));
 		
@@ -708,7 +698,7 @@ public abstract class PlayerConfig
 		return permissions;
 	}
 	
-	private static void createWorld(YamlConfiguration config, UUID uuid, String worldName) {
+	private static void createWorld(@NotNull YamlConfiguration config, UUID uuid, @NotNull String worldName) {
 		ConfigurationSection worldsSection;
 		worldsSection = config.getConfigurationSection("Worlds");
 		
@@ -717,7 +707,7 @@ public abstract class PlayerConfig
 		worldSection.set("World Permissions", new ArrayList<String>());
 	}
 	
-	public static void setWorldPermissions(UUID uuid, String worldName, List<Permission> permissions) {
+	public static void setWorldPermissions(@NotNull UUID uuid, @NotNull String worldName, @NotNull List<Permission> permissions) {
 		final List<String> permissionNodes = new ArrayList<String>(permissions.size());
 		for (Permission permission : permissions)
 			permissionNodes.add(permission.getName());

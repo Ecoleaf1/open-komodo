@@ -1,18 +1,18 @@
 package net.wigoftime.open_komodo.commands;
 
-import java.util.List;
-
+import net.wigoftime.open_komodo.etc.UpdateLog;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import net.wigoftime.open_komodo.etc.UpdateLog;
+import java.util.List;
 
 public class LogCommand extends Command
 {
 
-	public LogCommand(String name, String description, String usageMessage,
-			List<String> aliases) 
+	public LogCommand(@NotNull String name, @NotNull String description, @NotNull String usageMessage,
+                      @NotNull List<String> aliases)
 	{
 		super(name, description, usageMessage, aliases);
 	}

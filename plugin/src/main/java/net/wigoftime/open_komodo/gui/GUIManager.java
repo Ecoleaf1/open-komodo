@@ -1,25 +1,24 @@
 package net.wigoftime.open_komodo.gui;
 
-import java.util.Arrays;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
-import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.inventory.ItemStack;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.UUID;
 
 abstract public class GUIManager {
 	
-	public static void invItemClicked(InventoryClickEvent clickEvent) {
+	public static void invItemClicked(@NotNull InventoryClickEvent clickEvent) {
 		// If couldn't get item, return
 		if (clickEvent.getCurrentItem() == null) {
 			if (clickEvent.getCursor() != null)
@@ -78,14 +77,14 @@ abstract public class GUIManager {
 		}
 	}
 	
-	private static void clickedBag(CustomPlayer clickerCustomPlayer, ItemStack clickedItemStack ,InventoryClickEvent clickEvent) {
+	private static void clickedBag(@NotNull CustomPlayer clickerCustomPlayer, @NotNull ItemStack clickedItemStack , @NotNull InventoryClickEvent clickEvent) {
 		if (isSameBag(clickerCustomPlayer.getUniqueId(), clickedItemStack))
 			clickEvent.setCancelled(true);
 		
 		return;
 	}
 	
-	private static boolean isSameBag(UUID clickerUUID, ItemStack clickedItemStack) {
+	private static boolean isSameBag(UUID clickerUUID, @NotNull ItemStack clickedItemStack) {
 		if (!InventoryManagement.currentOpen.containsKey(clickerUUID))
 			return false;
 		
@@ -95,7 +94,7 @@ abstract public class GUIManager {
 		return clickedBagID == currentlyOpenedBagID ? true : false;
 	}
 	
-	private static void unmovableItem(ItemStack clickedItemStack, InventoryClickEvent clickEvent) {
+	private static void unmovableItem(@NotNull ItemStack clickedItemStack, @NotNull InventoryClickEvent clickEvent) {
 		if (!clickedItemStack.getItemMeta().hasCustomModelData()) return;
 		
 		int clickedItemID = clickedItemStack.getItemMeta().getCustomModelData();
@@ -110,7 +109,7 @@ abstract public class GUIManager {
 		if (item.getType() == ItemType.PHONE) clickEvent.setCancelled(true);
 	}
 	
-	 public static void inventoryClosed(InventoryCloseEvent closeEvent) {	
+	 public static void inventoryClosed(@NotNull InventoryCloseEvent closeEvent) {
 		 PrintConsole.test("1");
 		CustomPlayer customPlayer = CustomPlayer.get(closeEvent.getPlayer().getUniqueId());
 		if (customPlayer == null)

@@ -1,5 +1,8 @@
 package net.wigoftime.open_komodo.events;
 
+import github.scarsz.discordsrv.DiscordSRV;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -14,33 +17,19 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerChangedWorldEvent;
-import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerEditBookEvent;
-import org.bukkit.event.player.PlayerEggThrowEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
-import org.bukkit.event.player.PlayerRespawnEvent;
-import org.bukkit.event.player.PlayerSwapHandItemsEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.spigotmc.event.entity.EntityDismountEvent;
 
-import github.scarsz.discordsrv.DiscordSRV;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.etc.PrintConsole;
-
 public class EventListener implements Listener {
-	private final DiscordSRVListener discordListener;
+	private final @Nullable DiscordSRVListener discordListener;
 	
-	public EventListener(Plugin plugin) {
+	public EventListener(@NotNull Plugin plugin) {
 		Bukkit.getPluginManager().registerEvent(PlayerJoinEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.PlayerJoin(), plugin);
 		Bukkit.getPluginManager().registerEvent(PlayerDropItemEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.DropItem(), plugin);
 		Bukkit.getPluginManager().registerEvent(BlockPlaceEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockPlace(), plugin);

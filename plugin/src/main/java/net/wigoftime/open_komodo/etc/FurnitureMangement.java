@@ -1,5 +1,6 @@
 package net.wigoftime.open_komodo.etc;
 
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
@@ -8,12 +9,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-
-import net.md_5.bungee.api.ChatColor;
-import net.wigoftime.open_komodo.objects.CustomItem;
+import org.jetbrains.annotations.NotNull;
 
 abstract public class FurnitureMangement {
-	public static void createFurniture(ItemStack furnitureItem, PlayerInteractEvent interactEvent) {
+	public static void createFurniture(ItemStack furnitureItem, @NotNull PlayerInteractEvent interactEvent) {
 		// Disabled it due to armorstand editor plugin having issues
 		if (true) return;
 
@@ -28,7 +27,7 @@ abstract public class FurnitureMangement {
 		interactEvent.getPlayer().sendMessage(String.format("%s» %sFurniture placed", ChatColor.GOLD, ChatColor.GRAY));
 	}
 	
-	public static void rotateFurniture(PlayerInteractEntityEvent interactEvent) {
+	public static void rotateFurniture(@NotNull PlayerInteractEntityEvent interactEvent) {
 		// Disabled it due to armorstand editor plugin having issues
 		if (true) return;
 
@@ -38,7 +37,7 @@ abstract public class FurnitureMangement {
 		interactEvent.getPlayer().sendMessage(String.format("%s» %sFurniture rotated", ChatColor.GOLD, ChatColor.GRAY));
 	}
 	
-	public static void deleteFurniture(EntityDamageByEntityEvent damageEvent) {
+	public static void deleteFurniture(@NotNull EntityDamageByEntityEvent damageEvent) {
 		// Disabled it due to armorstand editor plugin having issues
 		if (true) return;
 
@@ -46,7 +45,7 @@ abstract public class FurnitureMangement {
 		damageEvent.getDamager().sendMessage(String.format("%s» %sFurniture deleted", ChatColor.GOLD, ChatColor.DARK_RED));
 	}
 	
-	public static boolean isValid (ItemStack item) {
+	public static boolean isValid (@NotNull ItemStack item) {
 		// Disabled it due to armorstand editor plugin having issues
 		if (true) return false;
 

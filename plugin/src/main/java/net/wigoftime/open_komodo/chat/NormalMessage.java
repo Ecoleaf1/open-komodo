@@ -1,23 +1,18 @@
 package net.wigoftime.open_komodo.chat;
 
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import net.wigoftime.open_komodo.etc.PrintConsole;
+import github.scarsz.discordsrv.DiscordSRV;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.*;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
-import github.scarsz.discordsrv.DiscordSRV;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.wigoftime.open_komodo.Main;
-import net.wigoftime.open_komodo.objects.CustomPlayer;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class NormalMessage 
 {
@@ -25,7 +20,7 @@ public class NormalMessage
 	// Distance Range by blocks set in Config.
 	private static final int distanceR = Main.getDistanceRange();
 	
-	public static void sendMessage(CustomPlayer senderCustomPlayer, String message) {	
+	public static void sendMessage(@NotNull CustomPlayer senderCustomPlayer, String message) {
 		if (senderCustomPlayer.isInTutorial())
 		if (!senderCustomPlayer.getTutorial().validState(NormalMessage.class)) return;
 		
@@ -149,7 +144,7 @@ public class NormalMessage
 		sendToDiscord(senderCustomPlayer, message);
 	}
 	
-	public static void sendToDiscord(CustomPlayer playerCustomPlayer, String message) {
+	public static void sendToDiscord(@NotNull CustomPlayer playerCustomPlayer, String message) {
 		if (Main.getDiscordSRV() == null)
 			return;
 		
@@ -160,7 +155,7 @@ public class NormalMessage
 		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(playerCustomPlayer.getPlayer(), message, null, false);
 	}
 	
-	private static void sendMonitorMessage(CustomPlayer messenger, String message, CustomPlayer monitorPlayer) {
+	private static void sendMonitorMessage(@NotNull CustomPlayer messenger, String message, @NotNull CustomPlayer monitorPlayer) {
 		monitorPlayer.getPlayer().sendMessage(String.format("%s[Public] %s%s%s: %s%s", 
 				ChatColor.YELLOW, ChatColor.DARK_GRAY, messenger.getPlayer().getDisplayName(), 
 				ChatColor.RESET, ChatColor.GRAY, message));

@@ -1,5 +1,8 @@
 package net.wigoftime.open_komodo.sql;
 
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 public class SQLCode {
 	public static enum SQLCodeType {CREATE_MAIN_TABLE, CREATE_MODERATION_TABLE, CREATE_BAG_INVENTORY, CREATE_BAG_INVENTORY_TABLE, CREATE_MAIL_TABLE, SET_BAG_INVENTORY, GET_BAG_INVENTORY, GET_LATEST_BAGID, CREATE_WORLD_TABLE,
 		SAVE_ITEMS, GET_FULL_PLAYER, GET_ITEMS, GET_ACTIVE_TAG, SET_ACTIVE_TAG, GET_JOINDATE, CONTAINS_PLAYER, SET_XP, GET_XP, CREATE_PLAYER, CREATE_MODERATION_PLAYER, CONTAINS_MODERATION_PLAYER, CONTAINS_WORLD_PLAYER, CREATE_WORLD_PLAYER,
@@ -11,7 +14,7 @@ public class SQLCode {
 
 	}
 
-	public static final String getSQLCode(SQLCodeType type) {
+	public static final @Nullable String getSQLCode(@NotNull SQLCodeType type) {
 		switch (type) {
 		case CONTAINS_PLAYER:
 			return "SELECT `UUID` FROM `OpenKomodo.Main` WHERE `UUID` = ?;";

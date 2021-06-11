@@ -1,19 +1,13 @@
 package net.wigoftime.open_komodo.config;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.UUID;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.Settings;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
+
+import java.io.*;
+import java.util.UUID;
 
 abstract public class PlayerSettingsConfig {
 	private static final File settingsFolder = new File(Main.dataFolderPath+"/PlayerSettings");
@@ -23,16 +17,16 @@ abstract public class PlayerSettingsConfig {
 			settingsFolder.mkdir();
 	}
 	
-	private static File getFile(UUID uuid) {
+	private static @NotNull File getFile(@NotNull UUID uuid) {
 		return new File(String.format("%s/%s.yml", settingsFolder.getAbsolutePath(), uuid.toString()));
 	}
 		
-	public static boolean contains(UUID uuid) {
+	public static boolean contains(@NotNull UUID uuid) {
 		if (!getFile(uuid).exists()) return false;
 		return true;
 	}
 	
-	public static void create(UUID uuid) {
+	public static void create(@NotNull UUID uuid) {
 		try {
 			InputStream is = Main.class.getClassLoader().getResourceAsStream("default_configs/PlayerSettings.yml");
 			
@@ -68,7 +62,7 @@ abstract public class PlayerSettingsConfig {
 		}
 	}
 	
-	public static Settings getSettings(UUID uuid) {
+	public static @NotNull Settings getSettings(@NotNull UUID uuid) {
 		File file = getFile(uuid);
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		
@@ -153,7 +147,7 @@ abstract public class PlayerSettingsConfig {
 		return new Settings(uuid, currentPhone, activeTagDisplay, displayTip, masterSounds, tpaEnabled, playerParticlesEnabled, isDiscordChatEnabled);
 	}
 	
-	public static void setSettings(Settings settings, UUID uuid) {
+	public static void setSettings(@NotNull Settings settings, @NotNull UUID uuid) {
 		File file = new File(String.format("%s/%s.yml", settingsFolder.getAbsolutePath(), uuid.toString()));
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(file);
 		

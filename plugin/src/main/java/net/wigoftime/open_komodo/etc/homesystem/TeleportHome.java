@@ -2,9 +2,10 @@ package net.wigoftime.open_komodo.etc.homesystem;
 
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Home;
+import org.jetbrains.annotations.NotNull;
 
 public class TeleportHome {
-	public static void teleport(CustomPlayer player, String homeName) {
+	public static void teleport(@NotNull CustomPlayer player, String homeName) {
 		Home home = player.getHome(homeName);
 		if (home == null) {
 			player.getPlayer().sendMessage(HomeSystem.invaildHouse);

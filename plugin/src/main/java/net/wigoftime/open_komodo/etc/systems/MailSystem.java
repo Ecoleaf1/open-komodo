@@ -3,7 +3,6 @@ package net.wigoftime.open_komodo.etc.systems;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.Filter;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
@@ -16,7 +15,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nullable;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +36,7 @@ public class MailSystem {
         return SQLManager.countMail(playerCustom.getUniqueId()) > 0 ? true : false;
     }
 
-    public void sendMail(UUID recipientUUID, String message) {
+    public void sendMail(@NotNull UUID recipientUUID, String message) {
         if (!isEnabled(playerCustom.getPlayer())) return;
 
         if (SQLManager.countMail(recipientUUID) > mailMax) {
