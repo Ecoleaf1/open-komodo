@@ -52,17 +52,6 @@ public class PlayerJoin implements EventExecutor {
 				// Create CustomPlayer to hold custom Variables.
 				CustomPlayer playerCustomPlayer = new CustomPlayer(joinEvent.getPlayer());
 				
-				// Get saved items from inventory
-				InventoryManagement.loadInventory(playerCustomPlayer, playerCustomPlayer.getPlayer().getWorld());
-				
-				// Put player in rank system
-				RankSystem.putPlayer(playerCustomPlayer.getPlayer());
-				
-				// Setup player's permissions
-				Permissions.setUp(playerCustomPlayer);
-
-				playerCustomPlayer.getNicknameSystem().setupCustomName();
-				
 				Runnable mainThreadSetup = new Runnable() {
 					
 					public void run() {

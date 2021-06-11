@@ -193,8 +193,8 @@ public class NicknameSystem
 		return nameClone;
 	}
 
-	public void setupCustomName() {
-		customName = SQLManager.getNickName(playerCustom.getPlayer());
+	public void setupCustomName(BaseComponent[] customName) {
+		this.customName = customName;
 	}
 
 	public void setCustomName(BaseComponent[] name, String rawFormatName) {

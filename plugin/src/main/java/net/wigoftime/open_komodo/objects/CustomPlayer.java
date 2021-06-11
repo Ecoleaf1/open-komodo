@@ -1,5 +1,6 @@
 package net.wigoftime.open_komodo.objects;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,17 +91,31 @@ public class CustomPlayer {
 			if (!SQLManager.containsPlayer(uuid)) SQLManager.createPlayer(uuid);
 			if (!SQLManager.containsModerationPlayer(uuid)) SQLManager.createModerationPlayer(uuid);
 
-			this.joinDate = SQLManager.getJoinDate(uuid);
+			List<Object> fullPlayerDetails = SQLManager.getFullMainPlayer(uuid);
+
+			this.joinDate = (Date) fullPlayerDetails.get(3);
 			moderationSystem.muteDate = SQLManager.getMuteDate(uuid);
 			moderationSystem.muteReason = SQLManager.getMuteReason(uuid);
-			rankSystem = new RankSystem(this, Rank.getRank(SQLManager.getRankID(uuid)), SQLManager.getXP(uuid));
-			donationSystem = new DonationSystem(this,SQLManager.getTip(uuid));
-			pointsBalance = SQLManager.getCurrency(uuid, Currency.POINTS);
-			coinsBalance = SQLManager.getCurrency(uuid, Currency.COINS);
-			this.ownedPets = SQLManager.getPets(uuid);
-			homeSystem = new HomeSystem(this, SQLManager.getHomes(uuid));
-			itemSystem = new ItemSystem(this,SQLManager.getItems(uuid));
+			rankSystem = new RankSystem(this, Rank.getRank((Integer) fullPlayerDetails.get(4)), ((BigDecimal) fullPlayerDetails.get(5)).doubleValue());
+			donationSystem = new DonationSystem(this, ((BigDecimal) fullPlayerDetails.get(7)).floatValue());
+			pointsBalance = ((Long) fullPlayerDetails.get(8)).intValue();
+			coinsBalance = ((Long) fullPlayerDetails.get(9)).intValue();
+			this.ownedPets = SQLManager.formatToPets((byte[]) fullPlayerDetails.get(11));
+			homeSystem = new HomeSystem(this, SQLManager.formatHomesList((byte[]) fullPlayerDetails.get(12)));
+			itemSystem = new ItemSystem(this,SQLManager.formatToItems((String) fullPlayerDetails.get(10), player));
 			marriageSystem = new MarriageSystem(this, SQLManager.getMarry(uuid));
+
+
+			// Get saved items from inventory
+			InventoryManagement.loadInventory(this, player.getWorld());
+
+			// Put player in rank system
+			RankSystem.putPlayer(player);
+
+			// Setup player's permissions
+			Permissions.setUp(this);
+
+			getNicknameSystem().setupCustomName(SQLManager.formatToNickname((String) fullPlayerDetails.get(1)));
 		} else {
 			this.joinDate = PlayerConfig.getJoinDate(uuid);
 			moderationSystem.muteDate = PlayerConfig.getMuteDate(uuid);

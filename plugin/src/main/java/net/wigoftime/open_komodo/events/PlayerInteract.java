@@ -118,7 +118,7 @@ public class PlayerInteract implements EventExecutor {
 			}
 
 			if (itemStack == null) return;
-			if (itemStack.hasItemMeta()) return;
+			if (!(itemStack.hasItemMeta())) return;
 			if (!(itemStack.getItemMeta().hasCustomModelData())) return;
 			
 			if (specialItem(itemStack, playerCustom, event)) {

@@ -14,6 +14,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.wigoftime.open_komodo.custommobs.CustomPet;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.etc.systems.MailSystem;
@@ -27,6 +29,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -68,20 +72,28 @@ abstract public class SQLManager {
 	
 	public static List<CustomItem> getItems(UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
+
+		List<CustomItem> itemList = formatToItems((String) new SQLCard(SQLCodeType.GET_ITEMS, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute().get(0),
+				Bukkit.getOfflinePlayer(uuid).getPlayer() != null ? Bukkit.getOfflinePlayer(uuid).getPlayer() : null);
+		return itemList;
+	}
+
+	public static List<CustomItem> formatToItems(String json, @Nullable Player player) {
 		JSONArray array;
-		//Blob uuidBlob = uuidTo
-		
 		JSONParser parser = new JSONParser();
+
 		try {
-			array = (JSONArray) parser.parse((String) new SQLCard(SQLCodeType.GET_ITEMS, SQLCard.SQLCardType.GET,
-					Arrays.asList(),
-					Arrays.asList(playerBlob)).execute().get(0));
-		} catch (ParseException e) {
-			e.printStackTrace();
+			array = (JSONArray) parser.parse(json);
+		} catch (ParseException exception) {
+			exception.printStackTrace();
+			if (player != null)
+				player.sendMessage(ChatColor.DARK_RED + "!!! ERROR, COULDN'T PARSE YOUR ITEMS, RESETTING.\nCONTACT FOR SUPPORT TO GET ITEMS BACK!");
 			return new ArrayList<CustomItem>(0);
 		}
+
 		List<CustomItem> list = new ArrayList<CustomItem>(array.size());
-		
 		Iterator arrayIterator = array.iterator();
 		while (arrayIterator.hasNext()) list.add(CustomItem.getCustomItem(((Long) arrayIterator.next()).intValue()));
 		return list;
@@ -301,6 +313,14 @@ abstract public class SQLManager {
 				Arrays.asList(),
 				Arrays.asList(reason, playerBlob)).execute();
 	}
+
+	public static List<Object> getFullMainPlayer(UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
+		return new SQLCard(SQLCodeType.GET_FULL_PLAYER, (byte) 13, SQLCard.SQLCardType.GET,
+				Arrays.asList(),
+				Arrays.asList(playerBlob)).execute();
+	}
 	
 	public static void setNickName(UUID uuid, String nickname) {
 		Blob playerBlob = uuidToBlob(uuid);
@@ -316,10 +336,28 @@ abstract public class SQLManager {
 		final String nicknameRaw = (String) new SQLCard(SQLCodeType.GET_NICKNAME, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(playerBlob)).execute().get(0);
-		if (nicknameRaw.length() == 0) return null;
+
+		BaseComponent[] nickname = formatToNickname(nicknameRaw);
+		return formatToNickname(nicknameRaw, player);
+	}
+
+	public static @Nullable BaseComponent[] formatToNickname(@NotNull String nicknameRaw) {
 		BaseComponent[] nickname;
-		nickname = NicknameSystem.translateRGBColorCodes('#', '&', nicknameRaw);
-		
+		if (nicknameRaw.length() == 0) {
+			return null;
+		};
+
+		return NicknameSystem.translateRGBColorCodes('#', '&', nicknameRaw);
+	}
+
+	public static @NotNull BaseComponent[] formatToNickname(@NotNull String nicknameRaw, @NotNull Player player) {
+		BaseComponent[] nickname = formatToNickname(nicknameRaw);
+		if (nickname == null) {
+			ComponentBuilder builder = new ComponentBuilder();
+			builder.append(player.getDisplayName());
+			return builder.create();
+		}
+
 		return nickname;
 	}
 
@@ -569,14 +607,18 @@ abstract public class SQLManager {
 		byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_HOMES, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(uuidBlob)).execute().get(0);
-		
+
+		return formatHomesList(serialized);
+	}
+
+	public static List<Home> formatHomesList(byte[] serialized) {
 		// Deserialize list
 		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
 			List<Home> homes = (List<Home>) objectInputStream.readObject();
-			
+
 			return homes;
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
@@ -716,19 +758,22 @@ abstract public class SQLManager {
 		byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_PETS, SQLCard.SQLCardType.GET,
 				Arrays.asList(),
 				Arrays.asList(uuidBlob)).execute().get(0);
-		
+		return formatToPets(serialized);
+	}
+
+	public static List<Pet> formatToPets(byte[] serialized) {
 		// Deserialized list of pet IDs
 		ByteArrayInputStream byteInputStream = new ByteArrayInputStream(serialized);
 		BukkitObjectInputStream objectInputStream = null;
 		try {
 			objectInputStream = new BukkitObjectInputStream(byteInputStream);
 			List<Integer> idList = (List<Integer>) objectInputStream.readObject();
-			
+
 			// Convert list of IDs to list of Pets
 			List<Pet> pets = new ArrayList<Pet>(idList.size());
 			for (int id : idList)
 				pets.add(Pet.getPet(id));
-			
+
 			return pets;
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
