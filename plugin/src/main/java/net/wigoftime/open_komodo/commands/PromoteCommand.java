@@ -54,7 +54,7 @@ public class PromoteCommand extends Command {
 		if (args[1].equalsIgnoreCase("add")) isAdding = true;
 		else isAdding = false;
 
-		OfflinePlayer targetPlayer = Bukkit.getPlayer(args[2]);
+		OfflinePlayer targetPlayer = Bukkit.getOfflinePlayer(args[2]);
 
 		if (args.length > 4) {
 			World targetWorld = Bukkit.getWorld(args[3]);
