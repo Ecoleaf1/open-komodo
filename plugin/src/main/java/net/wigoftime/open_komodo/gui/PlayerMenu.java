@@ -4,6 +4,8 @@ import net.wigoftime.open_komodo.etc.connectfour.ConnectFourSession;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -75,7 +77,12 @@ public class PlayerMenu extends CustomGUI {
     }
 
     private void mountClicked() {
-        selectedPlayerCustom.getPlayer().addPassenger(openerCustom.getPlayer());
+        Entity lastMountedEntity = selectedPlayerCustom.getPlayer();
+        while (true) {
+            if (lastMountedEntity.getPassengers().size() < 1) break;
+            lastMountedEntity = lastMountedEntity.getPassengers().get(0);
+        }
+        lastMountedEntity.addPassenger(openerCustom.getPlayer());
         opener.getPlayer().closeInventory();
     }
 

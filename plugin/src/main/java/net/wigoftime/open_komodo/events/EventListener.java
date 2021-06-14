@@ -20,6 +20,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.*;
+import org.bukkit.event.player.PlayerToggleSneakEvent;
 import org.bukkit.event.vehicle.VehicleDestroyEvent;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +59,8 @@ public class EventListener implements Listener {
 		Bukkit.getPluginManager().registerEvent(InventoryCloseEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.InventoryClose(), plugin);
 		Bukkit.getPluginManager().registerEvent(BlockFertilizeEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.BlockFertilize(), plugin);
 		Bukkit.getPluginManager().registerEvent(InventoryClickEvent.class, this, EventPriority.NORMAL, new net.wigoftime.open_komodo.events.InventoryClick(), plugin);
-		
+		Bukkit.getPluginManager().registerEvent(PlayerToggleSneakEvent.class, this, EventPriority.LOWEST, new net.wigoftime.open_komodo.events.PlayerToggleSneakEvent(), plugin);
+
 		if (Bukkit.getPluginManager().getPlugin("Votifier") == null)
 		PrintConsole.print("NuVotifier isn't detected, vote rewards disabled.");
 		else {

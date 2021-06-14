@@ -33,6 +33,10 @@ public class PlayerMove implements EventExecutor {
 		if (!moverCustomPlayer.isInTutorial())
 		if (passedWorldBorder(player.getLocation())) {
 			player.sendMessage(Permissions.getWorldBorderMessage());
+			player.getPassengers().stream().forEach(passenger -> {
+				player.removePassenger(passenger);
+				passenger.teleport(Main.spawnLocation);
+			});
 			player.teleport(Main.spawnLocation);
 		}
 		

@@ -68,10 +68,17 @@ public class TeleportSystem {
             return;
         }
 
-        if (tpRequest.getType() == TpRequest.tpType.TPA)
+        if (tpRequest.getType() == TpRequest.tpType.TPA) {
+            tpRequest.getRequester().getPassengers().stream().forEach(passenger -> {
+                tpRequest.getRequester().removePassenger(passenger);
+            });
             tpRequest.getRequester().teleport(tpRequest.getTarget());
-        else if (tpRequest.getType() == TpRequest.tpType.TPAHERE)
+        } else if (tpRequest.getType() == TpRequest.tpType.TPAHERE) {
+            tpRequest.getTarget().getPassengers().stream().forEach(passenger -> {
+                tpRequest.getTarget().removePassenger(passenger);
+            });
             tpRequest.getTarget().teleport(tpRequest.getRequester());
+        }
 
         String requesterMessage = MessageFormat.format(acceptedRequester, playerCustom.getPlayer(), tpRequest.getRequester(), null);
         String targetMessage = MessageFormat.format(acceptedTarget, playerCustom.getPlayer(), tpRequest.getRequester(), null);

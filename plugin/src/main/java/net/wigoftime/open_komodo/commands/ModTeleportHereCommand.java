@@ -35,7 +35,11 @@ public class ModTeleportHereCommand extends Command {
 		
 		if (targetPlayer == null)
 			return false;
-		
+
+		targetPlayer.getPassengers().stream().forEach(passenger -> {
+			targetPlayer.removePassenger(passenger);
+		});
+
 		targetPlayer.teleport(senderPlayer);
 		senderPlayer.sendMessage(String.format("%s» %sTeleported %s%s%s to your location", 
 				ChatColor.GOLD, ChatColor.GRAY, ChatColor.GOLD, senderPlayer.getDisplayName(),
