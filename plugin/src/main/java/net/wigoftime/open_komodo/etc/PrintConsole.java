@@ -7,7 +7,7 @@ abstract public class PrintConsole
 {
 	
 	// Used to enable the test print function, which is used to problem solve and fix issues.
-	private static final boolean debugMode = true;
+	private static boolean debugMode = false;
 	
 	private static final String name = Main.name;
 	
@@ -19,5 +19,9 @@ abstract public class PrintConsole
 	{
 		if (debugMode)
 			Bukkit.getLogger().info("["+name+"] "+text);
+	}
+
+	public static void setDebugMode(boolean isDebugOn) {
+		debugMode = isDebugOn;
 	}
 }

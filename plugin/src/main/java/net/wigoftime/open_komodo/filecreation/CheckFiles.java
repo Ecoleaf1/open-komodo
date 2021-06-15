@@ -33,6 +33,8 @@ abstract public class CheckFiles
 		}
 
 		FileCreation.create(ConfigType.NORMAL);
+		Config.setup();
+
 		SQLCard.setup();
 		
 		FileCreation.create(ConfigType.ITEM);

@@ -1,6 +1,7 @@
 package net.wigoftime.open_komodo.config;
 
 import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -11,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -201,6 +203,36 @@ abstract public class Config
 		boolean sslEnabled = section.getBoolean("EnableSSL");
 		
 		return new SQLInfo(enabled, type, database, host, user, password, sslEnabled);
+	}
+
+	public static void setup() {
+		boolean pendingWritten = false;
+
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		if (!yamlConfiguration.contains("Development")) {
+			yamlConfiguration.createSection("Development");
+			pendingWritten = true;
+		}
+
+		ConfigurationSection section = yamlConfiguration.getConfigurationSection("Development");
+		if (!section.contains("Debug")) {
+			section.set("Debug", false);
+			pendingWritten = true;
+		}
+
+		if (pendingWritten) {
+			try {
+				yamlConfiguration.save(configFile);
+			} catch (IOException exception) {
+				exception.printStackTrace();
+				PrintConsole.print(ChatColor.DARK_RED+" ERROR, COULDN'T WRITE IN FILE. THIS COULD CAUSE SOME ERRORS. " +
+						"IT IS RECOMMENDED THAT YOU STOP THE SERVER AND TEST IT OUT. Suggestions: Check if config.yml has the right file permissions. Check if you have space.");
+
+				return;
+			}
+		}
+
+		PrintConsole.setDebugMode(section.getBoolean("Debug"));
 	}
 	
 	public static @NotNull File getConfigFile() {

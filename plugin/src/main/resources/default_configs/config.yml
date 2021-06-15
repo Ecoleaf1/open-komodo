@@ -66,6 +66,8 @@ Global Settings:
     y: 120.0
     z: 612.0
 
+
+
 # Store player information in MySQL databases instead of files
 SQL:
   Enabled: false
@@ -75,3 +77,6 @@ SQL:
   User: ""
   Password: ""
   EnableSSL: false
+
+Development:
+  Debug: false

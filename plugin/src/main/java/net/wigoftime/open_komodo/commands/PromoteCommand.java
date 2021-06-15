@@ -65,17 +65,24 @@ public class PromoteCommand extends Command {
 
 			boolean addedResult;
 
-			if (isAdding)
+			if (isAdding) {
 				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[4]), targetWorld);
-			else
+				sender.sendMessage(ChatColor.GOLD+ "» "+ ChatColor.GRAY + args[3] + " has been added to " + targetPlayer.getName() + " in world "+ args[4]);
+
+			} else {
 				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[4]), targetWorld);
+				sender.sendMessage(ChatColor.GOLD+ "» "+ ChatColor.GRAY + args[3] + " has been removed from " + targetPlayer.getName() + " in world "+ args[4]);
+			}
 
 		} else {
 			boolean addedResult;
-			if (isAdding)
+			if (isAdding) {
 				addedResult = Permissions.addPermission(targetPlayer.getUniqueId(), new Permission(args[3]), null);
-			else
+				sender.sendMessage(ChatColor.GOLD+ "» "+ ChatColor.GRAY + args[3] + " has been added to " + targetPlayer.getName());
+			} else {
 				addedResult = Permissions.removePermission(targetPlayer.getUniqueId(), new Permission(args[3]), null);
+				sender.sendMessage(ChatColor.GOLD+ "» "+ ChatColor.GRAY + args[3] + " has been removed from " + targetPlayer.getName());
+			}
 		}
 	}
 
@@ -92,6 +99,8 @@ public class PromoteCommand extends Command {
 
 		if (playerCustom == null) SQLManager.setRankID(player.getUniqueId(),rank.getID());
 		else playerCustom.getRankSystem().setRank(rank);
+
+		sender.sendMessage(ChatColor.GOLD+ "» "+ChatColor.GRAY + player.getName()+" has been promoted to "+rank.getName());
 	}
 
 	private void listpermsSelector(@NotNull CommandSender sender, String @NotNull [] args) {
