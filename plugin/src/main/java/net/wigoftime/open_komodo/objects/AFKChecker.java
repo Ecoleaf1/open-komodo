@@ -8,10 +8,10 @@ public class AFKChecker implements Runnable {
 		for (CustomPlayer playerCustomPlayer : CustomPlayer.getOnlinePlayers())
 		{
 			if (playerCustomPlayer.isAfk())
-				return;
+				continue;
 			
-			if (playerCustomPlayer.getLastActiveTime().plusSeconds(480).isAfter(Instant.now())) 
-				return;
+			if (playerCustomPlayer.getLastActiveTime().plusSeconds(480).isAfter(Instant.now()))
+				continue;
 				
 			playerCustomPlayer.setAfk(true);
 		}

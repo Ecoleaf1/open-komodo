@@ -46,7 +46,7 @@ abstract public class ServerScoreBoard
 			score.setScore(i);
 		}
 		
-		Team team = getTeam(scoreboard, customPlayer);
+		Team team = customPlayer.isAfk() ? getAFKTeam(scoreboard, customPlayer) : getTeam(scoreboard, customPlayer);
 		
 		team.addEntry(customPlayer.getUniqueId().toString());
 		customPlayer.getPlayer().setScoreboard(scoreboard);
@@ -60,7 +60,7 @@ abstract public class ServerScoreBoard
 			if (playerIndex == playerJoined) continue;
 			
 			Scoreboard currentScoreboard = playerIndex.getPlayer().getScoreboard();
-			Team team = getTeam(currentScoreboard, playerJoined);
+			Team team = playerJoined.isAfk() ? getAFKTeam(currentScoreboard, playerJoined) : getTeam(currentScoreboard, playerJoined);
 			team.addEntry(playerJoined.getPlayer().getDisplayName());
 			
 			playerIndex.getPlayer().setScoreboard(currentScoreboard);
@@ -72,11 +72,10 @@ abstract public class ServerScoreBoard
 		
 		for (CustomPlayer playerIndex : CustomPlayer.getOnlinePlayers()) {
 			if (playerIndex == playerJoined) continue;
-			Team team = getTeam(currentScoreboard, playerIndex);
+			Team team = playerIndex.isAfk() ? getAFKTeam(currentScoreboard, playerIndex) : getTeam(currentScoreboard, playerIndex);
 			team.addEntry(playerIndex.getPlayer().getDisplayName());
-			
 		}
-		
+
 		playerJoined.getPlayer().setScoreboard(currentScoreboard);
 	}
 	
@@ -88,6 +87,17 @@ abstract public class ServerScoreBoard
 		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
 		
 		if (toSyncPlayer.getRank() != null) team.setPrefix(toSyncPlayer.getRank().getPrefix());
+		return team;
+	}
+
+	private static @Nullable Team getAFKTeam(@NotNull Scoreboard playerScoreBoard, @NotNull CustomPlayer toSyncPlayer) {
+		Team team = playerScoreBoard.getTeam(".AFKTEAM");
+
+		if (team == null) team = playerScoreBoard.registerNewTeam(".AFKTEAM");
+
+		team.setOption(Option.COLLISION_RULE, OptionStatus.NEVER);
+
+		team.setPrefix(ChatColor.GOLD + "" + ChatColor.BOLD + "AFK " + ChatColor.GRAY);
 		return team;
 	}
 }

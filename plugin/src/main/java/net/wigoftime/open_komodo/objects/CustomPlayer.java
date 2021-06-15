@@ -7,9 +7,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.config.PlayerSettingsConfig;
+import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.etc.Currency;
-import net.wigoftime.open_komodo.etc.InventoryManagement;
-import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.homesystem.HomeSystem;
 import net.wigoftime.open_komodo.etc.systems.*;
 import net.wigoftime.open_komodo.gui.CustomGUI;
@@ -199,14 +198,34 @@ public class CustomPlayer {
 	}
 	
 	public void setAfk(boolean afk) {
-		if (afk)
+		if (afk) {
 			this.getPlayer().sendMessage(ChatColor.GRAY + "You are now afk. While afk, Salary and potentially other rewards will be disabled.");
-		else {
-			if (this.isAfk)
+
+			CustomPlayer playerInference = this;
+			Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+				@Override
+				public void run() {
+					ServerScoreBoard.add(playerInference);
+					PlayerList.setAfk(playerInference, true);
+				}
+			});
+		} else {
+			if (this.isAfk) {
 				this.getPlayer().sendMessage(ChatColor.GRAY + "You are no longer afk, welcome back!");
+				PlayerList.setAfk(this, isAfk);
+
+				CustomPlayer playerInference = this;
+				Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
+					@Override
+					public void run() {
+						ServerScoreBoard.add(playerInference);
+						PlayerList.setAfk(playerInference, false);
+					}
+				});
+			}
 			this.lastActiveTime = Instant.now();
 		}
-		
+
 		isAfk = afk;
 	}
 	

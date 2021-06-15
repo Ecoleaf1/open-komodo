@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.etc;
 import net.md_5.bungee.api.ChatColor;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 abstract public class PlayerList 
@@ -23,5 +24,9 @@ abstract public class PlayerList
 			player.getPlayer().setPlayerListName(String.format("%s%s", ChatColor.GRAY, player.getPlayer().getDisplayName()));
 		else
 		player.getPlayer().setPlayerListName(String.format("%s%s", player.getRank().getPrefix(), player.getPlayer().getDisplayName()));
+	}
+
+	public static void setAfk(CustomPlayer player, boolean isAfk) {
+		player.getPlayer().setPlayerListName(String.format("%s%s", isAfk ? ChatColor.GOLD + "" + ChatColor.BOLD +"AFK " + ChatColor.GRAY : player.getRank().getPrefix(), player.getPlayer().getDisplayName()));
 	}
 }
