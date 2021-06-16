@@ -26,24 +26,22 @@ public class DiscordSRVListener {
     public void discordMessageProcessed(@NotNull DiscordGuildMessagePostProcessEvent event) {
         event.setCancelled(true);
 
-        switch (event.getChannel().getName()) {
-            case "minecraft-chat":
-                for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
-                    if (player.getSettings().isDiscordChatEnabled()) player.getPlayer().sendMessage(event.getProcessedMessage());
-                break;
-            case "moderation":
-                if (event.getMessage().getContentDisplay().startsWith(">")) {
-                    DiscordCommands.moderationCommand(event.getMessage().getContentDisplay());
-                    break;
-                }
+        if (((DiscordSRV) Main.getDiscordSRV()).getDestinationTextChannelForGameChannelName("minecraft-chat").getId() == event.getChannel().getId())
+            for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
+                if (player.getSettings().isDiscordChatEnabled()) player.getPlayer().sendMessage(event.getProcessedMessage());
+            if (((DiscordSRV) Main.getDiscordSRV()).getDestinationTextChannelForGameChannelName("moderation").getId() == event.getChannel().getId()) {
+            if (event.getMessage().getContentDisplay().startsWith(">")) {
+                DiscordCommands.moderationCommand(event.getMessage().getContentDisplay());
+                return;
+            }
 
-                Message discordMessage = event.getMessage();
-                for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
-                    player.getPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD +
-                            "Discord ModChat " + ChatColor.DARK_GRAY
-                            + discordMessage.getAuthor().getAsTag()
-                            + ChatColor.RESET +": "
-                            + ChatColor.GRAY + event.getMessage().getContentDisplay());
+            Message discordMessage = event.getMessage();
+            for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
+                player.getPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD +
+                        "Discord ModChat " + ChatColor.DARK_GRAY
+                        + discordMessage.getAuthor().getAsTag()
+                        + ChatColor.RESET + ": "
+                        + ChatColor.GRAY + event.getMessage().getContentDisplay());
         }
     }
 }
