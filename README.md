@@ -24,25 +24,69 @@ Below is where you can set the resource url to be (or download the resourcepack 
 https://drive.google.com/drive/folders/12UEmwj2jWY_M9Hpp-FzHeb730OIESRaq?usp=sharing
 
 ### Discord setup [Optional]
-To setup discord, you need to use their discord configuration file in the DiscordSRV's plugin folder. **If you have DiscordSRV in your plugins folder, but do not have it setup, the Open Komodo plugin will break.**
 
-In DiscordSRV's config file, go to `Channels` and set the first column as any name that you wish, and paste the discord channel ID in the second column (Write both of them within the quotation marks).
+**If you have DiscordSRV in your plugins folder, but do not have it setup, the Open Komodo plugin will break.**
 
-##### How to get the Discord Channel ID
-First, go into your discord settings > Advanced, and turn on Developer Mode
-![tutorial 1](https://i.imgur.com/G3uCjuC.png)
+Having a discord setup can be useful if you want Discord players & Minecraft players to talk to each other, while adding additonal channels like an automatic server status channel, as well as dontations and a moderation channel to moderate with Discord commands to moderate minecraft users via Discord. When Minecraft players link their discord to the server, it will also display their discord name (and tag) when someone hovers over their name in the Minecraft chat. Here's how to setup a Discord bot.
 
-Right click on the discord channel that you want the minecraft chat in and click `Copy ID`
-![tutorial 2](https://i.imgur.com/kCgxfH1.png)
+##### Create discord bot
+Go to the discord developer portal website (https://discord.com/developers/applications) and click on `New Application`.
 
-And paste it in to the second column in the DiscordSRV's config file.
-![Tutorial 3](https://i.imgur.com/xkRN9GY.png)
+![tutorial 1](https://i.imgur.com/IML2rMJ.png)
+
+Create a name for the application (This is not the discord bot name)
+
+![tutorial 2](https://i.imgur.com/ND7V4Z7.png)
+
+Go to build a bot and create your discord bot. From there you can change the username and icon.
+
+So the plugin knows what the bot is, copy your token (Do not share with anyone, as the token gives full access to the bot).
+
+![tutorial 3](https://i.imgur.com/PcUuXPZ.png)
+
+And paste it into the DiscordSRV config file
+
+![tutorial 4](https://i.imgur.com/Gp8D0IT.png)
+
+***You will need to enable server members intent permission to have your bot working.*** To enable it, go under the bot settings in the Discord Developer Portal, and enable `Server Members Intent`.
+
+![Tutorial 5](https://i.imgur.com/xQFZhgn.png)
+
+open DiscordSRV's config file and create a pair or use an existing one in `Channels`. The first column of the pair is where you set the type (does not need to match your discord channel), and the second column for channel IDs. The guide to get the type and get channel IDs are below this section.
+
+![Tutorial 3](https://i.imgur.com/zklKrUC.png)
 
 Save the config file and restart the server. Open Komodo will automatically start sending the minecraft chat to the discord channel.
 
 _**It is recommended to turn on Experiment WebhookChatMessageDelivery in the DiscordSRV's config. It makes the minecraft chat on discord a lot cleaner.**_
 
 ![Tutorial 4](https://i.imgur.com/spuvMbo.png)
+
+##### What channel types are there?
+At current, there are `minecraft-chat`, `donations`, `moderation`. The types are self explanatory.
+
+To use them, just set the exact values (case sensitive) as the first column in a channel pair.
+
+![tutorial channels](https://i.imgur.com/w1f2R6q.png)
+
+##### How to get the Discord Channel ID
+First, go into your discord settings > Advanced, and turn on Developer Mode. You will need this to enable an option to get IDs.
+![tutorial 1](https://i.imgur.com/G3uCjuC.png)
+
+Right click on the discord channel that you want to use, click `Copy ID`.
+![tutorial 2](https://i.imgur.com/kCgxfH1.png)
+
+And paste it in to the second column (where there a lot of zeros from the image below) in a pair in the DiscordSRV's config file.
+![Tutorial 3](https://i.imgur.com/zklKrUC.png)
+
+##### How do I invite the discord bot to a  server?
+Under `OAuth2` in the Discord Developer Portal, copy the `Client ID` and replace `INSERT_CLIENT_ID_HERE` in the url with the `client ID`. After doing so, click on the link below and invite your discord bot to the server.
+https://discord.com/oauth2/authorize?client_id=INSERT_CLIENT_ID_HERE&scope=bot&permissions=3187146351
+
+If you want more options for permsissions, click the link below.
+https://discordapi.com/permissions.html#0.
+
+From there you can adjust your general permissions before you invite it to a discord server. Once you are done adjusting your permissions, paste in your `Client ID`, and click on the link that the website provided.
 
 ### NuVotifier setup [Optional]
 Plenty of minecraft server providers already offer how to setup votifier (Such as https://help.pebblehost.com/en/article/how-to-set-up-votifier-14bx1hi/). Nevertheless, below is how you can setup your plugin.
@@ -148,6 +192,48 @@ Example:
 `/ban aPlayerName 5d` - Ban a player called 'aPlayerName' for 5 days
 
 Since there is no `/unban` nor `/unmute`, `/mute {username} 0d` or `/ban {username} 0d` is the replacement.
+
+# Permission Nodes:
+`openkomodo.abilities.flight` - Gives a player access to flight (/fly)
+
+`openkomodo.abilities.colornick` - Gives a player access to have Bukkit colors in their nicknames.
+`openkomodo.abilities.morecolornick` - Gives a player access to RGB hex colors in their nicknames.
+
+`openkomodo.pets.access` - Allows a player to use the pets feature in Open Komodo.
+`openkomodo.particles.access` - Allows a player to use the particles feature in Open Komodo.
+
+`openkomodo.build.buildmode` - Gives a player access to the build mode option (Permissions to change the enviroment in buildmode is below. Just gives permission for players to use /build)
+`openkomodo.build.place` - Allows a player to place blocks in buildmode.
+`openkomodo.build.break` - Allows a player to break blocks in buildmode.
+`openkomodo.build.change` - Allows a player to change (like placing/taking armour in armour stands) in buildmode.
+`openkomodo.build.hurt` - Allows a player to hurt entities in buildmode.
+`openkomodo.build.drop` - Allows a player to drop items while in buildmode.
+`openkomodo.teleport.builderworld` - Allows a player to teleport to the builderworld, where builders build before the main world gets updated.
+
+`openkomodo.builder.furnituremenu` - Gives a player access to the furniture shop for better decorations. [Very Experimental] [Feature Disabled]
+
+`openkomodo.chat.ignoreswear` - Swear filter ignores a players, giving player a bypass for the anti swear system.
+`openkomodo.chat.ignorespam` - Give a player to bypass the anti-spam.
+
+`openkomodo.admin.promote` - Gives a player permisison to use an ***admin*** command to use /promote. Which is used to add/remove ranks & permissions.
+
+`openkomodo.admin.genpay` - Gives a player permission to use an ***admin*** command to use /genpay, which is used to generate points/coins to players.
+`openkomodo.console.gentip` - Gives a player permission to use a ***console*** command to use /gentip, which is used to generate donations onto the server. I do not recommend giving this to anyone, and the command should only be used if something went wrong with a Player's donation.
+
+`openkomodo.admin.emote.reload` - Gives a player access to an ***admin*** command to use `/emote reload`, which is used to refresh emotes if the `emotes.yml` file is changed.
+`openkomodo.admin.rank.reload` - Gives a player access to an ***admin*** command to use `/rank reload`, which is used to refresh ranks if the `ranks.yml` file is changed.
+
+`openkomodo.mod.teleport` - Gives a player access to a ***mod*** command of `/atp`, which is used to teleport to a player without approval
+`openkomodo.mod.mute` - Gives a player access to a ***mod*** command of `/mute`, which is used to mute players
+`openkomodo.mod.kick` - Gives a player access to a ***mod*** command of `/kick`, which is used to kick players out of the game
+`openkomodo.mod.ban` - Gives a player access to a ***mod*** command of `/ban`, which is used to ban players
+`openkomodo.mod.chatmonitor` - Gives a player access to a ***mod*** command of `/monitor`, which is used to monitor all the chat messages sent by players regardless if the player is close or not.
+`openkomodo.mod.invisible` - Gives a player access to be able to turn themselves invisible with the ***mod*** command `/invis`.
+`openkomodo.mod.seeotherinvisible` - Gives a player a ***mod*** access to see other players who are invisible to be visible.
+
+`openkomodo.manager.monitorabuse` - Alerts a player when staff tries doing something suspicious. [Very Experimental]
+`openkomodo.admin.visiblefullerrors` - When player gets an error, it will give out the full error. [Very Experimental]
+
 
 # Compiling & Building:
 Use the buildtools from spigot to generate craftbucket 1.16.1 and put the craftbukkit-1.16.1-R0.1-SNAPSHOT.jar file into "External Dependencies". This is the only maunal dependency that you will need to add. For more information about BuildTools, check out the guide from the spigot team (https://www.spigotmc.org/wiki/buildtools/).
