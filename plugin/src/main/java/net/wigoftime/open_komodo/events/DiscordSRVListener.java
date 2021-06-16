@@ -1,18 +1,49 @@
 package net.wigoftime.open_komodo.events;
 
+import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.api.Subscribe;
 import github.scarsz.discordsrv.api.events.DiscordGuildMessagePostProcessEvent;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.Message;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.TextChannel;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.User;
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.etc.systems.DiscordCommands;
+import net.wigoftime.open_komodo.etc.systems.ModerationSystem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+
+import java.sql.Date;
+import java.time.Instant;
+import java.util.Arrays;
 
 public class DiscordSRVListener {
     @Subscribe
     public void discordMessageProcessed(@NotNull DiscordGuildMessagePostProcessEvent event) {
-        // Example of modifying a Discord -> Minecraft message
-    	
-    	event.setCancelled(true);
-    	
-    	for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
-    		if (player.getSettings().isDiscordChatEnabled()) player.getPlayer().sendMessage(event.getProcessedMessage());
+        event.setCancelled(true);
+
+        switch (event.getChannel().getName()) {
+            case "minecraft-chat":
+                for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
+                    if (player.getSettings().isDiscordChatEnabled()) player.getPlayer().sendMessage(event.getProcessedMessage());
+                break;
+            case "moderation":
+                if (event.getMessage().getContentDisplay().startsWith(">")) {
+                    DiscordCommands.moderationCommand(event.getMessage().getContentDisplay());
+                    break;
+                }
+
+                Message discordMessage = event.getMessage();
+                for (CustomPlayer player : CustomPlayer.getOnlinePlayers())
+                    player.getPlayer().sendMessage(ChatColor.GOLD + "" + ChatColor.BOLD +
+                            "Discord ModChat " + ChatColor.DARK_GRAY
+                            + discordMessage.getAuthor().getAsTag()
+                            + ChatColor.RESET +": "
+                            + ChatColor.GRAY + event.getMessage().getContentDisplay());
+        }
     }
 }

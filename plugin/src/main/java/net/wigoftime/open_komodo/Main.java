@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.wigoftime.open_komodo.commands.*;
 import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.*;
+import net.wigoftime.open_komodo.events.DiscordSRVListener;
 import net.wigoftime.open_komodo.events.EventListener;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.FurnitureMenu;
@@ -39,6 +40,7 @@ public class Main extends JavaPlugin implements Listener
 	public static ProtocolManager protocolManager;
 	
 	private static @Nullable EventListener eventListener = null;
+	private static @Nullable Object discordSRVListener = null;
 	
 	public static final String nameColoured = ChatColor.translateAlternateColorCodes('&', "&b&lOpen &a&lKomodo");
 	public static final String firstWelcome = ChatColor.translateAlternateColorCodes('&', "&6Welcome &e%s &6to &b&lOpen &2&lKomodo!");
@@ -122,8 +124,9 @@ public class Main extends JavaPlugin implements Listener
 		PetsManager.startLoop();
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new AFKChecker(), 0, 60);
 		Bukkit.getScheduler().runTaskTimerAsynchronously(Main.getPlugin(), new ChatAnnouncements(), 0, 7200);
+
 		CoinSalary.coinpayPlayersTimer();
-		
+
 		setupExtraCommands();
 	}
 	
@@ -134,8 +137,11 @@ public class Main extends JavaPlugin implements Listener
 		
 		SQLManager.disconnectSQL();
 		PetsManager.serverShuttingDown();
-		
+
 		eventListener.disable();
+
+		if (discordSRV != null)
+			DiscordSRV.api.unsubscribe(discordSRVListener);
 	}
 	
 	/* Variable Functions */
@@ -240,6 +246,8 @@ public class Main extends JavaPlugin implements Listener
 		
 		try {
 			discordSRV = DiscordSRV.getPlugin();
+			discordSRVListener = new DiscordSRVListener();
+			DiscordSRV.api.subscribe(discordSRVListener);
 		} catch (NoClassDefFoundError error) {
 		discordSRV = null;
 		}

@@ -62,8 +62,8 @@ public class MuteCommand extends Command {
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 
-				if (reasonStringBuilder == null) ModerationSystem.mute(sender,targetPlayer, Date.from(refInstant), null);
-				else ModerationSystem.mute(sender, targetPlayer, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) ModerationSystem.mute(targetPlayer, Date.from(refInstant), null);
+				else ModerationSystem.mute(targetPlayer, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 		return true;

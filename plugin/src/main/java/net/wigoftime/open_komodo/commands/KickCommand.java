@@ -55,7 +55,7 @@ public class KickCommand extends Command
 			ModerationSystem.sendCauserResultsKick(target, sender, sb.toString());
 		}
 		else {
-			target.kickPlayer("You have been kicked.");
+			target.kickPlayer(ChatColor.DARK_RED+"You have been kicked.");
 			ModerationSystem.sendCauserResultsKick(target, sender, null);
 		}
 		

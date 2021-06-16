@@ -91,8 +91,8 @@ public class BanCommand extends Command
 			public void run() {
 				ModerationResults banResult;
 				
-				if (reasonStringBuilder == null) ModerationSystem.ban(sender, playerTarget, Date.from(refInstant), null);
-				else ModerationSystem.ban(sender, playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) ModerationSystem.ban(playerTarget, Date.from(refInstant), null);
+				else ModerationSystem.ban(playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 	}

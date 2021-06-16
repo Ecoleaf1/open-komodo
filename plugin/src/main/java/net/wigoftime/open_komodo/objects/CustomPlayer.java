@@ -317,9 +317,8 @@ public class CustomPlayer {
 	public static void addDonated(@NotNull UUID uuid, float amount) {
 		DonationSystem.addTip(uuid,amount);
 
-		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if (player == null) return;
-		DonationSystem.announceDonation(player.getName(),amount);
+		OfflinePlayer playerOffline = Bukkit.getOfflinePlayer(uuid);
+		DonationSystem.announceDonation(playerOffline,amount);
 	}
 	
 	public @Nullable Rank getRank() {

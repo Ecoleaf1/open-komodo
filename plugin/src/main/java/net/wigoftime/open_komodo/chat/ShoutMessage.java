@@ -113,11 +113,21 @@ public class ShoutMessage {
 	public static void sendToDiscord(@NotNull CustomPlayer playerCustomPlayer, String message) {
 		if (Main.getDiscordSRV() == null)
 			return;
-		
+
+		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(
+				playerCustomPlayer.getPlayer(),
+				message,
+				"moderation",
+				false);
+
 		if (!playerCustomPlayer.getSettings().isDiscordChatEnabled())
 			return;
 		
 		// Send message to Discord
-		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(playerCustomPlayer.getPlayer(), message, null, false);
+		((DiscordSRV) Main.getDiscordSRV()).processChatMessage(
+				playerCustomPlayer.getPlayer(),
+				message,
+				"minecraft-chat",
+				false);
 	}
 }

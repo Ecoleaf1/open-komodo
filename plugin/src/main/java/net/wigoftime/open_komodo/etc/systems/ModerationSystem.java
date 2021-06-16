@@ -30,7 +30,7 @@ public class ModerationSystem
 	public static final String mutedNoReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted until: $~");
 	public static final String mutedReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted for: $1~\nYou will be unmuted at: $~");
 	
-	public static void ban(@NotNull CommandSender causer, @NotNull OfflinePlayer target, @NotNull Date date, @Nullable String reason) {
+	public static void ban(@NotNull OfflinePlayer target, @NotNull Date date, @Nullable String reason) {
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(target.getUniqueId())) {
 				SQLManager.createModerationPlayer(target.getUniqueId());
@@ -48,12 +48,11 @@ public class ModerationSystem
 			public void run() {
 				if (reason == null && target.isOnline()) target.getPlayer().kickPlayer(String.format("You have been banned.\nDate: %s", date.toString()));
 				else if (target.isOnline()) target.getPlayer().kickPlayer(String.format("You have been banned\nReason: %s\n.\nDate: %s", reason, date.toString()));
-				sendCauserResultsBan(target, causer, reason, date);
 			}
 		});
 	}
 	
-	public static void mute(@NotNull CommandSender causer, @NotNull OfflinePlayer targetPlayer, @NotNull Date date, @Nullable String reason)
+	public static void mute(@NotNull OfflinePlayer targetPlayer, @NotNull Date date, @Nullable String reason)
 	{
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(targetPlayer.getUniqueId())) {
@@ -64,14 +63,12 @@ public class ModerationSystem
 				PlayerConfig.createPlayerConfig(targetPlayer.getUniqueId());
 				
 		Player onlineTarget = targetPlayer.getPlayer();
-		sendCauserResultsMute(targetPlayer, causer, reason, date);
 
 		if (onlineTarget == null) {
 			if (reason == null) setMuteReason(targetPlayer.getUniqueId(), "");
 			else setMuteReason(targetPlayer.getUniqueId(), reason);
 			
 			setMuteDate(targetPlayer.getUniqueId(), date);
-			sendCauserResultsMute(targetPlayer, causer, reason, date);
 			return;
 		}
 		
@@ -80,8 +77,6 @@ public class ModerationSystem
 		
 		if (reason != null) targetCustomPlayer.setMuteReason(reason);
 		else targetCustomPlayer.setMuteReason("");
-
-		sendCauserResultsMute(targetPlayer, causer, reason, date);
 	}
 	
 	private static void setMuteDate(UUID uuid, @NotNull Date date) {
