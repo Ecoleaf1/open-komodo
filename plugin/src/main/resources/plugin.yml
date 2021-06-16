@@ -1,7 +1,7 @@
 name: Open_Komodo
 main: net.wigoftime.open_komodo.Main
 description: The Offical Open Komodo plugin!
-version: 0.4
+version: 0.5
 author: Ecoleaf
 depend: [ProtocolLib, PlayerParticles]
 softdepend: [NuVotifier, DiscordSRV]
