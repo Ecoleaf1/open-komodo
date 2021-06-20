@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.config;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.SQLInfo;
+import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -161,6 +162,29 @@ abstract public class Config
 		ConfigurationSection normalMessageSection = yamlConfiguration.getConfigurationSection("Global Settings");
 		
 		return ChatColor.translateAlternateColorCodes('&', normalMessageSection.getString("Discord"));
+	}
+
+	public static int getVersion() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		if (!yamlConfiguration.contains("Version")) {
+			updateConfigVersion();
+			return -1;
+		}
+
+		return yamlConfiguration.getInt("Version");
+	}
+
+	static final int configVersion = 1;
+	public static void updateConfigVersion() {
+		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
+		yamlConfiguration.set("Config Version", configVersion);
+
+		try {
+			yamlConfiguration.save(configFile);
+		} catch (IOException exception) {
+			exception.printStackTrace();
+			PrintConsole.print(ChatColor.DARK_RED + "COULD NOT SAVE LATEST VERSION, THIS COULD CAUSE PROBLEMS.");
+		}
 	}
 
 	public static @NotNull String getVotingDescription() {

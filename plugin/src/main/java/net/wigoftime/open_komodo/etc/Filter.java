@@ -226,7 +226,7 @@ public abstract class Filter
 				
 				word.getChars(cutOutPrefixIndex, removeSuffixStringBuilder.length(), cutOutPrefixCharArray, 0);
 				
-				System.out.println("Test Prefix " + String.copyValueOf(cutOutPrefixCharArray));
+				PrintConsole.test("Test Prefix " + String.copyValueOf(cutOutPrefixCharArray));
 				
 				if (whitelistWords.contains(String.copyValueOf(cutOutPrefixCharArray).toLowerCase()))
 					return true;

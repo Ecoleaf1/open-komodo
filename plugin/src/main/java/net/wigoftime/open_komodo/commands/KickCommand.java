@@ -52,11 +52,11 @@ public class KickCommand extends Command
 			}
 			
 			target.kickPlayer(ChatColor.DARK_RED + "You have been kicked for: "+ sb.toString());
-			ModerationSystem.sendCauserResultsKick(target, sender, sb.toString());
+			sender.sendMessage(ModerationSystem.getCauserResultsKick(target, sb.toString()));
 		}
 		else {
 			target.kickPlayer(ChatColor.DARK_RED+"You have been kicked.");
-			ModerationSystem.sendCauserResultsKick(target, sender, null);
+			sender.sendMessage(ModerationSystem.getCauserResultsKick(target, null));
 		}
 		
 		return true;

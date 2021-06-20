@@ -354,6 +354,7 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo", new RulesCommand("rules", "Display rules & terms", "/rules", new ArrayList<String>(0)));
 		map.register("openkomodo", new CreditsCommand("credits", "Display credits", "/credits", new ArrayList<String>(0)));
 
+
 		if (!Config.getVotingDescription().equals(""))
 			map.register("openkomodo", new VoteCommand("vote", "Displays voting websites", "/vote", new ArrayList<String>(0)));
 
@@ -374,7 +375,9 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_mod", new ModTeleportHereCommand("adminteleporthere", "Teleport player to you without requesting", "/adminteleporthere {Player}", Arrays.asList("atphere")));
 		map.register("openkomodo_mod", new MonitorChatCommand("monitor", "Monitor chat", "/monitor", new ArrayList<String>(0)));
 		map.register("openkomodo_mod", new InvisibleCommand("invisible", "Turn yourself invisible", "/invisible", Arrays.asList("invis", "vanish")));
-		
+		map.register("openkomodo_mod", new ModHistoryCommand());
+
+
 		map.register("openkomodo_builder", new BuildModeCommand("build", "Toggle build mode", "/build", new ArrayList<String>(0)));
 		
 		if (FurnitureMenu.isValidFurnitureMenu("default"))

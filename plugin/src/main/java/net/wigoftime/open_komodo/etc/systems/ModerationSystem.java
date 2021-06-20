@@ -5,6 +5,7 @@ import net.wigoftime.open_komodo.config.PlayerConfig;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
+import net.wigoftime.open_komodo.objects.ModHistorySingle;
 import net.wigoftime.open_komodo.sql.SQLManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -17,10 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ModerationSystem
 {
@@ -30,7 +28,7 @@ public class ModerationSystem
 	public static final String mutedNoReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted until: $~");
 	public static final String mutedReason = ChatColor.translateAlternateColorCodes('&', "&cYou have been muted for: $1~\nYou will be unmuted at: $~");
 	
-	public static void ban(@NotNull OfflinePlayer target, @NotNull Date date, @Nullable String reason) {
+	public static void ban(@Nullable OfflinePlayer causer, @NotNull OfflinePlayer target, @NotNull Date date, @Nullable String reason) {
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(target.getUniqueId())) {
 				SQLManager.createModerationPlayer(target.getUniqueId());
@@ -44,15 +42,19 @@ public class ModerationSystem
 		setBanReason(target.getUniqueId(), "");
 		else setBanReason(target.getUniqueId(), reason);
 
+		addModSystem(target.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(), causer.getUniqueId(), "Ban", reason));
+
 		Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
 			public void run() {
 				if (reason == null && target.isOnline()) target.getPlayer().kickPlayer(String.format("You have been banned.\nDate: %s", date.toString()));
 				else if (target.isOnline()) target.getPlayer().kickPlayer(String.format("You have been banned\nReason: %s\n.\nDate: %s", reason, date.toString()));
+
+				if (causer.isOnline()) causer.getPlayer().sendMessage(getCauserResultsBan(target, reason, date));
 			}
 		});
 	}
 	
-	public static void mute(@NotNull OfflinePlayer targetPlayer, @NotNull Date date, @Nullable String reason)
+	public static void mute(@Nullable OfflinePlayer causer, @NotNull OfflinePlayer targetPlayer, @NotNull Date date, @Nullable String reason)
 	{
 		if (SQLManager.isEnabled()) {
 			if (!SQLManager.containsModerationPlayer(targetPlayer.getUniqueId())) {
@@ -69,16 +71,23 @@ public class ModerationSystem
 			else setMuteReason(targetPlayer.getUniqueId(), reason);
 			
 			setMuteDate(targetPlayer.getUniqueId(), date);
+			addModSystem(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(),causer.getUniqueId(), "Mute", reason));
+
+			if (causer.isOnline()) causer.getPlayer().sendMessage(getCauserResultsMute(targetPlayer, reason, date));
 			return;
 		}
 		
 		CustomPlayer targetCustomPlayer = CustomPlayer.get(onlineTarget.getUniqueId());
-		targetCustomPlayer.setMuteDate(date);
+		if (targetCustomPlayer != null) targetCustomPlayer.setMuteDate(date);
+
+		addModSystem(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(),causer.getUniqueId(), "Mute", reason));
 		
 		if (reason != null) targetCustomPlayer.setMuteReason(reason);
 		else targetCustomPlayer.setMuteReason("");
+
+		if (causer.isOnline()) causer.getPlayer().sendMessage(getCauserResultsMute(targetPlayer, reason, date));
 	}
-	
+
 	private static void setMuteDate(UUID uuid, @NotNull Date date) {
 		if (SQLManager.isEnabled())
 		SQLManager.setMuteDate(uuid, date);
@@ -240,6 +249,10 @@ public class ModerationSystem
 		return true;
 	}
 
+	private static void addModSystem(UUID uuid, ModHistorySingle historySingle) {
+		SQLManager.addModHistory(uuid, historySingle);
+	}
+
 	// Non-static
 	private final CustomPlayer playerCustom;
 	public @Nullable Date muteDate;
@@ -304,16 +317,16 @@ public class ModerationSystem
 	}
 	private enum modType {KICK, MUTE, BAN};
 
-	private static void sendCauserResultsBan(@NotNull OfflinePlayer player, @NotNull CommandSender causer, @Nullable String reason, @NotNull Date date) {
-		if (reason == null) causer.sendMessage(String.format("%s» %s%s Has been banned until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), date.toString()));
-		else causer.sendMessage(String.format("%s» %s%s Has been banned for %s until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason, date.toString()));
+	private static String getCauserResultsBan(@NotNull OfflinePlayer player, @Nullable String reason, @NotNull Date date) {
+		if (reason == null) return String.format("%s» %s%s Has been banned until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), date.toString());
+		else return String.format("%s» %s%s Has been banned for %s until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason, date.toString());
 	}
-	public static void sendCauserResultsKick(@NotNull OfflinePlayer player, @NotNull CommandSender causer, @Nullable String reason) {
-		if (reason == null) causer.sendMessage(String.format("%s» %s%s Has been kicked", ChatColor.GOLD, ChatColor.DARK_RED, player.getName()));
-		else causer.sendMessage(String.format("%s» %s%s Has been kicked for %s ", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason));
+	public static String getCauserResultsKick(@NotNull OfflinePlayer player, @Nullable String reason) {
+		if (reason == null) return String.format("%s» %s%s Has been kicked", ChatColor.GOLD, ChatColor.DARK_RED, player.getName());
+		else return String.format("%s» %s%s Has been kicked for %s ", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason);
 	}
-	private static void sendCauserResultsMute(@NotNull OfflinePlayer player, @NotNull CommandSender causer, @Nullable String reason, @NotNull Date date) {
-		if (reason == null) causer.sendMessage(String.format("%s» %s%s Has been muted until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), date.toString()));
-		else causer.sendMessage(String.format("%s» %s%s Has been mute for %s until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason, date.toString()));
+	private static String getCauserResultsMute(@NotNull OfflinePlayer player, @Nullable String reason, @NotNull Date date) {
+		if (reason == null) return String.format("%s» %s%s Has been muted until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), date.toString());
+		else return String.format("%s» %s%s Has been mute for %s until %s", ChatColor.GOLD, ChatColor.DARK_RED, player.getName(), reason, date.toString());
 	}
 }

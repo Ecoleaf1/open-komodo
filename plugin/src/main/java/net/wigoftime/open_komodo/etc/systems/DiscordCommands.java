@@ -2,16 +2,19 @@ package net.wigoftime.open_komodo.etc.systems;
 
 import github.scarsz.discordsrv.DiscordSRV;
 import github.scarsz.discordsrv.dependencies.jda.api.entities.TextChannel;
+import github.scarsz.discordsrv.dependencies.jda.api.entities.User;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 
 import java.sql.Date;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.UUID;
 
 abstract public class DiscordCommands {
     private static void help() {
@@ -21,18 +24,17 @@ abstract public class DiscordCommands {
                 "To ban players- >ban {Username} {Duration} [Reason]").queue();
     }
 
-    public static void moderationCommand(String commandContext) {
-        PrintConsole.test("ModerationCommand Function");
+    public static void moderationCommand(@NotNull User senderDiscord, @NotNull String commandContext) {
 
         String[] commandAndArgs = commandContext.split(" ");
 
         if (commandAndArgs[0].equalsIgnoreCase(">kick")) kickCommand(commandAndArgs);
-        else if (commandAndArgs[0].equalsIgnoreCase(">mute")) muteCommand(commandAndArgs);
-        else if (commandAndArgs[0].equalsIgnoreCase(">ban")) ban(commandAndArgs);
+        else if (commandAndArgs[0].equalsIgnoreCase(">mute")) muteCommand(senderDiscord,commandAndArgs);
+        else if (commandAndArgs[0].equalsIgnoreCase(">ban")) ban(senderDiscord,commandAndArgs);
         else help();
     }
 
-    private static void kickCommand(String[] commandAndArguments) {
+    private static void kickCommand(@NotNull String[] commandAndArguments) {
         TextChannel channel = DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName("moderation");
 
         if (commandAndArguments.length < 2) {
@@ -55,11 +57,17 @@ abstract public class DiscordCommands {
         });
     }
 
-    private static void muteCommand(String[] commandAndArguments) {
+    private static void muteCommand(@NotNull User causerDiscord, @NotNull String[] commandAndArguments) {
         TextChannel channel = DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName("moderation");
 
         if (commandAndArguments.length < 3) {
             channel.sendMessage("Invalid Usage, Correct Usage: >mute {Username} {Duration} [Reason]").queue();
+            return;
+        }
+
+        UUID causerUUID = DiscordSRV.getPlugin().getAccountLinkManager().getUuid(causerDiscord.getId());
+        if (causerUUID == null) {
+            channel.sendMessage("Sorry, but you need to link your minecraft account on Open Komodo to use mod commands.").queue();
             return;
         }
 
@@ -71,7 +79,7 @@ abstract public class DiscordCommands {
             stringBuilder.append(textIndex + " ");
         });
 
-        ModerationSystem.mute(targetPlayer, Date.from(muteTime), commandAndArguments.length > 3 ? stringBuilder.toString() : null);
+        ModerationSystem.mute(Bukkit.getOfflinePlayer(causerUUID), targetPlayer, Date.from(muteTime), commandAndArguments.length > 3 ? stringBuilder.toString() : null);
 
         channel.sendMessage("muted " +
                 targetPlayer.getName() +
@@ -79,11 +87,17 @@ abstract public class DiscordCommands {
                 " duration: " + Date.from(muteTime).toString()).queue();
     }
 
-    private static void ban(String[] commandAndArguments) {
+    private static void ban(@NotNull User causerDiscord, @NotNull String[] commandAndArguments) {
         TextChannel channel = DiscordSRV.getPlugin().getDestinationTextChannelForGameChannelName("moderation");
 
         if (commandAndArguments.length < 3) {
             channel.sendMessage("Invalid Usage, Correct Usage: >ban {Username} {Duration} [Reason]").queue();
+            return;
+        }
+
+        UUID causerUUID = DiscordSRV.getPlugin().getAccountLinkManager().getUuid(causerDiscord.getId());
+        if (causerUUID == null) {
+            channel.sendMessage("Sorry, but you need to link your minecraft account on Open Komodo to use mod commands.").queue();
             return;
         }
 
@@ -95,7 +109,7 @@ abstract public class DiscordCommands {
             stringBuilder.append(textIndex + " ");
         });
 
-        ModerationSystem.ban(targetPlayer, Date.from(banTime), commandAndArguments.length > 3 ?stringBuilder.toString() : null);
+        ModerationSystem.ban(Bukkit.getOfflinePlayer(causerUUID), targetPlayer, Date.from(banTime), commandAndArguments.length > 3 ? stringBuilder.toString() : null);
 
         channel.sendMessage("banned " +
                 targetPlayer.getName() +

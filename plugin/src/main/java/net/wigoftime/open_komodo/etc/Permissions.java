@@ -72,6 +72,7 @@ abstract public class Permissions
 	public static final Permission banPerm = new Permission("openkomodo.mod.ban");
 	public static final Permission kickPerm = new Permission("openkomodo.mod.kick");
 	public static final Permission invis = new Permission("openkomodo.mod.invisible");
+	public static final Permission modHistory = new Permission("openkomodo.mod.modhistory");
 	public static final Permission seeOtherInvis = new Permission("openkomodo.mod.seeotherinvisible");
 	public static final Permission chatmonitor = new Permission("openkomodo.mod.chatmonitor");
 	

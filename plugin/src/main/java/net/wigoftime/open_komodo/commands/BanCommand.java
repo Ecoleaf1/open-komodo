@@ -11,6 +11,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,10 +90,8 @@ public class BanCommand extends Command
 		
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
-				ModerationResults banResult;
-				
-				if (reasonStringBuilder == null) ModerationSystem.ban(playerTarget, Date.from(refInstant), null);
-				else ModerationSystem.ban(playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) ModerationSystem.ban(sender instanceof Player ? ((Player) sender) : null ,playerTarget, Date.from(refInstant), null);
+				else ModerationSystem.ban(sender instanceof Player ? ((Player) sender) : null, playerTarget, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 	}

@@ -11,7 +11,9 @@ import net.wigoftime.open_komodo.objects.*;
 import net.wigoftime.open_komodo.sql.SQLCode.SQLCodeType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.Permission;
@@ -25,10 +27,8 @@ import org.json.simple.parser.ParseException;
 
 import javax.sql.rowset.serial.SerialBlob;
 import javax.sql.rowset.serial.SerialException;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
+import javax.swing.*;
+import java.io.*;
 import java.math.BigDecimal;
 import java.nio.ByteBuffer;
 import java.sql.Blob;
@@ -49,6 +49,10 @@ abstract public class SQLManager {
 		createMailTable();
 		createBagInventoryTable();
 		createMarriageTable();
+
+		int version = Config.getVersion();
+		if (version < 1)
+			SQLManager.createModHistory();
 	}
 	
 	public static void setUpWorlds(@NotNull List<World> worlds) {
@@ -63,6 +67,10 @@ abstract public class SQLManager {
 
 	private static void createMailTable() {
 		new SQLCard(SQLCodeType.CREATE_MAIL_TABLE, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
+	}
+
+	public static void createModHistory() {
+		new SQLCard(SQLCodeType.ADD_MODHISTORY_COLUMN, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList()).execute();
 	}
 	
 	public static @NotNull List<CustomItem> getItems(@NotNull UUID uuid) {
@@ -265,8 +273,25 @@ abstract public class SQLManager {
 	
 	public static void createModerationPlayer(@NotNull UUID uuid) {
 		Blob playerBlob = uuidToBlob(uuid);
-		new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCard.SQLCardType.SET, Arrays.asList(),
-				Arrays.asList(playerBlob)).execute();
+
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		BukkitObjectOutputStream bukkitObjectOutputStream = null;
+		try {
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			bukkitObjectOutputStream = new BukkitObjectOutputStream(byteArrayOutputStream);
+			bukkitObjectOutputStream.writeObject(new LinkedList<SingleSelectionModel>());
+
+			new SQLCard(SQLCodeType.CREATE_MODERATION_PLAYER, SQLCard.SQLCardType.SET, Arrays.asList(),
+					Arrays.asList(playerBlob, new SerialBlob(byteArrayOutputStream.toByteArray()))).execute();
+		} catch (IOException | SQLException exception) {
+			exception.printStackTrace();
+			PrintConsole.print(ChatColor.DARK_RED + "ERROR, CAN NOT CREATE MODERATION PLAYER. MODERATION MAY BE BROKEN.");
+			return;
+		} finally {
+			if (bukkitObjectOutputStream != null) try {bukkitObjectOutputStream.close();} catch (IOException exception) { exception.printStackTrace();}
+			if (byteArrayOutputStream != null) try {byteArrayOutputStream.close();} catch (IOException exception) { exception.printStackTrace();}
+
+		}
 	}
 	
 	public static void createWorldPlayer(@NotNull UUID uuid, String worldName) {
@@ -292,6 +317,52 @@ abstract public class SQLManager {
 		new SQLCard(SQLCodeType.SET_BANDATE, SQLCard.SQLCardType.SET,
 				Arrays.asList(),
 				Arrays.asList(Timestamp.from(date.toInstant()).toString(), playerBlob)).execute();
+	}
+
+	public static @NotNull List<ModHistorySingle> getModHistory(@NotNull UUID uuid) {
+		Blob playerBlob = uuidToBlob(uuid);
+
+		ByteArrayInputStream byteArrayInputStream = null;
+		ObjectInputStream objectInputStream = null;
+		try {
+			byte[] serialized = (byte[]) new SQLCard(SQLCodeType.GET_MODHISTORY, SQLCard.SQLCardType.GET, Arrays.asList(), Arrays.asList(playerBlob)).execute().get(0);
+			byteArrayInputStream = new ByteArrayInputStream(serialized);
+			objectInputStream = new ObjectInputStream(byteArrayInputStream);
+			List<ModHistorySingle> modHistory = (List<ModHistorySingle>) objectInputStream.readObject();
+			return modHistory;
+		} catch (IOException | ClassNotFoundException exception) {
+			exception.printStackTrace();
+			PrintConsole.print(ChatColor.DARK_RED + "ERROR, COULD NOT GET PUNISHMENT LIST FROM "+uuid.toString());
+			return new LinkedList<ModHistorySingle>();
+		} catch (IndexOutOfBoundsException indexOutOfBoundsException) {
+			PrintConsole.print(ChatColor.GOLD + "WARNING, PUNISHMENT LIST DOESN'T EXIST FROM "+uuid.toString() +", RETURNING EMPTY RESULTS");
+			return new LinkedList<ModHistorySingle>();
+		} finally {
+			if (objectInputStream != null) try { objectInputStream.close(); } catch (IOException exception) {};
+			if (byteArrayInputStream != null) try { byteArrayInputStream.close(); } catch (IOException exception) {};
+		}
+	}
+
+	public static void addModHistory(@NotNull UUID uuid,@NotNull ModHistorySingle historySingle) {
+		Blob playerBlob = uuidToBlob(uuid);
+
+		List<ModHistorySingle> modHistory = getModHistory(uuid);
+		PrintConsole.test("modHistory : "+ modHistory.toString());
+		modHistory.add(historySingle);
+
+		BukkitObjectOutputStream objectOutputStream = null;
+		ByteArrayOutputStream byteArrayOutputStream = null;
+		try {
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			objectOutputStream = new BukkitObjectOutputStream(byteArrayOutputStream);
+			objectOutputStream.writeObject(modHistory);
+			Blob modHistoryBlob = objectToBlob(byteArrayOutputStream.toByteArray());
+
+			new SQLCard(SQLCodeType.SET_MODHISTORY, SQLCard.SQLCardType.SET, Arrays.asList(), Arrays.asList(modHistoryBlob, playerBlob)).execute();
+		} catch (IOException exception) {
+			exception.printStackTrace();
+			PrintConsole.print(ChatColor.DARK_RED + "ERROR, COULD NOT SET PUNISHMENT LIST OF "+uuid.toString());
+		}
 	}
 	
 	public static @NotNull String getBanReason(@NotNull UUID uuid) {
@@ -853,7 +924,7 @@ abstract public class SQLManager {
 		}
 	}
 
-	private static byte @NotNull [] uuidToBytes(@NotNull UUID uuid) {
+	private static byte[] uuidToBytes(@NotNull UUID uuid) {
 		ByteBuffer buffer = ByteBuffer.wrap(new byte[16]);
 		buffer.putLong(uuid.getMostSignificantBits());
 		buffer.putLong(uuid.getLeastSignificantBits());

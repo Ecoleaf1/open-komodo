@@ -72,9 +72,11 @@ abstract public class CheckFiles
 		RankSystem.setup();
 		CustomParticle.setup();
 		ParticlesGUI.setup();
-		
+
 		if (SQLManager.isEnabled())
 			SQLManager.setup();
+
+		Config.updateConfigVersion();
 	}
 	
 }

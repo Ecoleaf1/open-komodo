@@ -10,6 +10,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -62,8 +63,8 @@ public class MuteCommand extends Command {
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {
 
-				if (reasonStringBuilder == null) ModerationSystem.mute(targetPlayer, Date.from(refInstant), null);
-				else ModerationSystem.mute(targetPlayer, Date.from(refInstant), reasonStringBuilder.toString());
+				if (reasonStringBuilder == null) ModerationSystem.mute(sender instanceof Player ? ((Player) sender) : null, targetPlayer, Date.from(refInstant), null);
+				else ModerationSystem.mute(sender instanceof Player ? ((Player) sender) : null, targetPlayer, Date.from(refInstant), reasonStringBuilder.toString());
 			}
 		});
 		return true;
