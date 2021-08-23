@@ -21,6 +21,7 @@ VIP:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.home.limit.3
@@ -42,6 +43,7 @@ VIP+:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.home.limit.5
@@ -95,6 +97,7 @@ MVP:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -174,6 +177,7 @@ MVP+:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -253,6 +257,7 @@ MOD:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -359,6 +364,7 @@ BUILDER:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -459,6 +465,7 @@ LESSERBUILDER:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight
@@ -560,6 +567,7 @@ DESIGNER:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
   - openkomodo.essentials.*
   - openkomodo.abilities.colornick
   - openkomodo.abilities.flight

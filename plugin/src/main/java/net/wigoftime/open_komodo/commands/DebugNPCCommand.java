@@ -120,11 +120,6 @@ public class DebugNPCCommand extends Command {
     }
 
     private void interactHatNPC(@NotNull CustomPlayer targetPlayer, @NotNull String menuName, boolean isInStore) {
-        if (!targetPlayer.getPlayer().hasPermission(Permissions.particleAccess)) {
-            targetPlayer.getPlayer().sendMessage(ChatColor.DARK_RED + "Sorry, but you do not have permission to access this.");
-            return;
-        }
-
         DialogManager.addActive(2,targetPlayer.getPlayer());
         BukkitRunnable runnable = new BukkitRunnable() {
             @Override

@@ -25,6 +25,17 @@ public class CreditsCommand extends Command {
 		sender.sendMessage(String.format("%s» %sBuilders: Jadesweetgamer (Discord: Jade/Yui#1428), KrispyKrunch (Discord: KRiSPY#2019), JustAluri (Discord: YeetusAFetus#2533)", ChatColor.GOLD, ChatColor.GRAY));
 		sender.sendMessage("");
 		sender.sendMessage(String.format("%s» %sProgrammer: Ecoleaf (Discord: Ecoleaf#9713)", ChatColor.GOLD, ChatColor.GRAY));
+		sender.sendMessage("");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Skins:");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" 707: https://www.planetminecraft.com/skin/707---mystic-messenger-3818625/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Selene: https://www.planetminecraft.com/skin/100-remakes-entry-clockmaker/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Hugo: https://www.planetminecraft.com/skin/badass-guy-with-a-coat/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Mall Guide: https://www.planetminecraft.com/skin/-5237543/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Chao Xing: https://www.planetminecraft.com/skin/the-fire-inside-you-oc/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Ayaka: https://www.planetminecraft.com/skin/you-ll-bring-honour-to-us-all/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" Ravenor: https://www.planetminecraft.com/skin/reginald---god-of-gentlemen/");
+		sender.sendMessage(ChatColor.GOLD+"»" + ChatColor.GRAY +" School Guide: https://www.planetminecraft.com/skin/cute-school-boy-o/");
+		sender.sendMessage("");
 		sender.sendMessage(String.format("%s» %sAnd you, The community even just checking by helps! Thank you!", ChatColor.GOLD, ChatColor.GRAY));
 		return true;
 	}
