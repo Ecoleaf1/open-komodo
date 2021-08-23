@@ -2,7 +2,7 @@
 **A MySQL/Mariadb database server is required to run.** When the plugin runs for the first time, the config.yml will be generated to put the database information in. The plugin will stop the server without a database.
 
 ### You will need these plugins to run the server:
-`ProtocolLib`, `PlayerParticles`
+`ProtocolLib`, `PlayerParticles`, `WarpIcons`, `ClickerBlocker`, ,`ZNPCs`
 
 ### The plugins that can enhance the server:
 `NuVotifier`, `DiscordSRV`, `varlights`, `ViaVersion`
@@ -11,10 +11,15 @@
 
 **The server must be running spigot or a spigot fork in specifically in `1.16.1`.**
 
+WarpIcons can be downloaded at: https://github.com/Ecoleaf1/warpicons
+ClickerBlocks can be downloaded at https://github.com/Ecoleaf1/ClickerBlock
+
 # installation/setup:
 Download the plugin from `Releases` on the current page, and put in the plugins folder. Make sure you have the correct server type mentioned above.
 
 Run the server with the plugin, and when the plugin loads the server will stop and the `config.yml` file in the plugin folder will generate. From there, you need to put in your SQL database information. After putting in the correct information, the plugin will load assuming you are running 1.16.1 spigot/spigot fork with the dependencies installed properly.
+
+Take out everything within the `Default Configuration Folder` into the `Plugins` folder. These contain configuration for other plugins such as ClickerBlocks and WarpIcons.
 
 ### Where do I get the world and resource packs?
 By default, a resourcepack is assigned when generating the plugin's config file. However it may get deleted if it gets outdated.
