@@ -46,6 +46,12 @@ public abstract class ItemConfig
 					pc = c1s2.getInt("Price (Points)");
 				else
 					pc = -1;
+
+				int cc;
+				if (c1s2.contains("Price (Coins)"))
+					cc = c1s2.getInt("Price (Coins)");
+				else
+					cc = -1;
 				
 				List<String> description;
 				if (c1s2.contains("Description"))
@@ -67,12 +73,12 @@ public abstract class ItemConfig
 					obtainPermission = new Permission(c1s2.getString("Permission"));
 					
 					// Create item
-					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, equipable, null, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, null, type);
 				}
 			}
 		}
@@ -101,6 +107,12 @@ public abstract class ItemConfig
 					pc = c2s2.getInt("Price (Points)");
 				else
 					pc = -1;
+
+				int cc;
+				if (c2s2.contains("Price (Coins)"))
+					cc = c2s2.getInt("Price (Coins)");
+				else
+					cc = -1;
 				
 				// Get description
 				List<String> description;
@@ -120,12 +132,12 @@ public abstract class ItemConfig
 					Permission obtainPermission;
 					obtainPermission = new Permission(c2s2.getString("Permission"));
 					
-					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, equipable, null, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, null, type);
 				}
 			}
 		}
@@ -151,6 +163,12 @@ public abstract class ItemConfig
 					pc = c2s2.getInt("Price (Points)");
 				else
 					pc = -1;
+
+				int cc;
+				if (c2s2.contains("Price (Coins)"))
+					cc = c2s2.getInt("Price (Coins)");
+				else
+					cc = -1;
 				
 				// Get description
 				List<String> description;
@@ -173,12 +191,12 @@ public abstract class ItemConfig
 					obtainPermission = new Permission(c2s2.getString("Permission"));
 					
 					// Create item
-					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, equipable, null, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, null, type);
 				}
 			}
 		}
@@ -203,6 +221,12 @@ public abstract class ItemConfig
 					pc = c2s2.getInt("Price (Points)");
 				else
 					pc = -1;
+
+				int cc;
+				if (c2s2.contains("Price (Coins)"))
+					cc = c2s2.getInt("Price (Coins)");
+				else
+					cc = -1;
 				
 				// Get description
 				List<String> description;
@@ -225,12 +249,12 @@ public abstract class ItemConfig
 					obtainPermission = new Permission(c2s2.getString("Permission"));
 					
 					// Create item
-					CustomItem.create(id, name, description, pc, equipable, obtainPermission, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, obtainPermission, type);
 				}
 				else
 				{
 					// Create Item
-					CustomItem.create(id, name, description, pc, equipable, null, type);
+					CustomItem.create(id, name, description, pc, cc, equipable, null, type);
 				}
 			}
 		}
@@ -248,7 +272,7 @@ public abstract class ItemConfig
 				int id = c2s2.getInt("ID");
 				
 				// Create Item
-				CustomItem.create(id, name, null, 0, false, null, ItemType.FURNITURE);
+				CustomItem.create(id, name, null, 0, 0, false, null, ItemType.FURNITURE);
 			}
 		}
 	}

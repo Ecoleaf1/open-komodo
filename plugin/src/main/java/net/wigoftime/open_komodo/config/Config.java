@@ -174,10 +174,10 @@ abstract public class Config
 		return yamlConfiguration.getInt("Version");
 	}
 
-	static final int configVersion = 1;
+	private static final int configVersion = 1;
 	public static void updateConfigVersion() {
 		YamlConfiguration yamlConfiguration = YamlConfiguration.loadConfiguration(configFile);
-		yamlConfiguration.set("Config Version", configVersion);
+		yamlConfiguration.set("Version", configVersion);
 
 		try {
 			yamlConfiguration.save(configFile);

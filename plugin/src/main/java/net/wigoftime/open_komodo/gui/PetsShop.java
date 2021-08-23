@@ -15,17 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Deprecated
-public class PetsGui extends CustomGUI {
-	public static final String title = "Pet Menu";
-	
-	public PetsGui(CustomPlayer customPlayer) {	
+public class PetsShop extends CustomGUI {
+	public static final String title = "Pet Shop";
+
+	public PetsShop(CustomPlayer customPlayer) {
 		super(customPlayer, Permissions.petAccess, Bukkit.createInventory(null, 45, title));
 		gui.setContents(getListofPetIcons());
 		return;
 	}
 	
-	private static ItemStack @NotNull [] getListofPetIcons() {
+	private ItemStack @NotNull [] getListofPetIcons() {
 		Set<Pet> petsSet = Pet.getPets();
 		ItemStack[] guiContent = new ItemStack[petsSet.size()];
 		
@@ -33,6 +32,8 @@ public class PetsGui extends CustomGUI {
 		int index = 0;
 		for (Pet pet : petsSet)
 		{
+			if (opener.hasPet(pet.getID())) continue;
+
 			ItemStack petItemStack = new ItemStack(pet.getItem());
 			ItemMeta petItemMeta = petItemStack.getItemMeta();
 			
@@ -76,11 +77,7 @@ public class PetsGui extends CustomGUI {
 		
 		int petID = clickedItem.getItemMeta().getCustomModelData();
 		Pet pet = Pet.getPet(petID);
-		
-		if (opener.hasPet(petID)) {
-			PetsManager.create(opener.getPlayer(), pet);
-			return;
-		}
+
 		BuyConfirm gui = new BuyConfirm(opener, pet, Currency.POINTS);
 		gui.open();
 	}

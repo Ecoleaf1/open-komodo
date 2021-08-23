@@ -3,9 +3,11 @@ package net.wigoftime.open_komodo.gui;
 import net.wigoftime.open_komodo.etc.Currency;
 import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.etc.PetsManager;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.Pet;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -15,18 +17,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Deprecated
-public class PetsGui extends CustomGUI {
+public class PetMenu extends CustomGUI {
 	public static final String title = "Pet Menu";
-	
-	public PetsGui(CustomPlayer customPlayer) {	
+
+	public PetMenu(CustomPlayer customPlayer) {
 		super(customPlayer, Permissions.petAccess, Bukkit.createInventory(null, 45, title));
 		gui.setContents(getListofPetIcons());
 		return;
 	}
 	
-	private static ItemStack @NotNull [] getListofPetIcons() {
-		Set<Pet> petsSet = Pet.getPets();
+	private ItemStack @NotNull [] getListofPetIcons() {
+		List<Pet> petsSet = opener.getPets();
 		ItemStack[] guiContent = new ItemStack[petsSet.size()];
 		
 		// Loop through each pet to display on gui
@@ -38,23 +39,6 @@ public class PetsGui extends CustomGUI {
 			
 			// Set Display Name on item
 			petItemMeta.setDisplayName(pet.getDisplayName());
-			
-			// Get Prices
-			int pointPrice = pet.getPrice(Currency.POINTS);
-			int coinPrice = pet.getPrice(Currency.COINS);
-			
-			// Display the pet's description
-			List<String> lore = new ArrayList<String>();
-			
-			if (pointPrice > -1 && coinPrice > -1)
-				lore.add(0, String.format("Price: %d points or %d coins", pointPrice, coinPrice));
-			else if (pointPrice > -1)
-				lore.add(0, String.format("Price: %d points", pointPrice));
-			else if (coinPrice > -1)
-				lore.add(0, String.format("Price: %d coins", coinPrice));
-			
-			// Set Description
-			petItemMeta.setLore(lore);
 			
 			// Assigning ID to to track
 			petItemMeta.setCustomModelData(pet.getID());
@@ -73,15 +57,17 @@ public class PetsGui extends CustomGUI {
 	public void clicked(@NotNull InventoryClickEvent clickEvent) {
 		clickEvent.setCancelled(true);
 		ItemStack clickedItem = clickEvent.getCurrentItem();
-		
+
+		if (clickedItem.getType() != Material.GHAST_SPAWN_EGG) return;
+		if (!clickedItem.hasItemMeta()) return;
+		if (!clickedItem.getItemMeta().hasCustomModelData()) return;
+
 		int petID = clickedItem.getItemMeta().getCustomModelData();
 		Pet pet = Pet.getPet(petID);
-		
-		if (opener.hasPet(petID)) {
-			PetsManager.create(opener.getPlayer(), pet);
-			return;
-		}
-		BuyConfirm gui = new BuyConfirm(opener, pet, Currency.POINTS);
-		gui.open();
+
+
+		PetsManager.create(opener.getPlayer(), pet);
+		opener.getPlayer().closeInventory();
+		return;
 	}
 }

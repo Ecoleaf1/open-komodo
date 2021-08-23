@@ -8,23 +8,24 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 public abstract class CustomGUI 
 {
 	protected final CustomPlayer opener;
-	private final Permission requiredPermission;
+	public final Permission requiredPermission;
 	protected final Inventory gui;
 	
 	private final byte roleplayModeOnly;
 	
-	public CustomGUI(CustomPlayer openerCustomPlayer, Permission requiredPermission, Inventory gui) {
+	public CustomGUI(@NotNull CustomPlayer openerCustomPlayer, @Nullable Permission requiredPermission, Inventory gui) {
 		opener = openerCustomPlayer;
 		this.requiredPermission = requiredPermission;
 		this.gui = gui;
 		this.roleplayModeOnly = 1;
 	}
 	
-	public CustomGUI(CustomPlayer openerCustomPlayer, Permission requiredPermission, Inventory gui, byte roleplayModeOnly) {
+	public CustomGUI(@NotNull CustomPlayer openerCustomPlayer, @Nullable Permission requiredPermission, Inventory gui, byte roleplayModeOnly) {
 		opener = openerCustomPlayer;
 		this.requiredPermission = requiredPermission;
 		this.gui = gui;

@@ -1,7 +1,9 @@
 package net.wigoftime.open_komodo;
 
+import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
 import dev.esophose.playerparticles.api.PlayerParticlesAPI;
 import github.scarsz.discordsrv.DiscordSRV;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -12,6 +14,7 @@ import net.wigoftime.open_komodo.config.Config;
 import net.wigoftime.open_komodo.etc.*;
 import net.wigoftime.open_komodo.events.DiscordSRVListener;
 import net.wigoftime.open_komodo.events.EventListener;
+import net.wigoftime.open_komodo.events.PacketListener;
 import net.wigoftime.open_komodo.filecreation.CheckFiles;
 import net.wigoftime.open_komodo.gui.FurnitureMenu;
 import net.wigoftime.open_komodo.objects.AFKChecker;
@@ -128,6 +131,10 @@ public class Main extends JavaPlugin implements Listener
 		CoinSalary.coinpayPlayersTimer();
 
 		setupExtraCommands();
+
+		if (protocolManager != null) {
+			protocolManager.addPacketListener(new PacketListener(plugin, ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE));
+		}
 	}
 	
 	@Override
@@ -386,8 +393,13 @@ public class Main extends JavaPlugin implements Listener
 		map.register("openkomodo_admin", new GenPayCommand("genpay", "Generate a Player's currency", "/genpay", new ArrayList<String>(0)));
 		
 		map.register("openkomodo_console", new GenTip("gentip", "Generate Player's tip", "/genpay", new ArrayList<String>(0)));
+		map.register("openkomodo_console", new DebugCommand());
+		map.register("openkomodo_console", new DebugNPCCommand());
+
+
 		map.register("openkomodo_admin", new PromoteCommand("promote", "Promote People's Ranks", "/promote {Player} {Add/Remove} {Player Name} {Permission}", new ArrayList<String>(0)));
-		
+
+
 		ArrayList<String> tpaDenyAtlas = new ArrayList<String>(1);
 		tpaDenyAtlas.add("tpdeny");
 		map.register("openkomodo", new TpaDenycommand("tpadeny", "Request to teleport", "/tpdeny", tpaDenyAtlas));

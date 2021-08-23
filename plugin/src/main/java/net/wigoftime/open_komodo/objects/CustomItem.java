@@ -30,7 +30,7 @@ public class CustomItem
 	
 	private final Permission obtainPermission;
 	
-	public CustomItem(@NotNull ItemStack item, int id, @Nullable String name, @Nullable List<String> description, boolean equipable, int pointPrice, Permission permission, ItemType type)
+	public CustomItem(@NotNull ItemStack item, int id, @Nullable String name, @Nullable List<String> description, boolean equipable, int pointPrice, int coinPrice, Permission permission, ItemType type)
 	{
 		// Set ID
 		this.id = id;
@@ -53,7 +53,7 @@ public class CustomItem
 		this.description = description;
 		
 		this.pointPrice = pointPrice;
-		this.coinPrice = -1;
+		this.coinPrice = coinPrice;
 		this.item = item;
 		this.type = type;
 		this.obtainPermission = permission;
@@ -63,18 +63,18 @@ public class CustomItem
 		items.put(id, this);
 	}
 	
-	public static void create(@NotNull ItemStack item, int id, int pointPrice, boolean equipable, Permission permission, ItemType type)
+	public static void create(@NotNull ItemStack item, int id, int pointPrice, int coinPrice, boolean equipable, Permission permission, ItemType type)
 	{
-		new CustomItem(item, id, null, null, equipable, pointPrice, permission, type);
+		new CustomItem(item, id, null, null, equipable, pointPrice, coinPrice, permission, type);
 	}
 	
-	public static void create(int id, int pointPrice,Permission permission, ItemType type)
+	public static void create(int id, int pointPrice, Permission permission, ItemType type)
 	{
 		ItemStack item = new ItemStack(Material.INK_SAC);
-		new CustomItem(item, id, null, null, false, pointPrice, permission, type);
+		new CustomItem(item, id, null, null, false, pointPrice, -1, permission, type);
 	}
 	
-	public static void create(int id, @Nullable String name, List<String> description, int pointPrice, boolean equipable, Permission permission, ItemType type)
+	public static void create(int id, @Nullable String name, List<String> description, int pointPrice, int coinPrice, boolean equipable, Permission permission, ItemType type)
 	{
 		ItemStack item;
 		
@@ -105,7 +105,7 @@ public class CustomItem
 			return;
 		}
 		
-		new CustomItem(item, id, name, description, equipable, pointPrice, permission, type);
+		new CustomItem(item, id, name, description, equipable, pointPrice, coinPrice, permission, type);
 	}
 	
 	public static @NotNull List<CustomItem> getCustomItem(ItemType type)

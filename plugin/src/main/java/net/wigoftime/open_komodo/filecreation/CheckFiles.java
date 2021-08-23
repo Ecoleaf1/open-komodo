@@ -4,6 +4,7 @@ import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.chat.Emote;
 import net.wigoftime.open_komodo.config.*;
 import net.wigoftime.open_komodo.etc.Filter;
+import net.wigoftime.open_komodo.etc.dialog.DialogManager;
 import net.wigoftime.open_komodo.etc.systems.RankSystem;
 import net.wigoftime.open_komodo.gui.*;
 import net.wigoftime.open_komodo.objects.CustomItem;
@@ -39,12 +40,12 @@ abstract public class CheckFiles
 		
 		FileCreation.create(ConfigType.ITEM);
 		ItemConfig.setup();
-		
+
 		ItemStack is = new ItemStack(Material.STICK);
 		ItemMeta meta = is.getItemMeta();
 		meta.setDisplayName(ChatColor.GOLD + "Backpack");
 		is.setItemMeta(meta);
-		new CustomItem(is, 999, meta.getDisplayName(), null, true, 1050, null, ItemType.PROP);
+		new CustomItem(is, 999, meta.getDisplayName(), null, true, 1050, -1, null, ItemType.PROP);
 		
 		FileCreation.create(ConfigType.RANK);
 		RankConfig.setup();
@@ -72,6 +73,7 @@ abstract public class CheckFiles
 		RankSystem.setup();
 		CustomParticle.setup();
 		ParticlesGUI.setup();
+		DialogManager.setup();
 
 		if (SQLManager.isEnabled())
 			SQLManager.setup();

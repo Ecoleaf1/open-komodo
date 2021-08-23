@@ -3,6 +3,6 @@ main: net.wigoftime.open_komodo.Main
 description: The Offical Open Komodo plugin!
 version: 0.5
 author: Ecoleaf
-depend: [ProtocolLib, PlayerParticles]
+depend: [ProtocolLib, PlayerParticles, Warpicons, ServersNPC, ClickerBlock, ServersNPC]
 softdepend: [NuVotifier, DiscordSRV]
 api-version: 1.16

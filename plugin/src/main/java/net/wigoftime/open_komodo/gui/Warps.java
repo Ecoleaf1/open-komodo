@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class Warps extends CustomGUI
 {
 	public static final String title = ChatColor.RED + "Warps";

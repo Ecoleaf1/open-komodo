@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+@Deprecated
 public class ParticlesGUI extends CustomGUI {
 	
 	private static final ItemStack lootBoxOpenIcon = new ItemStack(Material.TRIPWIRE_HOOK);

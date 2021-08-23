@@ -42,7 +42,7 @@ public class ModerationSystem
 		setBanReason(target.getUniqueId(), "");
 		else setBanReason(target.getUniqueId(), reason);
 
-		addModSystem(target.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(), causer.getUniqueId(), "Ban", reason));
+		addModHistory(target.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(), causer.getUniqueId(), "Ban", reason));
 
 		Bukkit.getScheduler().runTask(Main.getPlugin(), new Runnable() {
 			public void run() {
@@ -71,7 +71,7 @@ public class ModerationSystem
 			else setMuteReason(targetPlayer.getUniqueId(), reason);
 			
 			setMuteDate(targetPlayer.getUniqueId(), date);
-			addModSystem(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(),causer.getUniqueId(), "Mute", reason));
+			addModHistory(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(),causer.getUniqueId(), "Mute", reason));
 
 			if (causer.isOnline()) causer.getPlayer().sendMessage(getCauserResultsMute(targetPlayer, reason, date));
 			return;
@@ -80,7 +80,7 @@ public class ModerationSystem
 		CustomPlayer targetCustomPlayer = CustomPlayer.get(onlineTarget.getUniqueId());
 		if (targetCustomPlayer != null) targetCustomPlayer.setMuteDate(date);
 
-		addModSystem(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(),causer.getUniqueId(), "Mute", reason));
+		addModHistory(targetPlayer.getUniqueId(), new ModHistorySingle(Instant.now().getEpochSecond(), causer == null ? null : causer.getUniqueId(), "Mute", reason));
 		
 		if (reason != null) targetCustomPlayer.setMuteReason(reason);
 		else targetCustomPlayer.setMuteReason("");
@@ -249,7 +249,7 @@ public class ModerationSystem
 		return true;
 	}
 
-	private static void addModSystem(UUID uuid, ModHistorySingle historySingle) {
+	private static void addModHistory(UUID uuid, ModHistorySingle historySingle) {
 		SQLManager.addModHistory(uuid, historySingle);
 	}
 

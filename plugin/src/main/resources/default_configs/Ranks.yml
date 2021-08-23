@@ -9,6 +9,7 @@ DEFAULT:
   - GSit.SitToggle
   - GSit.Lay
   - GSit.Crawl
+  - warpicons.command.warp
 VIP:
   ID: 1
   Prefix: '&e&lVIP&r&e &e'

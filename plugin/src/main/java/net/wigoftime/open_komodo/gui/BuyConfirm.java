@@ -23,12 +23,14 @@ public class BuyConfirm extends CustomGUI
 	private final @NotNull Object pendingItem;
 	private final @NotNull ItemStack cancelButton;
 	private final @NotNull ItemStack confirmButton;
+	private final @NotNull Currency currencyType;
 	
 	// Create inventory for CustomItem
 	public BuyConfirm(CustomPlayer customPlayer, @NotNull CustomItem pendingCustomItem, Currency currencyType, Permission requiredPermissoin)
 	{
 		super(customPlayer, requiredPermissoin, Bukkit.getServer().createInventory(null, 27, title));
 		pendingItem = pendingCustomItem;
+		this.currencyType = currencyType;
 		
 		confirmButton = new ItemStack(Material.LIME_WOOL,1); {
 		// Change display name
@@ -63,6 +65,7 @@ public class BuyConfirm extends CustomGUI
 	{
 		super(customPlayer, pendingPet.getPermission(), Bukkit.getServer().createInventory(null, 27, title));
 		pendingItem = pendingPet;
+		this.currencyType = currencyType;
 		
 		confirmButton = new ItemStack(Material.LIME_WOOL,1); {
 		// Change display name
@@ -108,30 +111,21 @@ public class BuyConfirm extends CustomGUI
 		
 		// 
 		if (pendingItem.getType() == Pet.material)
-			buyPet(customPlayer, pendingItem);
+			buyPet(customPlayer, currencyType, pendingItem);
 		else 
-			buyCustomItem(customPlayer, pendingCustomItem);
+			buyCustomItem(customPlayer, currencyType,pendingCustomItem);
 		
 		// Close inventory
 		customPlayer.getPlayer().closeInventory();
 	}
 	
-	private static void buyPet(@NotNull CustomPlayer playerCustomPlayer, @NotNull ItemStack pendingItem)
+	private static void buyPet(@NotNull CustomPlayer playerCustomPlayer, @NotNull Currency currencyType, @NotNull ItemStack pendingItem)
 	{
 			// Get info about item
 			ItemMeta pendingItemMeta = pendingItem.getItemMeta();
 			
 			// Get pet from ID on item
 			Pet pet = Pet.getPet(pendingItemMeta.getCustomModelData());
-			
-			// Currency that is being used
-			Currency currencyType;
-			
-			// Identify what currency is being used.
-			if (pendingItem.getType() == Material.GOLD_INGOT)
-				currencyType = Currency.COINS;
-			else
-				currencyType = Currency.POINTS;
 			
 			// Get the price
 			int price = (currencyType == Currency.POINTS) ? 
@@ -144,16 +138,8 @@ public class BuyConfirm extends CustomGUI
 			return;
 	}
 	
-	private static void buyCustomItem(@NotNull CustomPlayer customPlayer, @NotNull CustomItem pendingCustomItem)
-	{		
-			// Currency that is being used
-			Currency currencyType;
-			
-			// Identify what currency is being used.
-			if (pendingCustomItem.getItem().getType() == Material.GOLD_INGOT)
-				currencyType = Currency.COINS;
-			else
-				currencyType = Currency.POINTS;
+	private static void buyCustomItem(@NotNull CustomPlayer customPlayer, @NotNull Currency currencyType, @NotNull CustomItem pendingCustomItem)
+	{
 			
 			// Buy CustomItem
 			CurrencyClass.buy(customPlayer, currencyType == Currency.POINTS ? 

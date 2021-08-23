@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.custommobs;
 import net.minecraft.server.v1_16_R1.EntityCreature;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.minecraft.server.v1_16_R1.PathfinderGoalSelector;
+import net.wigoftime.open_komodo.etc.PrintConsole;
 import org.bukkit.Location;
 import org.bukkit.craftbukkit.v1_16_R1.CraftWorld;
 import org.bukkit.entity.Player;
@@ -21,18 +22,19 @@ public class CustomPetMob extends EntityCreature
 	public CustomPetMob(@NotNull EntityTypes<? extends EntityCreature> type, @NotNull Location loc, @NotNull Player player)
 	{
 		super(type, ((CraftWorld) loc.getWorld()).getHandle());
-		//super(type, ((CraftWorld) loc.getWorld()).getHandle());
-		//net.minecraft.server.v1_16_R1.Entitya
-		((CraftWorld)player.getLocation().getWorld()).getHandle().addEntity(this, SpawnReason.CUSTOM);
 		
 		// Set location
 		this.setLocation(loc.getX(), loc.getY(), loc.getZ(), 1, 1);
-		
+
+		((CraftWorld)loc.getWorld()).getHandle().addEntity(this, SpawnReason.CUSTOM);
+
 		// Set owner to player.
 		owner = player;
 		
 		// Set invulnerable
 		this.setInvulnerable(true);
+
+		this.moveController = new CustomMoveController(this);
 		
 		// The targets and goals of the entity
 		Set targetD;

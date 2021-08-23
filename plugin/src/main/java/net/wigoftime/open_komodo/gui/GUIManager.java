@@ -3,6 +3,7 @@ package net.wigoftime.open_komodo.gui;
 import net.wigoftime.open_komodo.Main;
 import net.wigoftime.open_komodo.etc.InventoryManagement;
 import net.wigoftime.open_komodo.etc.PrintConsole;
+import net.wigoftime.open_komodo.etc.dialog.DialogManager;
 import net.wigoftime.open_komodo.objects.CustomItem;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import net.wigoftime.open_komodo.objects.ItemType;
@@ -52,10 +53,10 @@ abstract public class GUIManager {
 			return;
 		}
 		
-		if (clickEvent.getClickedInventory().equals(PhoneSwitcher.phoneSwitcherGui)) {
+		if (clickEvent.getClickedInventory().equals(_PhoneSwitcher.phoneSwitcherGui)) {
 			clickEvent.setCancelled(true);
 			
-			PhoneSwitcher.clicked(clickerCustomPlayer, clickedItemStack);
+			_PhoneSwitcher.clicked(clickerCustomPlayer, clickedItemStack);
 			return;
 		}
 		
@@ -121,7 +122,8 @@ abstract public class GUIManager {
 			customPlayer.getActiveGui().closed();
 			customPlayer.setActiveGui(null);
 		}
-		
+
+		 DialogManager.leaving(customPlayer.getPlayer());
 		customPlayer.setAfk(false);
 		Bukkit.getScheduler().runTaskAsynchronously(Main.getPlugin(), new Runnable() {
 			public void run() {

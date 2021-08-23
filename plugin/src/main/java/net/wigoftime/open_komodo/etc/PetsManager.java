@@ -1,5 +1,9 @@
 package net.wigoftime.open_komodo.etc;
 
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import net.minecraft.server.v1_16_R1.EntityCreature;
 import net.minecraft.server.v1_16_R1.EntityTypes;
 import net.wigoftime.open_komodo.Main;
@@ -9,14 +13,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.craftbukkit.v1_16_R1.CraftServer;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftCreature;
+import org.bukkit.craftbukkit.v1_16_R1.entity.CraftEntity;
 import org.bukkit.craftbukkit.v1_16_R1.entity.CraftHorse;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,21 +41,17 @@ abstract public class PetsManager
 		// Get player location
 		Location loc = player.getLocation();
 		
-		// Get Pet Entity
-		CraftCreature entityPet;
-		
 		// Get Type
 		EntityTypes<? extends EntityCreature> type = (EntityTypes<? extends EntityCreature>) pet.getType();
-		
-		// Spawn Pet
-		entityPet = new CraftCreature((CraftServer) Bukkit.getServer(), new CustomPetMob(type, loc, player));
-		
+
+		CustomPetMob petMob = new CustomPetMob(type, loc, player);
+		CraftEntity craftPet = petMob.getBukkitEntity();
+
 		// Put in Hashmap to keep track
-		pets.put(player.getUniqueId(), entityPet);
+		pets.put(player.getUniqueId(), (CraftCreature) craftPet);
 		
-		if (entityPet.getType() == EntityType.HORSE)
-			((CraftHorse) entityPet).getInventory().setSaddle(new ItemStack(Material.SADDLE));
-		
+		if (craftPet.getType() == EntityType.HORSE)
+			((CraftHorse) craftPet).getInventory().setSaddle(new ItemStack(Material.SADDLE));
 	}
 	
 	public static boolean isPet(UUID playerUUID, @NotNull UUID entryUUID) {
@@ -126,6 +127,9 @@ abstract public class PetsManager
 						entityPet.remove();
 						continue;
 					}
+
+					if (entityPet.getPassengers().size() > 0)
+						continue;
 					
 					// If player not in the same world as the pet, delete.
 					if (entityPet.getLocation().getWorld() != player.getWorld())
@@ -137,7 +141,7 @@ abstract public class PetsManager
 					// Get player locatoin
 					Location l = player.getLocation();
 					
-					// If entity more than 13 blocks away from player, teleport
+					// If entity more than 15 blocks away from player, teleport
 					if (entityPet.getLocation().distance(l) > 15)
 						entityPet.teleport(l);
 					
@@ -171,5 +175,25 @@ abstract public class PetsManager
 	public static void serverShuttingDown() {
 		for (Entry<UUID, CraftCreature> entry : pets.entrySet())
 			entry.getValue().setHealth(0);
+	}
+
+	public static void steer(PacketEvent event) {
+		Player player = event.getPlayer();
+		@Nullable CraftCreature pet = pets.get(player.getUniqueId());
+		if (pet == null) return;
+
+		PacketContainer packet = event.getPacket();
+
+		boolean hasJumped = packet.getBooleans().read(0);
+		if (hasJumped)
+			pet.getHandle().getControllerJump().jump();
+
+		float sideways = packet.getFloat().read(0);
+		float forward = packet.getFloat().read(1);
+
+		if (sideways == 0 && forward == 0) return;
+
+		pet.setRotation(player.getEyeLocation().getYaw(), player.getEyeLocation().getPitch());
+		pet.getHandle().getControllerMove().a(forward, sideways);
 	}
 }

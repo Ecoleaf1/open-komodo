@@ -28,13 +28,7 @@ public class BasicCrate extends CustomGUI {
 	public static final short cost = 18;
 	
 	public BasicCrate(@NotNull CustomPlayer player, @NotNull List<CustomParticle> items) {
-		super(player, Permissions.particleAccess, Bukkit.getServer().createInventory(null, 27, "Particles Loot Box"));
-		
-		if (!CurrencyClass.takeOutFromBalance(opener, cost, Currency.COINS)) {
-			opener.getPlayer().closeInventory();
-			return;
-		}
-		
+		super(player, null, Bukkit.getServer().createInventory(null, 27, "Particles Loot Box"));
 		isPaid = true;
 		
 		final ItemStack barrierItem = new ItemStack(Material.GRAY_STAINED_GLASS_PANE); {

@@ -80,3 +80,7 @@ SQL:
 
 Development:
   Debug: false
+
+# DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING.
+# The version is used to check for compatibility.
+version: 1

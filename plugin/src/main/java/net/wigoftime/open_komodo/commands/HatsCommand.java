@@ -33,9 +33,9 @@ public class HatsCommand extends Command
 			if (!HatMenu.isValid(args[0]))
 				return true;
 			
-			gui = new HatMenu(player, args[0]);
+			gui = new HatMenu(player, args[0], false);
 		} else {
-			gui = new HatMenu(player, "default");	
+			gui = new HatMenu(player, "default", false);
 		}
 		
 		// Open HatMenu

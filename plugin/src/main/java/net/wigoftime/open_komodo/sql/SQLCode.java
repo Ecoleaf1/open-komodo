@@ -74,7 +74,7 @@ public class SQLCode {
 					+ "`UUID`, "
 					+ "`Mute Reason`, "
 					+ "`Ban Reason`, "
-					+ "`Punishment Historyy` ) VALUES "
+					+ "`Punishment History` ) VALUES "
 					+ "(?, '', '', ?);";
 		case CREATE_WORLD_PLAYER:
 			return "INSERT INTO `OpenKomodo.Worlds.%s` ("

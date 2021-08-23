@@ -23,11 +23,14 @@ public class ModHistoryCommand extends Command {
     @Override
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
         if (!sender.hasPermission(Permissions.modHistory)) return true;
-        if (args.length < 1) return true;
+        if (args.length < 1) {
+            sender.sendMessage(ChatColor.GRAY + usageMessage);
+            return true;
+        }
 
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(args[0]);
         SQLManager.getModHistory(offlinePlayer.getUniqueId()).stream().forEach(historySingle -> {
-            sender.sendMessage(ChatColor.GOLD + "» "+ ChatColor.GRAY+ "Causer: " + Bukkit.getOfflinePlayer(historySingle.causerPlayer).getName()
+            sender.sendMessage(ChatColor.GOLD + "» "+ ChatColor.GRAY+ "Causer: " + (historySingle.causerPlayer == null ? "Unknown" : Bukkit.getOfflinePlayer(historySingle.causerPlayer).getName())
                     + " Type: " + "DATE: "+ Date.from(Instant.ofEpochSecond(historySingle.dateTime)).toString() + " " + historySingle.type + " Context:");
             sender.sendMessage(ChatColor.GRAY + " "+ historySingle.context);
         });

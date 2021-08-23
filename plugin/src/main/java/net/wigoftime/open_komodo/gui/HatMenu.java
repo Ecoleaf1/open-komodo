@@ -19,10 +19,12 @@ import java.util.List;
 
 public class HatMenu extends CustomItemMenuType1 {
 	private final String fileName;
+	private final boolean isInStore;
 	
-	public HatMenu(@NotNull CustomPlayer customPlayer, String fileName) {
-		super(customPlayer, null, getItems(customPlayer, fileName), "Hat-Menu", 36);
+	public HatMenu(@NotNull CustomPlayer customPlayer, String fileName, boolean isInStore) {
+		super(customPlayer, null, getItems(customPlayer, fileName), "Hat Menu", 36);
 		this.fileName = fileName;
+		this.isInStore = isInStore;
 		
 		gui.setItem(31, resetButton);
 	}
@@ -33,7 +35,7 @@ public class HatMenu extends CustomItemMenuType1 {
 		
 		switch (clickEvent.getCurrentItem().getType()) {
 		case INK_SAC:
-			clickedHat(opener, clickEvent.getCurrentItem());
+			clickedHat(opener, clickEvent.getCurrentItem(), isInStore);
 			break;
 		case WHITE_WOOL:
 			if (!clickEvent.getCurrentItem().getItemMeta().hasCustomModelData()) break;
@@ -51,7 +53,7 @@ public class HatMenu extends CustomItemMenuType1 {
 		
 		YamlConfiguration config = YamlConfiguration.loadConfiguration(shopPage);
 		List<Integer> ids = config.getIntegerList("ID");
-		
+
 		List<ItemStack> items = new ArrayList<ItemStack>(ids.size());
 		for (int idIndex : ids)
 			items.add(getHatItemStack(opener, CustomItem.getCustomItem(idIndex)));
@@ -118,7 +120,7 @@ public class HatMenu extends CustomItemMenuType1 {
 		return shopPage.exists();
 	}
 	
-	private static void clickedHat(@NotNull CustomPlayer clicker, @NotNull ItemStack clickedItem) {
+	private static void clickedHat(@NotNull CustomPlayer clicker, @NotNull ItemStack clickedItem, boolean isInStore) {
 		// Get information about item
 		ItemMeta clickedItemMeta = clickedItem.getItemMeta();
 		
@@ -134,6 +136,13 @@ public class HatMenu extends CustomItemMenuType1 {
 			// Put hat on player
 			clicker.setHat(clickedItem);
 			
+			clicker.getPlayer().closeInventory();
+			return;
+		}
+
+		// If not in store
+		if (!isInStore) {
+			clicker.getPlayer().sendMessage(ChatColor.DARK_RED+"Sorry, but you must go to the mall to buy locked hats");
 			clicker.getPlayer().closeInventory();
 			return;
 		}

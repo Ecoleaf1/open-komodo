@@ -21,7 +21,6 @@ public class TagMenu extends CustomGUI {
 	private static final ItemStack backButton = new ItemStack(Material.ARROW);
 	private static final ItemStack resetButton = new ItemStack(Material.WHITE_WOOL);
 	private static final ItemStack nextButton = new ItemStack(Material.ARROW);
-	private static final ItemStack tagShopButton = new ItemStack(Material.STICK);
 	
 	private static final int slotLimit = 35;
 	public byte page = 1;
@@ -69,13 +68,6 @@ public class TagMenu extends CustomGUI {
 			// Save Changes
 			nextButton.setItemMeta(meta);
 		}
-		
-		{
-			ItemMeta meta = tagShopButton.getItemMeta();
-			
-			meta.setDisplayName(getTagShopButtonDisplayName());
-			tagShopButton.setItemMeta(meta);
-		}
 	}
 	
 	public TagMenu(@NotNull CustomPlayer player) {
@@ -85,8 +77,6 @@ public class TagMenu extends CustomGUI {
 		gui.setItem(49, resetButton);
 		
 		// Ad Tagshop button
-		
-		gui.setItem(48, tagShopButton);
 		
 		// Add Border
 		gui.setItem(44, border);
@@ -174,9 +164,6 @@ public class TagMenu extends CustomGUI {
 		} else if (clickedItem.equals(resetButton)) {
 			opener.setTagDisplay("");
 			return;
-		} else if (clickEvent.getCurrentItem().equals(tagShopButton)) {
-			TagShop gui = new TagShop(opener);
-			gui.open();
 		}
 		
 		if (clickEvent.getSlot() > slotLimit)
@@ -266,10 +253,6 @@ public class TagMenu extends CustomGUI {
 				}
 				else
 					gui.setItem(53, new ItemStack(Material.AIR));
-	}
-	
-	public static @NotNull String getTagShopButtonDisplayName() {
-		return ChatColor.WHITE + "" + ChatColor.BOLD + "Tag Shop";
 	}
 	
 }

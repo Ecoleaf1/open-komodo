@@ -1,5 +1,7 @@
 package net.wigoftime.open_komodo.gui;
 
+import net.wigoftime.open_komodo.Main;
+import net.wigoftime.open_komodo.etc.Permissions;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -19,8 +21,6 @@ public class PhoneGui extends CustomGUI {
 	public static final String titleName = ChatColor.translateAlternateColorCodes('&', "&e&lEPhone");
 	
 //	All the icon variables.
-
-	private static ItemStack props;
 	
 	private static ItemStack pets;
 	
@@ -61,14 +61,6 @@ public class PhoneGui extends CustomGUI {
 //	Functions
 	
 	public static void setUp() {
-		
-		props = new ItemStack(Material.INK_SAC); {
-			ItemMeta meta = props.getItemMeta();
-			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&d&lProps"));
-			meta.setCustomModelData(-14);
-			props.setItemMeta(meta);
-		}
-		
 		hats = new ItemStack(Material.INK_SAC); {
 			ItemMeta meta = hats.getItemMeta();
 			meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', "&c&lHats"));
@@ -179,8 +171,7 @@ public class PhoneGui extends CustomGUI {
 		}
 		
 		// List of icons that will be displayed.
-		
-		icons.add(props);
+
 		icons.add(hats);
 		icons.add(tags);
 		icons.add(warps);
@@ -209,41 +200,40 @@ public class PhoneGui extends CustomGUI {
 		
 		// If clicked on Hats Icon
 		if (clickedItemID == hats.getItemMeta().getCustomModelData()) {
-			HatMenu gui = new HatMenu(opener, "default");
+			HatMenu gui = new HatMenu(opener, "default", false);
 			gui.open();
-			return;
-		}
-		
-		// If clicked on Props Icon
-		if (clickedItemID == props.getItemMeta().getCustomModelData()) {
-			CustomGUI gui = new PropShop(opener, "default");
-			gui.open();
-			//PropShop.open(opener);
 			return;
 		}
 		
 		// If clicked on warps Icon
 		if (clickedItemID == warps.getItemMeta().getCustomModelData()) {
-			Warps gui = new Warps(opener);
-			gui.open();
+			opener.getPlayer().closeInventory();
+			opener.getPlayer().performCommand("warp");
 			return;
 		}
 		
 		// If clicked on phone shop Icon
 		if (clickedItemID == phoneShop.getItemMeta().getCustomModelData()) {
-			PhoneSwitcher.open(opener);
+			if (!opener.getPlayer().hasPermission("openkomodo.abilities.phoneswitching")) {
+				opener.getPlayer().sendMessage(ChatColor.DARK_RED + "Sorry, but you do not have permission to access this.");
+				return;
+			}
+
+			opener.getPlayer().closeInventory();
+			PhoneSwitcher phoneSwitcher = new PhoneSwitcher(opener);
+			phoneSwitcher.open();
 			return;
 		}
 		
 		// If clicked on Particles Menu
 		if (clickedItemID == particlesMenu.getItemMeta().getCustomModelData()) {
-			CustomGUI gui = new ParticlesGUI(opener);
-			gui.open();
+			if (!opener.getPlayer().hasPermission(Permissions.particleAccess)) return;
+			Main.particlesApi.openParticlesGui(opener.getPlayer());
 			return;
 		}
 		
 		if (clickedItem.equals(pets)) {
-			CustomGUI gui = new PetsGui(opener);
+			CustomGUI gui = new PetMenu(opener);
 			gui.open();
 			return;
 		}

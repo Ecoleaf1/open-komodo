@@ -1,6 +1,6 @@
 package net.wigoftime.open_komodo.commands;
 
-import net.wigoftime.open_komodo.gui.PetsGui;
+import net.wigoftime.open_komodo.gui.PetMenu;
 import net.wigoftime.open_komodo.objects.CustomPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -19,8 +19,8 @@ public class PetCommand extends Command {
 			return false;
 		
 		CustomPlayer player = CustomPlayer.get(((Player) sender).getUniqueId());
-		
-		PetsGui gui = new PetsGui(player);
+
+		PetMenu gui = new PetMenu(player);
 		gui.open();
 		return false;
 	}
