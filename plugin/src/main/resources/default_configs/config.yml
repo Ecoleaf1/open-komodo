@@ -4,7 +4,7 @@ Private Message:
   Format (Sent): '&7you &e-> &7$D &7:&f $M'
   Format (Received): '&7$N &e-> &7you &7:&f $M'
 Global Settings:
-  Resource Pack: "https://www.dropbox.com/s/yk3pmxg109us0p7/OpenKomodo%20Pack.zip?dl=1"
+  Resource Pack: "https://www.dropbox.com/s/ut7513aqkp9wojf/OpenKomodo.zip?dl=1"
 
   # WIP (Work in progress)
   Enable Propshop: true
@@ -30,11 +30,11 @@ Global Settings:
   Spawn Location:
     ==: org.bukkit.Location
     world: komodo_island
-    x: 392.0
+    x: 293.0
     y: 68.0
     z: -255.0
-    pitch: 0.0
-    yaw: 0.0
+    pitch: -6.8
+    yaw: -91.1
 
   Join Message: ''
   Leave Message: ''

@@ -169,6 +169,14 @@ Props:
       Display Name: "&bSurf Board"
       id: 75
       Price (Points): 360
+   Particle Key:
+     Display Name: "&5Particle Key"
+     id: 80
+     Price (Coins): 8
+   Particle Style Key:
+     Display Name: "&5Particle-Style Key"
+     id: 81
+     Price (Coins): 8
 
 Hats:
    Blue Ribbon:
